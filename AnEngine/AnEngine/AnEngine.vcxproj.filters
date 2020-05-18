@@ -12,5 +12,11 @@
     <ClInclude Include="LAL\LAL.hpp" />
     <ClInclude Include="Core\Execution\Exec_Editor.hpp" />
     <ClInclude Include="Core\Execution\Exec_Engine.hpp" />
+    <ClInclude Include="LAL\Cpp_STL.hpp" />
+    <ClInclude Include="LAL\STL_Reflection.hpp" />
+    <ClInclude Include="LAL\DataTypes\STL_Types.hpp" />
+    <ClInclude Include="Meta\Explicit_Specifiers.hpp" />
+    <ClInclude Include="Core\Memory\Types.hpp" />
+    <ClInclude Include="Meta\Casting.hpp" />
   </ItemGroup>
 </Project>
