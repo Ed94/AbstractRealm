@@ -6,14 +6,14 @@ namespace Core::Cycler
 {
 	enum class CyclerType
 	{
-		Core,
-		Debugger,
-		Editor,
-		IO,
-		Profile,
-		Render,
+		Core      ,
+		Debugger  ,
+		Editor    ,
+		IO        ,
+		Profile   ,
+		Render    ,
 		Simulation,
-		UI,
+		UI        ,
 		UserManage,
 		Custom
 	};
@@ -30,19 +30,15 @@ namespace Core::Cycler
 	public:
 		~ACycler() {};
 
-		virtual void Initiate();
-
+		virtual void       Initiate          ();
 		virtual ReturnCode Initiate_withRCode();
 	};
 
 	class Cycler : public ACycler
 	{
 	public:
-		implem void Initiate();
-
+		implem void       Initiate          ();
 		implem ReturnCode Initiate_withRCode();
-
-
 
 	private:
 
