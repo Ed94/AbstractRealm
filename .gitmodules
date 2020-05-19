@@ -1,3 +1,6 @@
 [submodule "AnEngine/PAL/SAL/glfw"]
 	path = AnEngine/PAL/SAL/glfw
 	url = git@github.com:glfw/glfw
+[submodule "AnEngine/PAL/SAL/glm"]
+	path = AnEngine/PAL/SAL/glm
+	url = git@github.com:g-truc/glm
