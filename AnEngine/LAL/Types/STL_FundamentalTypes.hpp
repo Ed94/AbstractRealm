@@ -19,6 +19,13 @@ namespace LAL
 
 	// Integers
 
+	// Flexible
+
+	using uint32 = unsigned int;
+
+
+	// Strict
+
 	// Signed
 	using sInt8  = signed           char;
 	using sInt16 = signed short     int ;

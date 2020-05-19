@@ -90,7 +90,7 @@ namespace SAL
 
 		using CStrArray = ptr<const ptr<const char>>;
 
-		CStrArray GetRequiredVulkanAppExtensions(ptr<uInt32> NumberOfExensions_Container);
+		CStrArray GetRequiredVulkanAppExtensions(ptr<uint32> NumberOfExensions_Container);
 	}
 }
 

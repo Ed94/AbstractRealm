@@ -69,5 +69,21 @@ namespace HAL
 			ApplicationInformation = VK_STRUCTURE_TYPE_APPLICATION_INFO    ,
 			CreateInfo             = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 		};
+
+		// Bitmask
+		Bitmask EDebugUtilities_MessageSeverityFlags
+		{
+			Verbose = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT,
+			Info    = VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT   ,
+			Warning = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
+			Error   = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
+		};
+
+		Bitmask EDebugUtilities_MessageTypeFlags
+		{
+			General     = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT    ,
+			Validation  = VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT ,
+			Performance = VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT
+		};
 	}
 }

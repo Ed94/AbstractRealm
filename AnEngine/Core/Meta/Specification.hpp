@@ -10,7 +10,7 @@ Last Modified: 5/18/2020
 
 
 
-namespace Meta
+namespace Core::Meta
 {
 	enum class BitAccuracy
 	{

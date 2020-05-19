@@ -189,6 +189,14 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Core\Meta\Config\HAL_Flags.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Meta\Config\Override_Flags.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Core\Meta\EngineInfo.hpp">
       <SubType>
       </SubType>
@@ -239,7 +247,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Meta\Config\SimFlags.hpp">
+    <ClInclude Include="Core\Meta\Config\Sim_Flags.hpp">
       <SubType>
       </SubType>
     </ClInclude>

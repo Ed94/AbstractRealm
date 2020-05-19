@@ -16,5 +16,9 @@ C++ Standard Library
 #include <limits>
 #include <memory>
 #include <stdexcept>
+#include <string>
+//#include <string.h>
 #include <typeinfo>
 #include <type_traits>
+#include <utility>
+#include <vector>

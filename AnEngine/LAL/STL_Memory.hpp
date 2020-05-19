@@ -91,4 +91,7 @@ namespace LAL
 	{
 		return offsetof(_subject, _reference);
 	}
+
+	template<typename ReturnType, typename FunctionType, typename... ParameterTypes>
+	using FPtr = ReturnType(*FunctionType)(ParameterTypes...);
 }

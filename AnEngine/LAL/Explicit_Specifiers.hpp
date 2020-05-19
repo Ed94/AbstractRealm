@@ -55,3 +55,10 @@ struct
 // Bit-field type
 #define BitField \
 struct
+
+#define Bitmask \
+enum class
+
+
+template<typename BitmaskEnumType>
+using bitmask = BitmaskEnumType;

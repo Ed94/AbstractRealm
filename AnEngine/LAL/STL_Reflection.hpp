@@ -54,37 +54,51 @@ namespace LAL
 	template<typename Type>
 	using IsUnsignedType = std::is_unsigned<Type>;
 
+	// Type Primary Categories
+
+	template<typename Type>
+	using IsFunction_T = std::is_function<Type>;
+
 
 
 	// Functions
 
 	template<typename Type>
-	constexpr bool IsSigned(void)
+	constexpr bool IsSigned()
 	{
 		return IsSignedType<Type>::value;
 	}
 
 	template<typename Type>
-	constexpr bool IsUnsigned(void)
+	constexpr bool IsUnsigned()
 	{
 		return IsUnsignedType<Type>::value;
 	}
 
 	template<typename Base, typename Derived>
-	constexpr bool IsOfClass(void)
+	constexpr bool IsOfClass()
 	{
 		return OfClass<Base, Derived>::value;
 	}
 
 	template<typename Type, typename TypeRef>
-	constexpr bool IsSameType(void)
+	constexpr bool IsSameType()
 	{
 		return SameType<Type, TypeRef>::value;
 	}
 
 	template<typename Type, typename TypeRef>
-	constexpr bool IsSameTypeCV(void)
+	constexpr bool IsSameTypeCV()
 	{
 		return SameTypeCV<Type, TypeRef>::value;
 	}
+
+	// Type Primary Categories
+
+	template<typename Type> constexpr
+	bool IsFunction()
+	{
+		return IsFunction_T<Type>::value;
+	}
+
 }

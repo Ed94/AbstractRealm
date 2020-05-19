@@ -10,7 +10,7 @@ Last Modified: 5/20/2020
 
 
 
-#include "Specification.hpp"
+#include "Core/Meta/Specification.hpp"
 
 // Will use a more accurate epsilon for math floating-point operations.
 #define SIM_DecN_USE_HIGH_ACCURACY_COMPARE \
@@ -38,34 +38,40 @@ BitAccuracy::_64_Bit
 
 
 
-namespace Meta
+namespace Core::Meta
 {
-	constexpr bool Sim_DecN_UseHighAccuracy_Compare()
+	constexpr 
+	bool Sim_DecN_UseHighAccuracy_Compare()
 	{
 		return SIM_DecN_USE_HIGH_ACCURACY_COMPARE;
 	}
 
-	constexpr bool Sim_DecN_UseNanoAccuracy_Compare()
+	constexpr 
+	bool Sim_DecN_UseNanoAccuracy_Compare()
 	{
 		return SIM_DecN_USE_NANO_ACCURACY_COMPARE
 	}
 
-	constexpr BitAccuracy Sim_DecN_Accuracy()
+	constexpr
+	BitAccuracy Sim_DecN_Accuracy()
 	{
 		return SIM_DecN_ACCURACY;
 	}
 
-	constexpr bool Sim_DecN_UseHighAccuracy_Unit()
+	constexpr
+	bool Sim_DecN_UseHighAccuracy_Unit()
 	{
 		return SIM_DecN_USE_HIGH_ACCURACY_UNIT;
 	}
 
-	constexpr bool Sim_DecN_UseNanoAccuracy_Unit()
+	constexpr
+	bool Sim_DecN_UseNanoAccuracy_Unit()
 	{
 		return SIM_DecN_USE_HIGH_ACCURACY_UNIT;
 	}
 
-	constexpr BitAccuracy Sim_IntN_Accuracy()
+	constexpr
+	BitAccuracy Sim_IntN_Accuracy()
 	{
 		return SIM_IntN_ACCURACY;
 	}
