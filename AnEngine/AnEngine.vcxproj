@@ -247,6 +247,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan_HAL_Enums.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\OS_AL\OS_AL.hpp">
       <SubType>
       </SubType>
@@ -285,7 +289,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="PAL\HAL\Vulkan_HAL.hppi" />
+    <None Include="PAL\HAL\Vulkan_HAL_Implem.hpp" />
     <None Include="PAL\SAL\GLFW_SAL.hppi" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

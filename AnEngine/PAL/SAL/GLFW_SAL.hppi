@@ -48,5 +48,13 @@ namespace SAL
 
 			return;
 		}
+
+
+		// Vulkan Related
+
+		CStrArray GetRequiredVulkanAppExtensions(ptr<uInt32> _extensionCount)
+		{
+			return glfwGetRequiredInstanceExtensions( (uint32_t*)(_extensionCount) );
+		}
 	}
 }

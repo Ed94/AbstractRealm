@@ -4,6 +4,8 @@ Vector 2D Integer
 Last Modified: 5/18/2020
 
 Think about: Should I just make these templated? (That way there is one class definition)
+
+Reference: https://github.com/godotengine/godot/blob/master/core/math/vector2.h
 */
 
 

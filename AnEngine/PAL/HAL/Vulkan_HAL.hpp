@@ -12,8 +12,8 @@ Last Modified: 5/19/2020
 
 
 
-#include <vulkan/vulkan.h>
 #include "LAL/LAL.hpp"
+#include "Vulkan_HAL_Enums.hpp"
 
 
 
@@ -23,24 +23,10 @@ namespace HAL
 
 	namespace Vulkan
 	{
-		// Enums
-
-		enum class EStructureType
-		{
-			ApplicationInformation = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-			CreateInfo = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-		};
-
-		enum class EAPI_Version
-		{
-			_1_0 = VK_API_VERSION_1_0,
-		};
-
-
-		// Structs
-
-
 		// Types
+
+		// Will most likely make a class wrap, doing this for now...
+		using AllocationCallbacks = VkAllocationCallbacks;
 
 		// TODO: Strict definition of an application in reguards to this api.
 
@@ -105,6 +91,8 @@ namespace HAL
 			//ApplicationInstance();
 			//ApplicationInstance(CreateInfo CreationSpecToUse, AppInfo AppInfoToUse);
 
+			// EResult Create();
+
 			//AppInfo    appSpec     ;
 			//CreateInfo creationSpec;
 			//Handle     ID          ;
@@ -113,10 +101,17 @@ namespace HAL
 
 		// Functions
 
+		EResult CreateApplicationInstance
+		(
+			    const ApplicationInstance::CreateInfo& AppSpec        , 
+			ptr<const AllocationCallbacks            > CustomAllocator, 
+			ptr<      ApplicationInstance::Handle    > HandleContainer
+		);
+
 		uInt32 MakeVersion(uInt32 Major, uInt32 Minor, uInt32 Patch);
 	}
 }	
 
 
 
-#include "Vulkan_HAL.hppi"
+#include "Vulkan_HAL_Implem.hpp"

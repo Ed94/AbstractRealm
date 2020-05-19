@@ -20,7 +20,7 @@ Last Modified: 5/19/2020
 
 namespace SAL
 {
-	using LAL::ptr;
+	using namespace LAL;
 
 	namespace GLFW
 	{
@@ -84,6 +84,13 @@ namespace SAL
 		void SetWindowCreationParameter(EWindowCreationParameter ParameterToSet, ParameterType ParameterValue);
 
 		void Terminate();
+
+
+		// Vulkan Related
+
+		using CStrArray = ptr<const ptr<const char>>;
+
+		CStrArray GetRequiredVulkanAppExtensions(ptr<uInt32> NumberOfExensions_Container);
 	}
 }
 

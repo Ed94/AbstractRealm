@@ -43,9 +43,10 @@
     <ClInclude Include="Core\Meta\EngineInfo.hpp" />
     <ClInclude Include="LAL\Explicit_Specifiers.hpp" />
     <ClInclude Include="LAL\Casting.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan_HAL_Enums.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL.hppi" />
-    <None Include="PAL\HAL\Vulkan_HAL.hppi" />
+    <None Include="PAL\HAL\Vulkan_HAL_Implem.hpp" />
   </ItemGroup>
 </Project>

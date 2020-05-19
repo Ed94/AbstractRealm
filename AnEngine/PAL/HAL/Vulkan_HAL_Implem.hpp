@@ -42,7 +42,7 @@ namespace HAL
 
 			converted.pApplicationInfo = getAddress(tempRRef);   
 			// I had to pass app info via ref otherwise template would not work.. 
-		    // TODO: Find out why
+			// TODO: Find out why
 
 			converted.enabledLayerCount       = EnabledLayerCount    ;
 			converted.ppEnabledLayerNames     = EnabledLayerNames    ;
@@ -52,9 +52,23 @@ namespace HAL
 			return converted;
 		}
 
+		EResult CreateApplicationInstance
+		(
+			    const ApplicationInstance::CreateInfo& AppSpec        , 
+			ptr<const AllocationCallbacks            > CustomAllocator, 
+			ptr<      ApplicationInstance::Handle    > HandleContainer
+		)
+		{
+			const VkInstanceCreateInfo&& tempRRef = VkInstanceCreateInfo(AppSpec);
+
+			return EResult(vkCreateInstance(getAddress(tempRRef), CustomAllocator, HandleContainer));
+			// I had to pass app info via ref otherwise template would not work.. 
+			// TODO: Find out why
+		}
+
 		uInt32 MakeVersion(uInt32 _major, uInt32 _minor, uInt32 _patch)
 		{
-			VK_MAKE_VERSION(_major, _minor, _patch);
+			return VK_MAKE_VERSION(_major, _minor, _patch);
 		}
 	}
 }

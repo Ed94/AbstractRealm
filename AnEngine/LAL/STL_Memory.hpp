@@ -81,7 +81,7 @@ namespace LAL
 	Address operator
 	*/
 	template<typename Type>
-	ptr<Type> getAddress(Type& _obj)
+	auto getAddress(Type& _obj) -> ptr<Type>
 	{
 		return M_ADDRESS(_obj);
 	}
