@@ -11,7 +11,7 @@ Last Modified: 5/18/2020
 
 
 #include "Meta/Specification.hpp"
-#include "Meta/Config/Flags.hpp"
+#include "Meta/Config/SimFlags.hpp"
 #include "LAL/LAL.hpp"
 
 

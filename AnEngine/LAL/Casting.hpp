@@ -43,7 +43,7 @@ Static Cast (Direct)
 template<typename Derived, typename Base>
 Derived SCast(const Base _obj)
 {
-	return static_cast<Derived>(_obj)
+	return static_cast<Derived>(_obj);
 }
 
 /*

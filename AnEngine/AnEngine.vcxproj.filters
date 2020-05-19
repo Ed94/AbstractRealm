@@ -29,13 +29,23 @@
     <ClInclude Include="Simulation\Math\Vec2D_F.hpp" />
     <ClInclude Include="Simulation\Units.hpp" />
     <ClInclude Include="Simulation\Math\Constants.hpp" />
-    <ClInclude Include="Core\Meta\Config\Flags.hpp" />
-    <ClInclude Include="Core\Meta\Casting.hpp" />
-    <ClInclude Include="Core\Meta\Explicit_Specifiers.hpp" />
     <ClInclude Include="Core\Meta\Specification.hpp" />
     <ClInclude Include="PAL\HAL\Audio_HAL.hpp" />
     <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
     <ClInclude Include="PAL\OS_AL\OS_AL.hpp" />
     <ClInclude Include="UserManagment\User\User.hpp" />
+    <ClInclude Include="Core\Debug\Exec_GLFW_GLM_Test.hpp" />
+    <ClInclude Include="PAL\SAL\GLFW_SAL.hpp" />
+    <ClInclude Include="PAL\SAL\GLM_SAL.hpp" />
+    <ClInclude Include="Core\Debug\Vulkan_TriangleTest.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan_HAL.hpp" />
+    <ClInclude Include="Core\Meta\Config\SimFlags.hpp" />
+    <ClInclude Include="Core\Meta\EngineInfo.hpp" />
+    <ClInclude Include="LAL\Explicit_Specifiers.hpp" />
+    <ClInclude Include="LAL\Casting.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PAL\SAL\GLFW_SAL.hppi" />
+    <None Include="PAL\HAL\Vulkan_HAL.hppi" />
   </ItemGroup>
 </Project>

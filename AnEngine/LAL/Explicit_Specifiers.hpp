@@ -10,21 +10,6 @@ Explicit Specifiers
 
 
 
-// Memory
-
-#define Stack(...) \
-__VA__ARGS__
-
-#define Data(...) \
-__VA__ARGS__
-
-#define BSS(...) \
-__VA__ARGS__
-
-#define Heap(...) \
-__VA__ARGS__
-
-
 // Statics:
 
 // Creates a static duration variable only accessible to the file. (Global scope/File scope only)

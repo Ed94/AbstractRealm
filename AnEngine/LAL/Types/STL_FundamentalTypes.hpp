@@ -64,6 +64,6 @@ namespace LAL
 	template<typename Type>
 	constexpr bool IsFloat()
 	{
-		return IsSameType<Type, float32>() || IsSameType<Type, float64>() || IsSameType<Type, unsafe::floatEP>();
+		return IsSameType<Type, float32>() || IsSameType<Type, float64>();
 	}
 }

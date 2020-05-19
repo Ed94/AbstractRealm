@@ -15,5 +15,6 @@ C++ Standard Library
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <stdexcept>
 #include <typeinfo>
 #include <type_traits>
