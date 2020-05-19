@@ -75,7 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets;$(ProjectDir)Assets\Animation;$(ProjectDir)LAL;$(ProjectDir)LAL\DataTypes;$(ProjectDir)Core/Memory;$(ProjectDir)Core;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -145,6 +145,18 @@
     <ClCompile Include="Core\Execution\Execute.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Cycler\Cycle.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Cycler\Cycler.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Execution\Executer.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Core\Execution\Exec_Editor.hpp">
       <SubType>
       </SubType>
@@ -153,7 +165,19 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Memory\Types.hpp">
+    <ClInclude Include="Core\Execution\Exec_Primitive.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\MemTypes.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Audio_HAL.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\GPU_HAL.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -161,7 +185,16 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\DataTypes\STL_Types.hpp">
+    <ClInclude Include="LAL\STL_Memory.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="LAL\Types\STL_BasicTypes.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="LAL\Types\STL_FundamentalLimits.hpp" />
+    <ClInclude Include="LAL\Types\STL_FundamentalTypes.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -173,11 +206,51 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Meta\Casting.hpp">
+    <ClInclude Include="LAL\Utilities\STL_SmartPtrs.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Meta\Explicit_Specifiers.hpp">
+    <ClInclude Include="Core\Meta\Casting.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Meta\Explicit_Specifiers.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Meta\Config\Flags.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Meta\Specification.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\OS_AL\OS_AL.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Simulation\Math\Constants.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Simulation\Math\Vec2D_F.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Simulation\Math\Vec2D_I.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Simulation\Math\Vector3D.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Simulation\Units.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="UserManagment\User\User.hpp">
       <SubType>
       </SubType>
     </ClInclude>

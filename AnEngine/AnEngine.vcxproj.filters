@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="NewFilter1">
+      <UniqueIdentifier>{522cccc3-3938-458d-a222-02149b590371}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\Execution\Execute.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LAL\LAL.hpp" />
+    <ClInclude Include="Core\Execution\Exec_Editor.hpp" />
+    <ClInclude Include="Core\Execution\Exec_Engine.hpp" />
+    <ClInclude Include="LAL\Cpp_STL.hpp" />
+    <ClInclude Include="LAL\STL_Reflection.hpp" />
+    <ClInclude Include="LAL\Types\STL_FundamentalLimits.hpp" />
+    <ClInclude Include="LAL\Types\STL_FundamentalTypes.hpp" />
+    <ClInclude Include="LAL\Types\STL_BasicTypes.hpp" />
+    <ClInclude Include="LAL\Utilities\STL_SmartPtrs.hpp" />
+    <ClInclude Include="LAL\STL_Memory.hpp" />
+    <ClInclude Include="Core\Execution\Exec_Primitive.hpp" />
+    <ClInclude Include="Core\Execution\Executer.hpp" />
+    <ClInclude Include="Core\Cycler\Cycle.hpp" />
+    <ClInclude Include="Core\Cycler\Cycler.hpp" />
+    <ClInclude Include="Core\Memory\MemTypes.hpp" />
+    <ClInclude Include="Simulation\Math\Vector3D.hpp" />
+    <ClInclude Include="Simulation\Math\Vec2D_I.hpp" />
+    <ClInclude Include="Simulation\Math\Vec2D_F.hpp" />
+    <ClInclude Include="Simulation\Units.hpp" />
+    <ClInclude Include="Simulation\Math\Constants.hpp" />
+    <ClInclude Include="Core\Meta\Config\Flags.hpp" />
+    <ClInclude Include="Core\Meta\Casting.hpp" />
+    <ClInclude Include="Core\Meta\Explicit_Specifiers.hpp" />
+    <ClInclude Include="Core\Meta\Specification.hpp" />
+    <ClInclude Include="PAL\HAL\Audio_HAL.hpp" />
+    <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
+    <ClInclude Include="PAL\OS_AL\OS_AL.hpp" />
+    <ClInclude Include="UserManagment\User\User.hpp" />
+  </ItemGroup>
+</Project>
