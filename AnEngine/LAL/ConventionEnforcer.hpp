@@ -34,7 +34,7 @@ Do not directly use... its part of the MakeEnforcementSet.
 Creates the implementation template for the Enforced calling convention maker struct.
 */
 #define MakeEnforcer_MakerTemplate_Implementation(__API_NAME, __ATTRIBUTE, __CALL)    \
-template                                                                              \
+template                                           \
 <                                                                                     \
 	typename    ReturnType    ,                                                       \
 	typename... ParameterTypes,	                                                      \
