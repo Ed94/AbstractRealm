@@ -262,6 +262,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\Vulkan.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\OSAL\OSAL.hpp">
       <SubType>
       </SubType>

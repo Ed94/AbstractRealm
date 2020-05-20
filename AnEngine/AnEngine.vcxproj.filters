@@ -46,6 +46,7 @@
     <ClInclude Include="LAL\Types\Bitmask.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.hpp" />
     <ClInclude Include="LAL\ConventionEnforcer.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\Vulkan.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
