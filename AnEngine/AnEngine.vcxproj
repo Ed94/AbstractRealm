@@ -209,7 +209,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan_HAL.hpp" />
     <ClInclude Include="PAL\HAL\Audio_HAL.hpp">
       <SubType>
       </SubType>
@@ -263,10 +262,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan_HAL_Enums.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="PAL\OSAL\OSAL.hpp">
       <SubType>
       </SubType>
@@ -305,7 +300,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="PAL\HAL\Vulkan_HAL_Implem.hpp" />
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
