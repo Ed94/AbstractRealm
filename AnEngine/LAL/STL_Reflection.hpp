@@ -20,6 +20,9 @@ namespace LAL
 	using TypeData = std::type_info;
 
 	template<typename Type>
+	using RemovePtr = typename std::remove_pointer<Type>::type;
+
+	template<typename Type>
 	using RemoveCV = std::remove_cv_t<Type>;
 
 	template<typename Type>
@@ -46,6 +49,11 @@ namespace LAL
 	template<bool Constraint, typename ReturnTypeA, typename ReturnTypeB>
 	using Choose = typename std::conditional<Constraint, ReturnTypeA, ReturnTypeB>::type;
 
+	// Types as constants
+
+	/*template<typename Type>
+	using Something = std::integral_constant<Type>;*/
+
 	// Type Signage
 
 	template<typename Type>
@@ -57,7 +65,13 @@ namespace LAL
 	// Type Primary Categories
 
 	template<typename Type>
+	using IsPointer_T = std::is_pointer<Type>;
+
+	template<typename Type>
 	using IsFunction_T = std::is_function<Type>;
+	
+	template<typename Type>
+	using IsFunctionPtr_T = std::bool_constant< IsPointer_T<Type>::value && IsFunction_T< RemovePtr<Type>>::value >;
 
 
 
@@ -96,9 +110,20 @@ namespace LAL
 	// Type Primary Categories
 
 	template<typename Type> constexpr
+	bool IsPointer()
+	{
+		return IsPointer_T<Type>::value;
+	}
+
+	template<typename Type> constexpr
 	bool IsFunction()
 	{
 		return IsFunction_T<Type>::value;
 	}
 
+	template<typename Type> constexpr
+	bool IsFunctionPtr()
+	{
+		return IsFunctionPtr_T<Type>::value;
+	}
 }

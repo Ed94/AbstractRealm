@@ -69,7 +69,7 @@ namespace LAL
 	Dereference operator
 	*/
 	template<typename Type> 
-	Type& dref(const ptr<Type> _ptr)
+	auto dref(const ptr<Type> _ptr)
 	{
 		return *_ptr;
 	}
@@ -81,7 +81,7 @@ namespace LAL
 	Address operator
 	*/
 	template<typename Type>
-	auto getAddress(Type& _obj) -> ptr<Type>
+	ptr<Type> getAddress(Type& _obj)
 	{
 		return M_ADDRESS(_obj);
 	}
@@ -92,6 +92,6 @@ namespace LAL
 		return offsetof(_subject, _reference);
 	}
 
-	template<typename ReturnType, typename FunctionType, typename... ParameterTypes>
-	using FPtr = ReturnType(*FunctionType)(ParameterTypes...);
+	template<typename ReturnType, typename... ParameterTypes>
+	using FPtr = ReturnType(*)(ParameterTypes...);
 }

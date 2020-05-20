@@ -22,6 +22,7 @@ namespace LAL
 	// Flexible
 
 	using uint32 = unsigned int;
+	using sint32 = signed   int;
 
 
 	// Strict

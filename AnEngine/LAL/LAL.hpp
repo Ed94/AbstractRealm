@@ -21,6 +21,7 @@ standard c++.
 #include "Casting.hpp"
 #include "Explicit_Specifiers.hpp"
 #include "Types/STL_BasicTypes.hpp"
+#include "Types/Bitmask.hpp"
 #include "Types/STL_FundamentalTypes.hpp"
 #include "Types/STL_FundamentalLimits.hpp"
 #include "Utilities/STL_SmartPtrs.hpp"

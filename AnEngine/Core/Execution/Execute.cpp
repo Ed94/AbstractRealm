@@ -21,7 +21,7 @@ int main()
 {
 	// Debug Suite
 
-	Debug::Exec_GLFW_GLM_Test();
+	//Debug::Exec_GLFW_GLM_Test();
 
 	if (!Debug::Vulkan_TriangleTest::Run()) return EXIT_FAILURE;
 

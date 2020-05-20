@@ -10,9 +10,66 @@ namespace HAL
 {
 	namespace Vulkan
 	{
+		enum class EUndefined
+		{};
+
 		enum class EAPI_Version
 		{
 			_1_0 = VK_API_VERSION_1_0,
+		};
+
+		enum EBool
+		{
+			True  = VK_TRUE ,
+			False = VK_FALSE
+		};
+
+		enum class EObjectType
+		{
+			Unknown                        = VK_OBJECT_TYPE_UNKNOWN                        ,
+			Instance                       = VK_OBJECT_TYPE_INSTANCE                       ,
+			PhysicalDevice                 = VK_OBJECT_TYPE_PHYSICAL_DEVICE                ,
+			Device                         = VK_OBJECT_TYPE_DEVICE                         ,
+			Queue                          = VK_OBJECT_TYPE_QUEUE                          ,
+			Semaphore                      = VK_OBJECT_TYPE_SEMAPHORE                      ,
+			CommandBuffer                  = VK_OBJECT_TYPE_COMMAND_BUFFER                 ,
+			Fence                          = VK_OBJECT_TYPE_FENCE                          ,
+			DeviceMemory                   = VK_OBJECT_TYPE_DEVICE_MEMORY                  ,
+			Buffer                         = VK_OBJECT_TYPE_BUFFER                         ,
+			Image                          = VK_OBJECT_TYPE_IMAGE                          ,
+			Event                          = VK_OBJECT_TYPE_EVENT                          ,
+			QueryPool                      = VK_OBJECT_TYPE_QUERY_POOL                     ,
+			BufferView                     = VK_OBJECT_TYPE_BUFFER_VIEW                    ,
+			ImageView                      = VK_OBJECT_TYPE_IMAGE_VIEW                     ,
+			ShaderModule                   = VK_OBJECT_TYPE_SHADER_MODULE                  ,
+			PipelineCache                  = VK_OBJECT_TYPE_PIPELINE_CACHE                 ,
+			PipelineLayout                 = VK_OBJECT_TYPE_PIPELINE_LAYOUT                ,
+			RenderPass                     = VK_OBJECT_TYPE_RENDER_PASS                    ,
+			Pipeline                       = VK_OBJECT_TYPE_PIPELINE                       ,
+			DescriptorSetLayout            = VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT          ,
+			Sampler                        = VK_OBJECT_TYPE_SAMPLER                        ,
+			DescriptorPool                 = VK_OBJECT_TYPE_DESCRIPTOR_POOL                ,
+			DescriptorSet                  = VK_OBJECT_TYPE_DESCRIPTOR_SET                 ,
+			FrameBuffer                    = VK_OBJECT_TYPE_FRAMEBUFFER                    ,
+			CommandPool                    = VK_OBJECT_TYPE_COMMAND_POOL                   ,
+			Sampler_YCBCR_Conversion       = VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION       ,
+			DescriptorUpdateTemplate       = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE     ,
+			KHR_Surface                    = VK_OBJECT_TYPE_SURFACE_KHR                    ,
+			KHR_Swapchain                  = VK_OBJECT_TYPE_SWAPCHAIN_KHR                  ,
+			KHR_Display                    = VK_OBJECT_TYPE_DISPLAY_KHR                    ,
+			KHR_DisplayMode                = VK_OBJECT_TYPE_DISPLAY_MODE_KHR               ,
+			Extension_DebugReportCallback  = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT      ,
+			Extension_DebugUtilsMessenger  = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT      ,
+			KHR_AccelerationStructure      = VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_KHR     ,
+			Extension_ValidationCache      = VK_OBJECT_TYPE_VALIDATION_CACHE_EXT           ,
+			Intel_PerformanceConfiguration = VK_OBJECT_TYPE_PERFORMANCE_CONFIGURATION_INTEL,
+			KHR_DeferredOperation          = VK_OBJECT_TYPE_DEFERRED_OPERATION_KHR         ,
+			IndirectCommandsLayout         = VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NV    ,
+			//Extension_PrivateDataSlot = VK_OBJECT_TYPE_PRIVATE_DATA_SLOT_EXT,   // TODO: is this ok?
+			Extension_PrivateDataSlot = 1000295000,
+			KHR_DescriptorUpdateTemplate   = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR ,
+			KHR_Sampler_YCBCR_Conversion   = VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR   ,
+		 	AccelerationStructure          = VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_NV
 		};
 
 		enum class EResult
@@ -64,14 +121,52 @@ namespace HAL
 			Error_Extension_PipelineCompileRequired               = VK_ERROR_PIPELINE_COMPILE_REQUIRED_EXT
 		};
 
-		enum class EStructureType
-		{
-			ApplicationInformation = VK_STRUCTURE_TYPE_APPLICATION_INFO    ,
-			CreateInfo             = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-		};
 
-		// Bitmask
-		Bitmask EDebugUtilities_MessageSeverityFlags
+		namespace TODO
+		{
+			// TODO: Finish this.
+			enum class EStructureType
+			{
+				ApplicationInformation = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+				Instance_CreateInfo = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+				DeviceQueue_CreateInfo = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+				Device_CreateInfo = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+				SubmitInfo = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+				MemoryAllocateInfo = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+				MappedMemoryRange = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
+				BindSparseInfo = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO,
+				Fence_CreateInfo = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+				Semaphore_CreateInfo = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+				Event_CreateInfo = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO,
+				QueryPool_CreateInfo = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
+				Buffer_CreateInfo = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+				BufferView_CreateInfo = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO,
+				Image_CreateInfo = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+				ImageView_CreateInfo = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+				ShaderModule_CreateInfo = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+				Pipeline_Cache_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
+				Pipeline_ShaderState_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+				Pipeline_VertexInputState_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+				Pipeline_InputAssemblyState_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+				Pipeline_TessellationState_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO,
+				Pipeline_ViewportState_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+				Pipeline_RasterizationState_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+				Pipeline_MultisampleState_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+				Pipeline_DepthStencilState_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+				Pipeline_ColorBlendState_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+				Pipeline_DynamicState_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+				GraphicsPipeline_CreateInfo = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+				ComputePipeline_CreateInfo = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+				Pipeline_Layout_CreateInfo = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+				Sampler_CreateInfo = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+				VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO
+			};
+		}
+
+		
+
+		// Bitmaskable
+		Bitmaskable EDebugUtilities_MessageSeverityFlags
 		{
 			Verbose = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT,
 			Info    = VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT   ,
@@ -79,7 +174,8 @@ namespace HAL
 			Error   = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
 		};
 
-		Bitmask EDebugUtilities_MessageTypeFlags
+		// Bitmaskable
+		Bitmaskable EDebugUtilities_MessageTypeFlags
 		{
 			General     = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT    ,
 			Validation  = VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT ,

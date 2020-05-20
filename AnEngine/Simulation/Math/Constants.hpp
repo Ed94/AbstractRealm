@@ -21,10 +21,10 @@ namespace Sim
 			
 			LAL::IsOfClass<LAL::float32, DecN>() ? 
 
-			Meta::Sim_DecN_UseHighAccuracy_Compare() ? LAL::Float32_HighAccuracy : LAL::Float32_LowAccuracy :
+			Core::Meta::Sim_DecN_UseHighAccuracy_Compare() ? LAL::Float32_HighAccuracy : LAL::Float32_LowAccuracy :
 			(
-				Meta::Sim_DecN_UseHighAccuracy_Compare() ?
-				Meta::Sim_DecN_UseNanoAccuracy_Compare() ? LAL::Float64_NanoAccuracy : LAL::Float64_HighAccuracy :
+				Core::Meta::Sim_DecN_UseHighAccuracy_Compare() ?
+				Core::Meta::Sim_DecN_UseNanoAccuracy_Compare() ? LAL::Float64_NanoAccuracy : LAL::Float64_HighAccuracy :
 				                                           LAL::Float64_LowAccuracy
 			);
 	}
