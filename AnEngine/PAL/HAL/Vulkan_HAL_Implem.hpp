@@ -31,25 +31,8 @@ namespace HAL
 
 		AppInstance::CreateInfo::operator VkInstanceCreateInfo() const
 		{
-			stack<VkInstanceCreateInfo> converted;
-
-			converted.sType = VkStructureType(SType);
-			converted.pNext = Extension             ;
-			converted.flags = Flags                 ;
-
-			// TODO: Confirm correct usage of R-Value reference.
-			VkApplicationInfo&& tempRRef = VkApplicationInfo(dref(AppInfo));
-
-			converted.pApplicationInfo = getAddress(tempRRef);   
-			// I had to pass app info via ref otherwise template would not work.. 
-			// TODO: Find out why
-
-			converted.enabledLayerCount       = EnabledLayerCount    ;
-			converted.ppEnabledLayerNames     = EnabledLayerNames    ;
-			converted.enabledExtensionCount   = EnabledExtensionCount;
-			converted.ppEnabledExtensionNames = EnabledExtensionNames;
-
-			return converted;
+			// The struct data layout is exactly the same, so there should be no issue doing an raw cast...
+			return *(VkInstanceCreateInfo*)(this);
 		}
 
 		LayerProperties::operator VkLayerProperties() const
@@ -66,18 +49,14 @@ namespace HAL
 			return converted;
 		}
 
-		EResult CreateApplicationInstance
+		EResult CreateAppInstance
 		(
-			    const AppInstance::CreateInfo& AppSpec        , 
-			ptr<const AllocationCallbacks    > CustomAllocator, 
-			ptr<      AppInstance::Handle    > HandleContainer
+			    const AppInstance::CreateInfo& _appSpec        , 
+			ptr<const AllocationCallbacks    > _customAllocator, 
+			          AppInstance::Handle&     _handleContainer
 		)
 		{
-			const VkInstanceCreateInfo&& tempRRef = VkInstanceCreateInfo(AppSpec);
-
-			return EResult(vkCreateInstance(getAddress(tempRRef), CustomAllocator, HandleContainer));
-			// I had to pass app info via ref otherwise template would not work.. 
-			// TODO: Find out why
+			return EResult(vkCreateInstance(getAddress((const VkInstanceCreateInfo)(_appSpec)), _customAllocator, getAddress(_handleContainer)));
 		}
 
 		EResult GenerateGlobalLayerProperties(ptr<uint32> _numContainer, ptr<LayerProperties> _propertiesContainer)
@@ -168,37 +147,13 @@ namespace HAL
 
 			Messenger::CallbackData::operator VkDebugUtilsMessengerCallbackDataEXT()
 			{
-				VkDebugUtilsMessengerCallbackDataEXT converted;
-
-				converted.sType            = SType;
-				converted.pNext            = Extension;
-				converted.flags            = Flags;
-				converted.pMessageIdName   = MesssageIDName;
-				converted.messageIdNumber  = MessageIDNumber;
-				converted.pMessage         = Message;
-				converted.queueLabelCount  = QueueLabelCount;
-				converted.pQueueLabels     = ptr<const VkDebugUtilsLabelEXT>(QueueLabels);
-				converted.cmdBufLabelCount = CMDBufferLabel_Count;
-				converted.pCmdBufLabels    = ptr<const VkDebugUtilsLabelEXT>(CMDBufferLabels);
-				converted.objectCount      = ObjectCount;
-				converted.pObjects         = ptr<const VkDebugUtilsObjectNameInfoEXT>(Objects);
-
-				return converted;
+				return dref(ptr< VkDebugUtilsMessengerCallbackDataEXT>(this));
 			}
 
 			Messenger::CreateInfo::operator VkDebugUtilsMessengerCreateInfoEXT()
 			{
-				VkDebugUtilsMessengerCreateInfoEXT converted;
-
-				converted.sType           = SType;
-				converted.pNext           = Extension;
-				converted.flags           = Flags;
-				converted.messageSeverity = Serverity;
-				converted.messageType     = Type;
-				converted.pfnUserCallback = PFN_vkDebugUtilsMessengerCallbackEXT(UserCallback);
-				converted.pUserData       = UserData;
-
-				return converted;
+				// The struct data layout is exactly the same, so there should be no issue doing an raw cast...
+				return dref(ptr<VkDebugUtilsMessengerCreateInfoEXT>(this));
 			}
 
 

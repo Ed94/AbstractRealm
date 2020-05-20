@@ -19,6 +19,7 @@ standard c++.
 
 #include "Cpp_STL.hpp"
 #include "Casting.hpp"
+#include "ConventionEnforcer.hpp"
 #include "Explicit_Specifiers.hpp"
 #include "Types/STL_BasicTypes.hpp"
 #include "Types/Bitmask.hpp"

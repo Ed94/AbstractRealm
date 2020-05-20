@@ -13,9 +13,12 @@ namespace HAL
 		enum class EUndefined
 		{};
 
+
 		enum class EAPI_Version
 		{
 			_1_0 = VK_API_VERSION_1_0,
+			_1_1 = VK_API_VERSION_1_1,
+			_1_2 = VK_API_VERSION_1_2
 		};
 
 		enum EBool

@@ -47,6 +47,7 @@
     <ClInclude Include="Core\Meta\Config\Override_Flags.hpp" />
     <ClInclude Include="LAL\Types\Bitmask.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.hpp" />
+    <ClInclude Include="LAL\ConventionEnforcer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\HAL\Vulkan_HAL_Implem.hpp" />

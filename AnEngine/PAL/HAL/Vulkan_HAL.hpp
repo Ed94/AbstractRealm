@@ -23,6 +23,7 @@ namespace HAL
 
 	namespace Vulkan
 	{
+
 		using Bool = VkBool32;
 
 		using EStructureType = VkStructureType;
@@ -31,34 +32,10 @@ namespace HAL
 
 		// Experimental
 		// Reference: https://stackoverflow.com/questions/40326733/changing-calling-convention
+		MakeEnforcementSet(Vulkan, VKAPI_ATTR, VKAPI_CALL);
 
-		template<typename FunctionType, ptr<FunctionType> >
-		struct EnforcedSignatureCaller;
-
-		template
-		<
-			typename ReturnType,
-			typename... ParameterTypes,
-			ReturnType(*FunctionType)(ParameterTypes...)
-			//FPtr<ReturnType, FunctionType, ParameterTypes...>
-		>
-		// Pointer to function type determined at compile time.
-		struct EnforcedSignatureCaller<ReturnType(ParameterTypes...), FunctionType>
-		{
-			unbound VKAPI_ATTR ReturnType VKAPI_CALL Call(ParameterTypes... _parameters)
-			{
-				return FunctionType(std::forward<ParameterTypes>(_parameters)...);
-			}
-		};
-
-		template<typename FunctionType, FunctionType* _callback>
-		auto EnforceSignature()
-		{
-			return getAddress(EnforcedSignatureCaller<FunctionType, _callback>::Call);
-		}
-
-		template<typename ReturnType, typename... ParameterTypes>
-		using Enforced_FPtr = ReturnType(VKAPI_PTR *)(ParameterTypes...);
+		template<typename ReturnType, typename... ParameterTypes>                  
+		using Enforced_FPtr = ReturnType(VKAPI_PTR*)(ParameterTypes...);
 
 		// Equivalent to Enforced_FPtr<void, void>.
 		using FPtr_Void = PFN_vkVoidFunction;
@@ -160,11 +137,11 @@ namespace HAL
 		
 		// Functions
 
-		EResult CreateApplicationInstance
+		EResult CreateAppInstance
 		(
 			    const AppInstance::CreateInfo& AppSpec        , 
 			ptr<const AllocationCallbacks    > CustomAllocator, 
-			ptr<      AppInstance::Handle    > HandleContainer
+			          AppInstance::Handle&     HandleContainer
 		);
 
 		/*

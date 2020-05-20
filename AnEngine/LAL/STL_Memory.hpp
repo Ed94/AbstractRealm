@@ -75,15 +75,21 @@ namespace LAL
 	}
 
 	#define M_ADDRESS(_obj) \
-	&_obj
+	&(_obj)
 
 	/*
 	Address operator
 	*/
 	template<typename Type>
-	ptr<Type> getAddress(Type& _obj)
+	auto getAddress(Type& _obj)
 	{
 		return M_ADDRESS(_obj);
+	}
+
+	template<typename FunctionType>
+	auto getFuncAddress(FunctionType& _obj)
+	{
+		return NULL;
 	}
 
 	template<typename TypeS, typename TypeR>
