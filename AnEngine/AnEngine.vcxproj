@@ -75,14 +75,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\SAL\glfw\include;$(ProjectDir)PAL\SAL\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\SAL\glfw\include;$(ProjectDir)PAL\SAL\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -104,12 +104,12 @@
       <ConformanceMode>true</ConformanceMode>
       <FloatingPointModel>Fast</FloatingPointModel>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\SAL\glm\;$(ProjectDir)PAL\SAL\glfw\include\;F:\Development\vulkan\1.2.135.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;F:\Development\vulkan\1.2.135.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>F:\Development\vulkan\1.2.135.0\Lib;$(ProjectDir)PAL\SAL\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>F:\Development\vulkan\1.2.135.0\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -137,7 +137,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\SAL\glm\;$(ProjectDir)PAL\SAL\glfw\include\;F:\Development\vulkan\1.2.135.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;F:\Development\vulkan\1.2.135.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -145,7 +145,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>F:\Development\vulkan\1.2.135.0\Lib;F:\Projects\AnEngine\AnEngine\PAL\SAL\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>F:\Development\vulkan\1.2.135.0\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
