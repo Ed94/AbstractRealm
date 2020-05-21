@@ -5,36 +5,47 @@
 enum class
 
 
-template<typename EnumType, typename BitmaskRepresentation>
-struct bitmask
+namespace LAL
 {
-private:
-	using _self = bitmask<EnumType, BitmaskRepresentation>;
-
-public:
-
-	using Representation = BitmaskRepresentation;
-	using Enum           = EnumType             ;
-
-	template<typename... BitType>
-	void Add(const BitType... _bits)
+	template<typename EnumType, typename BitmaskRepresentation>
+	struct bitmask
 	{
-		mask |= (Representation(_bits) | ...);
-	}
+	private:
+		using _self = bitmask<EnumType, BitmaskRepresentation>;
 
-	template<typename... BitType>
-	void Set(const BitType... _bits)
-	{
-		mask = (Representation(_bits) | ...);
-	}
+	public:
 
-	_self& operator = (const BitmaskRepresentation& _mask ) { mask = _mask; }
+		using Representation = BitmaskRepresentation;
+		using Enum           = EnumType             ;
 
-	operator Representation()
-	{
-		return mask;
-	}
+		template<typename... BitType>
+		void Add(const BitType... _bits)
+		{
+			mask |= (Representation(_bits) | ...);
+		}
 
-private:
-	Representation mask;
-};
+		bool Has(const Enum _bit) const
+		{
+			return mask & Representation(_bit);
+		}
+
+		template<typename... BitType>
+		void Set(const BitType... _bits)
+		{
+			mask = (Representation(_bits) | ...);
+		}
+
+		_self& operator = (const BitmaskRepresentation& _mask ) { mask = _mask; }
+
+		operator Representation()
+		{
+			return mask;
+		}
+
+	private:
+		Representation mask;
+	};
+}
+
+
+

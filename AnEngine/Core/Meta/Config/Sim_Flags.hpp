@@ -40,39 +40,13 @@ BitAccuracy::_64_Bit
 
 namespace Core::Meta
 {
-	constexpr 
-	bool Sim_DecN_UseHighAccuracy_Compare()
-	{
-		return SIM_DecN_USE_HIGH_ACCURACY_COMPARE;
-	}
+	constexpr bool Sim_DecN_UseHighAccuracy_Compare = SIM_DecN_USE_HIGH_ACCURACY_COMPARE;
+	constexpr bool Sim_DecN_UseNanoAccuracy_Compare = SIM_DecN_USE_NANO_ACCURACY_COMPARE;
 
-	constexpr 
-	bool Sim_DecN_UseNanoAccuracy_Compare()
-	{
-		return SIM_DecN_USE_NANO_ACCURACY_COMPARE
-	}
+	constexpr bool Sim_DecN_UseHighAccuracy_Unit    = SIM_DecN_USE_HIGH_ACCURACY_UNIT   ;
+	constexpr bool Sim_DecN_UseNanoAccuracy_Unit    = SIM_DecN_USE_HIGH_ACCURACY_UNIT   ;
 
-	constexpr
-	BitAccuracy Sim_DecN_Accuracy()
-	{
-		return SIM_DecN_ACCURACY;
-	}
 
-	constexpr
-	bool Sim_DecN_UseHighAccuracy_Unit()
-	{
-		return SIM_DecN_USE_HIGH_ACCURACY_UNIT;
-	}
-
-	constexpr
-	bool Sim_DecN_UseNanoAccuracy_Unit()
-	{
-		return SIM_DecN_USE_HIGH_ACCURACY_UNIT;
-	}
-
-	constexpr
-	BitAccuracy Sim_IntN_Accuracy()
-	{
-		return SIM_IntN_ACCURACY;
-	}
+	constexpr BitAccuracy Sim_IntN_Accuracy =  SIM_IntN_ACCURACY;
+	constexpr BitAccuracy Sim_DecN_Accuracy = SIM_DecN_ACCURACY ;
 }

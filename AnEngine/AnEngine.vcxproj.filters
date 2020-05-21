@@ -47,6 +47,21 @@
     <ClInclude Include="PAL\OSAL\OSAL.hpp" />
     <ClInclude Include="LAL\ConventionEnforcer.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\Vulkan.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Enums.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Types.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Implem.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_AppInstance.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CallingConvention.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Debug.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Constants.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_PhysicalDevice.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Layer.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\ConventionEnforcer.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Bitmask.hpp" />
+    <ClInclude Include="LAL\Utilities\STL_Ambiguous.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_LogicalDevice.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

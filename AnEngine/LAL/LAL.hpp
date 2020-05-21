@@ -25,6 +25,7 @@ standard c++.
 #include "Types/Bitmask.hpp"
 #include "Types/STL_FundamentalTypes.hpp"
 #include "Types/STL_FundamentalLimits.hpp"
+#include "Utilities/STL_Ambiguous.hpp"
 #include "Utilities/STL_SmartPtrs.hpp"
 #include "STL_Memory.hpp"
 #include "STL_Reflection.hpp"

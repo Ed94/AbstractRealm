@@ -24,8 +24,8 @@ Do not directly use... its part of the MakeEnforcementSet.
 
 Creates the base template for the Enforced calling convention maker struct.
 */
-#define MakeEnforcer_MakerTemplate_Base(__API_NAME) \
-template<typename FunctionType, FunctionType* >     \
+#define MakeConventionEnforcer_MakerTemplate_Base(__API_NAME) \
+template<typename FunctionType, FunctionType* >               \
 struct Enforcer_##__API_NAME##_CallMaker;
 
 /*
@@ -33,8 +33,8 @@ Do not directly use... its part of the MakeEnforcementSet.
 
 Creates the implementation template for the Enforced calling convention maker struct.
 */
-#define MakeEnforcer_MakerTemplate_Implementation(__API_NAME, __ATTRIBUTE, __CALL)    \
-template                                           \
+#define MakeConventionEnforcer_MakerTemplate_Implementation(__API_NAME, __ATTRIBUTE, __CALL)    \
+template                                                                              \
 <                                                                                     \
 	typename    ReturnType    ,                                                       \
 	typename... ParameterTypes,	                                                      \
@@ -54,7 +54,7 @@ Do not directly use... its part of the MakeEnforcementSet.
 
 Creates the caller function tempalte for the Enforced calling convention maker struct.
 */
-#define MakeEnforcer_MakerCaller(__API_NAME)                                     \
+#define MakeConventionEnforcer_MakerCaller(__API_NAME)                           \
 template<typename FunctionType, FunctionType& _callback>                         \
 auto Enforcer_##__API_NAME##_Caller()                                            \
 {                                                                                \
@@ -68,10 +68,10 @@ for the specified api's attribute and call calling conventions.
 You can from here call the generated enforcer caller template, or use the
 EnforceConvention() macro.
 */
-#define MakeEnforcementSet(__API_NAME, __ATTRIBUTE, __CALL)                 \
-MakeEnforcer_MakerTemplate_Base(__API_NAME);                                \
-MakeEnforcer_MakerTemplate_Implementation(__API_NAME, __ATTRIBUTE, __CALL); \
-MakeEnforcer_MakerCaller(__API_NAME);                                       
+#define MakeConventionEnforcementSet(__API_NAME, __ATTRIBUTE, __CALL)                 \
+MakeConventionEnforcer_MakerTemplate_Base(__API_NAME);                                \
+MakeConventionEnforcer_MakerTemplate_Implementation(__API_NAME, __ATTRIBUTE, __CALL); \
+MakeConventionEnforcer_MakerCaller(__API_NAME);                                       
 
 /*
 Ease of use macro. Allows for auto calling of the enforcer caller template with the associated

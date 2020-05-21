@@ -52,9 +52,9 @@ namespace SAL
 
 		// Vulkan Related
 
-		CStrArray GetRequiredVulkanAppExtensions(ptr<uint32> _extensionCount)
+		CStrArray GetRequiredVulkanAppExtensions(uint32& _extensionCount)
 		{
-			return glfwGetRequiredInstanceExtensions( _extensionCount );
+			return glfwGetRequiredInstanceExtensions( getAddress(_extensionCount) );
 		}
 	}
 }

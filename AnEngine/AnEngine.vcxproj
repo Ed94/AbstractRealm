@@ -75,7 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\SAL\glfw\include;$(ProjectDir)PAL\SAL\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\SAL\glfw\include;$(ProjectDir)PAL\SAL\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -109,7 +109,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>F:\Development\vulkan\1.2.135.0\Lib;F:\Projects\AnEngine\AnEngine\PAL\SAL\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>F:\Development\vulkan\1.2.135.0\Lib;$(ProjectDir)PAL\SAL\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -209,6 +209,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="LAL\Utilities\STL_Ambiguous.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\HAL\Audio_HAL.hpp">
       <SubType>
       </SubType>
@@ -262,6 +266,41 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_AppInstance.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CallingConvention.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Constants.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Debug.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Enums.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Implem.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Layer.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_LogicalDevice.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_PhysicalDevice.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Types.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Bitmask.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\ConventionEnforcer.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\Vulkan.hpp">
       <SubType>
       </SubType>
