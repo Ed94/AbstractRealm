@@ -33,10 +33,8 @@
     <ClInclude Include="PAL\HAL\Audio_HAL.hpp" />
     <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
     <ClInclude Include="UserManagment\User\User.hpp" />
-    <ClInclude Include="Core\Debug\Exec_GLFW_GLM_Test.hpp" />
     <ClInclude Include="PAL\SAL\GLFW_SAL.hpp" />
     <ClInclude Include="PAL\SAL\GLM_SAL.hpp" />
-    <ClInclude Include="Core\Debug\Vulkan_TriangleTest.hpp" />
     <ClInclude Include="Core\Meta\EngineInfo.hpp" />
     <ClInclude Include="LAL\Explicit_Specifiers.hpp" />
     <ClInclude Include="LAL\Casting.hpp" />
@@ -50,10 +48,8 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Enums.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Types.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Implem.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_AppInstance.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CallingConvention.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Debug.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Constants.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_PhysicalDevice.hpp" />
@@ -62,6 +58,10 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Bitmask.hpp" />
     <ClInclude Include="LAL\Utilities\STL_Ambiguous.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_LogicalDevice.hpp" />
+    <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
+    <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Surface.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Platform.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

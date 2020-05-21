@@ -16,6 +16,7 @@ C++ Standard Library
 #include <limits>
 #include <memory>
 #include <stdexcept>
+#include <set>
 #include <string>
 //#include <string.h>
 #include <typeinfo>

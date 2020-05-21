@@ -10,11 +10,17 @@ Last Modified: 5/19/2020
 
 
 // GLFW
+#ifdef _WIN32
+	#ifndef GLFW_EXPOSE_NATIVE_WIN32
+		#define GLFW_EXPOSE_NATIVE_WIN32
+	#endif
+#endif
+#include "GLFW/glfw3native.h"
 #include "GLFW/glfw3.h"
 
 // LAL
 #include "LAL/LAL.hpp"
-#include "Core/Memory/MemTypes.hpp"
+#include "OSAL/OSAL.hpp"
 
 
 
@@ -65,7 +71,7 @@ namespace SAL
 
 		bool CanClose(const ptr<Window> WindowToCheck);
 
-		ptr<Window> CreateWindow
+		ptr<Window> MakeWindow
 		(
 			          int      Width                  , 
 			          int      Height                 , 
@@ -73,6 +79,26 @@ namespace SAL
 			ptr<      Monitor> MonitorToFullScreen    ,
 			ptr<      Window > MonitorToShareResources
 		);
+
+		template
+		<
+			typename AppInstanceHandle  ,
+			typename SurfaceHandle,
+			class EResult = VkResult
+		>
+		typename std::enable_if< 
+			sizeof(AppInstanceHandle) == sizeof(VkInstance) && 
+			sizeof(SurfaceHandle) == sizeof(VkSurfaceKHR), 
+		EResult>::type CreateWindowSurface
+		(
+			      AppInstanceHandle      _appHandle, 
+			      Window*                _window   , 
+			const VkAllocationCallbacks* _allocator, 
+			      SurfaceHandle&         _surface
+		)
+		{
+			return glfwCreateWindowSurface(_appHandle, _window, _allocator, &_surface);
+		}
 
 		void DestroyWindow(ptr<Window> WindowToDestroy);
 
@@ -91,6 +117,31 @@ namespace SAL
 		using CStrArray = ptr<const ptr<const char>>;
 
 		CStrArray GetRequiredVulkanAppExtensions(ptr<uint32> NumberOfExensions_Container);
+
+		// Platform
+
+		namespace PlatformBackend
+		{
+			template<OSAL::EOS>
+			struct PlatformTypes_Maker;
+
+			template<>
+			struct PlatformTypes_Maker<OSAL::EOS::Windows>
+			{
+				using OS_AppHandle = HINSTANCE;
+				using OS_WindowHandle = HWND;
+			};
+
+			using PlatformTypes = PlatformTypes_Maker<OSAL::OS>;
+		}
+
+		using PlatformTypes = PlatformBackend::PlatformTypes;
+
+		Where<OSAL::IsWindows, PlatformTypes::
+		OS_WindowHandle> GetOS_WindowHandle(Window* _window)
+		{
+			return glfwGetWin32Window(_window);
+		}
 	}
 }
 

@@ -12,8 +12,8 @@ Currently the only defined main in the engine. You can manually define what proc
 
 
 
-#include "Debug/Exec_GLFW_GLM_Test.hpp"
-#include "Debug/Vulkan_TriangleTest.hpp"
+#include "Dev/Exec_GLFW_GLM_Test.hpp"
+#include "Dev/Vulkan_TriangleTest.hpp"
 
 
 

@@ -11,14 +11,14 @@ https://vulkan-tutorial.com/Drawing_a_triangle/Setup/Base_code
 #pragma once
 
 
-#include <vulkan/vulkan.h>
+//#include <vulkan/vulkan.h>
 
 #include "LAL.hpp"
 #include "Core/Memory/MemTypes.hpp"
 #include "Core/Meta/EngineInfo.hpp"
 #include "Core/Meta/Config/HAL_Flags.hpp"
-#include "PAL/SAL/GLFW_SAL.hpp"
 #include "PAL/HAL/Vulkan/Vulkan.hpp"
+#include "PAL/SAL/GLFW_SAL.hpp"
 
 
 
@@ -120,6 +120,9 @@ namespace Debug
 		}
 
 
+
+
+
 		void PopulateDebugMessengerCreateInfo(Messenger::CreateInfo& _msngrCreateInfo)
 		{
 			_msngrCreateInfo.SType = EStructureType::VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -134,9 +137,33 @@ namespace Debug
 
 			using addrs = decltype(&DebugCallback);
 
-			_msngrCreateInfo.UserCallback = EnforceConvention(Vulkan, DebugCallback);
+			_msngrCreateInfo.UserCallback = EnforceConvention(Vulkan::EnforcerID_Vulkan, DebugCallback);
 
 			_msngrCreateInfo.UserData = nullptr;
+		}
+
+
+		bss<Surface::Handle> SurfaceHandle;
+
+		void CreateSurface()
+		{
+			Surface::CreateInfo createInfo {};
+
+			createInfo.SType = OS_SurfaceCreateInfoEnum;
+
+			createInfo.OSWinHandle = SAL::GLFW::GetOS_WindowHandle(TriangleWindow);
+
+			createInfo.OSAppHandle = GetOS_AppHandle();
+
+			/*if (Vulkan::CreateSurface(App, createInfo, nullptr, SurfaceHandle) != EResult::Success)
+			{
+				throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
+			}*/
+
+			if (EResult(SAL::GLFW::CreateWindowSurface(App, TriangleWindow, nullptr, SurfaceHandle)) != EResult::Success)
+			{
+				throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
+			}
 		}
 
 		bss<Messenger::CreateInfo> NotSureYet;
@@ -202,23 +229,26 @@ namespace Debug
 			EResult&& creationResult = AppInstance_Create(appCreateSpec, nullptr, App);
 			//EResult&& creationResult = EResult(vkCreateInstance(&VkInstanceCreateInfo(appCreateSpec), nullptr, getAddress(App)));
 
-			if (creationResult != EResult::Sucess) 
+			if (creationResult != EResult::Success) 
 				throw std::runtime_error("Triangle Test: Failed to create Vulkan app instance.");
 		}
+
 
 
 		data<PhysicalDevice::Handle> PhysicalDevice = PhysicalDevice::NullHandle();
 
 		struct QueueFamilyIndices
 		{
-			Maybe<uint32> GraphicsFamily;
+			Maybe<uint32> GraphicsFamily    ;
+			Maybe<uint32> PresentationFamily;
 
 
 			bool IsComplete()
 			{
 				return
-					GraphicsFamily.has_value()
-					;
+					GraphicsFamily.has_value() &&
+					PresentationFamily.has_value()
+				;
 			}
 		};
 
@@ -236,6 +266,7 @@ namespace Debug
 
 			GetPhysicalDevice_QueueFamilyProperties(_deviceHandle, queueFamilies.data());
 
+
 			int index = 0;
 
 			for (const auto& queueFamily : queueFamilies) 
@@ -243,6 +274,15 @@ namespace Debug
 				if ( queueFamily.QueueFlags.Has(decltype(queueFamily.QueueFlags)::Enum::Graphics) )
 				{
 					indices.GraphicsFamily = index;
+				}
+
+				Bool presentationSupport = EBool::False;
+
+				vkGetPhysicalDeviceSurfaceSupportKHR(_deviceHandle, index, SurfaceHandle, getAddress(presentationSupport));
+
+				if (presentationSupport)
+				{
+					indices.PresentationFamily = index;
 				}
 
 				if (indices.IsComplete())
@@ -257,6 +297,7 @@ namespace Debug
 					break;
 				}
 			}
+
 
 			return indices;
 		}
@@ -276,7 +317,7 @@ namespace Debug
 
 			bool&& result = 
 				bool(deviceFeatures.GeometryShader) &&
-				indices.GraphicsFamily.has_value()    ;
+				indices.IsComplete()                  ;
 
 			return result;
 		}
@@ -337,32 +378,52 @@ namespace Debug
 
 		LogicalDevice::Handle LogicalDevice;
 		LogicalDevice::Queue::Handle GraphicsQueue;
+		LogicalDevice::Queue::Handle PresentationQueue;
 
-		void CreateLogicalDevice()
+		void CreateLogicalDevice()	
 		{
 			QueueFamilyIndices indices = FindQueueFamilies(PhysicalDevice);
 
-			LogicalDevice::Queue::CreateInfo queueCreateInfo {};
+			using LogicalDevice_QueueCreateInfoList = std::vector<LogicalDevice::Queue::CreateInfo>;
 
-			queueCreateInfo.SType = EStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			LogicalDevice_QueueCreateInfoList queueCreateInfos;
 
-			queueCreateInfo.QueueFamilyIndex = indices.GraphicsFamily.value();
+			using IndiceSet = std::set<uint32_t>;
 
-			queueCreateInfo.QueueCount = 1;
+			IndiceSet queueFamiliesToCreate =
+			{
+				indices.GraphicsFamily.value(),
+				indices.PresentationFamily.value()
+			};
 
 			float queuePriority = 1.0f;
 
-			queueCreateInfo.QueuePriorities = &queuePriority;
+			for (uint32_t queueFamily : queueFamiliesToCreate)
+			{
+				LogicalDevice::Queue::CreateInfo queueCreateInfo{};
 
-			PhysicalDevice::Features physDeviceFeatures {};
+				queueCreateInfo.SType = EStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 
-			LogicalDevice::CreateInfo createInfo {};
+				queueCreateInfo.QueueFamilyIndex = queueFamily;
+
+				queueCreateInfo.QueueCount = 1; 
+
+				queueCreateInfo.QueuePriorities = &queuePriority;
+
+				queueCreateInfos.push_back(queueCreateInfo);
+			}
+
+			//queueCreateInfo.QueuePriorities = &queuePriority;
+
+			PhysicalDevice::Features physDeviceFeatures{};
+
+			LogicalDevice::CreateInfo createInfo{};
 
 			createInfo.SType = EStructureType::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-			createInfo.QueueCreateInfos = &queueCreateInfo;
+			createInfo.QueueCreateInfoCount = queueCreateInfos.size();
 
-			createInfo.QueueCreateInfoCount = 1;
+			createInfo.QueueCreateInfos = queueCreateInfos.data();
 
 			createInfo.EnabledFeatures = &physDeviceFeatures;
 
@@ -381,16 +442,17 @@ namespace Debug
 
 			EResult&& result = LogicalDevice_CreateDevice(PhysicalDevice, createInfo, nullptr, LogicalDevice);
 
-			if (result != EResult::Sucess)
+			if (result != EResult::Success)
 			{
-				throw std::runtime_error("Vulkan, TraingleTest: Failed to create logical device!");
+				if (result != EResult::Success)
+				{
+					throw std::runtime_error("Vulkan, TraingleTest: Failed to create logical device!");
+				}
 			}
+
+			LogicalDevice_GetQueue(LogicalDevice, indices.GraphicsFamily    .value(), 0, GraphicsQueue    );
+			LogicalDevice_GetQueue(LogicalDevice, indices.PresentationFamily.value(), 0, PresentationQueue);
 		}
-
-		
-
-		
-
 
 		bss<Messenger::Handle> MsngrHandle;
 
@@ -405,7 +467,7 @@ namespace Debug
 			EResult&& creationResult = CreateMessenger(App, msngrCreateSpec, nullptr, MsngrHandle);
 			//EResult&& creationResult = EResult(CreateDebugUtilsMessengerEXT(App, &VkDebugUtilsMessengerCreateInfoEXT(msngrCreateSpec), nullptr, &MsngrHandle));
 
-			if (creationResult != EResult::Sucess) throw std::runtime_error("Failed to setup debug messenger!");
+			if (creationResult != EResult::Success) throw std::runtime_error("Failed to setup debug messenger!");
 		}
 
 		void InitWindow()
@@ -420,7 +482,7 @@ namespace Debug
 			SetWindowCreationParameter(EWindowCreationParameter::Resizable, EBool      ::False );
 
 			TriangleWindow =
-				CreateWindow(Width, Height, "AnEngine: Triangle Test", WindowedMode(), NotShared());
+				MakeWindow(Width, Height, "AnEngine: Triangle Test", WindowedMode(), NotShared());
 		}
 
 		void InitVulkan()
@@ -428,6 +490,8 @@ namespace Debug
 			CreateInstance();
 
 			SetupDebugMessenger();
+
+			CreateSurface();
 
 			PickPhysicalDevice();
 
@@ -451,6 +515,8 @@ namespace Debug
 			LogicalDevice_Destory(LogicalDevice, nullptr);
 
 			if (Vulkan_ValidationLayersEnabled) DestroyMessenger(App, MsngrHandle, nullptr);
+
+			DestroySurface(App, SurfaceHandle, nullptr);
 
 			AppInstance_Destory(App, nullptr);
 

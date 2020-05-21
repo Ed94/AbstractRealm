@@ -14,7 +14,7 @@ namespace SAL
 			return glfwWindowShouldClose(_window);
 		}
 
-		ptr<Window> CreateWindow(int _width, int _height, ptr<const char> _title, ptr<Monitor> _fullscreenCast, ptr<Window> _windowToShareWith)
+		ptr<Window> MakeWindow(int _width, int _height, ptr<const char> _title, ptr<Monitor> _fullscreenCast, ptr<Window> _windowToShareWith)
 		{
 			return glfwCreateWindow(_width, _height, _title, _fullscreenCast, _windowToShareWith);
 		}
