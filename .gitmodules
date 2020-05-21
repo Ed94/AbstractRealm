@@ -1,12 +1,15 @@
 [submodule "AnEngine/PAL/SAL/glfw"]
-	path = AnEngine/PAL/SAL/glfw
+	path = AnEngine/PAL/ThirdParty/Libraries/glfw
 	url = git@github.com:glfw/glfw
 [submodule "AnEngine/PAL/SAL/glm"]
-	path = AnEngine/PAL/SAL/glm
+	path = AnEngine/PAL/ThirdParty/Libraries/glm
 	url = git@github.com:g-truc/glm
 [submodule "AnEngine/PAL/HAL/Vulkan/VaultedThermals"]
 	path = AnEngine/PAL/HAL/Vulkan/VaultedThermals
 	url = git@github.com:Ed94/VaultedThermals
 [submodule "AnEngine/PAL/SAL/imgui"]
-	path = AnEngine/PAL/SAL/imgui
+	path = AnEngine/PAL/ThirdParty/Libraries/imgui
 	url = git@github.com:ocornut/imgui
+[submodule "AnEngine/PAL/ThirdParty/Libraries/SDL-mirror"]
+	path = AnEngine/PAL/ThirdParty/Libraries/SDL-mirror
+	url = git@github.com:spurious/SDL-mirror
