@@ -41,16 +41,29 @@ namespace Debug
 
 		bss<AppHandle> App;
 
+		bss<SwapChain::Handle> SwapChain;
+		
+		using ImageList = std::vector<Image::Handle>;
+
+		ImageList SwapChain_Images;
+
+		EImageFormat SwapChain_ImageFormat;
+		Extent2D SwapChain_Extent;
 
 		using ValidationLayerList = std::vector< RoCStr >;
 
-		ValidationLayerList ValidationLayerIdentifiers = 
+		ValidationLayerList ValidationLayerIdentifiers =
 		{
 			ValidationLayer_Khronos
 		};
 
 
 		using ExtensionIdentifierList = std::vector< RoCStr >;
+
+		ExtensionIdentifierList DeviceExtensions =
+		{
+			Swapchain_ExtensionName
+		};
 
 		ExtensionIdentifierList GetRequiredExtensions()
 		{
@@ -155,10 +168,10 @@ namespace Debug
 
 			createInfo.OSAppHandle = GetOS_AppHandle();
 
-			/*if (Vulkan::CreateSurface(App, createInfo, nullptr, SurfaceHandle) != EResult::Success)
-			{
-				throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
-			}*/
+			//if (Vulkan::CreateSurface(App, createInfo, nullptr, SurfaceHandle) != EResult::Success) 
+			//{
+				//throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
+			//}
 
 			if (EResult(SAL::GLFW::CreateWindowSurface(App, TriangleWindow, nullptr, SurfaceHandle)) != EResult::Success)
 			{
@@ -252,7 +265,46 @@ namespace Debug
 			}
 		};
 
+		using SurfaceFormatList           = std::vector<Surface::Format  >;
+		using SurfacePresentationModeList = std::vector<EPresentationMode>;
 
+		struct SwapChainSupportDetails
+		{
+			Surface::Capabilities       Capabilities     ;
+			SurfaceFormatList           Formats          ;
+			SurfacePresentationModeList PresentationModes;
+		};
+
+		SwapChainSupportDetails QuerySwapChainSupport(PhysicalDevice::Handle _deviceHandle)
+		{
+			SwapChainSupportDetails details;
+
+			Surface_GetPhysicalDeviceCapabilities(_deviceHandle, SurfaceHandle, details.Capabilities);
+
+			uint32 formatCount;
+
+			formatCount = Surface_GetNumOf_AvailableFormats(_deviceHandle, SurfaceHandle);
+
+			if (formatCount > 0)
+			{
+				details.Formats.resize(formatCount);
+
+				Surface_GetAvailableFormats(_deviceHandle, SurfaceHandle, details.Formats.data());
+			}
+
+			uint32 presentationModeCount;
+
+			presentationModeCount = Surface_GetNumOf_SupportedPresentationModes(_deviceHandle, SurfaceHandle);
+
+			if (presentationModeCount > 0)
+			{
+				details.PresentationModes.resize(presentationModeCount);
+
+				Surface_GetSupportedPresentationModes(_deviceHandle, SurfaceHandle, details.PresentationModes.data());
+			}
+
+			return details;
+		}
 
 		QueueFamilyIndices FindQueueFamilies(PhysicalDevice::Handle _deviceHandle)
 		{
@@ -266,7 +318,6 @@ namespace Debug
 
 			GetPhysicalDevice_QueueFamilyProperties(_deviceHandle, queueFamilies.data());
 
-
 			int index = 0;
 
 			for (const auto& queueFamily : queueFamilies) 
@@ -278,7 +329,7 @@ namespace Debug
 
 				Bool presentationSupport = EBool::False;
 
-				vkGetPhysicalDeviceSurfaceSupportKHR(_deviceHandle, index, SurfaceHandle, getAddress(presentationSupport));
+				Surface_CheckPhysicalDeviceSupport(_deviceHandle, index, SurfaceHandle, presentationSupport);
 
 				if (presentationSupport)
 				{
@@ -298,8 +349,29 @@ namespace Debug
 				}
 			}
 
-
 			return indices;
+		}
+
+		bool PhysicalDevice_CheckExtensionSupport(PhysicalDevice::Handle _handle)
+		{
+			using ExtensionPropertiesList = std::vector<ExtensionProperties>;
+
+			ExtensionPropertiesList availableExtensions(PhysicalDevice_GetNumOfAvailableExtensions(_handle));
+
+			PhysicalDevice_GetAvailableExtensions(_handle, availableExtensions.data());
+
+			using ExtensionNameSet = std::set<std::string>;
+
+			ExtensionNameSet requiredExtensions(DeviceExtensions.begin(), DeviceExtensions.end());
+
+			for (const auto& extension : availableExtensions)
+			{
+				requiredExtensions.erase(extension.ExtensionName);
+			}
+
+			bool&& isSupported = requiredExtensions.empty();
+
+			return isSupported;
 		}
 
 
@@ -315,9 +387,22 @@ namespace Debug
 
 			QueueFamilyIndices indices = FindQueueFamilies(_deviceHandle);
 
+			bool extensionsSupported = PhysicalDevice_CheckExtensionSupport(_deviceHandle);
+
+			bool swapChainAdequate = false;
+
+			if (extensionsSupported)
+			{
+				SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(_deviceHandle);
+
+				swapChainAdequate = !swapChainSupport.Formats.empty() && !swapChainSupport.PresentationModes.empty();
+			}
+
 			bool&& result = 
 				bool(deviceFeatures.GeometryShader) &&
-				indices.IsComplete()                  ;
+				indices.IsComplete()                &&
+				extensionsSupported                 &&
+				swapChainAdequate                     ;
 
 			return result;
 		}
@@ -371,10 +456,9 @@ namespace Debug
 
 			if (PhysicalDevice == PhysicalDevice::NullHandle())
 			{
-				throw std::runtime_error("Not able to find stuitable Vulkan supported GPU.");
+				throw std::runtime_error("Not able to find suitable Vulkan supported GPU.");
 			}
 		}
-
 
 		LogicalDevice::Handle LogicalDevice;
 		LogicalDevice::Queue::Handle GraphicsQueue;
@@ -427,7 +511,9 @@ namespace Debug
 
 			createInfo.EnabledFeatures = &physDeviceFeatures;
 
-			createInfo.EnabledExtensionCount = 0;
+			createInfo.EnabledExtensionNames = DeviceExtensions.data();
+
+			createInfo.EnabledExtensionCount = DeviceExtensions.size();
 
 			if (Vulkan_ValidationLayersEnabled)
 			{
@@ -470,6 +556,129 @@ namespace Debug
 			if (creationResult != EResult::Success) throw std::runtime_error("Failed to setup debug messenger!");
 		}
 
+		Surface::Format Surface_SwapChain_ChooseFormat(const SurfaceFormatList& _availableFormats)
+		{
+			for (const auto& availableFormat : _availableFormats)
+			{
+				if 
+				(
+					availableFormat.Format     == EImageFormat::VK_FORMAT_B8G8R8A8_SRGB &&
+					availableFormat.ColorSpace == EColorSpace::KHR_SRGB_NonLinear         
+				)
+				{
+					return availableFormat;
+				}
+			}
+
+			// Just pick the first format...
+			return _availableFormats[0];
+		}
+
+		EPresentationMode Surface_SwapChain_ChoosePresentationMode(const SurfacePresentationModeList _surfacePresentationModes)
+		{
+			for (const auto& availablePresentationMode : _surfacePresentationModes)
+			{
+				if (availablePresentationMode == EPresentationMode::KHR_Mailbox)
+				{
+					return availablePresentationMode;
+				}
+			}
+
+			return EPresentationMode::KHR_FIFO;
+		}
+
+		Extent2D Surface_SwapChain_ChooseExtent(const Surface::Capabilities& _capabilities)
+		{
+			if (_capabilities.CurrentExtent.Width != UInt32Max)
+			{
+				return _capabilities.CurrentExtent;
+			}
+			else
+			{
+				Extent2D actualExtent = { Width, Height };
+
+				actualExtent.Width  = std::clamp(actualExtent.Width , _capabilities.MinImageExtent.Width , _capabilities.MaxImageExtent.Width );
+				actualExtent.Height = std::clamp(actualExtent.Height, _capabilities.MinImageExtent.Height, _capabilities.MaxImageExtent.Height);
+
+				return actualExtent;
+			}
+		}
+
+		void CreateSwapChain()
+		{
+			SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(PhysicalDevice);
+
+			Surface::Format surfaceFormat = Surface_SwapChain_ChooseFormat(swapChainSupport.Formats);
+
+			EPresentationMode presentationMode = Surface_SwapChain_ChoosePresentationMode(swapChainSupport.PresentationModes);
+
+			Extent2D extent = Surface_SwapChain_ChooseExtent(swapChainSupport.Capabilities);
+
+			uint32 numImagesDesired = swapChainSupport.Capabilities.MinImageCount;
+
+			numImagesDesired += 1;
+
+			if (swapChainSupport.Capabilities.MaxImageCount > 0 && numImagesDesired > swapChainSupport.Capabilities.MaxImageCount)
+			{
+				numImagesDesired = swapChainSupport.Capabilities.MaxImageCount;
+			}
+
+			SwapChain::CreateInfo creationSpec {};
+
+			creationSpec.SType = EStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+			creationSpec.Surface = SurfaceHandle;
+			creationSpec.MinImageCount = numImagesDesired;
+			creationSpec.ImageFormat = surfaceFormat.Format;
+			creationSpec.ImageColorSpace = surfaceFormat.ColorSpace;
+			creationSpec.ImageExtent = extent;
+			creationSpec.ImageArrayLayers = 1;
+			creationSpec.ImageUsage.Set(EImageUsage::Color_Attachment);
+
+			QueueFamilyIndices indices = FindQueueFamilies(PhysicalDevice);
+
+			uint32_t queueFamilyIndices[] = 
+			{
+				indices.GraphicsFamily    .value(), 
+				indices.PresentationFamily.value() 
+			};
+
+			if (indices.GraphicsFamily != indices.PresentationFamily) 
+			{
+				creationSpec.ImageSharingMode      = ESharingMode::Concurrent;
+				creationSpec.QueueFamilyIndexCount = 2;
+				creationSpec.QueueFamilyIndices    = queueFamilyIndices;
+			}
+			else 
+			{
+				creationSpec.ImageSharingMode      = ESharingMode::Excusive;
+				creationSpec.QueueFamilyIndexCount = 0                     ; // Optional
+				creationSpec.QueueFamilyIndices    = nullptr               ; // Optional
+			}
+
+			creationSpec.PreTransform = swapChainSupport.Capabilities.CurrentTransform;
+
+			creationSpec.CompositeAlpha = ECompositeAlpha::Opaque;
+
+			creationSpec.PresentationMode = presentationMode;
+
+			creationSpec.Clipped = true;
+
+			creationSpec.OldSwapchain = SwapChain::NullHandle();
+
+			EResult&& creationResult = CreateSwapChain(LogicalDevice, creationSpec, nullptr, SwapChain);
+
+			if (creationResult != EResult::Success)
+			{
+				throw std::runtime_error("Failed to create the swap chain!");
+			}
+
+			SwapChain_GetImages(LogicalDevice, SwapChain, SwapChain_Images.data());
+
+			SwapChain_ImageFormat = surfaceFormat.Format;
+
+
+		}
+
 		void InitWindow()
 		{
 			using namespace SAL::GLFW;
@@ -496,6 +705,8 @@ namespace Debug
 			PickPhysicalDevice();
 
 			CreateLogicalDevice();
+
+			CreateSwapChain();
 		}
 
 		void MainLoop()
@@ -511,6 +722,8 @@ namespace Debug
 		void Cleanup()
 		{
 			using namespace SAL::GLFW;
+
+			DestroySwapChain(LogicalDevice, SwapChain, nullptr);
 
 			LogicalDevice_Destory(LogicalDevice, nullptr);
 

@@ -1,8 +1,7 @@
 #pragma once
 
 
-#define Bitmaskable \
-enum class
+#define Bitmaskable 
 
 
 namespace LAL
