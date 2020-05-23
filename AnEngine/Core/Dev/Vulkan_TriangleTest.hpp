@@ -675,8 +675,47 @@ namespace Debug
 			SwapChain_GetImages(LogicalDevice, SwapChain, SwapChain_Images.data());
 
 			SwapChain_ImageFormat = surfaceFormat.Format;
+		}
 
+		using ImageViewList = std::vector<ImageView::Handle>;
 
+		ImageViewList swapChainImageViews;
+
+		void CreateImageViews()
+		{
+			swapChainImageViews.resize(SwapChain_Images.size());
+
+			for (DataSize index = 0; index < SwapChain_Images.size(); index++)
+			{
+				ImageView::CreateInfo creationSpec {};
+
+				creationSpec.SType = EStructureType::VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+
+				creationSpec.Image = SwapChain_Images[index];
+
+				creationSpec.ViewType = EImageViewType::_2D;
+
+				creationSpec.Format = SwapChain_ImageFormat;
+
+				creationSpec.Components.R = EComponentSwizzle::Identitity;
+				creationSpec.Components.G = EComponentSwizzle::Identitity;
+				creationSpec.Components.B = EComponentSwizzle::Identitity;
+				creationSpec.Components.A = EComponentSwizzle::Identitity;
+
+				creationSpec.SubresourceRange.AspectMask.Set(EImageAspect::Color);
+
+				creationSpec.SubresourceRange.BaseMipLevel   = 0;
+				creationSpec.SubresourceRange.LevelCount     = 1;
+				creationSpec.SubresourceRange.BaseArrayLayer = 0;
+				creationSpec.SubresourceRange.LayerCount     = 1;
+
+				EResult&& creationResult = CreateImageView(LogicalDevice, creationSpec, nullptr, &swapChainImageViews[index]);
+
+				if (creationResult != EResult::Success)
+				{
+					throw std::runtime_error("Failed to create image views!");
+				}
+			}
 		}
 
 		void InitWindow()
@@ -707,6 +746,8 @@ namespace Debug
 			CreateLogicalDevice();
 
 			CreateSwapChain();
+
+			CreateImageViews();
 		}
 
 		void MainLoop()
@@ -722,6 +763,11 @@ namespace Debug
 		void Cleanup()
 		{
 			using namespace SAL::GLFW;
+
+			for (auto iamgeView : swapChainImageViews)
+			{
+				DestroyImageView(LogicalDevice, iamgeView, nullptr);
+			}
 
 			DestroySwapChain(LogicalDevice, SwapChain, nullptr);
 
