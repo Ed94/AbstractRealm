@@ -13,18 +13,3 @@
 [submodule "AnEngine/PAL/ThirdParty/Libraries/SDL-mirror"]
 	path = AnEngine/PAL/ThirdParty/Libraries/SDL-mirror
 	url = git@github.com:spurious/SDL-mirror
-[submodule "AnEngine/PAL/ThirdParty/SDKs/VulkanTools"]
-	path = AnEngine/PAL/ThirdParty/SDKs/VulkanTools
-	url = git@github.com:LunarG/VulkanTools
-[submodule "AnEngine/PAL/ThirdParty/Libraries/Vulkan-Headers"]
-	path = AnEngine/PAL/ThirdParty/Libraries/Vulkan-Headers
-	url = git@github.com:KhronosGroup/Vulkan-Headers
-[submodule "AnEngine/PAL/ThirdParty/Libraries/Vulkan-ValidationLayers"]
-	path = AnEngine/PAL/ThirdParty/Libraries/Vulkan-ValidationLayers
-	url = git@github.com:KhronosGroup/Vulkan-ValidationLayers
-[submodule "AnEngine/PAL/ThirdParty/Drivers/Vulkan-Loader"]
-	path = AnEngine/PAL/ThirdParty/Drivers/Vulkan-Loader
-	url = git@github.com:KhronosGroup/Vulkan-Loader
-[submodule "AnEngine/PAL/ThirdParty/Libraries/Vulkan-Tools"]
-	path = AnEngine/PAL/ThirdParty/Libraries/Vulkan-Tools
-	url = git@github.com:KhronosGroup/Vulkan-Tools
