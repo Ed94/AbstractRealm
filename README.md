@@ -2,9 +2,9 @@
 A Real-Time Engine
 
 # Dependencies
-Since the Vulkan-SDK is quite a bit of work to embeed as a submodule (requires pretty much the entire Khronos suite of Vulkan repos, and even then the Loader needs you to put in the vender stuff yourself) unfortuantely you have to manually setup it.
+Since the Vulkan-SDK is quite a bit of work to embed as a submodule (requires pretty much the entire Khronos suite of Vulkan repo), and even then, the Loader needs you to put in the vender stuff yourself) unfortuantely you have to manually setup it.
 
-This project expects acess to vulkan sdk at the following directory:
+This project expects access to vulkan sdk at the following directory:
 $(ProjectDir)PAL\ThirdParty\SDKs\
 
 (This project is the raw vs solution, since this projet only supports Windows I haven't made a cmake to generate the project for other platforms.)
