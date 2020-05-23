@@ -5,7 +5,8 @@ A Real-Time Engine
 Since the Vulkan-SDK is quite a bit of work to embed as a submodule (requires pretty much the entire Khronos suite of Vulkan repo), and even then, the Loader needs you to put in the vender stuff yourself) unfortuantely you have to manually setup it.
 
 This project expects access to vulkan sdk at the following directory:
-$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\
+
+`$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\`
 
 (This project is the raw vs solution, since this projet only supports Windows I haven't made a cmake to generate the project for other platforms.)
 
