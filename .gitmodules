@@ -13,3 +13,6 @@
 [submodule "AnEngine/PAL/ThirdParty/Libraries/SDL-mirror"]
 	path = AnEngine/PAL/ThirdParty/Libraries/SDL-mirror
 	url = git@github.com:spurious/SDL-mirror
+[submodule "AnEngine/PAL/ThirdParty/SDKs/VulkanTools"]
+	path = AnEngine/PAL/ThirdParty/SDKs/VulkanTools
+	url = git@github.com:LunarG/VulkanTools

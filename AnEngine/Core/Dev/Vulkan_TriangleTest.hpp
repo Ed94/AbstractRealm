@@ -718,6 +718,11 @@ namespace Debug
 			}
 		}
 
+		void CreateGraphicsPipeline()
+		{
+
+		}
+
 		void InitWindow()
 		{
 			using namespace SAL::GLFW;
@@ -748,6 +753,8 @@ namespace Debug
 			CreateSwapChain();
 
 			CreateImageViews();
+
+			CreateGraphicsPipeline();
 		}
 
 		void MainLoop()

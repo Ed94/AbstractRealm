@@ -65,6 +65,9 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_SwapChain.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Vaults.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ImageView.hpp" />
+    <ClInclude Include="Renderer\Shader\TriangleTest\TriangleShader.frag" />
+    <ClInclude Include="Renderer\Shader\TriangleTest\TriangleShader.vert" />
+    <ClInclude Include="Renderer\Shader\RudimentaryCompiler.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

@@ -332,6 +332,18 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Renderer\Shader\RudimentaryCompiler.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Renderer\Shader\TriangleTest\TriangleShader.frag">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Renderer\Shader\TriangleTest\TriangleShader.vert">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Simulation\Math\Constants.hpp">
       <SubType>
       </SubType>
