@@ -36,7 +36,6 @@
     <ClInclude Include="PAL\SAL\GLFW_SAL.hpp" />
     <ClInclude Include="PAL\SAL\GLM_SAL.hpp" />
     <ClInclude Include="Core\Meta\EngineInfo.hpp" />
-    <ClInclude Include="LAL\Explicit_Specifiers.hpp" />
     <ClInclude Include="LAL\Casting.hpp" />
     <ClInclude Include="Core\Meta\Config\HAL_Flags.hpp" />
     <ClInclude Include="Core\Meta\Config\Sim_Flags.hpp" />
@@ -65,9 +64,19 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_SwapChain.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Vaults.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ImageView.hpp" />
-    <ClInclude Include="Renderer\Shader\TriangleTest\TriangleShader.frag" />
-    <ClInclude Include="Renderer\Shader\TriangleTest\TriangleShader.vert" />
     <ClInclude Include="Renderer\Shader\RudimentaryCompiler.hpp" />
+    <ClInclude Include="LAL\Types\CharacterTypes.hpp" />
+    <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.frag" />
+    <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.vert" />
+    <ClInclude Include="Core\IO\Basic_FileIO.hpp" />
+    <ClInclude Include="LAL\STL_IO.hpp" />
+    <ClInclude Include="LAL\STL_Containers.hpp" />
+    <ClInclude Include="LAL\STL_String.hpp" />
+    <ClInclude Include="LAL\Declarations.hpp" />
+    <ClInclude Include="LAL\STL_Exceptions.hpp" />
+    <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ShaderModule.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Pipeline.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

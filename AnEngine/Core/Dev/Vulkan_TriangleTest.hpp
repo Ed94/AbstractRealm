@@ -13,12 +13,14 @@ https://vulkan-tutorial.com/Drawing_a_triangle/Setup/Base_code
 
 //#include <vulkan/vulkan.h>
 
-#include "LAL.hpp"
+#include "PAL/HAL/Vulkan/Vulkan.hpp"
+#include "Core/IO/Basic_FileIO.hpp"
 #include "Core/Memory/MemTypes.hpp"
 #include "Core/Meta/EngineInfo.hpp"
 #include "Core/Meta/Config/HAL_Flags.hpp"
-#include "PAL/HAL/Vulkan/Vulkan.hpp"
+#include "Renderer/Shader/TriangleShader/TriangleShader.hpp"
 #include "PAL/SAL/GLFW_SAL.hpp"
+#include "LAL.hpp"
 
 
 
@@ -143,6 +145,8 @@ namespace Debug
 			using EMaskS = decltype(_msngrCreateInfo.Serverity)::Enum;
 
 			_msngrCreateInfo.Serverity.Set(EMaskS::Verbose, EMaskS::Warning, EMaskS::Error);
+
+			
 
 			using EMaskT = decltype(_msngrCreateInfo.Type)::Enum;
 
@@ -322,7 +326,7 @@ namespace Debug
 
 			for (const auto& queueFamily : queueFamilies) 
 			{
-				if ( queueFamily.QueueFlags.Has(decltype(queueFamily.QueueFlags)::Enum::Graphics) )
+				if ( queueFamily.QueueFlags.Has(EQueue::Graphics) )
 				{
 					indices.GraphicsFamily = index;
 				}
@@ -718,10 +722,69 @@ namespace Debug
 			}
 		}
 
+
+		using Bytecode_Buffer = DynamicArray<SPIR_V::Bytecode>;
+
+		ShaderModule::Handle CreateTriShaderModule(const IO::FileBuffer& code)
+		{
+			using ByteCode = uint32;
+
+			ShaderModule::CreateInfo creationSpec{};
+
+			creationSpec.SType = EStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+
+			creationSpec.Extension = NULL;
+
+			creationSpec.CodeSize = code.size();
+
+			creationSpec.Code = RCast<const ByteCode>(code.data());
+
+			ShaderModule::Handle createdModule;
+
+			EResult&& creationResult = ShaderModule_Create(LogicalDevice, creationSpec, nullptr, createdModule);
+
+			if (creationResult != EResult::Success)
+			{
+				throw RuntimeError("Failed to create TriShader module!");
+			}
+
+			return createdModule;
+		}
+
 		void CreateGraphicsPipeline()
 		{
+			using namespace Renderer::Shader;
 
-		}
+			auto triShader_VertCode = IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Vert.spv");
+			auto triShader_FragCode = IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Frag.spv");
+
+			//TODO: FIGURE THIS OUT.
+			Bytecode_Buffer triShader_Vert_Bytecode(triShader_VertCode.begin(), triShader_VertCode.end());
+			Bytecode_Buffer triShader_Frag_Bytecode(triShader_FragCode.begin(), triShader_FragCode.end());
+
+			ShaderModule::Handle triShaderModule_Vert = CreateTriShaderModule(triShader_VertCode);
+			ShaderModule::Handle triShaderModule_Frag = CreateTriShaderModule(triShader_FragCode);
+
+			Pipeline::ShaderStage::CreateInfo triShaderStage_Vert_CreationSpec{};
+			Pipeline::ShaderStage::CreateInfo triShaderStage_Frag_CreationSpec{};
+
+			triShaderStage_Vert_CreationSpec.SType = EStructureType::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			triShaderStage_Vert_CreationSpec.Stage = EShaderStageFlag::Vertex;
+
+			triShaderStage_Vert_CreationSpec.Module = triShaderModule_Vert;
+			triShaderStage_Vert_CreationSpec.Name = "main";
+
+			triShaderStage_Frag_CreationSpec.SType = EStructureType::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			triShaderStage_Frag_CreationSpec.Stage = EShaderStageFlag::Fragment;
+
+			triShaderStage_Frag_CreationSpec.Module = triShaderModule_Vert;
+			triShaderStage_Frag_CreationSpec.Name = "main";
+
+			Pipeline::ShaderStage::CreateInfo shaderStages[] = { triShaderStage_Vert_CreationSpec, triShaderStage_Frag_CreationSpec };
+
+			ShaderModule_Destory(LogicalDevice, triShaderModule_Vert, nullptr);
+			ShaderModule_Destory(LogicalDevice, triShaderModule_Frag, nullptr);
+		}	
 
 		void InitWindow()
 		{

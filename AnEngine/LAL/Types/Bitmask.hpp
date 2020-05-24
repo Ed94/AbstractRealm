@@ -1,21 +1,50 @@
 #pragma once
 
 
-#define Bitmaskable 
+//#define Bitmaskable 
+#include "Declarations.hpp"
+#include "STL_Reflection.hpp"
+
+
+
+#ifndef BITMASKABLE
+#define BITMASKABLE
+
+template<typename Enum>
+struct Bitmaskable
+{
+	static const bool specified = false;
+};
+
+#define SpecifyBitmaskable(__ENUM) \
+template<> \
+struct Bitmaskable<__ENUM> \
+{							\
+	static const bool specified = true; \
+};	
+
+#endif
+
 
 
 namespace LAL
 {
-	template<typename EnumType, typename BitmaskRepresentation>
-	struct bitmask
+	template
+	<
+		typename EnumType, 
+		typename BitmaskRepresentation
+	>
+	struct Bitmask
 	{
 	private:
-		using _self = bitmask<EnumType, BitmaskRepresentation>;
+		EnforceConstraint(Bitmaskable<EnumType>::specified, "EnumType must be of Bitmaskable type.");
+
+		using _ThisType = Bitmask<EnumType, BitmaskRepresentation>;
 
 	public:
 
 		using Representation = BitmaskRepresentation;
-		using Enum           = EnumType             ;
+		using Enum           =  EnumType;
 
 		template<typename... BitType>
 		void Add(const BitType... _bits)
@@ -34,7 +63,7 @@ namespace LAL
 			mask = (Representation(_bits) | ...);
 		}
 
-		_self& operator = (const BitmaskRepresentation& _mask ) { mask = _mask; }
+		_ThisType& operator = (const BitmaskRepresentation& _mask ) { mask = _mask; }
 
 		operator Representation()
 		{
@@ -45,6 +74,3 @@ namespace LAL
 		Representation mask;
 	};
 }
-
-
-

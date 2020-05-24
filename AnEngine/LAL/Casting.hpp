@@ -38,6 +38,24 @@ Derived* DCast(Base* const _ptr)
 }
 
 /*
+Reinterpret Cast (Direct)
+*/
+template<typename Derived, typename Base>
+Derived RCast(Base _obj)
+{
+	return reinterpret_cast<Derived>(_obj);
+}
+
+/*
+Reinterpret Cast (Pointer)
+*/
+template<typename Derived, typename Base>
+Derived* RCast(Base* _ptr)
+{
+	return reinterpret_cast< Derived* >(_ptr);
+}
+
+/*
 Static Cast (Direct)
 */
 template<typename Derived, typename Base>

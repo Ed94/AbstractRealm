@@ -75,14 +75,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -104,14 +104,21 @@
       <ConformanceMode>true</ConformanceMode>
       <FloatingPointModel>Fast</FloatingPointModel>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;F:\Development\vulkan\1.2.135.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>F:\Development\vulkan\1.2.135.0\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>echo F|xcopy "$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Bin\glslc.exe" "$(TargetDir)Engine\ThirdParty\Tools\glslc.exe" /y /s /i </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -137,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;F:\Development\vulkan\1.2.135.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -145,9 +152,16 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>F:\Development\vulkan\1.2.135.0\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>echo F|xcopy "$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Bin\glslc.exe" "$(TargetDir)Engine\ThirdParty\Tools\glslc.exe" /y /s /i </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\Execution\Execute.cpp" />
@@ -185,6 +199,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Core\IO\Basic_FileIO.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Core\Memory\MemTypes.hpp">
       <SubType>
       </SubType>
@@ -205,7 +223,27 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="LAL\STL_Containers.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="LAL\STL_Exceptions.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="LAL\STL_IO.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="LAL\STL_String.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="LAL\Types\Bitmask.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="LAL\Types\CharacterTypes.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -254,7 +292,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Explicit_Specifiers.hpp">
+    <ClInclude Include="LAL\Declarations.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -297,7 +335,15 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Pipeline.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Platform.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ShaderModule.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -336,11 +382,15 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Renderer\Shader\TriangleTest\TriangleShader.frag">
+    <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.frag">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Renderer\Shader\TriangleTest\TriangleShader.vert">
+    <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.vert">
       <SubType>
       </SubType>
     </ClInclude>

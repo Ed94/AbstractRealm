@@ -25,7 +25,7 @@ extern
 static
 
 
-// Memeber Specialization
+// Member Specialization
 
 // Alias for virtual in the context of a derived class implementing a virtual member.
 #define implem \
@@ -55,4 +55,8 @@ struct
 // Bit-field type
 #define BitField \
 struct
+
+
+#define EnforceConstraint(__CONSTRAINT, __REASON_MSG) \
+static_assert(__CONSTRAINT, __REASON_MSG)
 

@@ -126,4 +126,6 @@ namespace LAL
 	{
 		return IsFunctionPtr_T<Type>::value;
 	}
+
+
 }
