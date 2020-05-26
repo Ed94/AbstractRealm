@@ -13,3 +13,24 @@
 [submodule "AnEngine/PAL/ThirdParty/Libraries/SDL-mirror"]
 	path = AnEngine/PAL/ThirdParty/Libraries/SDL-mirror
 	url = git@github.com:spurious/SDL-mirror
+[submodule "AnEngine/PAL/ThirdParty/Libraries/gainput"]
+	path = AnEngine/PAL/ThirdParty/Libraries/gainput
+	url = git@github.com:jkuhlmann/gainput
+[submodule "AnEngine/PAL/ThirdParty/Libraries/Cinder"]
+	path = AnEngine/PAL/ThirdParty/Libraries/Cinder
+	url = git@github.com:cinder/Cinder
+[submodule "AnEngine/PAL/ThirdParty/Libraries/openal-soft"]
+	path = AnEngine/PAL/ThirdParty/Libraries/openal-soft
+	url = git@github.com:kcat/openal-soft
+[submodule "AnEngine/PAL/ThirdParty/Libraries/ggpo"]
+	path = AnEngine/PAL/ThirdParty/SDKs/ggpo
+	url = git@github.com:pond3r/ggpo
+[submodule "AnEngine/PAL/ThirdParty/Libraries/MemoryAllocator.KanameShiki"]
+	path = AnEngine/PAL/ThirdParty/Libraries/MemoryAllocator.KanameShiki
+	url = git@github.com:EmuraDaisuke/MemoryAllocator.KanameShiki
+[submodule "AnEngine/PAL/ThirdParty/Libraries/basis_universal"]
+	path = AnEngine/PAL/ThirdParty/Libraries/basis_universal
+	url = git@github.com:BinomialLLC/basis_universal
+[submodule "AnEngine/PAL/ThirdParty/Libraries/magic_enum"]
+	path = AnEngine/PAL/ThirdParty/Libraries/magic_enum
+	url = git@github.com:Neargye/magic_enum
