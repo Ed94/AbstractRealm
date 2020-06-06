@@ -1,3 +1,8 @@
+/*
+
+*/
+
+
 #pragma once
 
 
@@ -9,6 +14,8 @@
 
 #ifndef BITMASKABLE
 #define BITMASKABLE
+
+
 
 template<typename Enum>
 struct Bitmaskable

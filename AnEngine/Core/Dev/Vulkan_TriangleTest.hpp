@@ -751,8 +751,12 @@ namespace Debug
 			return createdModule;
 		}
 
+		Pipeline::Layout::Handle	 PipelineLayout;
+
 		void CreateGraphicsPipeline()
 		{
+			// Shader setup
+
 			using namespace Renderer::Shader;
 
 			auto triShader_VertCode = IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Vert.spv");
@@ -781,6 +785,115 @@ namespace Debug
 			triShaderStage_Frag_CreationSpec.Name = "main";
 
 			Pipeline::ShaderStage::CreateInfo shaderStages[] = { triShaderStage_Vert_CreationSpec, triShaderStage_Frag_CreationSpec };
+
+			// Fixed Function
+
+			Pipeline::VertexInputState::CreateInfo vertexInputState_CreationSpec{};
+
+			vertexInputState_CreationSpec.SType = EStructureType::VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+
+			vertexInputState_CreationSpec.VertexBindingDescriptionCount = 0;
+			vertexInputState_CreationSpec.BindingDescriptions = nullptr;
+
+			vertexInputState_CreationSpec.AttributeDescriptionCount = 0;
+			vertexInputState_CreationSpec.AttributeDescription = nullptr;
+
+			Pipeline::InputAssembly::CreateInfo inputAssembly_CreationSpec{};
+
+			inputAssembly_CreationSpec.SType = EStructureType::VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+
+			inputAssembly_CreationSpec.Topology = EPrimitiveTopology::TriangleList;
+			inputAssembly_CreationSpec.PrimitiveRestartEnable = false;
+
+			Viewport viewport{};
+
+			viewport.X = 0.0f;
+			viewport.Y = 0.0f;
+			viewport.Width = float(SwapChain_Extent.Width);
+			viewport.Height = float(SwapChain_Extent.Height);
+			viewport.MinDepth = 0.0f;
+			viewport.MaxDepth = 1.0f;
+
+			Rect2D scissor{};
+
+			scissor.Offset = { 0,0 };
+			scissor.Extent = SwapChain_Extent;
+
+			Pipeline::RasterizationState::CreateInfo rasterizer{};
+
+			rasterizer.SType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+			rasterizer.EnableDepthClamp = EBool::False;
+			rasterizer.EnableRasterizerDiscard = EBool::False;
+			rasterizer.PolygonMode = EPolygonMode::Fill;
+			rasterizer.LineWidth = 1.0f;
+			rasterizer.CullMode.Set(ECullModeFlag::Back);
+			rasterizer.FrontFace = EFrontFace::Clockwise;
+			rasterizer.EnableDepthBias = EBool::False;
+			rasterizer.DepthBiasConstantFactor = 0.0f;
+			rasterizer.DepthBiasClamp = 0.0f;
+			rasterizer.DepthBiasSlopeFactor = 0.0f;
+
+			Pipeline::MultisampleState::CreateInfo multisampling_CreationSpec{};
+
+			multisampling_CreationSpec.SType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+			multisampling_CreationSpec.EnableSampleShading = EBool::False;
+			multisampling_CreationSpec.RasterizationSamples = ESampleCount::_1;
+			multisampling_CreationSpec.MinSampleShading = 1.0f;
+			multisampling_CreationSpec.SampleMask = nullptr;
+			multisampling_CreationSpec.EnableAlphaToCoverage = EBool::False;
+			multisampling_CreationSpec.EnableAlphaToOne = EBool::False;
+
+			Pipeline::ColorBlend::AttachmentState colorBlend_Attachment{};
+
+			colorBlend_Attachment.ColorWriteMask.Set(EColorComponentFlag::R, EColorComponentFlag::G, EColorComponentFlag::B, EColorComponentFlag::A);
+			colorBlend_Attachment.EnableBlend = EBool::False;
+			colorBlend_Attachment.Source_ColorBlendFactor = EBlendFactor::One;
+			colorBlend_Attachment.Destination_ColorBlendFactor = EBlendFactor::Zero;
+			colorBlend_Attachment.ColorOperation = EBlendOperation::Add;
+			colorBlend_Attachment.Source_AlphaBlendFactor = EBlendFactor::One;
+			colorBlend_Attachment.Destination_AlphaBlendFactor = EBlendFactor::Zero;
+			colorBlend_Attachment.AlphaOperation = EBlendOperation::Add;
+
+			Pipeline::ColorBlend::CreateInfo colorBlending_CreationSpec{};
+
+			colorBlending_CreationSpec.SType = EStructureType::VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+			colorBlending_CreationSpec.EnableLogicOperations = EBool::False;
+			colorBlending_CreationSpec.LogicOperation = ELogicOperation::Copy;
+			colorBlending_CreationSpec.AttachmentCount = 1;
+			colorBlending_CreationSpec.Attachments = &colorBlend_Attachment;
+			colorBlending_CreationSpec.BlendConstants[0] = 0.0f;
+			colorBlending_CreationSpec.BlendConstants[1] = 0.0f;
+			colorBlending_CreationSpec.BlendConstants[2] = 0.0f;
+			colorBlending_CreationSpec.BlendConstants[3] = 0.0f;
+
+			EDynamicState States[] =
+			{
+				EDynamicState::Viewport,
+				EDynamicState::LineWidth
+			};
+
+			Pipeline::DynamicState::CreateInfo dynamicState {};
+
+			dynamicState.SType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+			dynamicState.StateCount = 2;
+			dynamicState.States = States;
+
+			Pipeline::Layout::CreateInfo pipelineLayout_CreationSpec;
+
+			pipelineLayout_CreationSpec.SType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+			pipelineLayout_CreationSpec.SetLayoutCount = 0;
+			pipelineLayout_CreationSpec.SetLayouts = nullptr;
+			pipelineLayout_CreationSpec.PushConstantRangeCount = 0;
+			pipelineLayout_CreationSpec.PushConstantRanges = nullptr;
+
+			EResult&& piplineLayout_CreationResult = 
+				Pipeline_CreateLayout(LogicalDevice, pipelineLayout_CreationSpec, nullptr, PipelineLayout);
+
+			if (piplineLayout_CreationResult != EResult::Success)
+			{
+				throw std::runtime_error("Failed to create pipeline layout!");
+			}
+
 
 			ShaderModule_Destory(LogicalDevice, triShaderModule_Vert, nullptr);
 			ShaderModule_Destory(LogicalDevice, triShaderModule_Frag, nullptr);
@@ -833,6 +946,8 @@ namespace Debug
 		void Cleanup()
 		{
 			using namespace SAL::GLFW;
+
+			Pipeline_DestroyLayout(LogicalDevice, PipelineLayout, nullptr);
 
 			for (auto iamgeView : swapChainImageViews)
 			{
