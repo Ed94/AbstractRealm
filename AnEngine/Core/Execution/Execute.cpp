@@ -23,7 +23,7 @@ int main()
 
 	//Debug::Exec_GLFW_GLM_Test();
 
-	if (!Debug::Vulkan_TriangleTest::Run()) return EXIT_FAILURE;
+	if (!Debug::Vulkan_TriangleTest::Execute_VulkanTriTest()) return EXIT_FAILURE;
 
 	return EXIT_SUCCESS;
 }

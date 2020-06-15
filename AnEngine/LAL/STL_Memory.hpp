@@ -15,18 +15,20 @@ Last Modified: 5/18/2020
 namespace LAL
 {
 	/*
-	Macro Stack Scope Specifier.
+	Macro Stack scope specifier.
 	*/
 	#define Stack(...) \
 	__VA_ARGS__
 
-	// Macro Data Segment Scope Specifier
+	// Macro Data Segment scope specifier
 	#define Data(...) \
 	__VA_ARGS__
 
+	// Macro BSS Segment scope specifier.
 	#define BSS(...) \
 	__VA_ARGS__
 
+	// Macro Heap manipulation specifier.
 	#define Heap(...) \
 	__VA_ARGS__
 

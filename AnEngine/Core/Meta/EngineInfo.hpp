@@ -12,6 +12,7 @@ Last Modified: 5/19/2020
 
 namespace Core::Meta
 {
+	// 0.1: MVP Version
 	class EEngineVersion
 	{
 	public:
