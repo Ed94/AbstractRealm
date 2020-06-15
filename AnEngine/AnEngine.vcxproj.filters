@@ -7,6 +7,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Execution\Execute.cpp" />
+    <ClCompile Include="Core\Dev\ImGui_TestingGrounds.hpp" />
+    <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LAL\LAL.hpp" />
@@ -77,6 +79,9 @@
     <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ShaderModule.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Pipeline.hpp" />
+    <ClInclude Include="PAL\SAL\ImGui_SAL.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_PlatformBackend.hpp" />
+    <ClInclude Include="Core\Meta\AppInfo.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

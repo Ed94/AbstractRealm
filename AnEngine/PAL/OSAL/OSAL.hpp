@@ -8,31 +8,14 @@ Operating System Abstraction Layer
 
 
 
+#include "LAL/LAL.hpp"
+#include "GLFW_SAL.hpp"
+#include "OSAL_PlatformBackend.hpp"
+
+
 namespace OSAL
 {
-	enum class EOS
-	{
-		Windows,
-		Mac    ,
-		Linux
-	};
+	using Window = PlatformBackend::Window;
 
-	#ifdef _WIN32
-		constexpr EOS OS = EOS::Windows;
-	#endif
-
-	#ifdef __MACH__
-
-	#endif
-
-	#ifdef __linux__
-
-	#endif 
-
-	constexpr bool IsWindows = OS == EOS::Windows;
-
-	namespace DarkSide
-	{
-		
-	}
+	
 }

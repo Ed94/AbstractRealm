@@ -10,8 +10,16 @@ Last Modified: 5/19/2020
 
 
 
+#include "LAL/LAL.hpp"
+
+
+
 namespace Core::Meta
 {
+	using namespace LAL;
+
+	constexpr char EngineName[] = "Abstract Realm";
+
 	// 0.1: MVP Version
 	class EEngineVersion
 	{

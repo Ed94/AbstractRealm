@@ -14,6 +14,7 @@ Currently the only defined main in the engine. You can manually define what proc
 
 #include "Dev/Exec_GLFW_GLM_Test.hpp"
 #include "Dev/Vulkan_TriangleTest.hpp"
+#include "Dev/ImGui_TestingGrounds.hpp"
 
 
 
@@ -23,7 +24,9 @@ int main()
 
 	//Debug::Exec_GLFW_GLM_Test();
 
-	if (!Debug::Vulkan_TriangleTest::Execute_VulkanTriTest()) return EXIT_FAILURE;
+	//if (!Debug::Vulkan_TriangleTest::Execute_VulkanTriTest()) return EXIT_FAILURE;
+
+	if (!Debug::Imgui_Testing::Exec_ImguiTest()) return EXIT_FAILURE;
 
 	return EXIT_SUCCESS;
 }
