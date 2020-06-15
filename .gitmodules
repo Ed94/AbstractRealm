@@ -34,3 +34,33 @@
 [submodule "AnEngine/PAL/ThirdParty/Libraries/magic_enum"]
 	path = AnEngine/PAL/ThirdParty/Libraries/magic_enum
 	url = git@github.com:Neargye/magic_enum
+[submodule "AnEngine/PAL/ThirdParty/Libraries/libjobs"]
+	path = AnEngine/PAL/ThirdParty/Libraries/libjobs
+	url = git@github.com:TLeonardUK/libjobs
+[submodule "AnEngine/PAL/ThirdParty/Libraries/rbase"]
+	path = AnEngine/PAL/ThirdParty/Libraries/rbase
+	url = git@github.com:milostosic/rbase
+[submodule "AnEngine/PAL/ThirdParty/Libraries/bgfx"]
+	path = AnEngine/PAL/ThirdParty/Libraries/bgfx
+	url = git@github.com:bkaradzic/bgfx
+[submodule "AnEngine/PAL/ThirdParty/Libraries/The-Forge"]
+	path = AnEngine/PAL/ThirdParty/Libraries/The-Forge
+	url = git@github.com:ConfettiFX/The-Forge
+[submodule "AnEngine/PAL/ThirdParty/Libraries/rpclib"]
+	path = AnEngine/PAL/ThirdParty/Libraries/rpclib
+	url = git@github.com:rpclib/rpclib
+[submodule "AnEngine/PAL/ThirdParty/Libraries/DiligentEngine"]
+	path = AnEngine/PAL/ThirdParty/Libraries/DiligentEngine
+	url = git@github.com:DiligentGraphics/DiligentEngine
+[submodule "AnEngine/PAL/ThirdParty/Libraries/bsf"]
+	path = AnEngine/PAL/ThirdParty/Libraries/bsf
+	url = git@github.com:GameFoundry/bsf
+[submodule "AnEngine/PAL/ThirdParty/Libraries/rttr"]
+	path = AnEngine/PAL/ThirdParty/Libraries/rttr
+	url = git@github.com:rttrorg/rttr
+[submodule "AnEngine/PAL/ThirdParty/Libraries/vivid"]
+	path = AnEngine/PAL/ThirdParty/Libraries/vivid
+	url = git@github.com:gurki/vivid
+[submodule "AnEngine/PAL/ThirdParty/Libraries/ctti"]
+	path = AnEngine/PAL/ThirdParty/Libraries/ctti
+	url = git@github.com:Manu343726/ctti
