@@ -32,4 +32,16 @@ namespace OSAL
 				void*
 			>;
 	}
+
+
+	using Window = PlatformBackend::Window;
+
+
+
+
+	Where<WindowingPlatform == Meta::EWindowingPlatform::GLFW,
+	void> GetFramebuffer(Window* _window)
+	{
+		
+	}
 }

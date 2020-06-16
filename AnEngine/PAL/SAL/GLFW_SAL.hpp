@@ -119,7 +119,7 @@ namespace SAL::GLFW
 
 	using CStrArray = ptr<const ptr<const char>>;
 
-	CStrArray GetRequiredVulkanAppExtensions(ptr<uint32> NumberOfExensions_Container);
+	CStrArray GetRequiredVulkanAppExtensions(uint32& NumberOfExensions_Container);
 
 
 	// Platform

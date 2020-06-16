@@ -104,6 +104,8 @@ namespace Meta
 
 	// Runtime
 
+	// Static Data
+
 	/*
 	Determines the operational mode of the engine.
 
@@ -111,9 +113,9 @@ namespace Meta
 
 	Note: Changing the operational mode will require many modules to reinitialize themselves.
 	*/
-	data< EOperationMode> OperationalMode = Default_OperationalMode();
+	eGlobal data< EOperationMode> OperationalMode;
 
-	data< bool> UseEditor    = OperationalMode == EOperationMode::Development;
-	data< bool> UseDebug     = OperationalMode >  EOperationMode::Profiling  ;
-	data< bool> UseProfiling = OperationalMode >  EOperationMode::User       ;
+	eGlobal data< bool> UseEditor   ;
+	eGlobal data< bool> UseDebug    ;
+	eGlobal data< bool> UseProfiling;
 }

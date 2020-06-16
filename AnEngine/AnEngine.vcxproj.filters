@@ -79,7 +79,6 @@
     <ClInclude Include="LAL\Utilities\STL_Functions.hpp" />
     <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp" />
     <ClInclude Include="PAL\PAL.hpp" />
-    <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
     <ClInclude Include="PAL\HAL\HAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\Vulkan_API.hpp" />
   </ItemGroup>
@@ -88,8 +87,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Execution\Execute.cpp" />
-    <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
+    <ClCompile Include="Meta\EngineInfo.cpp" />
+    <ClCompile Include="Meta\Config\HAL.cpp" />
   </ItemGroup>
 </Project>

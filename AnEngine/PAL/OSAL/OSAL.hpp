@@ -19,5 +19,4 @@ Operating System Abstraction Layer
 
 namespace OSAL
 {
-	using Window = PlatformBackend::Window;
 }

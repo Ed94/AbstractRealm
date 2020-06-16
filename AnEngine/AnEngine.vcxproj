@@ -441,8 +441,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Execution\Execute.cpp" />
+    <ClCompile Include="Meta\Config\HAL.cpp" />
+    <ClCompile Include="Meta\EngineInfo.cpp" />
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

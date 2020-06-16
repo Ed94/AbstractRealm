@@ -56,10 +56,10 @@ namespace Meta
 	/*
 	Note: Changing the GPU_API will require the GPU_HAL to reinitialize.
 	*/
-	data< EGPUPlatformAPI> GPU_API = Default_GPU_API;
+	eGlobal data< EGPUPlatformAPI> GPU_API;
 
 	/*
 	Determines if Vulkan will use validation layers.
 	*/
-	data< bool> Vulkan_ValidationLayersEnabled = UseDebug;
+	eGlobal data< bool> Vulkan_ValidationLayersEnabled;
 }
