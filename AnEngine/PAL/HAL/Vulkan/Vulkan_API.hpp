@@ -9,7 +9,7 @@
 
 
 
-#include "Core/Meta/Config/HAL_Flags.hpp"
+#include "Meta/Config/HAL.hpp"
 
 
 
@@ -18,3 +18,10 @@
 	#include "VaultedThermals/VaultedThermals.hpp"
 
 #endif
+
+
+
+namespace HAL::GPU
+{
+
+}

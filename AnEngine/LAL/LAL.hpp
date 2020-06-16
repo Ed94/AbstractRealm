@@ -33,5 +33,6 @@ standard c++.
 #include "STL_Containers.hpp"
 #include "STL_String.hpp"
 #include "STL_Exceptions.hpp"
+#include "Utilities/STL_Functions.hpp"
 
 

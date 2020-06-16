@@ -6,9 +6,14 @@
 
 
 
-namespace Core::Meta
+namespace Meta
 {
+	// Usings
+
 	using namespace LAL;
+
+
+	// Structs
 
 	struct AppVersion
 	{

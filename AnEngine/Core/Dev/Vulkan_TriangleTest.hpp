@@ -13,15 +13,17 @@ https://vulkan-tutorial.com/Drawing_a_triangle/Setup/Base_code
 
 //#include <vulkan/vulkan.h>
 
-#include "PAL/HAL/Vulkan/Vulkan.hpp"
+
 
 #include "Core/IO/Basic_FileIO.hpp"
 #include "Core/Memory/MemTypes.hpp"
-#include "Core/Meta/EngineInfo.hpp"
-#include "Core/Meta/Config/HAL_Flags.hpp"
+#include "Meta/EngineInfo.hpp"
+#include "Meta/Config/HAL.hpp"
 
 #include "Renderer/Shader/TriangleShader/TriangleShader.hpp"
 
+// GLFW MUST BE FIRST, I DO NOT KNOW WHY JUST FUCKING DO IT.
+#include "PAL/HAL/Vulkan/Vulkan_API.hpp"
 #include "PAL/SAL/GLFW_SAL.hpp"
 
 #include "LAL.hpp"
@@ -34,12 +36,11 @@ namespace Debug
 	{
 		// Namespaces
 
-		using namespace Vulkan       ;
-		using namespace Vulkan::Debug;
+		using namespace Vulkan;
 
 		using namespace LAL;
 
-		using namespace Core::Meta;
+		using namespace Meta;
 
 
 
@@ -180,8 +181,7 @@ namespace Debug
 		
 		// Vulkan
 
-		Where<Vulkan_ValidationLayersEnabled,
-		bool> CheckValidationLayerSupport()
+		bool CheckValidationLayerSupport()
 		{
 			uInt32&& layerCount = GetNumOf_AvailableGlobalLayerProperties();
 
@@ -561,6 +561,8 @@ namespace Debug
 					throw std::runtime_error("Validation layers requested, but are not available!");
 			}
 
+			using Meta::EEngineVersion;
+
 			//AppSpec.SType         = EStructureType::ApplicationInformation;   // Use later...
 			appSpec.SType         = EStructureType::VK_STRUCTURE_TYPE_APPLICATION_INFO;
 			appSpec.AppName       = "Triangle Test"                       ;
@@ -681,10 +683,7 @@ namespace Debug
 
 			if (result != EResult::Success)
 			{
-				if (result != EResult::Success)
-				{
-					throw std::runtime_error("Vulkan, TraingleTest: Failed to create logical device!");
-				}
+				throw std::runtime_error("Vulkan, TraingleTest: Failed to create logical device!");
 			}
 
 			LogicalDevice_GetQueue(LogicalDevice, indices.GraphicsFamily    .value(), 0, GraphicsQueue    );
@@ -757,15 +756,15 @@ namespace Debug
 
 			createInfo.OSAppHandle = GetOS_AppHandle();
 
-			//if (Vulkan::CreateSurface(App, createInfo, nullptr, SurfaceHandle) != EResult::Success) 
-			//{
-				//throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
-			//}
-
-			if (EResult(SAL::GLFW::CreateWindowSurface(App, TriangleWindow, nullptr, SurfaceHandle)) != EResult::Success)
+			if (Vulkan::CreateSurface(App, createInfo, nullptr, SurfaceHandle) != EResult::Success) 
 			{
 				throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
 			}
+
+			/*if (EResult(SAL::GLFW::CreateWindowSurface(App, TriangleWindow, nullptr, SurfaceHandle)) != EResult::Success)
+			{
+				throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
+			}*/
 		}
 
 		void CreateSwapChain()
@@ -979,7 +978,7 @@ namespace Debug
 
 			if (Vulkan_ValidationLayersEnabled)
 			{
-				extensions.push_back(Vulkan::Debug::Extension_DebugUtility);
+				extensions.push_back(Vulkan::Extension_DebugUtility);
 			}
 
 			return extensions;

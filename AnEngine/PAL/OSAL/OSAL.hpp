@@ -8,14 +8,16 @@ Operating System Abstraction Layer
 
 
 
+// Includes
+
 #include "LAL/LAL.hpp"
-#include "GLFW_SAL.hpp"
-#include "OSAL_PlatformBackend.hpp"
+
+#include "OSAL/Platform.hpp"
+#include "OSAL/Windowing.hpp"
+
 
 
 namespace OSAL
 {
 	using Window = PlatformBackend::Window;
-
-	
 }
