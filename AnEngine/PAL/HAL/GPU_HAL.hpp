@@ -1,10 +1,7 @@
 /*
 GPU Hardware Abstraction Layer
 
-Last Modified: 5/19/2020
 
-Currently GPU Abstraction design is way to costly for what I'm after unless a library
-does it for me, so I'm keeping 
 */
 
 
@@ -12,21 +9,16 @@ does it for me, so I'm keeping
 #pragma once
 
 
-#include "HAL_Flags.hpp"
 
 
-#if HAL_GPU_PLATFORM == HAL_GPU_PLATFORM_VULKAN
+// Engine
 
-	#include "Vulkan/Vulkan.hpp"
-
-#endif
-
-
+#include "HAL/Vulkan/GPU_Vulkan.hpp"
 
 #include "LAL/LAL.hpp"
 
-
 #include "Meta/AppInfo.hpp"
+#include "Meta/Config/HAL_Config.hpp"
 
 
 
@@ -34,43 +26,54 @@ namespace HAL
 {
 	namespace GPU
 	{
-		using Core::Meta::AppVersion;
+		// Usings
 
-		namespace PlatformBackend
+		using namespace LAL;
+
+		using Meta::AppVersion;
+
+
+		// Structs
+
+		/*
+		Used for keeping track of physical GPUs present.
+		*/
+		struct PhysicalDevice
 		{
-			using namespace LAL;
-
-			using Core::Meta::GPU_API;
-			using Core::Meta::EGPUPlatformAPI;
-
-			using AppInstance = Choose<GPU_API == EGPUPlatformAPI::Vulkan,
-				Vulkan::AppInstance,
-				void>;
-
-			using PhysicalDevice = Choose<GPU_API == EGPUPlatformAPI::Vulkan,
-				Vulkan::PhysicalDevice,
-				void>;
-		}
-
-		using AppInstance    = PlatformBackend::AppInstance   ;
-		using PhysicalDevice = PlatformBackend::PhysicalDevice;
-
-		using PhysicalDeviceList = std::vector< PhysicalDevice>;
-
-
-
-		// Static Data
-
-
+			String Name;
+		};
 
 
 		// Functionality
 
-		/*
-		Initializes the GPU Application state context object.
+		// Submodule Related
 
-		Note: Not sure if this exists conceptually in other API's other than Vulkan.
+		/*
+		Loads the GPU HAL submodule.
+
+		Note: This prepares the submodule for use of its related functionality supported.
 		*/
-		void InitalizeApplication(RoCStr _appName, AppVersion _version);
+		void Load();
+
+		/*
+		Unloads the GPU HAL submodule.
+
+		Note: Unloading the submodule is not possible unless the GPU is not being used.
+		Please make sure the GPU is properly deinitialized with the application first.
+		*/
+		void Unload();
+
+
+
+		// GPU Related
+
+
+		/*
+		Initializes the essential object instances to provide interfacing to the GPU.
+
+		_appName: Name to represent this application to the GPU.
+		_version: Version of the application.
+		*/
+		void Initalize_GPUComms(RoCStr _appName, AppVersion _version);
 	}
 }

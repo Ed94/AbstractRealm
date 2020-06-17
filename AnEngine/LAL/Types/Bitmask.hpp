@@ -70,7 +70,7 @@ namespace LAL
 			mask = (Representation(_bits) | ...);
 		}
 
-		_ThisType& operator = (const BitmaskRepresentation& _mask ) { mask = _mask; }
+		_ThisType& operator = (const BitmaskRepresentation& _mask ) { mask = _mask; return this; }
 
 		operator Representation()
 		{

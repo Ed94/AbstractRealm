@@ -1,4 +1,8 @@
 /*
+Vulkan API
+
+Defines the Vulkan API used with the GPU_HAL.
+
 
 
 */
@@ -9,7 +13,8 @@
 
 
 
-#include "Core/Meta/Config/HAL_Flags.hpp"
+#include "Meta/Config/HAL_Config.hpp"
+
 
 
 

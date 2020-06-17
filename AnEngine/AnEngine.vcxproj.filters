@@ -6,11 +6,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Execution\Execute.cpp" />
-    <ClCompile Include="Core\Dev\ImGui_TestingGrounds.hpp" />
-    <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="LAL\LAL.hpp" />
     <ClInclude Include="Core\Execution\Exec_Editor.hpp" />
     <ClInclude Include="Core\Execution\Exec_Engine.hpp" />
@@ -31,21 +26,14 @@
     <ClInclude Include="Simulation\Math\Vec2D_F.hpp" />
     <ClInclude Include="Simulation\Units.hpp" />
     <ClInclude Include="Simulation\Math\Constants.hpp" />
-    <ClInclude Include="Core\Meta\Specification.hpp" />
     <ClInclude Include="PAL\HAL\Audio_HAL.hpp" />
-    <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
     <ClInclude Include="UserManagment\User\User.hpp" />
     <ClInclude Include="PAL\SAL\GLFW_SAL.hpp" />
     <ClInclude Include="PAL\SAL\GLM_SAL.hpp" />
-    <ClInclude Include="Core\Meta\EngineInfo.hpp" />
     <ClInclude Include="LAL\Casting.hpp" />
-    <ClInclude Include="Core\Meta\Config\HAL_Flags.hpp" />
-    <ClInclude Include="Core\Meta\Config\Sim_Flags.hpp" />
-    <ClInclude Include="Core\Meta\Config\Override_Flags.hpp" />
     <ClInclude Include="LAL\Types\Bitmask.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.hpp" />
     <ClInclude Include="LAL\ConventionEnforcer.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\Vulkan.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Enums.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Types.hpp" />
@@ -59,8 +47,6 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Bitmask.hpp" />
     <ClInclude Include="LAL\Utilities\STL_Ambiguous.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_LogicalDevice.hpp" />
-    <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
-    <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Surface.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Platform.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_SwapChain.hpp" />
@@ -80,10 +66,39 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ShaderModule.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Pipeline.hpp" />
     <ClInclude Include="PAL\SAL\ImGui_SAL.hpp" />
-    <ClInclude Include="PAL\OSAL\OSAL_PlatformBackend.hpp" />
-    <ClInclude Include="Core\Meta\AppInfo.hpp" />
+    <ClInclude Include="PAL\OSAL\Windowing.hpp" />
+    <ClInclude Include="PAL\OSAL\Platform.hpp" />
+    <ClInclude Include="Meta\AppInfo.hpp" />
+    <ClInclude Include="Meta\EngineInfo.hpp" />
+    <ClInclude Include="Meta\Specification.hpp" />
+    <ClInclude Include="Meta\Config\Overrides.hpp" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\Library.hpp" />
+    <ClInclude Include="LAL\Utilities\STL_Functions.hpp" />
+    <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp" />
+    <ClInclude Include="PAL\PAL.hpp" />
+    <ClInclude Include="PAL\HAL\HAL.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\Vulkan_API.hpp" />
+    <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPU_Vulkan.hpp" />
+    <ClInclude Include="Meta\Config\Simulation_Config.hpp" />
+    <ClInclude Include="Meta\Config\HAL_Config.hpp" />
+    <ClInclude Include="Meta\Config\OSAL_Config.hpp" />
+    <ClInclude Include="Core\Dev\ImGui_TestingGrounds.hpp" />
+    <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\Execution\Execute.cpp" />
+    <ClCompile Include="PAL\HAL\HAL.cpp" />
+    <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
+    <ClCompile Include="Meta\EngineInfo.cpp" />
+    <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
+    <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
+    <ClCompile Include="PAL\OSAL\Windowing.cpp" />
+    <ClCompile Include="Meta\Config\HAL_Config.cpp" />
   </ItemGroup>
 </Project>

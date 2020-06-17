@@ -1,0 +1,2842 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="SuppressVersion">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="CurrentVersion" type="xs:int" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="AnEngine">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="FileName" type="xs:string" default="" />
+                <xs:element name="ErrorCode" type="xs:string" default="" />
+                <xs:element name="Message" type="xs:string" default="" />
+                <xs:element name="CodePrev" type="xs:unsignedInt" default="0" />
+                <xs:element name="CodeCurrent" type="xs:unsignedInt" default="0" />
+                <xs:element name="CodeNext" type="xs:unsignedInt" default="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+      <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//AnEngine" />
+        <xs:field xpath="FileName" />
+        <xs:field xpath="ErrorCode" />
+        <xs:field xpath="Message" />
+        <xs:field xpath="CodePrev" />
+        <xs:field xpath="CodeCurrent" />
+        <xs:field xpath="CodeNext" />
+      </xs:unique>
+    </xs:element>
+  </xs:schema>
+  <SuppressVersion>
+    <CurrentVersion>2</CurrentVersion>
+  </SuppressVersion>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3706876985</CodePrev>
+    <CodeCurrent>1319873244</CodeCurrent>
+    <CodeNext>1524959531</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3275897657</CodePrev>
+    <CodeCurrent>1111212161</CodeCurrent>
+    <CodeNext>1139658521</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3331893681</CodePrev>
+    <CodeCurrent>2787928371</CodeCurrent>
+    <CodeNext>2201118521</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>27854348</CodePrev>
+    <CodeCurrent>1077334312</CodeCurrent>
+    <CodeNext>266585</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1610937260</CodePrev>
+    <CodeCurrent>534171883</CodeCurrent>
+    <CodeNext>1066853</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>894894133</CodePrev>
+    <CodeCurrent>3761731560</CodeCurrent>
+    <CodeNext>140139353</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>4167827773</CodePrev>
+    <CodeCurrent>2352402730</CodeCurrent>
+    <CodeNext>277913</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2423140572</CodePrev>
+    <CodeCurrent>464965862</CodeCurrent>
+    <CodeNext>1088809</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>594599193</CodePrev>
+    <CodeCurrent>3694582794</CodeCurrent>
+    <CodeNext>4267161</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1796558316</CodePrev>
+    <CodeCurrent>2792809672</CodeCurrent>
+    <CodeNext>33767505</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>4162303510</CodePrev>
+    <CodeCurrent>397862330</CodeCurrent>
+    <CodeNext>17455305</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>684132935</CodePrev>
+    <CodeCurrent>412531111</CodeCurrent>
+    <CodeNext>70880397</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1236015210</CodePrev>
+    <CodeCurrent>766955751</CodeCurrent>
+    <CodeNext>1085001</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3562462146</CodePrev>
+    <CodeCurrent>727109928</CodeCurrent>
+    <CodeNext>267925</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>449096542</CodePrev>
+    <CodeCurrent>310825257</CodeCurrent>
+    <CodeNext>263759</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>81613700</CodePrev>
+    <CodeCurrent>2164707626</CodeCurrent>
+    <CodeNext>278391</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>27995594</CodePrev>
+    <CodeCurrent>2995179864</CodeCurrent>
+    <CodeNext>67151</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1306929405</CodePrev>
+    <CodeCurrent>3932606702</CodeCurrent>
+    <CodeNext>1056595</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2071609441</CodePrev>
+    <CodeCurrent>1857475092</CodeCurrent>
+    <CodeNext>2153545</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>596535275</CodePrev>
+    <CodeCurrent>3165049156</CodeCurrent>
+    <CodeNext>33035</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>4208095150</CodePrev>
+    <CodeCurrent>1236665001</CodeCurrent>
+    <CodeNext>69758985</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>224793840</CodePrev>
+    <CodeCurrent>2276947602</CodeCurrent>
+    <CodeNext>139494633</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>869939911</CodePrev>
+    <CodeCurrent>1718014188</CodeCurrent>
+    <CodeNext>1064595</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2165980928</CodePrev>
+    <CodeCurrent>1983306809</CodeCurrent>
+    <CodeNext>8473145</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3839513600</CodePrev>
+    <CodeCurrent>1829157680</CodeCurrent>
+    <CodeNext>34103351</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>975327053</CodePrev>
+    <CodeCurrent>1317406118</CodeCurrent>
+    <CodeNext>68208783</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3831828730</CodePrev>
+    <CodeCurrent>610664988</CodeCurrent>
+    <CodeNext>70089171</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3633598249</CodePrev>
+    <CodeCurrent>1246198958</CodeCurrent>
+    <CodeNext>134286615</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2585536515</CodePrev>
+    <CodeCurrent>1781977384</CodeCurrent>
+    <CodeNext>267257</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3983790113</CodePrev>
+    <CodeCurrent>26659698</CodeCurrent>
+    <CodeNext>17745837</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3533596966</CodePrev>
+    <CodeCurrent>2810630518</CodeCurrent>
+    <CodeNext>135479</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2776060233</CodePrev>
+    <CodeCurrent>3402990407</CodeCurrent>
+    <CodeNext>136473797</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3937835215</CodePrev>
+    <CodeCurrent>181423635</CodeCurrent>
+    <CodeNext>279268037</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1436850393</CodePrev>
+    <CodeCurrent>3403078742</CodeCurrent>
+    <CodeNext>4449477</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1981822002</CodePrev>
+    <CodeCurrent>1256441586</CodeCurrent>
+    <CodeNext>2190098629</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3385455269</CodePrev>
+    <CodeCurrent>2329247771</CodeCurrent>
+    <CodeNext>136941253</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3717292205</CodePrev>
+    <CodeCurrent>1233738622</CodeCurrent>
+    <CodeNext>163258561</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>268435533</CodePrev>
+    <CodeCurrent>2328917451</CodeCurrent>
+    <CodeNext>272666309</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>665190431</CodePrev>
+    <CodeCurrent>2308134286</CodeCurrent>
+    <CodeNext>1027778241</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>497192452</CodePrev>
+    <CodeCurrent>192155649</CodeCurrent>
+    <CodeNext>514415303</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3909397935</CodePrev>
+    <CodeCurrent>1255171454</CodeCurrent>
+    <CodeNext>268640453</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2027575000</CodePrev>
+    <CodeCurrent>576482012</CodeCurrent>
+    <CodeNext>2772643906</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1710785086</CodePrev>
+    <CodeCurrent>181426650</CodeCurrent>
+    <CodeNext>284492485</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>77372810</CodePrev>
+    <CodeCurrent>1255899934</CodeCurrent>
+    <CodeNext>553296069</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>441375757</CodePrev>
+    <CodeCurrent>3402659895</CodeCurrent>
+    <CodeNext>276802757</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2721196821</CodePrev>
+    <CodeCurrent>1241668670</CodeCurrent>
+    <CodeNext>74850500</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>110497448</CodePrev>
+    <CodeCurrent>1279520830</CodeCurrent>
+    <CodeNext>1184243917</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2927123231</CodePrev>
+    <CodeCurrent>1206075198</CodeCurrent>
+    <CodeNext>3049922773</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3300920353</CodePrev>
+    <CodeCurrent>3493093624</CodeCurrent>
+    <CodeNext>1539646696</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3534451376</CodePrev>
+    <CodeCurrent>1255539860</CodeCurrent>
+    <CodeNext>34574533</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1388157766</CodePrev>
+    <CodeCurrent>182678633</CodeCurrent>
+    <CodeNext>2149227205</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>699566862</CodePrev>
+    <CodeCurrent>1254927390</CodeCurrent>
+    <CodeNext>1116119237</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3259737474</CodePrev>
+    <CodeCurrent>4151270488</CodeCurrent>
+    <CodeNext>1424467151</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3212032731</CodePrev>
+    <CodeCurrent>1344287966</CodeCurrent>
+    <CodeNext>1388159205</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3185714471</CodePrev>
+    <CodeCurrent>1266635550</CodeCurrent>
+    <CodeNext>301637825</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>266953971</CodePrev>
+    <CodeCurrent>1265739582</CodeCurrent>
+    <CodeNext>361898183</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>406737187</CodePrev>
+    <CodeCurrent>273302419</CodeCurrent>
+    <CodeNext>207178372</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1906719750</CodePrev>
+    <CodeCurrent>160487315</CodeCurrent>
+    <CodeNext>1980320461</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3204616229</CodePrev>
+    <CodeCurrent>3403120333</CodeCurrent>
+    <CodeNext>135511237</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3717276765</CodePrev>
+    <CodeCurrent>1233982686</CodeCurrent>
+    <CodeNext>16621761</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1935258420</CodePrev>
+    <CodeCurrent>2340107248</CodeCurrent>
+    <CodeNext>8197831</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3289387937</CodePrev>
+    <CodeCurrent>3428933687</CodeCurrent>
+    <CodeNext>17804493</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1283304526</CodePrev>
+    <CodeCurrent>2329657680</CodeCurrent>
+    <CodeNext>568547013</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>50105652</CodePrev>
+    <CodeCurrent>2355191824</CodeCurrent>
+    <CodeNext>17733325</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3371499475</CodePrev>
+    <CodeCurrent>3402651999</CodeCurrent>
+    <CodeNext>284953797</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>658473429</CodePrev>
+    <CodeCurrent>464066122</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3713544773</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3843239601</CodePrev>
+    <CodeCurrent>3952850747</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3101497501</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3712580165</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3906210949</CodeCurrent>
+    <CodeNext>90434578</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>464270058</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3127722892</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>464014058</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>928492243</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1971118110</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3530123632</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2807870950</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2726019015</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>720311830</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1427536218</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3816429079</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1320178890</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1563161802</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3126085267</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1858020611</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3927945019</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1960386590</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2218011592</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3591424080</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3127674540</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>437063678</CodePrev>
+    <CodeCurrent>4088131615</CodeCurrent>
+    <CodeNext>1112284651</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2881997340</CodePrev>
+    <CodeCurrent>2345625747</CodeCurrent>
+    <CodeNext>372410729</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2690692242</CodePrev>
+    <CodeCurrent>2474221973</CodeCurrent>
+    <CodeNext>2692834611</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1848135618</CodePrev>
+    <CodeCurrent>9831084</CodeCurrent>
+    <CodeNext>69739341</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>268435533</CodePrev>
+    <CodeCurrent>3177634878</CodeCurrent>
+    <CodeNext>8455219</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1066976671</CodePrev>
+    <CodeCurrent>2974656304</CodeCurrent>
+    <CodeNext>1385584313</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1872810956</CodePrev>
+    <CodeCurrent>1253995687</CodeCurrent>
+    <CodeNext>259385540</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>432017254</CodePrev>
+    <CodeCurrent>1234910055</CodeCurrent>
+    <CodeNext>713746625</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3059994030</CodePrev>
+    <CodeCurrent>1256441166</CodeCurrent>
+    <CodeNext>2190975173</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>96362333</CodePrev>
+    <CodeCurrent>450658193</CodeCurrent>
+    <CodeNext>3227927246</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2096938951</CodePrev>
+    <CodeCurrent>2144762727</CodeCurrent>
+    <CodeNext>2013980804</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>3331040025</CodePrev>
+    <CodeCurrent>3805370259</CodeCurrent>
+    <CodeNext>3845538240</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>526545331</CodePrev>
+    <CodeCurrent>1347856871</CodeCurrent>
+    <CodeNext>3164661989</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2314729964</CodePrev>
+    <CodeCurrent>181429617</CodeCurrent>
+    <CodeNext>268655301</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>1792520723</CodePrev>
+    <CodeCurrent>180295857</CodeCurrent>
+    <CodeNext>181689028</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._MAX_ENUM = _x_FFFFFFF.</Message>
+    <CodePrev>2432941634</CodePrev>
+    <CodeCurrent>3405770632</CodeCurrent>
+    <CodeNext>4249243803</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>181185892</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3952137563</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2376030641</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1480839115</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3828343623</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1857413815</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2779502592</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1779892639</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1867194682</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3640062163</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>367690200</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1357364426</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1597126643</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2988811284</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1262947886</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3739679835</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2073792074</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>928832957</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3123859948</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>284949937</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1500280778</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3316276973</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3879835364</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3748696454</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2771206025</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3559375695</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2018457579</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2527142291</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1405472566</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2014041111</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4027590441</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1406227658</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1263570714</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2850385434</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3934205755</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2807897747</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3037351689</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2667346107</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1790328296</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1957264702</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>602373074</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2695513747</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3558390210</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1963352112</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>927303667</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>780015380</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3089225897</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4264423530</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4233760972</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1839838402</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2246959943</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>29617966</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2004401346</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2864373203</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4259530157</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2993083700</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1354087969</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1922377754</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4110042114</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1712178399</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1810999136</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1825110722</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2798728678</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1867282727</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1614403748</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2379285148</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2963252539</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2886792844</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3104694009</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>234043694</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3300517421</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>4239370157</CodePrev>
+    <CodeCurrent>3943892817</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3930852785</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3712579119</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>657891846</CodePrev>
+    <CodeCurrent>1429111968</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3921015633</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3629615960</CodePrev>
+    <CodeCurrent>3355088218</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1854432075</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3625500942</CodePrev>
+    <CodeCurrent>3289728811</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3939081765</CodePrev>
+    <CodeCurrent>1968672884</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1857042123</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1648442561</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3910375649</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3222062637</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>335446654</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1971851780</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2737035930</CodePrev>
+    <CodeCurrent>3595757270</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1023823020</CodePrev>
+    <CodeCurrent>26883752</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2640836601</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1930240240</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1111699215</CodePrev>
+    <CodeCurrent>3546576980</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2114144958</CodePrev>
+    <CodeCurrent>3104505566</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3699704337</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3251320072</CodePrev>
+    <CodeCurrent>1311719034</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2621456621</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>43884837</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>4289345702</CodePrev>
+    <CodeCurrent>3560648798</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>200108532</CodePrev>
+    <CodeCurrent>3470144114</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>629582447</CodePrev>
+    <CodeCurrent>1145314429</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2938454081</CodePrev>
+    <CodeCurrent>3761197150</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1329943338</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>139112267</CodePrev>
+    <CodeCurrent>3710560435</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>854061759</CodePrev>
+    <CodeCurrent>135350122</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3086570291</CodePrev>
+    <CodeCurrent>1132697046</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3066238591</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>404429881</CodePrev>
+    <CodeCurrent>2177092082</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3066917822</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>268796875</CodePrev>
+    <CodeCurrent>3133426650</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3715238419</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3133508570</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2534576451</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3507328292</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1135703575</CodePrev>
+    <CodeCurrent>1988991477</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1258264511</CodePrev>
+    <CodeCurrent>722812159</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3980275024</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2238498335</CodePrev>
+    <CodeCurrent>1284464723</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3245762065</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3575348929</CodePrev>
+    <CodeCurrent>2430313117</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3651496977</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1825753974</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>904552688</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3554319007</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3189697615</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3554325206</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2177865497</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1583188730</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1892479504</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>16908283</CodePrev>
+    <CodeCurrent>3537131339</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>445643887</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>4026891282</CodePrev>
+    <CodeCurrent>2316485965</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3368454321</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1572361896</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1244889016</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2738837151</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1431414445</CodePrev>
+    <CodeCurrent>2863658207</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3967944045</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1182341622</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4237196242</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1627024541</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1841172718</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1344366878</CodePrev>
+    <CodeCurrent>3362059550</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>353954316</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2113993604</CodePrev>
+    <CodeCurrent>1528809862</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2278046859</CodePrev>
+    <CodeCurrent>729661596</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>342589746</CodePrev>
+    <CodeCurrent>1416221566</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2560525727</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1606174596</CodePrev>
+    <CodeCurrent>4037583636</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>4386267</CodePrev>
+    <CodeCurrent>2094944374</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>716397578</CodePrev>
+    <CodeCurrent>3185047995</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1154093462</CodePrev>
+    <CodeCurrent>2078811634</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3521117474</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>141426301</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>126463266</CodePrev>
+    <CodeCurrent>2453306224</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1206501332</CodePrev>
+    <CodeCurrent>2366609227</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3418609963</CodePrev>
+    <CodeCurrent>1464393608</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2957283505</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1816732116</CodePrev>
+    <CodeCurrent>659647113</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>928527017</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2538984942</CodePrev>
+    <CodeCurrent>638036981</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V117</ErrorCode>
+    <Message>Memsize type is used in the union.</Message>
+    <CodePrev>16194791</CodePrev>
+    <CodeCurrent>142939365</CodeCurrent>
+    <CodeNext>557586835</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1641224434</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2672901407</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>202991307</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>4294041884</CodePrev>
+    <CodeCurrent>2917739313</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3705407185</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1151900179</CodePrev>
+    <CodeCurrent>1549248702</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1901943454</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4245998424</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3235403109</CodePrev>
+    <CodeCurrent>1160973076</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3576074986</CodePrev>
+    <CodeCurrent>1398262592</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1153569089</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2773946174</CodePrev>
+    <CodeCurrent>2109647683</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>739731877</CodePrev>
+    <CodeCurrent>30328160</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2506078491</CodePrev>
+    <CodeCurrent>3914693069</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>83603635</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2381489328</CodePrev>
+    <CodeCurrent>2418115829</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3031251908</CodePrev>
+    <CodeCurrent>3387079328</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1204949719</CodePrev>
+    <CodeCurrent>3991466278</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2684004014</CodePrev>
+    <CodeCurrent>1341813982</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1527963936</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3065546433</CodePrev>
+    <CodeCurrent>1420663616</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>891539219</CodePrev>
+    <CodeCurrent>3355973693</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2835352515</CodePrev>
+    <CodeCurrent>1446889790</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1435438441</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1254715486</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2207127909</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2831759027</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1182733693</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1392404076</CodePrev>
+    <CodeCurrent>280735441</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1122845475</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2284523931</CodePrev>
+    <CodeCurrent>2546945016</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>377298080</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1057340376</CodePrev>
+    <CodeCurrent>1826703586</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3552444530</CodePrev>
+    <CodeCurrent>4062101036</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2494488865</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3963102892</CodePrev>
+    <CodeCurrent>1866176738</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>929667708</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1981494495</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>1922143496</CodePrev>
+    <CodeCurrent>3695724181</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>784577710</CodePrev>
+    <CodeCurrent>717974282</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3689328914</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>939677846</CodePrev>
+    <CodeCurrent>1413215810</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4097570371</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2350368163</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2460551725</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1565267248</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3126580108</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1805907524</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2137374077</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1613284170</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>331796676</CodePrev>
+    <CodeCurrent>2854091549</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2048785181</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V112</ErrorCode>
+    <Message>Dangerous magic number _x_FFFFFFF used: ..._ENUM_EXT = _x_FFFFFFF.</Message>
+    <CodePrev>2418011619</CodePrev>
+    <CodeCurrent>2001601226</CodeCurrent>
+    <CodeNext>2195233163</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>2195233163</CodePrev>
+    <CodeCurrent>232127788</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2981502700</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>magic_enum.hpp</FileName>
+    <ErrorCode>V594</ErrorCode>
+    <Message>The '"_FUNCSIG_" + _' pointer steps out of array's bounds.</Message>
+    <CodePrev>8276985</CodePrev>
+    <CodeCurrent>2888107775</CodeCurrent>
+    <CodeNext>100</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>magic_enum.hpp</FileName>
+    <ErrorCode>V108</ErrorCode>
+    <Message>Incorrect index type: indexes_v&lt;E&gt;[not a memsize-type]. Use memsize type instead.</Message>
+    <CodePrev>1492789691</CodePrev>
+    <CodeCurrent>1646349626</CodeCurrent>
+    <CodeNext>44275</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>magic_enum.hpp</FileName>
+    <ErrorCode>V104</ErrorCode>
+    <Message>Implicit conversion of 'detail::min_v &lt; D &gt;' to memsize type in an arithmetic expression: index + detail::min_v &lt; D &gt;</Message>
+    <CodePrev>3053</CodePrev>
+    <CodeCurrent>2818763184</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>magic_enum.hpp</FileName>
+    <ErrorCode>V108</ErrorCode>
+    <Message>Incorrect index type: detail::names_v&lt;D&gt;[not a memsize-type]. Use memsize type instead.</Message>
+    <CodePrev>590220836</CodePrev>
+    <CodeCurrent>3016763807</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>564599742</CodePrev>
+    <CodeCurrent>3509541914</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2532003407</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1778688859</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>232494030</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>928813779</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3709209067</CodeCurrent>
+    <CodeNext>1478829590</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3711978459</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2714364476</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2767651044</CodeCurrent>
+    <CodeNext>4059230693</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3254801481</CodePrev>
+    <CodeCurrent>413207956</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_win32.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>3251220373</CodePrev>
+    <CodeCurrent>2354087670</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3920773333</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1574995492</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3129435020</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>463999722</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3123450686</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3540332755</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2283740754</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1798107374</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>625362053</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>2379612854</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3618395431</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3028983443</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+  <AnEngine>
+    <FileName>vulkan_core.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>3133844758</CodeCurrent>
+    <CodeNext>130510233</CodeNext>
+  </AnEngine>
+</NewDataSet>

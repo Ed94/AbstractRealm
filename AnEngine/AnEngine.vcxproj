@@ -75,14 +75,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Meta\;$(ProjectDir)Core\Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\HAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -104,7 +104,7 @@
       <ConformanceMode>true</ConformanceMode>
       <FloatingPointModel>Fast</FloatingPointModel>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -164,11 +164,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Dev\ImGui_TestingGrounds.hpp" />
-    <ClCompile Include="Core\Execution\Execute.cpp" />
-    <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Core\Cycler\Cycle.hpp">
       <SubType>
       </SubType>
@@ -177,14 +172,9 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
+    <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
+    <ClInclude Include="Core\Dev\ImGui_TestingGrounds.hpp" />
+    <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp" />
     <ClInclude Include="Core\Execution\Executer.hpp">
       <SubType>
       </SubType>
@@ -209,19 +199,27 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Meta\AppInfo.hpp">
+    <ClInclude Include="LAL\Utilities\STL_Functions.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Meta\Config\HAL_Flags.hpp">
+    <ClInclude Include="Meta\AppInfo.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Meta\Config\Override_Flags.hpp">
+    <ClInclude Include="Meta\Config\HAL_Config.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Meta\EngineInfo.hpp">
+    <ClInclude Include="Meta\Config\OSAL_Config.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Meta\Config\Overrides.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Meta\EngineInfo.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -258,10 +256,6 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\Audio_HAL.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="PAL\HAL\GPU_HAL.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -302,11 +296,17 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Meta\Config\Sim_Flags.hpp">
+    <ClInclude Include="Meta\Config\Simulation_Config.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Meta\Specification.hpp">
+    <ClInclude Include="Meta\Specification.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
+    <ClInclude Include="PAL\HAL\HAL.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPU_Vulkan.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -368,7 +368,7 @@
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Bitmask.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\ConventionEnforcer.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\Vulkan.hpp">
+    <ClInclude Include="PAL\HAL\Vulkan\Vulkan_API.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -376,7 +376,15 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\OSAL\OSAL_PlatformBackend.hpp">
+    <ClInclude Include="PAL\OSAL\Platform.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\OSAL\Windowing.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\PAL.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -389,6 +397,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\SAL\ImGui_SAL.hpp" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\Library.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Renderer\Shader\RudimentaryCompiler.hpp">
       <SubType>
       </SubType>
@@ -432,6 +444,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\Execution\Execute.cpp" />
+    <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
+    <ClCompile Include="Meta\Config\HAL_Config.cpp" />
+    <ClCompile Include="Meta\EngineInfo.cpp" />
+    <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
+    <ClCompile Include="PAL\HAL\HAL.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
+    <ClCompile Include="PAL\OSAL\Windowing.cpp" />
+    <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

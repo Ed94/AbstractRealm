@@ -14,9 +14,11 @@ C++ Standard Library
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <set>
 #include <string>
