@@ -172,6 +172,8 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
+    <ClInclude Include="Core\Dev\ImGui_TestingGrounds.hpp" />
     <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp" />
     <ClInclude Include="Core\Execution\Executer.hpp">
       <SubType>
@@ -205,11 +207,11 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Meta\Config\HAL.hpp">
+    <ClInclude Include="Meta\Config\HAL_Config.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Meta\Config\OSAL.hpp">
+    <ClInclude Include="Meta\Config\OSAL_Config.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -294,7 +296,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Meta\Config\Simulation.hpp">
+    <ClInclude Include="Meta\Config\Simulation_Config.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -304,6 +306,10 @@
     </ClInclude>
     <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
     <ClInclude Include="PAL\HAL\HAL.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPU_Vulkan.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_AppInstance.hpp">
@@ -441,11 +447,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Execution\Execute.cpp" />
-    <ClCompile Include="Meta\Config\HAL.cpp" />
+    <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
+    <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
+    <ClCompile Include="PAL\OSAL\Windowing.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

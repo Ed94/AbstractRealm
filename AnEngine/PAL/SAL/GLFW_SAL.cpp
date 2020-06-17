@@ -44,4 +44,17 @@ namespace SAL::GLFW
 	{
 		return glfwGetRequiredInstanceExtensions(getAddress(_extensionCount));
 	}
+
+	// OS Related
+
+	Where<OSAL::IsWindows, OSAL::PlatformTypes::
+		OS_WindowHandle> GetOS_WindowHandle(const ptr<Window> _window)
+	{
+		return glfwGetWin32Window(_window);
+	}
+
+	void GetFramebufferSize(const ptr<Window> _window, int& _width, int& _height)
+	{
+		glfwGetFramebufferSize(_window, &_width, &_height);
+	}
 }

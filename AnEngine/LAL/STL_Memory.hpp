@@ -71,7 +71,7 @@ namespace LAL
 	Dereference operator
 	*/
 	template<typename Type> 
-	auto dref(const ptr<Type> _ptr)
+	inline Type& dref(const ptr<Type> _ptr)
 	{
 		return *_ptr;
 	}

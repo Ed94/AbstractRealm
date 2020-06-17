@@ -32,6 +32,8 @@ GFLW Software Abstraction Layer
 namespace SAL::GLFW
 {
 	using namespace LAL;
+	using namespace OSAL;
+	using namespace Vulkan;
 
 	// Enums
 
@@ -124,28 +126,10 @@ namespace SAL::GLFW
 
 	// Platform
 
-	namespace PlatformBackend
-	{
-		template<OSAL::EOS>
-		struct PlatformTypes_Maker;
+	Where<OSAL::IsWindows, OSAL::PlatformTypes::
+	OS_WindowHandle> GetOS_WindowHandle(const ptr<Window> _window);
 
-		template<>
-		struct PlatformTypes_Maker<OSAL::EOS::Windows>
-		{
-			using OS_AppHandle    = HINSTANCE;
-			using OS_WindowHandle = HWND     ;
-		};
-
-		using PlatformTypes = PlatformTypes_Maker<OSAL::OS>;
-	}
-
-	using PlatformTypes = PlatformBackend::PlatformTypes;
-
-	Where<OSAL::IsWindows, PlatformTypes::
-	OS_WindowHandle> GetOS_WindowHandle(Window* _window)
-	{
-		return glfwGetWin32Window(_window);
-	}
+	void GetFramebufferSize(const ptr<Window> _window, int& _width, int& _height);
 }
 
 

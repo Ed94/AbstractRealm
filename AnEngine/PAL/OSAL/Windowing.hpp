@@ -3,7 +3,9 @@
 
 #include "LAL/LAL.hpp"
 
-#include "Meta/Config/OSAL.hpp"
+#include "Meta/Config/OSAL_Config.hpp"
+
+#include "OSAL/Platform.hpp"
 
 #include "SAL/GLFW_SAL.hpp"
 
@@ -35,13 +37,28 @@ namespace OSAL
 
 
 	using Window = PlatformBackend::Window;
+	using PlatformTypes = PlatformBackend::PlatformTypes;
 
 
-
-
-	Where<WindowingPlatform == Meta::EWindowingPlatform::GLFW,
-	void> GetFramebuffer(Window* _window)
+	struct FrameBufferDimensions	
 	{
-		
-	}
+		FrameBufferDimensions() { Width = 0; Height = 0; }
+
+		FrameBufferDimensions(int _width, int _height) : Width(_width), Height(_height)
+		{}
+
+		int Width, Height;
+	};
+
+
+	Window* Create_Window();
+
+	void Destroy_Window(Window* _window);
+
+
+	Where<Meta::WindowingPlatform == Meta::EWindowingPlatform::GLFW,
+	PlatformTypes::OS_WindowHandle> GetOS_WindowHandle(Window* _window);
+
+	Where<Meta::WindowingPlatform == Meta::EWindowingPlatform::GLFW,
+	FrameBufferDimensions> GetFramebufferDimensions(const ptr<Window> _window);
 }

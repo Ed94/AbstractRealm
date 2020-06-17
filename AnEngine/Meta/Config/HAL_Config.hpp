@@ -42,6 +42,7 @@ namespace Meta
 
 	enum class EGPUPlatformAPI
 	{
+		No_API,
 		Vulkan,
 	};
 
@@ -61,5 +62,5 @@ namespace Meta
 	/*
 	Determines if Vulkan will use validation layers.
 	*/
-	eGlobal data< bool> Vulkan_ValidationLayersEnabled;
+	eGlobal data< bool> Vulkan_EnableValidationLayers;
 }

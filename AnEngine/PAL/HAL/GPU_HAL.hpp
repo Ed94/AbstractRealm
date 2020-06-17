@@ -13,12 +13,12 @@ GPU Hardware Abstraction Layer
 
 // Engine
 
-#include "HAL/Vulkan/Vulkan_API.hpp"
+#include "HAL/Vulkan/GPU_Vulkan.hpp"
 
 #include "LAL/LAL.hpp"
 
 #include "Meta/AppInfo.hpp"
-#include "Meta/Config/HAL.hpp"
+#include "Meta/Config/HAL_Config.hpp"
 
 
 

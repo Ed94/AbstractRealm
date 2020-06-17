@@ -72,15 +72,19 @@
     <ClInclude Include="Meta\EngineInfo.hpp" />
     <ClInclude Include="Meta\Specification.hpp" />
     <ClInclude Include="Meta\Config\Overrides.hpp" />
-    <ClInclude Include="Meta\Config\HAL.hpp" />
-    <ClInclude Include="Meta\Config\OSAL.hpp" />
-    <ClInclude Include="Meta\Config\Simulation.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\Library.hpp" />
     <ClInclude Include="LAL\Utilities\STL_Functions.hpp" />
     <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp" />
     <ClInclude Include="PAL\PAL.hpp" />
     <ClInclude Include="PAL\HAL\HAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\Vulkan_API.hpp" />
+    <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPU_Vulkan.hpp" />
+    <ClInclude Include="Meta\Config\Simulation_Config.hpp" />
+    <ClInclude Include="Meta\Config\HAL_Config.hpp" />
+    <ClInclude Include="Meta\Config\OSAL_Config.hpp" />
+    <ClInclude Include="Core\Dev\ImGui_TestingGrounds.hpp" />
+    <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -91,6 +95,10 @@
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
-    <ClCompile Include="Meta\Config\HAL.cpp" />
+    <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
+    <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
+    <ClCompile Include="PAL\OSAL\Windowing.cpp" />
+    <ClCompile Include="Meta\Config\HAL_Config.cpp" />
   </ItemGroup>
 </Project>

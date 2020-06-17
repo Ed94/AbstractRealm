@@ -19,7 +19,7 @@ Note: For now this is going to be a big copy and paste to an extent from the tri
 #include "LAL/LAL.hpp"
 
 #include "Meta/EngineInfo.hpp"
-#include "Meta/Config/OSAL.hpp"
+#include "Meta/Config/OSAL_Config.hpp"
 #include "OSAL/Platform.hpp"
 
 #include "GLFW_SAL.hpp"
@@ -53,7 +53,7 @@ namespace HAL
 				{
 					case EGPUPlatformAPI::Vulkan:
 					{
-						Initalize_GPUComms_Bind = Platform_Vulkan::InitializeVulkanApplication;
+						Initalize_GPUComms_Bind = Platform_Vulkan::Initalize_GPUComms_Vulkan;
 					}
 				}
 

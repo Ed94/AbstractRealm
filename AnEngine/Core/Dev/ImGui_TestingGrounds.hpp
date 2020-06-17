@@ -6,7 +6,9 @@
 
 
 #include "ImGui_SAL.hpp"
+#include "Meta/AppInfo.hpp"
 #include "PAL/OSAL/OSAL.hpp"
+#include "HAL/GPU_HAL.hpp"
 
 #include "LAL.hpp"
 
@@ -18,16 +20,24 @@ namespace Debug
 	namespace Imgui_Testing
 	{
 		using namespace LAL;
+		using namespace Meta;
 
 		using OSAL::Window;
 
-		bss< ptr<Window>> TestWindow;
+		BSS
+		(
+			ptr<Window> TestWindow;
+		)
 
+		Data
+		(
+			AppVersion AppVer = { 1, 0, 0 };
+		)
 
 
 		void InitializeDependencies()
 		{
-			
+			HAL::GPU::Initalize_GPUComms("ImGui Test", AppVer);
 		}
 
 
@@ -46,6 +56,8 @@ namespace Debug
 			try
 			{
 				InitializeDependencies();
+
+				InitalizeImgui();
 			}
 			catch (const std::exception& error)
 			{
