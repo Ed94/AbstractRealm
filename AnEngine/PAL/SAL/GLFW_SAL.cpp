@@ -57,4 +57,10 @@ namespace SAL::GLFW
 	{
 		glfwGetFramebufferSize(_window, &_width, &_height);
 	}
+
+	// TODO: use glfw callback func type instead of making it..
+	void SetWidnowSizeCallback(const ptr<Window> _window, void(*_callback)(ptr<Window>, int, int))
+	{
+		glfwSetWindowSizeCallback(_window, _callback);
+	}
 }

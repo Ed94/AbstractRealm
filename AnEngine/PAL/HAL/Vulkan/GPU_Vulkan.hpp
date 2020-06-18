@@ -95,7 +95,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				// Moved to an extent from the Vulkan TriangleTest
 				// Eventually this will be organized into a proper structural setup for modular use.
 
-				eGlobal AppInstance::Handle AppStateRef;
+				eGlobal AppInstance::Handle AppGPU;
 
 				eGlobal CommandBufferList CommandBuffers;
 				eGlobal VkCommandPool     CommandPool   ;   // TODO: Wrap
@@ -290,8 +290,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			QueueFamilyIndices FindQueueFamilies(PhysicalDevice::Handle _deviceHandle, Surface::Handle _surfaceHandle);
 
-			void FramebufferSizeCallback(Window* _window, int width, int height);
-
 			ExtensionIdentifierList GetRequiredExtensions();
 
 			Where<Meta::WindowingPlatform == Meta::EWindowingPlatform::GLFW,
@@ -321,7 +319,23 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EPresentationMode Surface_SwapChain_ChoosePresentationMode(const SurfacePresentationModeList& _surfacePresentationModes);
 
-			void Initalize_GPUComms_Vulkan(RoCStr _applicationName, AppVersion _applicationVersion);
+			void Initialize_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
+
+			void Cease_GPUComms();
+
+			void WaitFor_GPUIdle();
+
+
+			namespace Dirty
+			{
+				void GetRenderReady(ptr<OSAL::Window> _window);
+
+				void DeInitializeRenderReady(ptr<OSAL::Window> _window);
+
+				void DrawFrame(ptr<OSAL::Window> _window);
+
+				void ReinitializeRenderer(ptr<OSAL::Window> _window);
+			}
 		}
 	}
 
