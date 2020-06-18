@@ -85,6 +85,17 @@
     <ClInclude Include="Meta\Config\OSAL_Config.hpp" />
     <ClInclude Include="Core\Dev\ImGui_TestingGrounds.hpp" />
     <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui_internal.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_rectpack.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_textedit.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_truetype.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imconfig.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\misc\single_file\imgui_single_file.h" />
+    <ClInclude Include="PAL\OSAL\Threading.hpp" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -100,5 +111,15 @@
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
     <ClCompile Include="PAL\OSAL\Windowing.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
+    <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_demo.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_dx9.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
   </ItemGroup>
 </Project>

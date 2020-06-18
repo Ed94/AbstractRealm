@@ -135,6 +135,14 @@ namespace Debug
 
 		// Functions
 
+		void FramebufferSizeCallback(Window* _window, int width, int height)
+		{
+			//auto app = reinterpret_cast<HelloTriangleApplication*>(glfwGetWindowUserPointer(window));
+			// Not necessary, this isn't object oriented.
+
+			FramebufferResized = true;
+		}
+
 		void InitWindow()
 		{
 			using namespace SAL::GLFW;
@@ -147,7 +155,7 @@ namespace Debug
 			SetWindowCreationParameter(EWindowCreationParameter::Resizable, EBool      ::True  );
 
 			TriangleWindow =
-				MakeWindow(Width, Height, "AnEngine: Triangle Test", WindowedMode(), NotShared());
+				MakeWindow(Width, Height, "AnEngine: Triangle Test", WindowedMode, NotShared);
 
 			//glfwSetWindowUserPointer(window, this);
 			// Not necessary see FramebufferSizeCallback procedure.
@@ -304,14 +312,14 @@ namespace Debug
 		{
 			using namespace SAL::GLFW;
 
-			while (! CanClose(TriangleWindow))
+			while (! SAL::GLFW::CanClose(TriangleWindow))
 			{
 				PollEvents();
 
 				DrawFrame();
 			}
 
-			vkDeviceWaitIdle(LogicalDevice);   // TODO: Wrap
+			vkDeviceWaitIdle(LogicalDevice);   // TODO: Wrap 
 		}
 
 		void Cleanup()

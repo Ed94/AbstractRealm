@@ -380,6 +380,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\OSAL\Threading.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\OSAL\Windowing.hpp">
       <SubType>
       </SubType>
@@ -397,6 +401,16 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\SAL\ImGui_SAL.hpp" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imconfig.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui_internal.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_rectpack.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_textedit.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_truetype.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\Library.hpp">
       <SubType>
       </SubType>
@@ -454,8 +468,18 @@
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.cpp" />
     <ClCompile Include="PAL\OSAL\Windowing.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
+    <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_dx9.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_demo.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\misc\cpp\imgui_stdlib.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

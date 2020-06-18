@@ -65,11 +65,13 @@ namespace SAL::GLFW
 	using Monitor = GLFWmonitor;
 	using Window  = GLFWwindow ;
 
+	using WindowSize_CallbackFunc = GLFWwindowsizefun;
+
 
 	// Constants
 
-	constexpr ptr<Window > NotShared   () { return NULL; }
-	constexpr ptr<Monitor> WindowedMode() { return NULL; }
+	constexpr ptr<Window > NotShared    = NULL; 
+	constexpr ptr<Monitor> WindowedMode = NULL; 
 
 
 	// Functions
@@ -130,6 +132,8 @@ namespace SAL::GLFW
 	OS_WindowHandle> GetOS_WindowHandle(const ptr<Window> _window);
 
 	void GetFramebufferSize(const ptr<Window> _window, int& _width, int& _height);
+
+	void SetWidnowSizeCallback(const ptr<Window> _window, void(*_callback)(ptr<Window>, int, int));
 }
 
 

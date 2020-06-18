@@ -20,6 +20,8 @@ GPU Hardware Abstraction Layer
 #include "Meta/AppInfo.hpp"
 #include "Meta/Config/HAL_Config.hpp"
 
+#include "OSAL/OSAL.hpp"
+
 
 
 namespace HAL
@@ -74,6 +76,31 @@ namespace HAL
 		_appName: Name to represent this application to the GPU.
 		_version: Version of the application.
 		*/
-		void Initalize_GPUComms(RoCStr _appName, AppVersion _version);
+		void Initialize_GPUComms(RoCStr _appName, AppVersion _version);
+
+		void Cease_GPUComms();
+
+		void WaitFor_GPUIdle();
+
+
+		// Quick and dirty functionality. Due to lack of better implementation or time to make it.
+		namespace Dirty
+		{
+			/*
+			Does a quick and dirty GPU initialization for rendering.
+
+			Note: Only works for one window.
+			*/
+			void GetRenderReady(ptr<OSAL::Window> _window);
+
+			void DrawFrame(ptr<OSAL::Window> _window);
+
+			/*
+			Deinitialize of the Dirty_GetRenderReady setup.
+			*/
+			void DeinitializeRenderReady(ptr<OSAL::Window> _window);
+
+			void ReinitializeRenderer(ptr<OSAL::Window> _window);
+		}
 	}
 }

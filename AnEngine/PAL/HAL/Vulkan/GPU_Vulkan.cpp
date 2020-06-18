@@ -21,7 +21,7 @@
 
 			BSS
 			(
-				AppInstance::Handle AppStateRef;
+				AppInstance::Handle AppGPU;
 
 				CommandBufferList CommandBuffers;
 				VkCommandPool     CommandPool   ;   // TODO: Wrap
@@ -993,13 +993,7 @@
 				return indices;
 			}
 
-			void FramebufferSizeCallback(Window* _window, int width, int height)
-			{
-				//auto app = reinterpret_cast<HelloTriangleApplication*>(glfwGetWindowUserPointer(window));
-				// Not necessary, this isn't object oriented.
-
-				FramebufferResized = true;
-			}
+			
 
 			ExtensionIdentifierList GetRequiredExtensions()
 			{
@@ -1256,7 +1250,9 @@
 			}
 
 
-			void Initalize_GPUComms_Vulkan(RoCStr _applicationName, AppVersion _applicationVersion)
+			// GPU_HAL
+
+			void Initialize_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion)
 			{
 				CreateApplicationInstance
 				(
@@ -1264,8 +1260,190 @@
 					_applicationVersion, 
 					&ValidationLayerIdentifiers, 
 					&DebugMessenger_CreationSpec,
-					AppStateRef
+					AppGPU
 				);
+
+				SetupDebugMessenger(AppGPU, DebugMessenger_Handle);
+			}
+
+			void Cease_GPUComms()
+			{
+				AppInstance_Destory(AppGPU, nullptr);
+			}
+
+			void WaitFor_GPUIdle()
+			{
+				vkDeviceWaitIdle(LogicalDevice);
+			}
+			
+
+			namespace Dirty
+			{
+				void GetRenderReady(ptr<Window> _window)
+				{
+					CreateSurface(AppGPU, _window, SurfaceHandle);
+
+					PickPhysicalDevice(AppGPU, PhysicalDevice, SurfaceHandle, DeviceExtensions);
+
+					CreateLogicalDevice(PhysicalDevice, SurfaceHandle, DeviceExtensions, &ValidationLayerIdentifiers, LogicalDevice, GraphicsQueue, PresentationQueue);
+
+					CreateSwapChain(_window, PhysicalDevice, LogicalDevice, SurfaceHandle, SwapChain, SwapChain_ImageFormat, SwapChain_Extent, SwapChain_Images);
+
+					CreateImageViews(LogicalDevice, SwapChain_Images, SwapChain_ImageFormat, SwapChain_ImageViews);
+
+					CreateRenderPass(LogicalDevice, SwapChain_ImageFormat, RenderPass);
+
+					CreateGraphicsPipeline(LogicalDevice, SwapChain_Extent, RenderPass, PipelineLayout, GraphicsPipeline);
+
+					CreateFrameBuffers(LogicalDevice, RenderPass, SwapChain_Extent, SwapChain_ImageViews, SwapChain_Framebuffers);
+
+					CreateCommandPool(PhysicalDevice, LogicalDevice, SurfaceHandle, CommandPool);
+
+					CreateCommandBuffers(LogicalDevice, GraphicsPipeline, SwapChain_Framebuffers, SwapChain_Extent, RenderPass, CommandPool, CommandBuffers);;
+
+					CreateSyncObjects(LogicalDevice, MaxFramesInFlight, SwapChain_Images, ImageAvailable_Semaphores, RenderFinished_Semaphores, InFlightFences, ImagesInFlight);
+				}
+
+				void RecreateSwapChain(ptr<Window> _window)
+				{
+					// TODO: Wrap
+
+					int width = 0, height = 0;
+
+					glfwGetFramebufferSize(_window, &width, &height);
+
+					while (width == 0 || height == 0)
+					{
+						glfwGetFramebufferSize(_window, &width, &height);
+
+						glfwWaitEvents();
+					}
+
+					vkDeviceWaitIdle(LogicalDevice);
+
+					CleanupSwapChain(LogicalDevice, PipelineLayout, GraphicsPipeline, SwapChain, SwapChain_ImageViews, SwapChain_Framebuffers, RenderPass, CommandPool, CommandBuffers);
+
+					CreateSwapChain(_window, PhysicalDevice, LogicalDevice, SurfaceHandle, SwapChain, SwapChain_ImageFormat, SwapChain_Extent, SwapChain_Images);
+
+					CreateImageViews(LogicalDevice, SwapChain_Images, SwapChain_ImageFormat, SwapChain_ImageViews);
+					CreateRenderPass(LogicalDevice, SwapChain_ImageFormat, RenderPass);
+					CreateGraphicsPipeline(LogicalDevice, SwapChain_Extent, RenderPass, PipelineLayout, GraphicsPipeline);
+					CreateFrameBuffers(LogicalDevice, RenderPass, SwapChain_Extent, SwapChain_ImageViews, SwapChain_Framebuffers);
+					CreateCommandBuffers(LogicalDevice, GraphicsPipeline, SwapChain_Framebuffers, SwapChain_Extent, RenderPass, CommandPool, CommandBuffers);
+					CreateCommandBuffers(LogicalDevice, GraphicsPipeline, SwapChain_Framebuffers, SwapChain_Extent, RenderPass, CommandPool, CommandBuffers);;
+				}
+
+				// TODO: Wrap
+				void DrawFrame(ptr<Window> _window)
+				{
+					vkWaitForFences(LogicalDevice, 1, &InFlightFences[CurrentFrame], VK_TRUE, UINT64_MAX);
+
+					uint32 imageIndex;
+
+					VkResult&& result = vkAcquireNextImageKHR(LogicalDevice, SwapChain, UINT64_MAX, ImageAvailable_Semaphores[CurrentFrame], VK_NULL_HANDLE, &imageIndex);
+
+					if (result == VK_ERROR_OUT_OF_DATE_KHR) 
+					{
+						RecreateSwapChain(_window);
+
+						return;
+					}
+					else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) 
+					{
+						throw std::runtime_error("Failed to acquire swap chain image!");
+					}
+
+					if (ImagesInFlight[imageIndex] != VK_NULL_HANDLE) 
+						vkWaitForFences(LogicalDevice, 1, &ImagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+
+					ImagesInFlight[imageIndex] = InFlightFences[CurrentFrame];
+
+
+					VkSubmitInfo submitInfo {};
+
+					submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+
+					VkSemaphore waitSemaphores[] = { ImageAvailable_Semaphores[CurrentFrame] };
+
+					VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+					submitInfo.waitSemaphoreCount = 1;
+					submitInfo.pWaitSemaphores    = waitSemaphores;
+					submitInfo.pWaitDstStageMask  = waitStages;
+
+					submitInfo.commandBufferCount = 1;
+					submitInfo.pCommandBuffers    = &CommandBuffers[imageIndex];
+
+
+					VkSemaphore signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame] };
+
+					submitInfo.signalSemaphoreCount = 1;
+					submitInfo.pSignalSemaphores    = signalSemaphores;
+
+
+					vkResetFences(LogicalDevice, 1, &InFlightFences[CurrentFrame]);
+
+					if (vkQueueSubmit(GraphicsQueue, 1, &submitInfo, InFlightFences[CurrentFrame]) != VK_SUCCESS) 
+						throw std::runtime_error("Failed to submit draw command buffer!");
+
+
+					VkPresentInfoKHR presentInfo{};
+
+					presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+					presentInfo.waitSemaphoreCount = 1;
+					presentInfo.pWaitSemaphores    = signalSemaphores;
+
+
+					VkSwapchainKHR swapChains[] = { SwapChain };
+
+					presentInfo.swapchainCount = 1;
+					presentInfo.pSwapchains    = swapChains;
+					presentInfo.pImageIndices  = &imageIndex;
+
+					presentInfo.pResults = nullptr; // Optional
+
+
+					result = vkQueuePresentKHR(PresentationQueue, &presentInfo);
+
+					if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || FramebufferResized) 
+					{
+						FramebufferResized = false;
+
+						RecreateSwapChain(_window);
+					}
+					else if (result != VK_SUCCESS) 
+					{
+						throw std::runtime_error("failed to present swap chain image!");
+					}
+
+					CurrentFrame = (CurrentFrame + 1) % MaxFramesInFlight;
+				}
+
+				void DeInitializeRenderReady(ptr<OSAL::Window> _window)
+				{
+					CleanupSwapChain(LogicalDevice, PipelineLayout, GraphicsPipeline, SwapChain, SwapChain_ImageViews, SwapChain_Framebuffers, RenderPass, CommandPool, CommandBuffers);
+
+					for (size_t index = 0; index < MaxFramesInFlight; index++) 
+					{
+						vkDestroySemaphore(LogicalDevice, RenderFinished_Semaphores[index], nullptr);   // TODO: Wrap
+						vkDestroySemaphore(LogicalDevice, ImageAvailable_Semaphores[index], nullptr);   // TODO: Wrap
+						vkDestroyFence    (LogicalDevice, InFlightFences           [index], nullptr);   // TODO: Wrap
+					}
+
+					vkDestroyCommandPool(LogicalDevice, CommandPool, nullptr);   // TODO: Wrap
+
+					LogicalDevice_Destory(LogicalDevice, nullptr);
+
+					if (Vulkan_EnableValidationLayers) DestroyMessenger(AppGPU, DebugMessenger_Handle, nullptr);
+
+					DestroySurface(AppGPU, SurfaceHandle, nullptr);
+				}
+
+				void ReinitializeRenderer(ptr<OSAL::Window> _window)
+				{
+					RecreateSwapChain(_window);
+				}
 			}
 		}
 	}
