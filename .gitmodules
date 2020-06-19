@@ -61,3 +61,6 @@
 [submodule "AnEngine/PAL/ThirdParty/Libraries/ctti"]
 	path = AnEngine/PAL/ThirdParty/Libraries/ctti
 	url = git@github.com:Manu343726/ctti
+[submodule "AnEngine/PAL/HAL/Vulkan/VaultedThermals"]
+	path = AnEngine/PAL/HAL/Vulkan/VaultedThermals
+	url = git@github.com:Ed94/VaultedThermals
