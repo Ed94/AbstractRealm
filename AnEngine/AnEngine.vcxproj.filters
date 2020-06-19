@@ -128,5 +128,6 @@
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_dx9.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\Samples\HelloTriangle.cpp" />
   </ItemGroup>
 </Project>

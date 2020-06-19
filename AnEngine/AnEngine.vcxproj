@@ -495,6 +495,7 @@
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\Samples\HelloTriangle.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL.cpp" />
     <ClCompile Include="PAL\OSAL\Windowing.cpp" />
