@@ -41,6 +41,7 @@ namespace HAL
 			using Delegate_Initalize_GPUComms = Function<void(RoCStr, AppVersion)>;
 			using Delegate_Cease_GPUComms     = Function<decltype(Cease_GPUComms)>;
 			using Delegate_WaitFor_GPUIdle    = Function<decltype(WaitFor_GPUIdle)>;
+			using Delegate_GetRenderContext   = Function<decltype(GetRenderContext)>;
 
 			namespace Dirty
 			{
@@ -57,6 +58,7 @@ namespace HAL
 				Delegate_Initalize_GPUComms Initialize_GPUComms_Bind;
 				Delegate_Cease_GPUComms     Cease_GPUComms_Bind     ;
 				Delegate_WaitFor_GPUIdle    WaitFor_GPUIdle         ;
+				Delegate_GetRenderContext   GetRenderContext_Bind;
 
 				namespace Dirty
 				{
@@ -80,6 +82,8 @@ namespace HAL
 						Cease_GPUComms_Bind = Platform_Vulkan::Cease_GPUComms;
 							
 						WaitFor_GPUIdle = Platform_Vulkan::WaitFor_GPUIdle;
+
+						GetRenderContext_Bind = Platform_Vulkan::GetRenderContext;
 
 						Dirty::GetRenderReady_Bind = Platform_Vulkan::Dirty::GetRenderReady;
 
@@ -121,6 +125,11 @@ namespace HAL
 		void WaitFor_GPUIdle()
 		{
 			PlatformBackend::WaitFor_GPUIdle();
+		}
+
+		ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window)
+		{
+			return PlatformBackend::GetRenderContext_Bind(_window);
 		}
 
 		// Dirty

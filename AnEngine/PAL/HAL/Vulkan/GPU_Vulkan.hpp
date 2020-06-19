@@ -21,6 +21,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 #include "Core/IO/Basic_FileIO.hpp"
 
+#include "GPU_HAL_CoreDefs.hpp"
+
 #include "OSAL/Platform.hpp"
 
 #include "OSAL/Windowing.hpp"
@@ -87,6 +89,25 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				SurfacePresentationModeList PresentationModes;
 			};
 
+			struct RenderContext : ARenderContext
+			{
+				ptr<Window> Window;
+
+				AppInstance::Handle    AppGPU;
+				PhysicalDevice::Handle PhysicalDevice;
+				LogicalDevice::Handle LogicalDevice;
+				LogicalDevice::Queue::Handle GraphicsQueue;
+				LogicalDevice::Queue::Handle PresentationQueue;
+				QueueFamilyIndices QueueFamilies;
+				VkPipelineCache PipelineCache;   // PipelineCache TODO: Wrap the type...
+				// DescriptorPool
+				const VkAllocationCallbacks* Allocator;
+				// MinImageCount
+				// 
+			};
+
+			using RenderContextList = DynamicArray<RenderContext>;
+
 			
 			// Static Data
 
@@ -106,6 +127,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				eGlobal LogicalDevice::Handle        LogicalDevice    ;
 				eGlobal LogicalDevice::Queue::Handle GraphicsQueue    ;
 				eGlobal LogicalDevice::Queue::Handle PresentationQueue;
+
+				eGlobal QueueFamilyIndices QueueFamilies;
 
 				eGlobal Pipeline::Layout::Handle PipelineLayout;
 
@@ -129,6 +152,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				eGlobal FrameBufferList SwapChain_Framebuffers;
 
 				eGlobal VkRenderPass RenderPass;   // TODO: Wrap.
+
+				eGlobal RenderContextList RenderContextPool;    // Contains a reference to every created render context. (Early implementation...)
 			);
 
 			Data
@@ -324,6 +349,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			void Cease_GPUComms();
 
 			void WaitFor_GPUIdle();
+
+			ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window);
 
 
 			namespace Dirty

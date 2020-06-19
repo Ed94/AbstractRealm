@@ -13,6 +13,7 @@ GPU Hardware Abstraction Layer
 
 // Engine
 
+#include "GPU_HAL_CoreDefs.hpp"
 #include "HAL/Vulkan/GPU_Vulkan.hpp"
 
 #include "LAL/LAL.hpp"
@@ -35,15 +36,7 @@ namespace HAL
 		using Meta::AppVersion;
 
 
-		// Structs
-
-		/*
-		Used for keeping track of physical GPUs present.
-		*/
-		struct PhysicalDevice
-		{
-			String Name;
-		};
+		
 
 
 		// Functionality
@@ -82,6 +75,12 @@ namespace HAL
 
 		void WaitFor_GPUIdle();
 
+		/*
+		Provides the render context for the provided window.
+
+		Note: Render contexts are different depending on GPU API. You must check the GPU_API in use and cast the render context reference to its associated type.
+		*/
+		ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window);
 
 		// Quick and dirty functionality. Due to lack of better implementation or time to make it.
 		namespace Dirty

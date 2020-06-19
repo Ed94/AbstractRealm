@@ -17,6 +17,9 @@
 	{
 		namespace Platform_Vulkan
 		{
+			//using namespace Vulkan::Vault_00;
+			using namespace Vulkan::Vault_01;
+
 			// Static Data
 
 			BSS
@@ -43,6 +46,8 @@
 
 				SemaphoreList ImageAvailable_Semaphores;
 				SemaphoreList RenderFinished_Semaphores;
+
+				RenderContextList RenderContextPool; 
 
 				Surface::Handle SurfaceHandle;
 
@@ -963,7 +968,7 @@
 
 				for (const auto& queueFamily : queueFamilies)
 				{
-					if (queueFamily.QueueFlags.Has(EQueue::Graphics))
+					if (queueFamily.QueueFlags.Has(EQueueFlag::Graphics))
 					{
 						indices.GraphicsFamily = index;
 					}
@@ -992,8 +997,6 @@
 
 				return indices;
 			}
-
-			
 
 			ExtensionIdentifierList GetRequiredExtensions()
 			{
@@ -1276,6 +1279,16 @@
 				vkDeviceWaitIdle(LogicalDevice);
 			}
 			
+			ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window)
+			{
+				RenderContext renderContext {};
+
+				// Fill this shit
+
+				RenderContextPool.push_back(renderContext);
+
+				return &RenderContextPool.back();
+			}
 
 			namespace Dirty
 			{

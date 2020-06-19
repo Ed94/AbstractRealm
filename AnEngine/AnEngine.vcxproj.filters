@@ -34,17 +34,13 @@
     <ClInclude Include="LAL\Types\Bitmask.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.hpp" />
     <ClInclude Include="LAL\ConventionEnforcer.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Enums.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Types.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_AppInstance.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Debug.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Constants.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_PhysicalDevice.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Layer.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\ConventionEnforcer.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Bitmask.hpp" />
     <ClInclude Include="LAL\Utilities\STL_Ambiguous.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_LogicalDevice.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Surface.hpp" />
@@ -96,6 +92,17 @@
     <ClInclude Include="PAL\OSAL\Threading.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.h" />
+    <ClInclude Include="Core\Dev\Vulkan_VKTutFull_Test.hpp" />
+    <ClInclude Include="PAL\HAL\GPU_HAL_CoreDefs.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_ConventionEnforcer.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_Bitmask.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Resource.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Sampler.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Initalization.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CoreVersions.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Backend.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Queues.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

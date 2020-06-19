@@ -4,9 +4,6 @@
 [submodule "AnEngine/PAL/SAL/glm"]
 	path = AnEngine/PAL/ThirdParty/Libraries/glm
 	url = git@github.com:g-truc/glm
-[submodule "AnEngine/PAL/HAL/Vulkan/VaultedThermals"]
-	path = AnEngine/PAL/HAL/Vulkan/VaultedThermals
-	url = git@github.com:Ed94/VaultedThermals
 [submodule "AnEngine/PAL/SAL/imgui"]
 	path = AnEngine/PAL/ThirdParty/Libraries/imgui
 	url = git@github.com:ocornut/imgui

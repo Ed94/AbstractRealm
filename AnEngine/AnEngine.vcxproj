@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -175,6 +175,10 @@
     <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
     <ClInclude Include="Core\Dev\ImGui_TestingGrounds.hpp" />
     <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp" />
+    <ClInclude Include="Core\Dev\Vulkan_VKTutFull_Test.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Core\Execution\Executer.hpp">
       <SubType>
       </SubType>
@@ -305,14 +309,22 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
+    <ClInclude Include="PAL\HAL\GPU_HAL_CoreDefs.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\HAL\HAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPU_Vulkan.hpp">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_AppInstance.hpp">
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Backend.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CoreVersions.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Initalization.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -349,6 +361,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Queues.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ShaderModule.hpp">
       <SubType>
       </SubType>
@@ -366,8 +382,20 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Bitmask.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\ConventionEnforcer.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_Bitmask.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_ConventionEnforcer.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Resource.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Sampler.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\Vulkan_API.hpp">
       <SubType>
       </SubType>

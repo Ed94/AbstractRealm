@@ -33,14 +33,14 @@ namespace Debug
 		(
 			ptr<Window> TestWindow;
 
-			FrameBufferDimensions WindowSize = { 1280, 720 };
-
 			Imgui::IO IO_Config;
 		)
 
 		Data
 		(
 			AppVersion AppVer = { 1, 0, 0 };
+
+			FrameBufferDimensions WindowSize = { 1280, 720 };
 
 			bool WindowResized = false;
 		)
@@ -128,11 +128,11 @@ namespace Debug
 			{
 				InitializeDependencies();
 
-				//InitalizeImgui();
+				InitalizeImgui();
 
 				PrimitiveCycler();
 
-				//DeinitalizeImgui();
+				DeinitalizeImgui();
 
 				DeinitalizeDependencies();
 			}
