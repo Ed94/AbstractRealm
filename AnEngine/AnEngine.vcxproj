@@ -174,7 +174,6 @@
     </ClInclude>
     <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
     <ClInclude Include="Core\Dev\ImGui_TestingGrounds.hpp" />
-    <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp" />
     <ClInclude Include="Core\Dev\Vulkan_VKTutFull_Test.hpp">
       <SubType>
       </SubType>
@@ -320,11 +319,19 @@
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Backend.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Command.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CoreVersions.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Initalization.hpp">
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CPP_STL.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Initialization.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -337,14 +344,6 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Enums.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ImageView.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Layer.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_LogicalDevice.hpp">
       <SubType>
       </SubType>
@@ -353,7 +352,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Pipeline.hpp">
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Pipelines.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -361,11 +360,15 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Queues.hpp">
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Queries.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ShaderModule.hpp">
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_RenderPass.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Shaders.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -374,6 +377,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_SwapChain.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_SyncAndCacheControl.hpp">
       <SubType>
       </SubType>
     </ClInclude>

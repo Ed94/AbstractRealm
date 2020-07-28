@@ -37,11 +37,14 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 	{
 		namespace Platform_Vulkan
 		{
+			using namespace VaultedThermals;
+			using namespace VaultedThermals::Vault_01;
+			using namespace VaultedThermals::SPIR_V;
+
 			// Usings
 
 			using namespace LAL   ;
 			using namespace Meta  ;
-			using namespace Vulkan;
 
 			// Vulkan
 
@@ -111,8 +114,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			
 			// Static Data
 
-			BSS
-			(
+			//BSS
+			//(
 				// Moved to an extent from the Vulkan TriangleTest
 				// Eventually this will be organized into a proper structural setup for modular use.
 
@@ -122,11 +125,11 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				eGlobal VkCommandPool     CommandPool   ;   // TODO: Wrap
 
 				//eGlobal PhysicalDeviceList  PhysicalDevices      ;
-				eGlobal Messenger::Handle   DebugMessenger_Handle;
+				eGlobal DebugMessenger::Handle   DebugMessenger_Handle;
 
-				eGlobal LogicalDevice::Handle        LogicalDevice    ;
-				eGlobal LogicalDevice::Queue::Handle GraphicsQueue    ;
-				eGlobal LogicalDevice::Queue::Handle PresentationQueue;
+				eGlobal LogicalDevice::Handle LogicalDevice    ;
+				eGlobal LogicalDevice::Queue::Handle         GraphicsQueue    ;
+				eGlobal LogicalDevice::Queue::Handle         PresentationQueue;
 
 				eGlobal QueueFamilyIndices QueueFamilies;
 
@@ -146,7 +149,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 				eGlobal Extent2D      SwapChain_Extent     ;
 				eGlobal ImageList     SwapChain_Images     ;
-				eGlobal EImageFormat  SwapChain_ImageFormat;
+				eGlobal EFormat       SwapChain_ImageFormat;
 				eGlobal ImageViewList SwapChain_ImageViews ;
 
 				eGlobal FrameBufferList SwapChain_Framebuffers;
@@ -154,10 +157,10 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				eGlobal VkRenderPass RenderPass;   // TODO: Wrap.
 
 				eGlobal RenderContextList RenderContextPool;    // Contains a reference to every created render context. (Early implementation...)
-			);
+			//);
 
-			Data
-			(
+			//Data
+			//(
 				eGlobal bool FramebufferResized;
 
 				eGlobal DataSize CurrentFrame;
@@ -169,7 +172,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				eGlobal PhysicalDevice::Handle PhysicalDevice;
 
 				eGlobal ValidationLayerList ValidationLayerIdentifiers;
-			)
+			//)
 						
 
 			// Functions
@@ -202,7 +205,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				RoCStr _appName, 
 				AppVersion& _version, 
 				const ptr<ValidationLayerList> _optionalValidationLayers, 
-				const ptr<Messenger::CreateInfo> _optionalDebugMessengerCreateSpec,
+				const ptr<DebugMessenger::CreateInfo> _optionalDebugMessengerCreateSpec,
 				AppInstance::Handle& _applicationInstance
 			);
 
@@ -250,7 +253,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			(
 				LogicalDevice::Handle _logicalDevice       ,
 				ImageList&            _swapChainImages     , 
-				EImageFormat          _swapChainImageFormat,
+				EFormat          _swapChainImageFormat,
 				ImageViewList&        _imageViewContainer      // Will be populated.
 			);
 
@@ -268,7 +271,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			void CreateRenderPass
 			(
 				LogicalDevice::Handle _logicalDevice,
-				EImageFormat          _imageFormat  ,
+				EFormat          _imageFormat  ,
 				VkRenderPass&         _renderPass       // Will be provided.
 			);
 
@@ -286,7 +289,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				LogicalDevice::Handle  _logicalDevice,
 				Surface::Handle        _surfaceHandle,
 				SwapChain::Handle&     _swapChain,
-				EImageFormat&          _swapChainImageFormat,
+				EFormat&          _swapChainImageFormat,
 				Extent2D&              _swapChainExtent,
 				ImageList&             _swapChain_Images
 			);
@@ -309,7 +312,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			(
 				MessageServerityFlags   _messageServerity,
 				MessageTypeFlags        _messageType,
-				const Messenger::CallbackData _callbackData,
+				const DebugMessenger::CallbackData _callbackData,
 				ptr<void>               _userData
 			);
 
@@ -326,7 +329,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			
 			void PickPhysicalDevice(AppInstance::Handle _applicationInstance, PhysicalDevice::Handle& _physicalDevice, Surface::Handle _surface, ExtensionIdentifierList _extensionSpecified);
 
-			void PopulateDebugMessengerCreateInfo(Messenger::CreateInfo& _msngrCreateInfo);
+			void PopulateDebugMessengerCreateInfo(DebugMessenger::CreateInfo& _msngrCreateInfo);
 
 			SwapChainSupportDetails QuerySwapChainSupport(PhysicalDevice::Handle _deviceHandle, Surface::Handle _surfaceHandle);
 
@@ -335,7 +338,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			void SetupDebugMessenger
 			(
 				AppInstance::Handle _applicationInstance,
-				Messenger::Handle& _debugMessenger
+				DebugMessenger::Handle& _debugMessenger
 			);
 
 			Extent2D Surface_SwapChain_ChooseExtent(const Surface::Capabilities& _capabilities, const ptr<Window> _window);

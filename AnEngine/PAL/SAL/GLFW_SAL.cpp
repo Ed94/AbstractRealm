@@ -45,6 +45,11 @@ namespace SAL::GLFW
 		return glfwGetRequiredInstanceExtensions(getAddress(_extensionCount));
 	}
 
+	void WaitForEvents()
+	{
+		glfwWaitEvents();
+	}
+
 	// OS Related
 
 	Where<OSAL::IsWindows, OSAL::PlatformTypes::

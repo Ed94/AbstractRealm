@@ -33,7 +33,7 @@ namespace SAL::GLFW
 {
 	using namespace LAL;
 	using namespace OSAL;
-	using namespace Vulkan;
+	using namespace VaultedThermals;
 
 	// Enums
 
@@ -115,6 +115,8 @@ namespace SAL::GLFW
 
 	template<typename ParameterType>
 	void SetWindowCreationParameter(EWindowCreationParameter ParameterToSet, ParameterType ParameterValue);
+
+	void WaitForEvents();
 
 	void Terminate();
 

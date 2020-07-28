@@ -37,7 +37,10 @@ namespace IO
 
 	SpecifyBitmaskable(EOpenFlag);
 
-	using OpenFlags = LAL::Bitmask<EOpenFlag, std::ios::openmode>;
+	using OpenFlags = 
+		Bitmask<EOpenFlag, std::ios::openmode>;
+		
+		//LAL::Bitmask<EOpenFlag, std::ios::openmode>;
 
 
 	constexpr int FileStream_Beginning = 0;

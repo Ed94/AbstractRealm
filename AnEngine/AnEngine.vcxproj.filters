@@ -40,14 +40,12 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Debug.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Constants.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_PhysicalDevice.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Layer.hpp" />
     <ClInclude Include="LAL\Utilities\STL_Ambiguous.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_LogicalDevice.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Surface.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Platform.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_SwapChain.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Vaults.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ImageView.hpp" />
     <ClInclude Include="Renderer\Shader\RudimentaryCompiler.hpp" />
     <ClInclude Include="LAL\Types\CharacterTypes.hpp" />
     <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.frag" />
@@ -59,8 +57,6 @@
     <ClInclude Include="LAL\Declarations.hpp" />
     <ClInclude Include="LAL\STL_Exceptions.hpp" />
     <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_ShaderModule.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Pipeline.hpp" />
     <ClInclude Include="PAL\SAL\ImGui_SAL.hpp" />
     <ClInclude Include="PAL\OSAL\Windowing.hpp" />
     <ClInclude Include="PAL\OSAL\Platform.hpp" />
@@ -70,7 +66,6 @@
     <ClInclude Include="Meta\Config\Overrides.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\Library.hpp" />
     <ClInclude Include="LAL\Utilities\STL_Functions.hpp" />
-    <ClInclude Include="Core\Dev\Vulkan_TriangleTest.hpp" />
     <ClInclude Include="PAL\PAL.hpp" />
     <ClInclude Include="PAL\HAL\HAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\Vulkan_API.hpp" />
@@ -99,10 +94,16 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Resource.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Sampler.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Initalization.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CoreVersions.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Backend.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Queues.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Initialization.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_SyncAndCacheControl.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_RenderPass.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Shaders.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Pipelines.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Queries.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Command.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CPP_STL.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

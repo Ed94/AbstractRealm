@@ -1,15 +1,16 @@
 #pragma once
 
 
+#include "HAL/GPU_HAL.hpp"
+
+
+#include "PAL/OSAL/OSAL.hpp"
+
+
 
 #include "LAL/LAL.hpp"
 
-
-
 #include "Meta/AppInfo.hpp"
-#include "HAL/GPU_HAL.hpp"
-#include "PAL/OSAL/OSAL.hpp"
-
 
 
 namespace Debug::Vulkan_FullTut_Test
@@ -48,13 +49,13 @@ namespace Debug::Vulkan_FullTut_Test
 
 		HAL::GPU::Load();
 
-		HAL::GPU::Initialize_GPUComms("ImGui Test", AppVer);
+		HAL::GPU::Initialize_GPUComms("Vulkan Tutorial Full Test", AppVer);
 
 		// Window
 
 		WindowCreationSpec windowSpec = {};
 
-		windowSpec.WindowTitle = "ImGui Test"             ;
+		windowSpec.WindowTitle = "Vulkan Tutorial Test"   ;
 		windowSpec.WindowSize  = WindowSize               ;
 		windowSpec.Windowed    = OSAL::WindowedMode       ;
 		windowSpec.ClientAPI   = GLFW::EClient_API::No_API;

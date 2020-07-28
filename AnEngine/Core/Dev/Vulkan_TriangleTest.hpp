@@ -118,7 +118,7 @@ namespace Debug
 
 		bss< Extent2D     > SwapChain_Extent     ;
 		bss< ImageList    > SwapChain_Images     ;
-		bss< EImageFormat > SwapChain_ImageFormat;
+		bss< EFormat > SwapChain_ImageFormat;
 		bss< ImageViewList> SwapChain_ImageViews ;
 
 		data< bool> FramebufferResized = false;

@@ -12,33 +12,25 @@
 
 
 
-#ifndef BITMASKABLE
-#define BITMASKABLE
+#ifndef BITMASK_DEFINED
+#define BITMASK_DEFINED
 
+	template<typename Enum>
+	struct Bitmaskable
+	{
+		static const bool specified = false;
+	};
 
+	#define SpecifyBitmaskable(__ENUM)      \
+	template<>                              \
+	struct Bitmaskable<__ENUM>              \
+	{							            \
+		static const bool specified = true; \
+	};	
 
-template<typename Enum>
-struct Bitmaskable
-{
-	static const bool specified = false;
-};
-
-#define SpecifyBitmaskable(__ENUM) \
-template<> \
-struct Bitmaskable<__ENUM> \
-{							\
-	static const bool specified = true; \
-};	
-
-#endif
-
-
-
-namespace LAL
-{
 	template
 	<
-		typename EnumType, 
+		typename EnumType,
 		typename BitmaskRepresentation
 	>
 	struct Bitmask
@@ -51,7 +43,7 @@ namespace LAL
 	public:
 
 		using Representation = BitmaskRepresentation;
-		using Enum           =  EnumType;
+		using Enum = EnumType;
 
 		template<typename... BitType>
 		void Add(const BitType... _bits)
@@ -70,7 +62,7 @@ namespace LAL
 			mask = (Representation(_bits) | ...);
 		}
 
-		_ThisType& operator = (const BitmaskRepresentation& _mask ) { mask = _mask; return this; }
+		_ThisType& operator = (const BitmaskRepresentation _mask) { mask = _mask; return *this; }
 
 		operator Representation()
 		{
@@ -80,4 +72,12 @@ namespace LAL
 	private:
 		Representation mask;
 	};
+
+#endif
+
+
+
+namespace LAL
+{
+	
 }
