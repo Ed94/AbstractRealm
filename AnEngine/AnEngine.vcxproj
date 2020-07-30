@@ -454,15 +454,11 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.frag">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.vert">
+    <ClInclude Include="Renderer\Shader\VKTut_V1\VKTut_V1.hpp">
       <SubType>
       </SubType>
     </ClInclude>

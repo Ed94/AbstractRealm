@@ -8,6 +8,7 @@
 
 
 #include "Renderer/Shader/TriangleShader/TriangleShader.hpp"
+#include "Renderer/Shader/VKTut_V1/VKTut_V1.hpp"
 
 
 
@@ -36,7 +37,7 @@
 
 				Pipeline::Layout::Handle PipelineLayout;
 
-				VkPipeline GraphicsPipeline;
+				Pipeline::Handle GraphicsPipeline;
 
 				FenceList InFlightFences;
 				FenceList ImagesInFlight;
@@ -57,7 +58,17 @@
 
 				FrameBufferList SwapChain_Framebuffers;
 
-				VkRenderPass RenderPass;   // TODO: Wrap.
+				RenderPass::Handle RenderPass;   
+
+				Buffer::Handle VertexBuffer;
+
+				Memory::Handle VertexBufferMemory;
+
+				Buffer::Handle IndexBuffer;
+
+				Memory::Handle IndexBufferMemory;
+				
+
 			//);
 
 			Data
@@ -82,6 +93,112 @@
 			{
 				ValidationLayer_Khronos
 			};
+
+
+			#pragma region VKTut_V1
+
+				using AttributeDescription = Pipeline::VertexInputState::AttributeDescription;
+				using BindingDescription   = Pipeline::VertexInputState::BindingDescription  ;
+
+				using VertexAttributes = StaticArray<AttributeDescription, 2>;
+
+				struct Vertex
+				{
+					struct
+					{
+						float32 X, Y;
+					} 
+					
+					Position;
+
+					struct
+					{
+						float32 R,G,B;
+					}
+					
+					Color;
+
+
+					static constexpr VertexAttributes GetAttributeDescriptions()
+					{
+						VertexAttributes result{};
+
+						// Position Attributes
+
+						AttributeDescription& posAttrib = result.at(0);
+
+						posAttrib.Binding = 0;
+						posAttrib.Location = 0;
+						posAttrib.Format = EFormat::R32_G32_SFloat;
+						posAttrib.Offset = offsetof(Vertex, Vertex::Position);
+
+						// Color Attributes
+
+						AttributeDescription& colorAttrib = result.at(1);
+
+						colorAttrib.Binding = 0;
+						colorAttrib.Location = 1;
+						colorAttrib.Format = EFormat::R32_G32_B32_SFloat;
+						colorAttrib.Offset = offsetof(Vertex, Vertex::Color);
+
+						return result;
+					}
+
+					static constexpr BindingDescription GetBindingDescription()
+					{
+						BindingDescription result{};
+
+						result.Binding = 0;
+						result.Stride = sizeof(Vertex);
+						result.InputRate = EVertexInputRate::Vertex;
+
+						return result;
+					}
+				};
+
+				const DynamicArray<Vertex> TriangleVerticies = 
+				{
+					{
+						{ 0.0f, -0.5f      }, 
+						{ 1.0f,  0.0f, 0.0f}
+					},
+					{
+						{ 0.5f, 0.5f      }, 
+						{ 0.0f, 1.0f, 0.0f}
+					},
+					{
+						{-0.5f, 0.5f      }, 
+						{ 0.0f, 0.0f, 1.0f}
+					}
+				};
+
+				const DynamicArray<Vertex> SquareVerticies =
+				{
+					{
+						{ -0.5f, -0.5f      }, 
+						{  1.0f, 0.0f, 0.0f }
+					},
+					{
+						{ 0.5f, -0.5f      }, 
+						{ 0.0f, 1.0f, 0.0f }
+					},
+					{
+						{ 0.5f, 0.5f       }, 
+						{ 0.0f, 0.0f, 1.0f }
+					},
+					{
+						{ -0.5f, 0.5f       }, 
+						{  1.0f, 1.0f, 1.0f }
+					}
+				};
+
+				const DynamicArray<uInt16> SquareIndices =
+				{
+					0, 1, 2, 2, 3, 0
+				};
+
+
+			#pragma region VKTut_V1
 
 
 			// Forwards
@@ -168,6 +285,49 @@
 				SwapChain::Destroy(_logicalDevice, _swapChain, nullptr);
 			}
 
+			void CopyBuffer(Buffer::Handle _sourceBuffer, Buffer::Handle _destinationBuffer, DeviceSize _size)
+			{
+				CommandBuffer::AllocateInfo allocationInfo {};
+
+				allocationInfo.SType = allocationInfo.STypeEnum;
+				allocationInfo.Level = ECommandBufferLevel::Primary;
+				allocationInfo.Pool = CommandPool;
+				allocationInfo.BufferCount = 1;
+
+				CommandBuffer::Handle commandBuffer;
+
+				CommandBuffer::Allocate(LogicalDevice, allocationInfo, &commandBuffer);
+
+				CommandBuffer::BeginInfo beginInfo {};
+
+				beginInfo.SType = beginInfo.STypeEnum;
+				beginInfo.Flags = ECommandBufferUsageFlag::OneTimeSubmit;
+
+				CommandBuffer::BeginRecord(commandBuffer, beginInfo);
+
+					Buffer::CopyInfo copyRegion {};
+
+					copyRegion.SourceOffset = 0; // Optional
+					copyRegion.DestinationOffset = 0; // Optional
+					copyRegion.Size = _size;
+
+					CommandBuffer::CopyBuffer(commandBuffer, _sourceBuffer, _destinationBuffer, 1, &copyRegion);
+
+				CommandBuffer::EndRecord(commandBuffer);
+
+				CommandBuffer::SubmitInfo submitInfo{};
+
+				submitInfo.SType = submitInfo.STypeEnum;
+				submitInfo.CommandBufferCount = 1;
+				submitInfo.CommandBuffers = &commandBuffer;
+
+				CommandBuffer::SubmitToQueue(GraphicsQueue, 1, &submitInfo, Fence::NullHandle);
+
+				LogicalDevice::Queue::WaitUntilIdle(GraphicsQueue);
+		
+				CommandBuffer::Free(LogicalDevice, CommandPool, 1, &commandBuffer);
+			}
+
 			void CreateApplicationInstance
 			(
 				      RoCStr                          _appName                         , 
@@ -191,7 +351,7 @@
 						throw std::runtime_error("Validation layers requested, but are not available!");
 				}
 
-				appSpec.SType         = AppInstance::AppInfo::STypeEnum                            ;
+				appSpec.SType         = appSpec.STypeEnum                                          ;
 				appSpec.AppName       = _appName                                                   ;
 				appSpec.AppVersion    = MakeVersion(_version.Major, _version.Minor, _version.Patch);
 				appSpec.EngineName    = Meta::EngineName                                           ;
@@ -235,6 +395,36 @@
 					throw std::runtime_error("Triangle Test: Failed to create Vulkan app instance.");
 			}
 
+			void CreateBuffer(DeviceSize _size, Buffer::UsageFlags _usuage, Memory::PropertyFlags _propertyFlags, Buffer::Handle& _buffer, Memory::Handle& _bufferMemory)
+			{
+				Buffer::CreateInfo bufferInfo {};
+
+				bufferInfo.SType = bufferInfo.STypeEnum;
+				bufferInfo.Size = _size;
+
+				bufferInfo.Usuage = _usuage;
+
+				bufferInfo.SharingMode = ESharingMode::Excusive;
+
+				if (Buffer::Create(LogicalDevice, bufferInfo, nullptr, _buffer) != EResult::Success)
+					throw RuntimeError("Failed to create vertex buffer!");
+
+				Memory::Requirements memReq;
+
+				Buffer::GetMemoryRequirements(LogicalDevice, _buffer, memReq);
+
+				Memory::AllocateInfo allocationInfo {};
+
+				allocationInfo.SType = allocationInfo.STypeEnum;
+				allocationInfo.AllocationSize = memReq.Size;
+				allocationInfo.MemoryTypeIndex = FindMemoryType(PhysicalDevice, memReq.MemoryTypeBits, _propertyFlags);
+
+				if (LogicalDevice::Memory::Allocate(LogicalDevice, allocationInfo, nullptr, _bufferMemory) != EResult::Success)
+					throw RuntimeError("Failed to allocate vertex buffer memory!");
+
+				Buffer::BindMemory(LogicalDevice, _buffer, _bufferMemory, 0);
+			}
+
 			void CreateCommandBuffers
 			(
 				LogicalDevice::Handle _logicalDevice         ,
@@ -253,9 +443,9 @@
 
 				CommandBuffer::AllocateInfo allocSpec {};
 
-				allocSpec.SType       = CommandBuffer::AllocateInfo::STypeEnum  ;
-				allocSpec.Pool        = _commandPool                            ;
-				allocSpec.Level       = ECommandBufferLevel::Primary            ;
+				allocSpec.SType       = allocSpec.STypeEnum                   ;
+				allocSpec.Pool        = _commandPool                          ;
+				allocSpec.Level       = ECommandBufferLevel::Primary          ;
 				allocSpec.BufferCount = uint32(_commandBufferContainer.size());
 
 				if (CommandBuffer::Allocate(_logicalDevice, allocSpec, _commandBufferContainer.data()) != EResult::Success) 
@@ -267,50 +457,64 @@
 				{
 					CommandBuffer::BeginInfo beginInfo {};
 
-					beginInfo.SType           = CommandBuffer::BeginInfo::STypeEnum;
-					beginInfo.Flags           = 0                                  ;   // Optional
-					beginInfo.InheritanceInfo = nullptr                            ;   // Optional
+					beginInfo.SType           = beginInfo.STypeEnum;
+					beginInfo.Flags           = 0                  ;   // Optional
+					beginInfo.InheritanceInfo = nullptr            ;   // Optional
 
 					if (CommandBuffer::BeginRecord(_commandBufferContainer[index], beginInfo) != EResult::Success) 
-					{
 						throw std::runtime_error("Failed to begin recording command buffer!");
-					}
 
-					RenderPass::BeginInfo renderPassInfo{};
+						RenderPass::BeginInfo renderPassInfo{};
 
-					renderPassInfo.SType       = RenderPass::BeginInfo::STypeEnum;
-					renderPassInfo.RenderPass  = _renderPass                     ;
-					renderPassInfo.Framebuffer = _swapChain_FrameBuffers[index]  ;
+						renderPassInfo.SType       = renderPassInfo.STypeEnum      ;
+						renderPassInfo.RenderPass  = _renderPass                   ;
+						renderPassInfo.Framebuffer = _swapChain_FrameBuffers[index];
 
-					renderPassInfo.RenderArea.Offset.X = 0;
-					renderPassInfo.RenderArea.Offset.Y = 0;
+						renderPassInfo.RenderArea.Offset.X = 0;
+						renderPassInfo.RenderArea.Offset.Y = 0;
 
-					renderPassInfo.RenderArea.Extent = _swapChain_Extent;
+						renderPassInfo.RenderArea.Extent = _swapChain_Extent;
 
-					ClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+						ClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-					renderPassInfo.ClearValueCount = 1          ;
-					renderPassInfo.ClearValues     = &clearColor;
+						renderPassInfo.ClearValueCount = 1          ;
+						renderPassInfo.ClearValues     = &clearColor;
 
-					CommandBuffer::BeginRenderPass(_commandBufferContainer[index], renderPassInfo, ESubpassContents::Inline);
+						CommandBuffer::BeginRenderPass(_commandBufferContainer[index], renderPassInfo, ESubpassContents::Inline);
 
-						CommandBuffer::BindPipeline(_commandBufferContainer[index], EPipelineBindPoint::Graphics, _graphicsPipeline);
+							CommandBuffer::BindPipeline(_commandBufferContainer[index], EPipelineBindPoint::Graphics, _graphicsPipeline);
 
-						CommandBuffer::Draw
-						(
-							_commandBufferContainer[index], 
-							0,
-							3,
-							0,
-							1
-						);
+							Buffer::Handle vertexBuffers = VertexBuffer;
 
-					CommandBuffer::EndRenderPass(_commandBufferContainer[index]);
+							DeviceSize offsets = 0;
+
+							CommandBuffer::BindVertexBuffers(_commandBufferContainer[index], 0, 1, vertexBuffers, offsets);
+
+							CommandBuffer::BindIndexBuffer(_commandBufferContainer[index], IndexBuffer, 0, EIndexType::uInt16);
+
+							CommandBuffer::DrawIndexed
+							(
+								_commandBufferContainer[index],
+								SCast<uint32>(SquareIndices.size()),
+								1,
+								0,
+								0,
+								0
+							);
+
+							/*CommandBuffer::Draw
+							(
+								_commandBufferContainer[index], 
+								0,
+								3,
+								0,
+								1
+							);*/
+
+						CommandBuffer::EndRenderPass(_commandBufferContainer[index]);
 
 					if (CommandBuffer::EndRecord(_commandBufferContainer[index]) != EResult::Success) 
-					{
 						throw std::runtime_error("Failed to record command buffer!");
-					}	
 				}
 			}
 
@@ -326,7 +530,7 @@
 
 				CommandPool::CreateInfo poolInfo {};
 
-				poolInfo.SType            = CommandPool::CreateInfo::STypeEnum       ;
+				poolInfo.SType            = poolInfo.STypeEnum                       ;
 				poolInfo.QueueFamilyIndex = queueFamilyIndices.GraphicsFamily.value();
 				poolInfo.Flags            = CommandPool::CreateFlgas()               ;   // Optional
 																					    
@@ -356,13 +560,13 @@
 
 					Framebuffer::CreateInfo framebufferInfo {};
 
-					framebufferInfo.SType           = Framebuffer::CreateInfo::STypeEnum;
-					framebufferInfo.RenderPass      = _renderPass                       ;
-					framebufferInfo.AttachmentCount = 1                                 ;
-					framebufferInfo.Attachments     = attachments                       ;
-					framebufferInfo.Width           = _swapChainExtent.Width            ;
-					framebufferInfo.Height          = _swapChainExtent.Height           ;
-					framebufferInfo.Layers          = 1                                 ;
+					framebufferInfo.SType           = framebufferInfo.STypeEnum;
+					framebufferInfo.RenderPass      = _renderPass              ;
+					framebufferInfo.AttachmentCount = 1                        ;
+					framebufferInfo.Attachments     = attachments              ;
+					framebufferInfo.Width           = _swapChainExtent.Width   ;
+					framebufferInfo.Height          = _swapChainExtent.Height  ;
+					framebufferInfo.Layers          = 1                        ;
 
 					if (Framebuffer::Create(_logicalDevice, framebufferInfo, nullptr, _swapChainFrameBuffers[index]) != EResult::Success) 
 					{
@@ -381,59 +585,62 @@
 			(
 				LogicalDevice::Handle     _logicalDevice   ,
 				Extent2D                  _swapChainExtent ,
-				VkRenderPass              _renderPass      ,
+				StaticArray<ShaderModule::Handle, 2> _shaders,
 				Pipeline::Layout::Handle& _pipelineLayout  ,
+				RenderPass::Handle        _renderPass      ,
 				VkPipeline&               _graphicsPipeline   // Will be provided.
 			)
 			{
-				using Bytecode_Buffer = DynamicArray<Bytecode>;
+				Pipeline::ShaderStage::CreateInfo vertexShaderStage_CreeationSpec{};
+				Pipeline::ShaderStage::CreateInfo fragShaderStage_CreationSpec{};
 
-				// Shader setup
+				vertexShaderStage_CreeationSpec.SType = vertexShaderStage_CreeationSpec.STypeEnum;
+				vertexShaderStage_CreeationSpec.Stage = EShaderStageFlag::Vertex                 ;
 
-				using namespace Renderer::Shader;
+				vertexShaderStage_CreeationSpec.Module = _shaders[0];
+				vertexShaderStage_CreeationSpec.Name   = "main"     ;
 
-				auto triShader_VertCode = IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Vert.spv");
-				auto triShader_FragCode = IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Frag.spv");
+				fragShaderStage_CreationSpec.SType = fragShaderStage_CreationSpec.STypeEnum;
+				fragShaderStage_CreationSpec.Stage = EShaderStageFlag::Fragment            ;
 
-				//TODO: FIGURE THIS OUT.
-				Bytecode_Buffer triShader_Vert_Bytecode(triShader_VertCode.begin(), triShader_VertCode.end());
-				Bytecode_Buffer triShader_Frag_Bytecode(triShader_FragCode.begin(), triShader_FragCode.end());
+				fragShaderStage_CreationSpec.Module = _shaders[1];
+				fragShaderStage_CreationSpec.Name   = "main"     ;
 
-				ShaderModule::Handle triShaderModule_Vert = CreateTriShaderModule(_logicalDevice, triShader_VertCode);
-				ShaderModule::Handle triShaderModule_Frag = CreateTriShaderModule(_logicalDevice, triShader_FragCode);
-
-				Pipeline::ShaderStage::CreateInfo triShaderStage_Vert_CreationSpec{};
-				Pipeline::ShaderStage::CreateInfo triShaderStage_Frag_CreationSpec{};
-
-				triShaderStage_Vert_CreationSpec.SType = Pipeline::ShaderStage::CreateInfo::STypeEnum;
-				triShaderStage_Vert_CreationSpec.Stage = EShaderStageFlag::Vertex                    ;
-
-				triShaderStage_Vert_CreationSpec.Module = triShaderModule_Vert;
-				triShaderStage_Vert_CreationSpec.Name   = "main"              ;
-
-				triShaderStage_Frag_CreationSpec.SType = Pipeline::ShaderStage::CreateInfo::STypeEnum;
-				triShaderStage_Frag_CreationSpec.Stage = EShaderStageFlag::Fragment                  ;
-
-				triShaderStage_Frag_CreationSpec.Module = triShaderModule_Frag;
-				triShaderStage_Frag_CreationSpec.Name   = "main"              ;
-
-				Pipeline::ShaderStage::CreateInfo shaderStages[] = { triShaderStage_Vert_CreationSpec, triShaderStage_Frag_CreationSpec };
+				Pipeline::ShaderStage::CreateInfo shaderStages[] = { vertexShaderStage_CreeationSpec, fragShaderStage_CreationSpec };
 
 				// Fixed Function
 
 				Pipeline::VertexInputState::CreateInfo vertexInputState_CreationSpec{};
 
-				vertexInputState_CreationSpec.SType = Pipeline::VertexInputState::CreateInfo::STypeEnum;
+				vertexInputState_CreationSpec.SType = vertexInputState_CreationSpec.STypeEnum;
 
-				vertexInputState_CreationSpec.VertexBindingDescriptionCount = 0      ;
+				// TODO: Need to figure out how the GPU is going to be fed shader/vertex information etc.
+
+				// Triangle Shader
+
+				/*vertexInputState_CreationSpec.VertexBindingDescriptionCount = 0      ;
 				vertexInputState_CreationSpec.BindingDescriptions           = nullptr;
 
 				vertexInputState_CreationSpec.AttributeDescriptionCount = 0      ;
-				vertexInputState_CreationSpec.AttributeDescription      = nullptr;
+				vertexInputState_CreationSpec.AttributeDescription      = nullptr;*/
+
+			
+				// VKTut_V1
+
+				auto binding = Vertex::GetBindingDescription();
+				auto attributes = Vertex::GetAttributeDescriptions();
+
+				vertexInputState_CreationSpec.VertexBindingDescriptionCount = 1;
+				vertexInputState_CreationSpec.AttributeDescriptionCount = SCast<uint32>(attributes.size());
+
+				vertexInputState_CreationSpec.BindingDescriptions = &binding;
+				vertexInputState_CreationSpec.AttributeDescription = attributes.data();
+
+				
 
 				Pipeline::InputAssemblyState::CreateInfo inputAssembly_CreationSpec{};
 
-				inputAssembly_CreationSpec.SType = Pipeline::InputAssemblyState::CreateInfo::STypeEnum;
+				inputAssembly_CreationSpec.SType = inputAssembly_CreationSpec.STypeEnum;
 
 				inputAssembly_CreationSpec.Topology               = EPrimitiveTopology::TriangleList;
 				inputAssembly_CreationSpec.PrimitiveRestartEnable = false                           ;
@@ -456,19 +663,19 @@
 
 				Pipeline::ViewportState::CreateInfo viewportState_CreationSpec{};
 
-				viewportState_CreationSpec.SType         = Pipeline::ViewportState::CreateInfo::STypeEnum;
-				viewportState_CreationSpec.ViewportCount = 1                                             ;
-				viewportState_CreationSpec.Viewports     = &viewport                                     ;
-				viewportState_CreationSpec.ScissorCount  = 1                                             ;
-				viewportState_CreationSpec.Scissors      = &scissor                                      ;
+				viewportState_CreationSpec.SType         = viewportState_CreationSpec.STypeEnum;
+				viewportState_CreationSpec.ViewportCount = 1                                   ;
+				viewportState_CreationSpec.Viewports     = &viewport                           ;
+				viewportState_CreationSpec.ScissorCount  = 1                                   ;
+				viewportState_CreationSpec.Scissors      = &scissor                            ;
 
 				Pipeline::RasterizationState::CreateInfo rasterizer{};
 
-				rasterizer.SType                   = Pipeline::RasterizationState::CreateInfo::STypeEnum;
-				rasterizer.EnableDepthClamp        = EBool::False                                       ;
-				rasterizer.EnableRasterizerDiscard = EBool::False                                       ;
-				rasterizer.PolygonMode             = EPolygonMode::Fill                                 ;
-				rasterizer.LineWidth               = 1.0f                                               ;
+				rasterizer.SType                   = rasterizer.STypeEnum;
+				rasterizer.EnableDepthClamp        = EBool::False        ;
+				rasterizer.EnableRasterizerDiscard = EBool::False        ;
+				rasterizer.PolygonMode             = EPolygonMode::Fill  ;
+				rasterizer.LineWidth               = 1.0f                ;
 
 				rasterizer.CullMode.Set(ECullModeFlag::Back);
 
@@ -480,13 +687,13 @@
 
 				Pipeline::MultisampleState::CreateInfo multisampling_CreationSpec{};
 
-				multisampling_CreationSpec.SType                 = Pipeline::MultisampleState::CreateInfo::STypeEnum;
-				multisampling_CreationSpec.EnableSampleShading   = EBool::False                                     ;
-				multisampling_CreationSpec.RasterizationSamples  = ESampleCount::_1                                 ;
-				multisampling_CreationSpec.MinSampleShading      = 1.0f                                             ;
-				multisampling_CreationSpec.SampleMask            = nullptr                                          ;
-				multisampling_CreationSpec.EnableAlphaToCoverage = EBool::False                                     ;
-				multisampling_CreationSpec.EnableAlphaToOne      = EBool::False                                     ;
+				multisampling_CreationSpec.SType                 = multisampling_CreationSpec.STypeEnum;
+				multisampling_CreationSpec.EnableSampleShading   = EBool::False                        ;
+				multisampling_CreationSpec.RasterizationSamples  = ESampleCount::_1                    ;
+				multisampling_CreationSpec.MinSampleShading      = 1.0f                                ;
+				multisampling_CreationSpec.SampleMask            = nullptr                             ;
+				multisampling_CreationSpec.EnableAlphaToCoverage = EBool::False                        ;
+				multisampling_CreationSpec.EnableAlphaToOne      = EBool::False                        ;
 
 				Pipeline::ColorBlendState::AttachmentState colorBlend_Attachment{};
 
@@ -508,15 +715,15 @@
 
 				Pipeline::ColorBlendState::CreateInfo colorBlending_CreationSpec{};
 
-				colorBlending_CreationSpec.SType                 = Pipeline::ColorBlendState::CreateInfo::STypeEnum;
-				colorBlending_CreationSpec.EnableLogicOperations = EBool::False                                    ;
-				colorBlending_CreationSpec.LogicOperation        = ELogicOperation::Copy                           ;
-				colorBlending_CreationSpec.AttachmentCount       = 1                                               ;
-				colorBlending_CreationSpec.Attachments           = &colorBlend_Attachment                          ;
-				colorBlending_CreationSpec.BlendConstants[0]     = 0.0f                                            ;
-				colorBlending_CreationSpec.BlendConstants[1]     = 0.0f                                            ;
-				colorBlending_CreationSpec.BlendConstants[2]     = 0.0f                                            ;
-				colorBlending_CreationSpec.BlendConstants[3]     = 0.0f                                            ;
+				colorBlending_CreationSpec.SType                 = colorBlending_CreationSpec.STypeEnum;
+				colorBlending_CreationSpec.EnableLogicOperations = EBool::False                        ;
+				colorBlending_CreationSpec.LogicOperation        = ELogicOperation::Copy               ;
+				colorBlending_CreationSpec.AttachmentCount       = 1                                   ;
+				colorBlending_CreationSpec.Attachments           = &colorBlend_Attachment              ;
+				colorBlending_CreationSpec.BlendConstants[0]     = 0.0f                                ;
+				colorBlending_CreationSpec.BlendConstants[1]     = 0.0f                                ;
+				colorBlending_CreationSpec.BlendConstants[2]     = 0.0f                                ;
+				colorBlending_CreationSpec.BlendConstants[3]     = 0.0f                                ;
 
 				EDynamicState States[] =
 				{
@@ -526,17 +733,17 @@
 
 				Pipeline::DynamicState::CreateInfo dynamicState {};
 
-				dynamicState.SType      = Pipeline::DynamicState::CreateInfo::STypeEnum;
-				dynamicState.StateCount = 2                                            ;
-				dynamicState.States     = States                                       ;
+				dynamicState.SType      = dynamicState.STypeEnum;
+				dynamicState.StateCount = 2                     ;
+				dynamicState.States     = States                ;
 
 				Pipeline::Layout::CreateInfo pipelineLayout_CreationSpec {};
 
-				pipelineLayout_CreationSpec.SType                  = Pipeline::Layout::CreateInfo::STypeEnum;
-				pipelineLayout_CreationSpec.SetLayoutCount         = 0                                      ;
-				pipelineLayout_CreationSpec.SetLayouts             = nullptr                                ;
-				pipelineLayout_CreationSpec.PushConstantRangeCount = 0                                      ;
-				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr                                ;
+				pipelineLayout_CreationSpec.SType                  = pipelineLayout_CreationSpec.STypeEnum;
+				pipelineLayout_CreationSpec.SetLayoutCount         = 0                                    ;
+				pipelineLayout_CreationSpec.SetLayouts             = nullptr                              ;
+				pipelineLayout_CreationSpec.PushConstantRangeCount = 0                                    ;
+				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr                              ;
 
 				EResult&& piplineLayout_CreationResult = 
 					Pipeline::Layout::Create(_logicalDevice, pipelineLayout_CreationSpec, nullptr, _pipelineLayout);
@@ -548,9 +755,9 @@
 
 				Pipeline::Graphics::CreateInfo pipelineInfo {};
 
-				pipelineInfo.SType      = Pipeline::Graphics::CreateInfo::STypeEnum;
-				pipelineInfo.StageCount = 2                                        ;
-				pipelineInfo.Stages     = shaderStages                             ;
+				pipelineInfo.SType      = pipelineInfo.STypeEnum;
+				pipelineInfo.StageCount = 2                     ;
+				pipelineInfo.Stages     = shaderStages          ;
 
 				pipelineInfo.VertexInputState   = &vertexInputState_CreationSpec;
 				pipelineInfo.InputAssemblyState = &inputAssembly_CreationSpec   ;
@@ -573,9 +780,6 @@
 				{
 					throw std::runtime_error("Failed to create graphics pipeline!");
 				}
-
-				ShaderModule::Destory(_logicalDevice, triShaderModule_Vert, nullptr);
-				ShaderModule::Destory(_logicalDevice, triShaderModule_Frag, nullptr);
 			}	
 
 			void CreateImageViews
@@ -592,10 +796,10 @@
 				{
 					ImageView::CreateInfo creationSpec {};
 
-					creationSpec.SType    = ImageView::CreateInfo::STypeEnum;
-					creationSpec.Image    = _swapChainImages[index]         ;
-					creationSpec.ViewType = EImageViewType::_2D             ;
-					creationSpec.Format   = _swapChainImageFormat           ;
+					creationSpec.SType    = creationSpec.STypeEnum ;
+					creationSpec.Image    = _swapChainImages[index];
+					creationSpec.ViewType = EImageViewType::_2D    ;
+					creationSpec.Format   = _swapChainImageFormat  ;
 
 					creationSpec.Components.R = EComponentSwizzle::Identitity;
 					creationSpec.Components.G = EComponentSwizzle::Identitity;
@@ -616,6 +820,48 @@
 						throw std::runtime_error("Failed to create image views!");
 					}
 				}
+			}
+
+			void CreateIndexBuffer()
+			{
+				DeviceSize bufferSize = sizeof(SquareIndices[0]) * SquareIndices.size();
+
+				Buffer::UsageFlags usuageFlags; usuageFlags.Set(EBufferUsage::TransferSource);
+
+				Memory::PropertyFlags propertyFlags; propertyFlags.Set(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent);
+
+				Buffer::Handle stagingBuffer;
+
+				Memory::Handle stagingBufferMemory;
+
+				CreateBuffer(bufferSize, usuageFlags, propertyFlags, stagingBuffer, stagingBufferMemory);
+
+				// Hard coded vertex data...
+
+				VoidPtr vertexData;
+
+				Memory::MapFlags mapflags;
+
+				LogicalDevice::Memory::Map(LogicalDevice, stagingBufferMemory, 0, bufferSize, mapflags, vertexData);
+
+				memcpy(vertexData, SquareIndices.data(), DataSize(bufferSize));
+
+				LogicalDevice::Memory::Unmap(LogicalDevice, stagingBufferMemory);
+
+				CreateBuffer
+				(
+					bufferSize,
+					Buffer::UsageFlags(EBufferUsage::TransferDestination, EBufferUsage::IndexBuffer),
+					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal),
+					IndexBuffer,
+					IndexBufferMemory
+				);
+
+				CopyBuffer(stagingBuffer, IndexBuffer, bufferSize);
+
+				Buffer::Destroy(LogicalDevice, stagingBuffer, nullptr);
+
+				LogicalDevice::Memory::Free(LogicalDevice, stagingBufferMemory, nullptr);
 			}
 
 			void CreateLogicalDevice
@@ -649,10 +895,10 @@
 				{
 					LogicalDevice::Queue::CreateInfo queueCreateInfo{};
 
-					queueCreateInfo.SType            = LogicalDevice::Queue::CreateInfo::STypeEnum;
-					queueCreateInfo.QueueFamilyIndex = queueFamily                                ;
-					queueCreateInfo.QueueCount       = 1                                          ; 
-					queueCreateInfo.QueuePriorities  = &queuePriority                             ;
+					queueCreateInfo.SType            = queueCreateInfo.STypeEnum;
+					queueCreateInfo.QueueFamilyIndex = queueFamily              ;
+					queueCreateInfo.QueueCount       = 1                        ; 
+					queueCreateInfo.QueuePriorities  = &queuePriority           ;
 
 					queueCreateInfos.push_back(queueCreateInfo);
 				}
@@ -663,12 +909,12 @@
 
 				LogicalDevice::CreateInfo createInfo{};
 
-				createInfo.SType                 = LogicalDevice::CreateInfo::STypeEnum;
-				createInfo.QueueCreateInfoCount  = queueCreateInfos.size()             ;
-				createInfo.QueueCreateInfos      = queueCreateInfos.data()             ;
-				createInfo.EnabledFeatures       = &physDeviceFeatures                 ;
-				createInfo.EnabledExtensionNames = _extensionsToSpecify.data()         ;
-				createInfo.EnabledExtensionCount = _extensionsToSpecify.size()         ;
+				createInfo.SType                 = createInfo.STypeEnum       ;
+				createInfo.QueueCreateInfoCount  = queueCreateInfos.size()    ;
+				createInfo.QueueCreateInfos      = queueCreateInfos.data()    ;
+				createInfo.EnabledFeatures       = &physDeviceFeatures        ;
+				createInfo.EnabledExtensionNames = _extensionsToSpecify.data();
+				createInfo.EnabledExtensionCount = _extensionsToSpecify.size();
 
 				if (Vulkan_EnableValidationLayers)
 				{
@@ -726,11 +972,11 @@
 
 				RenderPass::CreateInfo renderPassInfo{};
 
-				renderPassInfo.SType           = RenderPass::CreateInfo::STypeEnum;
-				renderPassInfo.AttachmentCount = 1                                ;
-				renderPassInfo.Attachments     = &colorAttachment                 ;
-				renderPassInfo.SubpassCount    = 1                                ;
-				renderPassInfo.Subpasses       = &subpass                         ;
+				renderPassInfo.SType           = renderPassInfo.STypeEnum;
+				renderPassInfo.AttachmentCount = 1                       ;
+				renderPassInfo.Attachments     = &colorAttachment        ;
+				renderPassInfo.SubpassCount    = 1                       ;
+				renderPassInfo.Subpasses       = &subpass                ;
 
 
 				RenderPass::SubpassDependency dependency{};
@@ -764,7 +1010,7 @@
 			{
 				Surface::CreateInfo createInfo{};
 
-				createInfo.SType       = Surface::CreateInfo::STypeEnum   ;
+				createInfo.SType       = createInfo.STypeEnum             ;
 				createInfo.OSWinHandle = OSAL::GetOS_WindowHandle(_window);   // TODO: Use OSAL instead.
 				createInfo.OSAppHandle = Surface::GetOS_AppHandle()       ;
 
@@ -807,13 +1053,13 @@
 
 				SwapChain::CreateInfo creationSpec {};
 
-				creationSpec.SType            = SwapChain::CreateInfo::STypeEnum;
-				creationSpec.Surface          = _surfaceHandle                  ;
-				creationSpec.MinImageCount    = numImagesDesired                ;
-				creationSpec.ImageFormat      = surfaceFormat.Format            ;
-				creationSpec.ImageColorSpace  = surfaceFormat.ColorSpace        ;
-				creationSpec.ImageExtent      = extent                          ;
-				creationSpec.ImageArrayLayers = 1                               ;
+				creationSpec.SType            = creationSpec.STypeEnum  ;
+				creationSpec.Surface          = _surfaceHandle          ;
+				creationSpec.MinImageCount    = numImagesDesired        ;
+				creationSpec.ImageFormat      = surfaceFormat.Format    ;
+				creationSpec.ImageColorSpace  = surfaceFormat.ColorSpace;
+				creationSpec.ImageExtent      = extent                  ;
+				creationSpec.ImageArrayLayers = 1                       ;
 
 				creationSpec.ImageUsage.Set(EImageUsage::Color_Attachment);
 
@@ -878,11 +1124,11 @@
 
 				Semaphore::CreateInfo semaphore_CreationSpec {};
 
-				semaphore_CreationSpec.SType = Semaphore::CreateInfo::STypeEnum;
+				semaphore_CreationSpec.SType = semaphore_CreationSpec.STypeEnum;
 
 				Fence::CreateInfo fence_CreationSpec {};
 
-				fence_CreationSpec.SType = Fence::CreateInfo::STypeEnum;
+				fence_CreationSpec.SType = fence_CreationSpec.STypeEnum;
 
 				fence_CreationSpec.Flags.Set(EFenceCreateFlag::Signaled);
 
@@ -901,13 +1147,13 @@
 				}
 			}
 
-			ShaderModule::Handle CreateTriShaderModule(LogicalDevice::Handle _logicalDevice, const IO::FileBuffer& code)
+			ShaderModule::Handle CreateShaderModule(LogicalDevice::Handle _logicalDevice, const IO::FileBuffer& code)
 			{
 				using ByteCode = uint32;
 
 				ShaderModule::CreateInfo creationSpec{};
 
-				creationSpec.SType     = ShaderModule::CreateInfo::STypeEnum;
+				creationSpec.SType     = creationSpec.STypeEnum;
 				creationSpec.Extension = NULL                               ;
 				creationSpec.CodeSize  = code.size()                        ;
 				creationSpec.Code      = RCast<const ByteCode>(code.data()) ;
@@ -922,6 +1168,96 @@
 				}
 
 				return createdModule;
+			}
+
+			StaticArray<ShaderModule::Handle, 2> CreateTriShaders(LogicalDevice::Handle _logicalDevice)
+			{
+				using Bytecode_Buffer = DynamicArray<Bytecode>;
+
+				// Shader setup
+
+				using namespace Renderer::Shader;
+
+				auto triShader_VertCode = IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Vert.spv");
+				auto triShader_FragCode = IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Frag.spv");
+
+				//TODO: FIGURE THIS OUT.
+				Bytecode_Buffer triShader_Vert_Bytecode(triShader_VertCode.begin(), triShader_VertCode.end());
+				Bytecode_Buffer triShader_Frag_Bytecode(triShader_FragCode.begin(), triShader_FragCode.end());
+
+				ShaderModule::Handle triShaderModule_Vert = CreateShaderModule(_logicalDevice, triShader_VertCode);
+				ShaderModule::Handle triShaderModule_Frag = CreateShaderModule(_logicalDevice, triShader_FragCode);
+
+				StaticArray<ShaderModule::Handle, 2> result = { triShaderModule_Vert, triShaderModule_Frag };
+
+				return result;
+			}
+
+			StaticArray<ShaderModule::Handle, 2> Create_VKTut_V1_Shaders(LogicalDevice::Handle _logicalDevice)
+			{
+				using Bytecode_Buffer = DynamicArray<Bytecode>;
+
+				// Shader setup
+
+				using namespace Renderer::Shader;
+
+				auto vertCode = IO::BufferFile(String(Paths::VKTut_V1) + "VKTut_V1_Vert.spv");
+				auto fragCode = IO::BufferFile(String(Paths::VKTut_V1) + "VKTut_V1_Frag.spv");
+
+				//TODO: FIGURE THIS OUT.
+				Bytecode_Buffer vertBytecode(vertCode.begin(), vertCode.end());
+				Bytecode_Buffer fragBytecode(fragCode.begin(), fragCode.end());
+
+				ShaderModule::Handle vertShaderModule = CreateShaderModule(_logicalDevice, vertCode);
+				ShaderModule::Handle fragShaderModule = CreateShaderModule(_logicalDevice, fragCode);
+
+				StaticArray<ShaderModule::Handle, 2> result = { vertShaderModule, fragShaderModule };
+
+				return result;
+			}
+
+			
+
+			void CreateVertexBuffers(PhysicalDevice::Handle _physicalDevice, LogicalDevice::Handle _device, Buffer::Handle& _vertexBuffer, Memory::Handle& _vertexBufferMemory)
+			{
+				DeviceSize bufferSize = sizeof(SquareVerticies[0]) * SquareVerticies.size();
+
+				Buffer::UsageFlags usuageFlags; usuageFlags.Set(EBufferUsage::TransferSource);
+
+				Memory::PropertyFlags propertyFlags; propertyFlags.Set(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent);
+
+				Buffer::Handle stagingBuffer;
+
+				Memory::Handle stagingBufferMemory;
+
+				CreateBuffer(bufferSize, usuageFlags, propertyFlags, stagingBuffer, stagingBufferMemory);
+
+				// Hard coded vertex data...
+
+				VoidPtr vertexData;
+
+				Memory::MapFlags mapflags;
+
+				LogicalDevice::Memory::Map(_device, stagingBufferMemory, 0, bufferSize, mapflags, vertexData);
+
+					memcpy(vertexData, SquareVerticies.data(), DataSize(bufferSize));
+
+				LogicalDevice::Memory::Unmap(_device, stagingBufferMemory);
+
+				CreateBuffer
+				(
+					bufferSize, 
+					Buffer::UsageFlags(EBufferUsage::TransferDestination, EBufferUsage::VertexBuffer), 
+					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
+					_vertexBuffer, 
+					_vertexBufferMemory
+				);
+
+				CopyBuffer(stagingBuffer, _vertexBuffer, bufferSize);
+
+				Buffer::Destroy(LogicalDevice, stagingBuffer, nullptr);
+
+				LogicalDevice::Memory::Free(LogicalDevice, stagingBufferMemory, nullptr);
 			}
 
 			Bool DebugCallback
@@ -999,6 +1335,27 @@
 				}
 
 				return indices;
+			}
+
+			uint32 FindMemoryType(PhysicalDevice::Handle _device,  uint32 _typeFilter, Memory::PropertyFlags _properties)
+			{
+				PhysicalDevice::MemoryProperties memProperties;
+
+				PhysicalDevice::GetMemoryProperties(_device, memProperties);
+
+				for (DeviceSize index = 0; index < memProperties.TypeCount; index++)
+				{
+					if 
+					(
+						_typeFilter & (1 << index) &&
+						(memProperties.Types[index].propertyFlags & _properties) == _properties
+					)
+					{
+						return index;
+					}
+				}
+
+				throw RuntimeError("Failed to find suitable memory type!");
 			}
 
 			ExtensionIdentifierList GetRequiredExtensions()
@@ -1232,10 +1589,10 @@
 				for (const auto& availableFormat : _availableFormats)
 				{
 					if 
-						(
-							availableFormat.Format     == EFormat    ::B8_G8_R8_A8_SRGB   &&
-							availableFormat.ColorSpace == EColorSpace::KHR_SRGB_NonLinear         
-						)
+					(
+						availableFormat.Format     == EFormat    ::B8_G8_R8_A8_SRGB   &&
+						availableFormat.ColorSpace == EColorSpace::KHR_SRGB_NonLinear         
+					)
 					{
 						return availableFormat;
 					}
@@ -1312,11 +1669,20 @@
 
 					CreateRenderPass(LogicalDevice, SwapChain_ImageFormat, RenderPass);
 
-					CreateGraphicsPipeline(LogicalDevice, SwapChain_Extent, RenderPass, PipelineLayout, GraphicsPipeline);
+					StaticArray<ShaderModule::Handle, 2> shaders = Create_VKTut_V1_Shaders(LogicalDevice);
+
+					CreateGraphicsPipeline(LogicalDevice, SwapChain_Extent, shaders, PipelineLayout, RenderPass, GraphicsPipeline);
+
+					ShaderModule::Destory(LogicalDevice, shaders[0], nullptr);
+					ShaderModule::Destory(LogicalDevice, shaders[1], nullptr);
 
 					CreateFrameBuffers(LogicalDevice, RenderPass, SwapChain_Extent, SwapChain_ImageViews, SwapChain_Framebuffers);
 
 					CreateCommandPool(PhysicalDevice, LogicalDevice, SurfaceHandle, CommandPool);
+
+					CreateVertexBuffers(PhysicalDevice, LogicalDevice, VertexBuffer, VertexBufferMemory);
+
+					CreateIndexBuffer();
 
 					CreateCommandBuffers(LogicalDevice, GraphicsPipeline, SwapChain_Framebuffers, SwapChain_Extent, RenderPass, CommandPool, CommandBuffers);;
 
@@ -1346,7 +1712,12 @@
 
 					CreateRenderPass(LogicalDevice, SwapChain_ImageFormat, RenderPass);
 
-					CreateGraphicsPipeline(LogicalDevice, SwapChain_Extent, RenderPass, PipelineLayout, GraphicsPipeline);
+					StaticArray<ShaderModule::Handle, 2> shaders = Create_VKTut_V1_Shaders(LogicalDevice);
+
+					CreateGraphicsPipeline(LogicalDevice, SwapChain_Extent, shaders, PipelineLayout, RenderPass, GraphicsPipeline);
+
+					ShaderModule::Destory(LogicalDevice, shaders[0], nullptr);
+					ShaderModule::Destory(LogicalDevice, shaders[1], nullptr);
 
 					CreateFrameBuffers(LogicalDevice, RenderPass, SwapChain_Extent, SwapChain_ImageViews, SwapChain_Framebuffers);
 
@@ -1421,9 +1792,9 @@
 
 					SwapChain::PresentationInfo presentInfo{};
 
-					presentInfo.SType              = SwapChain::PresentationInfo::STypeEnum;
-					presentInfo.WaitSemaphoreCount = 1                                     ;
-					presentInfo.WaitSemaphores     = signalSemaphores                      ;
+					presentInfo.SType              = presentInfo.STypeEnum;
+					presentInfo.WaitSemaphoreCount = 1                    ;
+					presentInfo.WaitSemaphores     = signalSemaphores     ;
 
 
 					SwapChain::Handle swapChains[] = { SwapChain };
@@ -1465,6 +1836,15 @@
 						CommandPool           , 
 						CommandBuffers
 					);
+
+					
+					Buffer::Destroy(LogicalDevice, IndexBuffer, nullptr);
+
+					LogicalDevice::Memory::Free(LogicalDevice, IndexBufferMemory, nullptr);
+
+					Buffer::Destroy(LogicalDevice, VertexBuffer, nullptr);
+
+					LogicalDevice::Memory::Free(LogicalDevice, VertexBufferMemory, nullptr);
 
 					for (DataSize index = 0; index < MaxFramesInFlight; index++) 
 					{

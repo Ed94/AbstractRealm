@@ -95,8 +95,6 @@ namespace HAL
 					}
 				}
 			}
-
-			
 		}
 
 

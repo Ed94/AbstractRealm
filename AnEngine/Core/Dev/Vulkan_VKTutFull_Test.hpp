@@ -3,14 +3,14 @@
 
 #include "HAL/GPU_HAL.hpp"
 
-
 #include "PAL/OSAL/OSAL.hpp"
-
-
 
 #include "LAL/LAL.hpp"
 
 #include "Meta/AppInfo.hpp"
+
+
+//#include "glm/glm.hpp"
 
 
 namespace Debug::Vulkan_FullTut_Test
@@ -19,6 +19,9 @@ namespace Debug::Vulkan_FullTut_Test
 	using namespace Meta    ;
 	using namespace HAL::GPU;
 	using namespace OSAL    ;
+
+	using namespace VaultedThermals::Vault_01;
+
 
 	BSS
 	(

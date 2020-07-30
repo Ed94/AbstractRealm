@@ -67,7 +67,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			using OSAL::Window;
 
 
-
 			// Structs
 
 			struct QueueFamilyIndices
@@ -135,7 +134,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 				eGlobal Pipeline::Layout::Handle PipelineLayout;
 
-				eGlobal VkPipeline GraphicsPipeline;
+				eGlobal Pipeline::Handle GraphicsPipeline;
 
 				eGlobal FenceList InFlightFences;
 				eGlobal FenceList ImagesInFlight;
@@ -154,9 +153,11 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 				eGlobal FrameBufferList SwapChain_Framebuffers;
 
-				eGlobal VkRenderPass RenderPass;   // TODO: Wrap.
+				eGlobal RenderPass::Handle RenderPass;   // TODO: Wrap.
 
 				eGlobal RenderContextList RenderContextPool;    // Contains a reference to every created render context. (Early implementation...)
+
+				eGlobal Buffer::Handle VertexBuffer;
 			//);
 
 			//Data
@@ -242,11 +243,12 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			void CreateGraphicsPipeline
 			(
-				LogicalDevice::Handle    _logicalDevice,
-				Extent2D                 _swapChainExtent,
-				VkRenderPass             _renderPass,
-				Pipeline::Layout::Handle& _pipelineLayout,
-				VkPipeline& _graphicsPipeline   // Will be provided.
+				LogicalDevice::Handle     _logicalDevice   ,
+				Extent2D                  _swapChainExtent ,
+				StaticArray<ShaderModule::Handle, 2> _shaders,
+				Pipeline::Layout::Handle& _pipelineLayout  ,
+				RenderPass::Handle        _renderPass      ,
+				VkPipeline&               _graphicsPipeline   // Will be provided.
 			);
 
 			void CreateImageViews
@@ -305,7 +307,13 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				FenceList&     _imagesInFlight
 			);
 
-			ShaderModule::Handle CreateTriShaderModule(LogicalDevice::Handle _logicalDevice, const IO::FileBuffer& code);
+			ShaderModule::Handle CreateShaderModule(LogicalDevice::Handle _logicalDevice, const IO::FileBuffer& code);
+
+			StaticArray<ShaderModule::Handle, 2> CreateTriShaders(LogicalDevice::Handle _logicalDevice);
+
+			StaticArray<ShaderModule::Handle, 2> Create_VKTut_V1_Shaders(LogicalDevice::Handle _logicalDevice);
+
+			void CreateVertexBuffers(PhysicalDevice::Handle _physicalDevice, LogicalDevice::Handle _device, Buffer::Handle& _vertexBuffer, Memory::Handle& _vertexBufferMemory);
 
 			// Exposed but really should not be used directly unless for another implementation I guess.
 			Bool DebugCallback
@@ -317,6 +325,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			);
 
 			QueueFamilyIndices FindQueueFamilies(PhysicalDevice::Handle _deviceHandle, Surface::Handle _surfaceHandle);
+
+			uint32 FindMemoryType(PhysicalDevice::Handle _device,  uint32 _typeFilter, Memory::PropertyFlags _properties);
 
 			ExtensionIdentifierList GetRequiredExtensions();
 
