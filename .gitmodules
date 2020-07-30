@@ -64,3 +64,9 @@
 [submodule "AnEngine/PAL/HAL/Vulkan/VaultedThermals"]
 	path = AnEngine/PAL/HAL/Vulkan/VaultedThermals
 	url = git@github.com:Ed94/VaultedThermals
+[submodule "AnEngine/PAL/ThirdParty/Libraries/assimp"]
+	path = AnEngine/PAL/ThirdParty/Libraries/assimp
+	url = git@github.com:assimp/assimp
+[submodule "AnEngine/PAL/ThirdParty/Libraries/VulkanMemoryAllocator"]
+	path = AnEngine/PAL/ThirdParty/Libraries/VulkanMemoryAllocator
+	url = git@github.com:GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
