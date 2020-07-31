@@ -9,7 +9,11 @@
 
 #include "Renderer/Shader/TriangleShader/TriangleShader.hpp"
 #include "Renderer/Shader/VKTut_V1/VKTut_V1.hpp"
+#include "Renderer/Shader/VKTut_V2/VKTut_V2.hpp"
+#include "glm/glm.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
+#include <chrono>
 
 
 #if VULCAN_INTERFACE == VAULTED_THERMALS_INTERFACE
@@ -34,6 +38,8 @@
 				LogicalDevice::Handle LogicalDevice    ;
 				LogicalDevice::Queue::Handle         GraphicsQueue    ;
 				LogicalDevice::Queue::Handle         PresentationQueue;
+
+				Pipeline::Layout::DescriptorSet::Handle DescriptorSetLayout;
 
 				Pipeline::Layout::Handle PipelineLayout;
 
@@ -61,13 +67,17 @@
 				RenderPass::Handle RenderPass;   
 
 				Buffer::Handle VertexBuffer;
-
 				Memory::Handle VertexBufferMemory;
 
 				Buffer::Handle IndexBuffer;
-
 				Memory::Handle IndexBufferMemory;
-				
+
+				DynamicArray<Buffer::Handle> UniformBuffers;
+				DynamicArray<LogicalDevice::Memory::Handle> UniformBuffersMemory;
+
+				DescriptorPool::Handle DescriptorPool;	
+
+				DynamicArray<DescriptorSet::Handle> DescriptorSets;
 
 			//);
 
@@ -197,8 +207,15 @@
 					0, 1, 2, 2, 3, 0
 				};
 
+				struct UniformBufferObject
+				{
+					alignas(16) glm::mat4 ModelSpace;
+					alignas(16) glm::mat4 Viewport  ;
+					alignas(16) glm::mat4 Projection;
+				};
 
-			#pragma region VKTut_V1
+
+			#pragma endregion VKTut_V1
 
 
 			// Forwards
@@ -283,6 +300,14 @@
 				}
 
 				SwapChain::Destroy(_logicalDevice, _swapChain, nullptr);
+
+				for (DataSize index = 0; index < _swapChainImageViews.size(); index++)
+				{
+					Buffer::Destroy(_logicalDevice, UniformBuffers[index], nullptr);
+					LogicalDevice::Memory::Free(_logicalDevice, UniformBuffersMemory[index], nullptr);
+				}
+				
+				DescriptorPool::Destroy(_logicalDevice, DescriptorPool, nullptr);
 			}
 
 			void CopyBuffer(Buffer::Handle _sourceBuffer, Buffer::Handle _destinationBuffer, DeviceSize _size)
@@ -492,6 +517,20 @@
 
 							CommandBuffer::BindIndexBuffer(_commandBufferContainer[index], IndexBuffer, 0, EIndexType::uInt16);
 
+							//vkCmdBindDescriptorSets(_commandBufferContainer[index], VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLayout, 0, 1, &DescriptorSets[index], 0, nullptr);
+
+							CommandBuffer::BindDescriptorSets
+							(
+								_commandBufferContainer[index],
+								EPipelineBindPoint::Graphics,
+								PipelineLayout,
+								0,
+								1,
+								&DescriptorSets[index],
+								0,
+								nullptr
+							);
+
 							CommandBuffer::DrawIndexed
 							(
 								_commandBufferContainer[index],
@@ -538,6 +577,91 @@
 				{
 					throw std::runtime_error("failed to create command pool!");
 				}
+			}
+
+			void CreateDescriptorPool()
+			{
+				DescriptorPool::Size poolSize {};
+
+				poolSize.Type = EDescriptorType::UniformBuffer;
+
+				poolSize.Count = SCast<uint32>(SwapChain_Images.size());
+
+				DescriptorPool::CreateInfo poolInfo {};
+
+				poolInfo.SType         = poolInfo.STypeEnum;
+				poolInfo.PoolSizeCount = 1                 ;
+				poolInfo.PoolSizes     = &poolSize         ;
+
+				poolInfo.MaxSets = SCast<uint32>(SwapChain_Images.size());
+
+				if (DescriptorPool::Create(LogicalDevice, poolInfo, nullptr, DescriptorPool) != EResult::Success)
+					throw RuntimeError("Failed to create descriptor pool!");
+			}
+
+			void CreateDescriptorSets()
+			{
+				DynamicArray<Pipeline::Layout::DescriptorSet::Handle> layouts(SwapChain_Images.size(), DescriptorSetLayout);
+
+				DescriptorSet::AllocateInfo allocInfo{};
+
+				allocInfo.SType              = allocInfo.STypeEnum;
+				allocInfo.DescriptorPool     = DescriptorPool;
+				allocInfo.DescriptorSetCount = SCast<uint32>(SwapChain_Images.size());
+				allocInfo.SetLayouts         = layouts.data();
+
+				DescriptorSets.resize(SwapChain_Images.size());
+
+				if (DescriptorSet::Allocate(LogicalDevice, allocInfo, DescriptorSets.data()) != EResult::Success)
+					throw std::runtime_error("failed to allocate descriptor sets!");
+
+				for (DataSize index = 0; index < SwapChain_Images.size(); index++)
+				{
+					DescriptorSet::BufferInfo bufferInfo{};
+
+					bufferInfo.Buffer = UniformBuffers[index]      ;
+					bufferInfo.Offset = 0                          ;
+					bufferInfo.Range  = sizeof(UniformBufferObject);
+
+					DescriptorSet::Write descriptorWrite{};
+					
+					descriptorWrite.SType           = descriptorWrite.STypeEnum;
+					descriptorWrite.DstSet          = DescriptorSets[index]    ;
+					descriptorWrite.DstBinding      = 0                        ;
+					descriptorWrite.DstArrayElement = 0                        ;
+
+					descriptorWrite.DescriptorType  = EDescriptorType::UniformBuffer;
+					descriptorWrite.DescriptorCount = 1                             ;
+
+					descriptorWrite.BufferInfo      = &bufferInfo;
+					descriptorWrite.ImageInfo       = nullptr    ; // Optional
+					descriptorWrite.TexelBufferView = nullptr    ; // Optional
+
+					DescriptorSet::Update(LogicalDevice, 1, &descriptorWrite, 0, nullptr);	
+				}
+			}
+
+			void CreateDescriptorSetLayout()
+			{
+				Pipeline::Layout::DescriptorSet::Binding uboLayoutBinding {};
+
+				uboLayoutBinding.Binding = 0;
+				uboLayoutBinding.Type = EDescriptorType::UniformBuffer;
+				uboLayoutBinding.Count = 1;
+
+				uboLayoutBinding.StageFlags = EShaderStageFlag::Vertex;
+
+				uboLayoutBinding.ImmutableSamplers = nullptr;
+
+				
+				Pipeline::Layout::DescriptorSet::CreateInfo layoutInfo {};
+
+				layoutInfo.SType = layoutInfo.STypeEnum;
+				layoutInfo.BindingCount = 1;
+				layoutInfo.Bindings = &uboLayoutBinding;
+
+				if (Pipeline::Layout::DescriptorSet::Create(LogicalDevice, layoutInfo, nullptr, DescriptorSetLayout) != EResult::Success)
+					throw RuntimeError("Failed to create descriptor set layout!");
 			}
 
 			void CreateFrameBuffers
@@ -625,7 +749,7 @@
 				vertexInputState_CreationSpec.AttributeDescription      = nullptr;*/
 
 			
-				// VKTut_V1
+				// VKTut_V1/2
 
 				auto binding = Vertex::GetBindingDescription();
 				auto attributes = Vertex::GetAttributeDescriptions();
@@ -679,11 +803,11 @@
 
 				rasterizer.CullMode.Set(ECullModeFlag::Back);
 
-				rasterizer.FrontFace               = EFrontFace::Clockwise;
-				rasterizer.EnableDepthBias         = EBool::False         ;
-				rasterizer.DepthBiasConstantFactor = 0.0f                 ;
-				rasterizer.DepthBiasClamp          = 0.0f                 ;
-				rasterizer.DepthBiasSlopeFactor    = 0.0f                 ;
+				rasterizer.FrontFace               = EFrontFace::CounterClockwise;
+				rasterizer.EnableDepthBias         = EBool::False                ;
+				rasterizer.DepthBiasConstantFactor = 0.0f                        ;
+				rasterizer.DepthBiasClamp          = 0.0f                        ;
+				rasterizer.DepthBiasSlopeFactor    = 0.0f                        ;
 
 				Pipeline::MultisampleState::CreateInfo multisampling_CreationSpec{};
 
@@ -740,8 +864,8 @@
 				Pipeline::Layout::CreateInfo pipelineLayout_CreationSpec {};
 
 				pipelineLayout_CreationSpec.SType                  = pipelineLayout_CreationSpec.STypeEnum;
-				pipelineLayout_CreationSpec.SetLayoutCount         = 0                                    ;
-				pipelineLayout_CreationSpec.SetLayouts             = nullptr                              ;
+				pipelineLayout_CreationSpec.SetLayoutCount         = 1                                    ;
+				pipelineLayout_CreationSpec.SetLayouts             = &DescriptorSetLayout                 ;
 				pipelineLayout_CreationSpec.PushConstantRangeCount = 0                                    ;
 				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr                              ;
 
@@ -1001,6 +1125,29 @@
 				}
 			}
 
+			ShaderModule::Handle CreateShaderModule(LogicalDevice::Handle _logicalDevice, const IO::FileBuffer& code)
+			{
+				using ByteCode = uint32;
+
+				ShaderModule::CreateInfo creationSpec{};
+
+				creationSpec.SType     = creationSpec.STypeEnum;
+				creationSpec.Extension = NULL                               ;
+				creationSpec.CodeSize  = code.size()                        ;
+				creationSpec.Code      = RCast<const ByteCode>(code.data()) ;
+
+				ShaderModule::Handle createdModule;
+
+				EResult&& creationResult = ShaderModule::Create(_logicalDevice, creationSpec, nullptr, createdModule);
+
+				if (creationResult != EResult::Success)
+				{
+					throw RuntimeError("Failed to create TriShader module!");
+				}
+
+				return createdModule;
+			}
+
 			void CreateSurface
 			(
 				AppInstance::Handle _applicationInstance,
@@ -1147,29 +1294,6 @@
 				}
 			}
 
-			ShaderModule::Handle CreateShaderModule(LogicalDevice::Handle _logicalDevice, const IO::FileBuffer& code)
-			{
-				using ByteCode = uint32;
-
-				ShaderModule::CreateInfo creationSpec{};
-
-				creationSpec.SType     = creationSpec.STypeEnum;
-				creationSpec.Extension = NULL                               ;
-				creationSpec.CodeSize  = code.size()                        ;
-				creationSpec.Code      = RCast<const ByteCode>(code.data()) ;
-
-				ShaderModule::Handle createdModule;
-
-				EResult&& creationResult = ShaderModule::Create(_logicalDevice, creationSpec, nullptr, createdModule);
-
-				if (creationResult != EResult::Success)
-				{
-					throw RuntimeError("Failed to create TriShader module!");
-				}
-
-				return createdModule;
-			}
-
 			StaticArray<ShaderModule::Handle, 2> CreateTriShaders(LogicalDevice::Handle _logicalDevice)
 			{
 				using Bytecode_Buffer = DynamicArray<Bytecode>;
@@ -1191,6 +1315,27 @@
 				StaticArray<ShaderModule::Handle, 2> result = { triShaderModule_Vert, triShaderModule_Frag };
 
 				return result;
+			}
+
+			void CreateUniformBuffers()
+			{
+				DeviceSize bufferSize = sizeof(UniformBufferObject);
+
+				UniformBuffers.resize(SwapChain_Images.size());
+				UniformBuffersMemory.resize(SwapChain_Images.size());
+
+				for (DataSize index = 0; index < SwapChain_Images.size(); index++)
+				{
+					CreateBuffer
+					(
+						bufferSize, 
+						Buffer::UsageFlags(EBufferUsage::UniformBuffer), 
+						Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
+						UniformBuffers[index],
+						UniformBuffersMemory[index]
+					);
+				}
+
 			}
 
 			StaticArray<ShaderModule::Handle, 2> Create_VKTut_V1_Shaders(LogicalDevice::Handle _logicalDevice)
@@ -1216,7 +1361,28 @@
 				return result;
 			}
 
-			
+			StaticArray<ShaderModule::Handle, 2> Create_VKTut_V2_Shaders(LogicalDevice::Handle _logicalDevice)
+			{
+				using Bytecode_Buffer = DynamicArray<Bytecode>;
+
+				// Shader setup
+
+				using namespace Renderer::Shader;
+
+				auto vertCode = IO::BufferFile(String(Paths::VKTut_V2) + "VKTut_V2_Vert.spv");
+				auto fragCode = IO::BufferFile(String(Paths::VKTut_V2) + "VKTut_V2_Frag.spv");
+
+				//TODO: FIGURE THIS OUT.
+				Bytecode_Buffer vertBytecode(vertCode.begin(), vertCode.end());
+				Bytecode_Buffer fragBytecode(fragCode.begin(), fragCode.end());
+
+				ShaderModule::Handle vertShaderModule = CreateShaderModule(_logicalDevice, vertCode);
+				ShaderModule::Handle fragShaderModule = CreateShaderModule(_logicalDevice, fragCode);
+
+				StaticArray<ShaderModule::Handle, 2> result = { vertShaderModule, fragShaderModule };
+
+				return result;
+			}
 
 			void CreateVertexBuffers(PhysicalDevice::Handle _physicalDevice, LogicalDevice::Handle _device, Buffer::Handle& _vertexBuffer, Memory::Handle& _vertexBufferMemory)
 			{
@@ -1615,6 +1781,32 @@
 				return EPresentationMode::FIFO;
 			}
 
+			void UpdateUniformBuffers(uint32 _currentImage)
+			{
+				static auto startTime = std::chrono::high_resolution_clock::now();
+
+				auto currentTime = std::chrono::high_resolution_clock::now();
+
+				float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+				UniformBufferObject ubo {};
+
+				ubo.ModelSpace = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+				ubo.Viewport = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+				ubo.Projection = glm::perspective(glm::radians(45.0f), SwapChain_Extent.Width / (float) SwapChain_Extent.Height, 0.1f, 10.0f);
+
+				ubo.Projection[1][1] *= -1;
+
+				void* uniformData;
+
+				LogicalDevice::Memory::Map(LogicalDevice, UniformBuffersMemory[_currentImage], 0, sizeof(ubo), 0, uniformData);
+				
+					memcpy(uniformData, &ubo, sizeof(ubo));
+				
+				LogicalDevice::Memory::Unmap(LogicalDevice, UniformBuffersMemory[_currentImage]);
+			}
 
 			// GPU_HAL
 
@@ -1669,7 +1861,9 @@
 
 					CreateRenderPass(LogicalDevice, SwapChain_ImageFormat, RenderPass);
 
-					StaticArray<ShaderModule::Handle, 2> shaders = Create_VKTut_V1_Shaders(LogicalDevice);
+					StaticArray<ShaderModule::Handle, 2> shaders = Create_VKTut_V2_Shaders(LogicalDevice);
+
+					CreateDescriptorSetLayout();
 
 					CreateGraphicsPipeline(LogicalDevice, SwapChain_Extent, shaders, PipelineLayout, RenderPass, GraphicsPipeline);
 
@@ -1683,6 +1877,12 @@
 					CreateVertexBuffers(PhysicalDevice, LogicalDevice, VertexBuffer, VertexBufferMemory);
 
 					CreateIndexBuffer();
+
+					CreateUniformBuffers();
+
+					CreateDescriptorPool();
+
+					CreateDescriptorSets();
 
 					CreateCommandBuffers(LogicalDevice, GraphicsPipeline, SwapChain_Framebuffers, SwapChain_Extent, RenderPass, CommandPool, CommandBuffers);;
 
@@ -1712,7 +1912,7 @@
 
 					CreateRenderPass(LogicalDevice, SwapChain_ImageFormat, RenderPass);
 
-					StaticArray<ShaderModule::Handle, 2> shaders = Create_VKTut_V1_Shaders(LogicalDevice);
+					StaticArray<ShaderModule::Handle, 2> shaders = Create_VKTut_V2_Shaders(LogicalDevice);
 
 					CreateGraphicsPipeline(LogicalDevice, SwapChain_Extent, shaders, PipelineLayout, RenderPass, GraphicsPipeline);
 
@@ -1721,10 +1921,15 @@
 
 					CreateFrameBuffers(LogicalDevice, RenderPass, SwapChain_Extent, SwapChain_ImageViews, SwapChain_Framebuffers);
 
+					CreateUniformBuffers();
+
+					CreateDescriptorPool();
+
+					CreateDescriptorSets();
+
 					CreateCommandBuffers(LogicalDevice, GraphicsPipeline, SwapChain_Framebuffers, SwapChain_Extent, RenderPass, CommandPool, CommandBuffers);
 				}
 
-				// TODO: Wrap
 				void DrawFrame(ptr<Window> _window)
 				{
 					Fence::WaitForFences(LogicalDevice, 1, &InFlightFences[CurrentFrame], EBool::True, UInt64Max);
@@ -1758,6 +1963,7 @@
 
 					ImagesInFlight[imageIndex] = InFlightFences[CurrentFrame];
 
+					UpdateUniformBuffers(imageIndex);
 
 					CommandBuffer::SubmitInfo submitInfo {};
 
@@ -1837,6 +2043,7 @@
 						CommandBuffers
 					);
 
+					Pipeline::Layout::DescriptorSet::Destroy(LogicalDevice, DescriptorSetLayout, nullptr);
 					
 					Buffer::Destroy(LogicalDevice, IndexBuffer, nullptr);
 

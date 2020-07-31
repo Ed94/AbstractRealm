@@ -43,8 +43,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			// Usings
 
-			using namespace LAL   ;
-			using namespace Meta  ;
+			using namespace LAL ;
+			using namespace Meta;
 
 			// Vulkan
 

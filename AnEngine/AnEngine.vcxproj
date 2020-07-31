@@ -462,6 +462,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Renderer\Shader\VKTut_V2\VKTut_V2.hpp" />
     <ClInclude Include="Simulation\Math\Constants.hpp">
       <SubType>
       </SubType>
