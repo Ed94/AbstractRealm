@@ -20,6 +20,6 @@ namespace Renderer::Shader
 
 	namespace Paths
 	{
-		constexpr RoCStr VKTut_V2 = "Engine/Renderer/Shaders/VKTut_V2/";
+		constexpr RoCStr VKTut = "Engine/Renderer/Shaders/VKTut/";
 	}
 }

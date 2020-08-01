@@ -15,7 +15,11 @@ layout(location = 0) in vec2 VertexPosition;
 
 layout(location = 1) in vec3 VertexColor;
 
-layout(location = 0) out vec3 FragmentColor;
+layout(location = 2) in vec2 VertTextureCoordinate;
+
+layout(location = 0) out vec3 FragColor;
+
+layout(location = 1) out vec2 FragTextureCoordinate;
 
 
 
@@ -23,5 +27,7 @@ void main()
 {
     gl_Position = UBO.Projection * UBO.Viewport * UBO.ModelSpace * vec4(VertexPosition, 0.0, 1.0);
 
-    FragmentColor = VertexColor;
+    FragColor = VertexColor;
+
+    FragTextureCoordinate = VertTextureCoordinate;
 }

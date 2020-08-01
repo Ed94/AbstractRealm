@@ -102,8 +102,8 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Queries.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Command.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CPP_STL.hpp" />
-    <ClInclude Include="Renderer\Shader\VKTut_V1\VKTut_V1.hpp" />
-    <ClInclude Include="Renderer\Shader\VKTut_V2\VKTut_V2.hpp" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\stb\stb_image.h" />
+    <ClInclude Include="Renderer\Shader\VKTut\VKTut.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

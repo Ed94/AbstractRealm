@@ -357,6 +357,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EPresentationMode Surface_SwapChain_ChoosePresentationMode(const SurfacePresentationModeList& _surfacePresentationModes);
 
+			void TransitionImageLayout(Image::Handle _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout);
+
 			void Initialize_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
 
 			void Cease_GPUComms();

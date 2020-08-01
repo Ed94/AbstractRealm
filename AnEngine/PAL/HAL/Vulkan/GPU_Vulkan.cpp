@@ -8,10 +8,12 @@
 
 
 #include "Renderer/Shader/TriangleShader/TriangleShader.hpp"
-#include "Renderer/Shader/VKTut_V1/VKTut_V1.hpp"
-#include "Renderer/Shader/VKTut_V2/VKTut_V2.hpp"
+#include "Renderer/Shader/VKTut/VKTut.hpp"
 #include "glm/glm.hpp"
-#include <glm/gtc/matrix_transform.hpp>
+#include "glm/gtc/matrix_transform.hpp"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
 
 #include <chrono>
 
@@ -79,6 +81,15 @@
 
 				DynamicArray<DescriptorSet::Handle> DescriptorSets;
 
+				Image::Handle TextureImage;
+
+				LogicalDevice::Memory::Handle TextureImageMemory;
+
+				ImageView::Handle TextureImageView;
+
+				Sampler::Handle TextureSampler;
+
+
 			//);
 
 			Data
@@ -110,7 +121,7 @@
 				using AttributeDescription = Pipeline::VertexInputState::AttributeDescription;
 				using BindingDescription   = Pipeline::VertexInputState::BindingDescription  ;
 
-				using VertexAttributes = StaticArray<AttributeDescription, 2>;
+				using VertexAttributes = StaticArray<AttributeDescription, 3>;
 
 				struct Vertex
 				{
@@ -127,6 +138,13 @@
 					}
 					
 					Color;
+
+					struct 
+					{
+						float32 X, Y;
+					}
+					
+					TextureCoordinates;
 
 
 					static constexpr VertexAttributes GetAttributeDescriptions()
@@ -150,6 +168,15 @@
 						colorAttrib.Location = 1;
 						colorAttrib.Format = EFormat::R32_G32_B32_SFloat;
 						colorAttrib.Offset = offsetof(Vertex, Vertex::Color);
+
+						// Texture Coordinate Attributes
+
+						AttributeDescription& texCoordAttrib = result.at(2);
+
+						texCoordAttrib.Binding = 0;
+						texCoordAttrib.Location = 2;
+						texCoordAttrib.Format = EFormat::R32_G32_SFloat;
+						texCoordAttrib.Offset = offsetof(Vertex, Vertex::TextureCoordinates);
 
 						return result;
 					}
@@ -186,19 +213,23 @@
 				{
 					{
 						{ -0.5f, -0.5f      }, 
-						{  1.0f, 0.0f, 0.0f }
+						{  1.0f,  0.0f, 0.0f}, 
+						{  0.0f,  0.0f      }
 					},
 					{
 						{ 0.5f, -0.5f      }, 
-						{ 0.0f, 1.0f, 0.0f }
+						{ 0.0f,  1.0f, 0.0f}, 
+						{ 1.0f,  0.0f      }
 					},
 					{
-						{ 0.5f, 0.5f       }, 
-						{ 0.0f, 0.0f, 1.0f }
+						{ 0.5f, 0.5f      }, 
+						{ 0.0f, 0.0f, 1.0f}, 
+						{ 1.0f, 1.0f      }
 					},
 					{
-						{ -0.5f, 0.5f       }, 
-						{  1.0f, 1.0f, 1.0f }
+						{ -0.5f, 0.5f      }, 
+						{  1.0f, 1.0f, 1.0f}, 
+						{  0.0f, 1.0f      }
 					}
 				};
 
@@ -267,7 +298,6 @@
 				return true;
 			}
 
-			// TODO: Wrap
 			void CleanupSwapChain
 			(
 				LogicalDevice::Handle    _logicalDevice,
@@ -310,7 +340,7 @@
 				DescriptorPool::Destroy(_logicalDevice, DescriptorPool, nullptr);
 			}
 
-			void CopyBuffer(Buffer::Handle _sourceBuffer, Buffer::Handle _destinationBuffer, DeviceSize _size)
+			CommandBuffer::Handle CommandBuffer_BeginSingleTimeCommands()
 			{
 				CommandBuffer::AllocateInfo allocationInfo {};
 
@@ -330,6 +360,30 @@
 
 				CommandBuffer::BeginRecord(commandBuffer, beginInfo);
 
+				return commandBuffer;
+			}
+
+			void CommandBuffer_EndSingleTimeCommands(CommandBuffer::Handle _commandBuffer)
+			{
+				CommandBuffer::EndRecord(_commandBuffer);
+
+				CommandBuffer::SubmitInfo submitInfo {};
+
+				submitInfo.SType = submitInfo.STypeEnum;
+				submitInfo.CommandBufferCount = 1;
+				submitInfo.CommandBuffers = &_commandBuffer;
+				
+				CommandBuffer::SubmitToQueue(GraphicsQueue, 1, &submitInfo, Fence::NullHandle);
+
+				LogicalDevice::Queue::WaitUntilIdle(GraphicsQueue);
+
+				CommandBuffer::Free(LogicalDevice, CommandPool, 1, &_commandBuffer);
+			}
+
+			void CopyBuffer(Buffer::Handle _sourceBuffer, Buffer::Handle _destinationBuffer, DeviceSize _size)
+			{
+				CommandBuffer::Handle commandBuffer = CommandBuffer_BeginSingleTimeCommands();
+
 					Buffer::CopyInfo copyRegion {};
 
 					copyRegion.SourceOffset = 0; // Optional
@@ -338,19 +392,41 @@
 
 					CommandBuffer::CopyBuffer(commandBuffer, _sourceBuffer, _destinationBuffer, 1, &copyRegion);
 
-				CommandBuffer::EndRecord(commandBuffer);
+				CommandBuffer_EndSingleTimeCommands(commandBuffer);
+			}
 
-				CommandBuffer::SubmitInfo submitInfo{};
+			void CopyBufferToImage(Buffer::Handle _buffer, Image::Handle _image, uint32 _width, uint32 _height)
+			{
+				CommandBuffer::Handle commandBuffer = CommandBuffer_BeginSingleTimeCommands();
 
-				submitInfo.SType = submitInfo.STypeEnum;
-				submitInfo.CommandBufferCount = 1;
-				submitInfo.CommandBuffers = &commandBuffer;
+				CommandBuffer::BufferImageRegion region {};
 
-				CommandBuffer::SubmitToQueue(GraphicsQueue, 1, &submitInfo, Fence::NullHandle);
+				region.bufferOffset = 0;
+				region.bufferRowLength = 0;
+				region.imageSubresource.AspectMask.Set(EImageAspect::Color);
+				region.imageSubresource.MipLevel = 0;
+				region.imageSubresource.BaseArrayLayer = 0;
+				region.imageSubresource.LayerCount = 1;
 
-				LogicalDevice::Queue::WaitUntilIdle(GraphicsQueue);
-		
-				CommandBuffer::Free(LogicalDevice, CommandPool, 1, &commandBuffer);
+				region.imageOffset.Y = 0; 
+				region.imageOffset.Y = 0; 
+				region.imageOffset.Z = 0;
+
+				region.imageExtent.Width  = _width ;
+				region.imageExtent.Height = _height;
+				region.imageExtent.Depth  = 1      ;
+
+				CommandBuffer::CopyBufferToImage
+				(
+					commandBuffer,
+					_buffer,
+					_image,
+					EImageLayout::TransferDestination_Optimal,
+					1,
+					&region
+				);
+
+				CommandBuffer_EndSingleTimeCommands(commandBuffer);
 			}
 
 			void CreateApplicationInstance
@@ -581,17 +657,19 @@
 
 			void CreateDescriptorPool()
 			{
-				DescriptorPool::Size poolSize {};
+				StaticArray<DescriptorPool::Size, 2> poolSizes {};
 
-				poolSize.Type = EDescriptorType::UniformBuffer;
+				poolSizes[0].Type = EDescriptorType::UniformBuffer;
+				poolSizes[0].Count = SCast<uint32>(SwapChain_Images.size());
 
-				poolSize.Count = SCast<uint32>(SwapChain_Images.size());
+				poolSizes[1].Type = EDescriptorType::Sampler;
+				poolSizes[1].Count = SCast<uint32>(SwapChain_Images.size());
 
 				DescriptorPool::CreateInfo poolInfo {};
 
-				poolInfo.SType         = poolInfo.STypeEnum;
-				poolInfo.PoolSizeCount = 1                 ;
-				poolInfo.PoolSizes     = &poolSize         ;
+				poolInfo.SType         = poolInfo.STypeEnum             ;
+				poolInfo.PoolSizeCount = SCast<uint32>(poolSizes.size());
+				poolInfo.PoolSizes     = poolSizes.data()               ;
 
 				poolInfo.MaxSets = SCast<uint32>(SwapChain_Images.size());
 
@@ -623,21 +701,43 @@
 					bufferInfo.Offset = 0                          ;
 					bufferInfo.Range  = sizeof(UniformBufferObject);
 
-					DescriptorSet::Write descriptorWrite{};
+
+					DescriptorSet::ImageInfo imageInfo{};
+
+					imageInfo.ImageLayout = EImageLayout::Shader_ReadonlyOptimal;
+					imageInfo.ImageView   = TextureImageView                    ;
+					imageInfo.Sampler     = TextureSampler                      ;
+
+
+					StaticArray<DescriptorSet::Write, 2> descriptorWrites {};
+
+					//DescriptorSet::Write descriptorWrite{};
 					
-					descriptorWrite.SType           = descriptorWrite.STypeEnum;
-					descriptorWrite.DstSet          = DescriptorSets[index]    ;
-					descriptorWrite.DstBinding      = 0                        ;
-					descriptorWrite.DstArrayElement = 0                        ;
+					descriptorWrites[0].SType           = DescriptorSet::Write::STypeEnum;
+					descriptorWrites[0].DstSet          = DescriptorSets[index]          ;
+					descriptorWrites[0].DstBinding      = 0                              ;
+					descriptorWrites[0].DstArrayElement = 0                              ;
 
-					descriptorWrite.DescriptorType  = EDescriptorType::UniformBuffer;
-					descriptorWrite.DescriptorCount = 1                             ;
+					descriptorWrites[0].DescriptorType  = EDescriptorType::UniformBuffer;
+					descriptorWrites[0].DescriptorCount = 1                             ;
 
-					descriptorWrite.BufferInfo      = &bufferInfo;
-					descriptorWrite.ImageInfo       = nullptr    ; // Optional
-					descriptorWrite.TexelBufferView = nullptr    ; // Optional
+					descriptorWrites[0].BufferInfo      = &bufferInfo;
+					descriptorWrites[0].ImageInfo       = nullptr    ; // Optional
+					descriptorWrites[0].TexelBufferView = nullptr    ; // Optional
 
-					DescriptorSet::Update(LogicalDevice, 1, &descriptorWrite, 0, nullptr);	
+					descriptorWrites[1].SType           = DescriptorSet::Write::STypeEnum;
+					descriptorWrites[1].DstSet          = DescriptorSets[index]          ;
+					descriptorWrites[1].DstBinding      = 1                              ;
+					descriptorWrites[1].DstArrayElement = 0                              ;
+
+					descriptorWrites[1].DescriptorType  = EDescriptorType::CombinedImageSampler;
+					descriptorWrites[1].DescriptorCount = 1                                    ;
+
+					descriptorWrites[1].BufferInfo      = nullptr   ;
+					descriptorWrites[1].ImageInfo       = &imageInfo; // Optional
+					descriptorWrites[1].TexelBufferView = nullptr   ; // Optional
+
+					DescriptorSet::Update(LogicalDevice, SCast<uint32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
 				}
 			}
 
@@ -646,19 +746,31 @@
 				Pipeline::Layout::DescriptorSet::Binding uboLayoutBinding {};
 
 				uboLayoutBinding.Binding = 0;
-				uboLayoutBinding.Type = EDescriptorType::UniformBuffer;
-				uboLayoutBinding.Count = 1;
+				uboLayoutBinding.Type    = EDescriptorType::UniformBuffer;
+				uboLayoutBinding.Count   = 1;
 
 				uboLayoutBinding.StageFlags = EShaderStageFlag::Vertex;
 
 				uboLayoutBinding.ImmutableSamplers = nullptr;
 
+				Pipeline::Layout::DescriptorSet::Binding samplerLayoutBinding{};
+
+				samplerLayoutBinding.Binding = 1;
+				samplerLayoutBinding.Count   = 1;
+				samplerLayoutBinding.Type    = EDescriptorType::CombinedImageSampler;
+
+				samplerLayoutBinding.ImmutableSamplers = nullptr;
+
+				samplerLayoutBinding.StageFlags.Set(EShaderStageFlag::Fragment);
+
+				StaticArray<Pipeline::Layout::DescriptorSet::Binding, 2> bindings =
+				{ uboLayoutBinding, samplerLayoutBinding };
 				
 				Pipeline::Layout::DescriptorSet::CreateInfo layoutInfo {};
 
 				layoutInfo.SType = layoutInfo.STypeEnum;
-				layoutInfo.BindingCount = 1;
-				layoutInfo.Bindings = &uboLayoutBinding;
+				layoutInfo.BindingCount = SCast<uint32>(bindings.size());
+				layoutInfo.Bindings = bindings.data();
 
 				if (Pipeline::Layout::DescriptorSet::Create(LogicalDevice, layoutInfo, nullptr, DescriptorSetLayout) != EResult::Success)
 					throw RuntimeError("Failed to create descriptor set layout!");
@@ -906,6 +1018,78 @@
 				}
 			}	
 
+			void CreateImage
+			(
+				uint32                         _width      , 
+				uint32                         _height     , 
+				EFormat                        _format     , 
+				EImageTiling                   _tiling     , 
+				Image::UsageFlags              _usage      , 
+				Memory::PropertyFlags          _properties , 
+				Image::Handle&                 _image      , 
+				LogicalDevice::Memory::Handle& _imageMemory
+			)
+			{
+				Image::CreateInfo imageInfo {};
+
+				imageInfo.SType         = imageInfo.STypeEnum   ;
+				imageInfo.ImageType     = EImageType::_2D       ;
+				imageInfo.Extent.Width  = SCast<uint32>(_width );
+				imageInfo.Extent.Height = SCast<uint32>(_height);
+				imageInfo.Extent.Depth  = 1                     ;
+				imageInfo.MipmapLevels  = 1                     ;
+				imageInfo.ArrayLayers   = 1                     ;
+
+				imageInfo.Format       = _format;
+				imageInfo.Tiling       = _tiling   ;
+				imageInfo.InitalLayout = EImageLayout::Undefined  ;
+				imageInfo.Usage        = _usage;
+				imageInfo.SharingMode  = ESharingMode::Excusive;
+				imageInfo.Samples      = ESampleCount::_1      ;
+				imageInfo.Flags        = 0                     ;
+
+				if (Image::Create(LogicalDevice, imageInfo, nullptr, _image) != EResult::Success)
+					throw RuntimeError("Failed to create image!");
+
+				Memory::Requirements memReq;
+
+				Image::GetMemoryRequirements(LogicalDevice, _image, memReq);
+
+				Memory::AllocateInfo allocationInfo {};
+
+				allocationInfo.SType = allocationInfo.STypeEnum;
+				allocationInfo.AllocationSize = memReq.Size;
+				allocationInfo.MemoryTypeIndex = FindMemoryType(PhysicalDevice, memReq.MemoryTypeBits, _properties);
+
+				if (LogicalDevice::Memory::Allocate(LogicalDevice, allocationInfo, nullptr, _imageMemory) != EResult::Success)
+					throw RuntimeError("Failed to allocate image memory!");
+
+				Image::BindMemory(LogicalDevice, _image, _imageMemory, 0);
+			}
+
+			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format)
+			{
+				ImageView::CreateInfo viewInfo {};
+
+				viewInfo.SType    = viewInfo.STypeEnum       ;
+				viewInfo.Image    = TextureImage             ;
+				viewInfo.ViewType = ImageView::EViewType::_2D;
+				viewInfo.Format   = EFormat::R8_G8_B8_A8_SRGB;
+
+				viewInfo.SubresourceRange.AspectMask     = EImageAspect::Color;
+				viewInfo.SubresourceRange.BaseMipLevel   = 0                  ;
+				viewInfo.SubresourceRange.LevelCount     = 1                  ;
+				viewInfo.SubresourceRange.BaseArrayLayer = 0                  ;
+				viewInfo.SubresourceRange.LayerCount     = 1                  ;
+
+				ImageView::Handle result;
+
+				if (ImageView::Create(LogicalDevice, viewInfo, nullptr, result) != EResult::Success )
+					throw RuntimeError("Failed to create texture image view!");
+
+				return result;
+			}
+
 			void CreateImageViews
 			(
 				LogicalDevice::Handle _logicalDevice       ,
@@ -937,7 +1121,7 @@
 					creationSpec.SubresourceRange.BaseArrayLayer = 0;
 					creationSpec.SubresourceRange.LayerCount     = 1;
 
-					EResult&& creationResult = ImageView::Create(_logicalDevice, creationSpec, nullptr, &_imageViewContainer[index]);
+					EResult&& creationResult = ImageView::Create(_logicalDevice, creationSpec, nullptr, _imageViewContainer[index]);
 
 					if (creationResult != EResult::Success)
 					{
@@ -1030,6 +1214,8 @@
 				//queueCreateInfo.QueuePriorities = &queuePriority;
 
 				PhysicalDevice::Features physDeviceFeatures{};
+
+				physDeviceFeatures.SamplerAnisotropy = EBool::True;	
 
 				LogicalDevice::CreateInfo createInfo{};
 
@@ -1294,6 +1480,103 @@
 				}
 			}
 
+			void CreateTextureImage()
+			{
+				int textureWidth, textureHeight, textureChannels;
+
+				using ImageBytes = stbi_uc;
+
+				ImageBytes* imageData = stbi_load("Engine/Data/Textures/DaFace.png", &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
+
+				DeviceSize imageSize = textureWidth * textureHeight	 * 4;
+
+				if (!imageData)
+				{
+					throw RuntimeError("Failed to load image data!");
+				}
+
+				Buffer::Handle stagingBuffer;
+
+				LogicalDevice::Memory::Handle stagingBufferMemory;
+
+				CreateBuffer
+				(
+					imageSize, 
+					Buffer::UsageFlags(EImageUsage::TransferSource), 
+					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
+					stagingBuffer, 
+					stagingBufferMemory
+				);
+
+				void* data;
+
+				LogicalDevice::Memory::Map(LogicalDevice, stagingBufferMemory, 0, imageSize, 0, data);
+
+					memcpy(data, imageData, SCast<DataSize>(imageSize));
+
+				LogicalDevice::Memory::Unmap(LogicalDevice, stagingBufferMemory);
+
+				stbi_image_free(imageData);
+
+				CreateImage
+				(
+					textureWidth, 
+					textureHeight,  
+					EFormat::R8_G8_B8_A8_SRGB, 
+					EImageTiling::Optional, 
+					Image::UsageFlags(EImageUsage::TransferDestination, EImageUsage::Sampled), 
+					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal),
+					TextureImage, 
+					TextureImageMemory
+				);
+
+				TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_SRGB, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal);
+
+				CopyBufferToImage(stagingBuffer, TextureImage, SCast<uint32>(textureWidth), SCast<uint32>(textureHeight));
+
+				TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_SRGB, EImageLayout::TransferDestination_Optimal, EImageLayout::Shader_ReadonlyOptimal);
+
+				Buffer::Destroy(LogicalDevice, stagingBuffer, nullptr);
+
+				LogicalDevice::Memory::Free(LogicalDevice, stagingBufferMemory, nullptr);
+			}
+
+			void CreateTextureImageView()
+			{
+				TextureImageView = CreateImageView(TextureImage, EFormat::R8_G8_B8_A8_SRGB);
+			}
+
+			void CreateTextureSampler()
+			{
+				Sampler::CreateInfo samplerInfo {};
+
+				samplerInfo.SType = samplerInfo.STypeEnum;
+
+				samplerInfo.MagnificationFilter = EFilter::Linear;
+				samplerInfo.MinimumFilter = EFilter::Linear;
+
+				samplerInfo.AddressModeU = ESamplerAddressMode::Repeat;
+				samplerInfo.AddressModeV = ESamplerAddressMode::Repeat;
+				samplerInfo.AddressModeW = ESamplerAddressMode::Repeat;
+
+				samplerInfo.AnisotropyEnable = EBool::True;
+				samplerInfo.MaxAnisotropy    = 16.0f      ;
+				samplerInfo.BorderColor = EBorderColor::Int_OpaqueBlack;
+
+				samplerInfo.UnnormalizedCoordinates = EBool::False;
+
+				samplerInfo.CompareEnable = EBool::False;
+				samplerInfo.CompareOperation = ECompareOperation::Always;
+
+				samplerInfo.MipmapMode = ESamplerMipmapMode::Linear;
+				samplerInfo.MipLodBias = 0.0f;
+				samplerInfo.MinimumLod = 0.0f;
+				samplerInfo.MaxLod     = 0.0f;
+
+				if (Sampler::Create(LogicalDevice, samplerInfo, nullptr, TextureSampler) != EResult::Success)
+					throw RuntimeError("Failed to create texture sampler!");
+			}
+
 			StaticArray<ShaderModule::Handle, 2> CreateTriShaders(LogicalDevice::Handle _logicalDevice)
 			{
 				using Bytecode_Buffer = DynamicArray<Bytecode>;
@@ -1338,7 +1621,7 @@
 
 			}
 
-			StaticArray<ShaderModule::Handle, 2> Create_VKTut_V1_Shaders(LogicalDevice::Handle _logicalDevice)
+			StaticArray<ShaderModule::Handle, 2> Create_VKTut_Shaders(LogicalDevice::Handle _logicalDevice)
 			{
 				using Bytecode_Buffer = DynamicArray<Bytecode>;
 
@@ -1346,31 +1629,8 @@
 
 				using namespace Renderer::Shader;
 
-				auto vertCode = IO::BufferFile(String(Paths::VKTut_V1) + "VKTut_V1_Vert.spv");
-				auto fragCode = IO::BufferFile(String(Paths::VKTut_V1) + "VKTut_V1_Frag.spv");
-
-				//TODO: FIGURE THIS OUT.
-				Bytecode_Buffer vertBytecode(vertCode.begin(), vertCode.end());
-				Bytecode_Buffer fragBytecode(fragCode.begin(), fragCode.end());
-
-				ShaderModule::Handle vertShaderModule = CreateShaderModule(_logicalDevice, vertCode);
-				ShaderModule::Handle fragShaderModule = CreateShaderModule(_logicalDevice, fragCode);
-
-				StaticArray<ShaderModule::Handle, 2> result = { vertShaderModule, fragShaderModule };
-
-				return result;
-			}
-
-			StaticArray<ShaderModule::Handle, 2> Create_VKTut_V2_Shaders(LogicalDevice::Handle _logicalDevice)
-			{
-				using Bytecode_Buffer = DynamicArray<Bytecode>;
-
-				// Shader setup
-
-				using namespace Renderer::Shader;
-
-				auto vertCode = IO::BufferFile(String(Paths::VKTut_V2) + "VKTut_V2_Vert.spv");
-				auto fragCode = IO::BufferFile(String(Paths::VKTut_V2) + "VKTut_V2_Frag.spv");
+				auto vertCode = IO::BufferFile(String(Paths::VKTut) + "VKTut_V4_Vert.spv");
+				auto fragCode = IO::BufferFile(String(Paths::VKTut) + "VKTut_V4_Frag.spv");
 
 				//TODO: FIGURE THIS OUT.
 				Bytecode_Buffer vertBytecode(vertCode.begin(), vertCode.end());
@@ -1571,11 +1831,16 @@
 					swapChainAdequate = !swapChainSupport.Formats.empty() && !swapChainSupport.PresentationModes.empty();
 				}
 
+				//PhysicalDevice::Features supportedFeatures;
+
+				//PhysicalDevice::GetFeatures(PhysicalDevice, supportedFeatures);
+
 				bool&& result = 
 					bool(deviceFeatures.GeometryShader) &&
 					indices.IsComplete()                &&
 					extensionsSupported                 &&
-					swapChainAdequate                     ;
+					swapChainAdequate                   && 
+					deviceFeatures.SamplerAnisotropy      ;
 
 				return result;
 			}
@@ -1781,6 +2046,70 @@
 				return EPresentationMode::FIFO;
 			}
 
+			void TransitionImageLayout(Image::Handle _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout)
+			{
+				CommandBuffer::Handle commandBuffer = CommandBuffer_BeginSingleTimeCommands();
+
+				Image::Memory_Barrier barrier {};
+
+				barrier.SType = barrier.STypeEnum;
+
+				barrier.OldLayout = _oldLayout;
+				barrier.NewLayout = _newLayout;
+
+				barrier.SrcQueueFamilyIndex = QueueFamily_Ignored;
+				barrier.DstQueueFamilyIndex = QueueFamily_Ignored;
+
+				barrier.Image = _image;
+
+				barrier.SubresourceRange.AspectMask.Set(EImageAspect::Color);
+
+				barrier.SubresourceRange.BaseMipLevel   = 0;
+				barrier.SubresourceRange.LevelCount     = 1;
+				barrier.SubresourceRange.BaseArrayLayer = 0;
+				barrier.SubresourceRange.LayerCount     = 1;
+
+				//barrier.SrcAccessMask = 0;   // TODO
+				//barrier.DstAccessMask = 0;   // TODO
+
+				Pipeline::StageFlags sourceStage     ;
+				Pipeline::StageFlags destinationStage;
+
+				if (_oldLayout == EImageLayout::Undefined && _newLayout == EImageLayout::TransferDestination_Optimal)
+				{
+					barrier.SrcAccessMask = 0;
+
+					barrier.DstAccessMask.Set(EAccessFlag::TransferWrite);
+
+					sourceStage     .Set(EPipelineStageFlag::TopOfPipe);
+					destinationStage.Set(EPipelineStageFlag::Transfer );
+				}
+				else if (_oldLayout == EImageLayout::TransferDestination_Optimal && _newLayout == EImageLayout::Shader_ReadonlyOptimal)
+				{
+					barrier.SrcAccessMask.Set(EAccessFlag::TransferWrite);
+					barrier.DstAccessMask.Set(EAccessFlag::ShaderRead   );
+
+					sourceStage     .Set(EPipelineStageFlag::Transfer       );
+					destinationStage.Set(EPipelineStageFlag::FragementShader);
+				}
+				else
+				{
+					throw std::invalid_argument("unsupported layout transition!");
+				}
+
+				CommandBuffer::SubmitPipelineBarrier
+				(
+					commandBuffer,
+					sourceStage, destinationStage,   // TODO
+					0, 
+					0, nullptr,
+					0, nullptr,
+					1, &barrier
+				);
+				
+				CommandBuffer_EndSingleTimeCommands(commandBuffer);
+			}
+
 			void UpdateUniformBuffers(uint32 _currentImage)
 			{
 				static auto startTime = std::chrono::high_resolution_clock::now();
@@ -1791,9 +2120,9 @@
 
 				UniformBufferObject ubo {};
 
-				ubo.ModelSpace = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+				ubo.ModelSpace = glm::rotate(glm::mat4(1.0f), time * glm::radians(25.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-				ubo.Viewport = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+				ubo.Viewport = glm::lookAt(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
 				ubo.Projection = glm::perspective(glm::radians(45.0f), SwapChain_Extent.Width / (float) SwapChain_Extent.Height, 0.1f, 10.0f);
 
@@ -1861,7 +2190,7 @@
 
 					CreateRenderPass(LogicalDevice, SwapChain_ImageFormat, RenderPass);
 
-					StaticArray<ShaderModule::Handle, 2> shaders = Create_VKTut_V2_Shaders(LogicalDevice);
+					StaticArray<ShaderModule::Handle, 2> shaders = Create_VKTut_Shaders(LogicalDevice);
 
 					CreateDescriptorSetLayout();
 
@@ -1881,6 +2210,12 @@
 					CreateUniformBuffers();
 
 					CreateDescriptorPool();
+
+					CreateTextureImage();
+
+					CreateTextureImageView();
+
+					CreateTextureSampler();
 
 					CreateDescriptorSets();
 
@@ -1912,7 +2247,7 @@
 
 					CreateRenderPass(LogicalDevice, SwapChain_ImageFormat, RenderPass);
 
-					StaticArray<ShaderModule::Handle, 2> shaders = Create_VKTut_V2_Shaders(LogicalDevice);
+					StaticArray<ShaderModule::Handle, 2> shaders = Create_VKTut_Shaders(LogicalDevice);
 
 					CreateGraphicsPipeline(LogicalDevice, SwapChain_Extent, shaders, PipelineLayout, RenderPass, GraphicsPipeline);
 
@@ -2042,6 +2377,14 @@
 						CommandPool           , 
 						CommandBuffers
 					);
+
+					Sampler::Destroy(LogicalDevice, TextureSampler, nullptr);
+
+					ImageView::Destroy(LogicalDevice, TextureImageView, nullptr);
+
+					Image::Destroy(LogicalDevice, TextureImage, nullptr);
+
+					LogicalDevice::Memory::Free(LogicalDevice, TextureImageMemory, nullptr);
 
 					Pipeline::Layout::DescriptorSet::Destroy(LogicalDevice, DescriptorSetLayout, nullptr);
 					
