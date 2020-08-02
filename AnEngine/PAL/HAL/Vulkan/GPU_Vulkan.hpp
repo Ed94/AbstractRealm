@@ -251,6 +251,20 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				VkPipeline&               _graphicsPipeline   // Will be provided.
 			);
 
+			void CreateImage
+			(
+				uint32                         _width,
+				uint32                         _height,
+				EFormat                        _format,
+				EImageTiling                   _tiling,
+				Image::UsageFlags              _usage,
+				Memory::PropertyFlags          _properties,
+				Image::Handle& _image,
+				LogicalDevice::Memory::Handle& _imageMemory
+			);
+
+			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format, Image::AspectFlags _aspectFlags);
+
 			void CreateImageViews
 			(
 				LogicalDevice::Handle _logicalDevice       ,
@@ -324,9 +338,13 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				ptr<void>               _userData
 			);
 
+			EFormat FindDepthFormat();
+
 			QueueFamilyIndices FindQueueFamilies(PhysicalDevice::Handle _deviceHandle, Surface::Handle _surfaceHandle);
 
 			uint32 FindMemoryType(PhysicalDevice::Handle _device,  uint32 _typeFilter, Memory::PropertyFlags _properties);
+
+			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features);
 
 			ExtensionIdentifierList GetRequiredExtensions();
 

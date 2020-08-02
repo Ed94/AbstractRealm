@@ -9,4 +9,7 @@
 
 %cd%/../../../../Engine/ThirdParty/Tools/glslc.exe %cd%/VertexShaderV4.vert -o VKTut_V4_Vert.spv
 %cd%/../../../../Engine/ThirdParty/Tools/glslc.exe %cd%/FragmentShaderV4.frag -o VKTut_V4_Frag.spv
+
+%cd%/../../../../Engine/ThirdParty/Tools/glslc.exe %cd%/VertexShaderV5.vert -o VKTut_V5_Vert.spv
+%cd%/../../../../Engine/ThirdParty/Tools/glslc.exe %cd%/FragmentShaderV5.frag -o VKTut_V5_Frag.spv
 pause

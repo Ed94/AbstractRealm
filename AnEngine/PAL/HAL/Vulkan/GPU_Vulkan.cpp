@@ -6,7 +6,8 @@
 // Includes
 
 
-
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "Renderer/Shader/TriangleShader/TriangleShader.hpp"
 #include "Renderer/Shader/VKTut/VKTut.hpp"
 #include "glm/glm.hpp"
@@ -89,6 +90,12 @@
 
 				Sampler::Handle TextureSampler;
 
+				Image::Handle DepthImage;
+
+				LogicalDevice::Memory::Handle DepthImageMemory;
+
+				ImageView::Handle DepthImageView;
+
 
 			//);
 
@@ -127,7 +134,7 @@
 				{
 					struct
 					{
-						float32 X, Y;
+						float32 X, Y, Z;
 					} 
 					
 					Position;
@@ -157,7 +164,7 @@
 
 						posAttrib.Binding = 0;
 						posAttrib.Location = 0;
-						posAttrib.Format = EFormat::R32_G32_SFloat;
+						posAttrib.Format = EFormat::R32_G32_B32_SFloat;
 						posAttrib.Offset = offsetof(Vertex, Vertex::Position);
 
 						// Color Attributes
@@ -212,30 +219,52 @@
 				const DynamicArray<Vertex> SquareVerticies =
 				{
 					{
-						{ -0.5f, -0.5f      }, 
-						{  1.0f,  0.0f, 0.0f}, 
-						{  0.0f,  0.0f      }
+						{ -0.5f, -0.5f, 0.0f }, 
+						{  1.0f,  0.0f, 0.0f }, 
+						{  0.0f,  0.0f       }
 					},
 					{
-						{ 0.5f, -0.5f      }, 
-						{ 0.0f,  1.0f, 0.0f}, 
-						{ 1.0f,  0.0f      }
+						{ 0.5f, -0.5f, 0.0f }, 
+						{ 0.0f,  1.0f, 0.0f }, 
+						{ 1.0f,  0.0f       }
 					},
 					{
-						{ 0.5f, 0.5f      }, 
-						{ 0.0f, 0.0f, 1.0f}, 
-						{ 1.0f, 1.0f      }
+						{ 0.5f, 0.5f, 0.0f }, 
+						{ 0.0f, 0.0f, 1.0f }, 
+						{ 1.0f, 1.0f       }
 					},
 					{
-						{ -0.5f, 0.5f      }, 
-						{  1.0f, 1.0f, 1.0f}, 
-						{  0.0f, 1.0f      }
+						{ -0.5f, 0.5f, 0.0f }, 
+						{  1.0f, 1.0f, 1.0f }, 
+						{  0.0f, 1.0f       }
+					},
+
+					{ 
+						{ -0.5f, -0.5f, -0.5f }, 
+						{  1.0f,  0.0f,  0.0f }, 
+						{  0.0f,  0.0f        }
+					},
+					{
+						{ 0.5f, -0.5f, -0.5f }, 
+						{ 0.0f,  1.0f,  0.0f }, 
+						{ 1.0f,  0.0f        }
+					},
+					{
+						{ 0.5f, 0.5f, -0.5f }, 
+						{ 0.0f, 0.0f,  1.0f }, 
+						{ 1.0f, 1.0f        }
+					},
+					{
+						{ -0.5f, 0.5f, -0.5f }, 
+						{  1.0f, 1.0f,  1.0f }, 
+						{  0.0f, 1.0f        }
 					}
 				};
 
 				const DynamicArray<uInt16> SquareIndices =
 				{
-					0, 1, 2, 2, 3, 0
+					0, 1, 2, 2, 3, 0,
+					4, 5, 6, 6, 7, 4
 				};
 
 				struct UniformBufferObject
@@ -311,6 +340,12 @@
 				CommandBufferList&       _commandBuffers
 			)
 			{
+				ImageView::Destroy(LogicalDevice, DepthImageView, nullptr);
+
+				Image::Destroy(LogicalDevice, DepthImage, nullptr);
+
+				LogicalDevice::Memory::Free(LogicalDevice, DepthImageMemory, nullptr);
+
 				for (DataSize index = 0; index < _swapChainFramebuffers.size(); index++)
 				{
 					Framebuffer::Destroy(_logicalDevice, _swapChainFramebuffers[index], nullptr);
@@ -576,10 +611,13 @@
 
 						renderPassInfo.RenderArea.Extent = _swapChain_Extent;
 
-						ClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+						StaticArray<ClearValue, 2> clearValues {}; 
 
-						renderPassInfo.ClearValueCount = 1          ;
-						renderPassInfo.ClearValues     = &clearColor;
+						clearValues[0].Color        = { 0.0f, 0.0f, 0.0f, 1.0f };
+						clearValues[1].DepthStencil = { 1.0f, 0                };
+
+						renderPassInfo.ClearValueCount = SCast<uint32>(clearValues.size());
+						renderPassInfo.ClearValues     = clearValues.data()               ;
 
 						CommandBuffer::BeginRenderPass(_commandBufferContainer[index], renderPassInfo, ESubpassContents::Inline);
 
@@ -653,6 +691,29 @@
 				{
 					throw std::runtime_error("failed to create command pool!");
 				}
+			}
+
+			void CreateDepthResources()
+			{
+				EFormat depthFormat = FindDepthFormat();
+
+				CreateImage
+				(
+					SwapChain_Extent.Width, 
+					SwapChain_Extent.Height, 
+					depthFormat, 
+					EImageTiling::Optimal, 
+					EImageUsage::DepthStencil_Attachment, 
+					EMemoryPropertyFlag::DeviceLocal, 
+					DepthImage,
+					DepthImageMemory
+				);
+
+				DepthImageView = CreateImageView(DepthImage, depthFormat, Image::AspectFlags(EImageAspect::Depth));
+
+				TransitionImageLayout(DepthImage, depthFormat, EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal);
+
+
 			}
 
 			void CreateDescriptorPool()
@@ -789,20 +850,21 @@
 
 				for (DataSize index = 0; index < _swapChainImageViews.size(); index++) 
 				{
-					ImageView::Handle attachments[] = 
+					StaticArray<ImageView::Handle, 2> attachments = 
 					{
-						_swapChainImageViews[index]
+						_swapChainImageViews[index],
+						DepthImageView
 					};
 
 					Framebuffer::CreateInfo framebufferInfo {};
 
-					framebufferInfo.SType           = framebufferInfo.STypeEnum;
-					framebufferInfo.RenderPass      = _renderPass              ;
-					framebufferInfo.AttachmentCount = 1                        ;
-					framebufferInfo.Attachments     = attachments              ;
-					framebufferInfo.Width           = _swapChainExtent.Width   ;
-					framebufferInfo.Height          = _swapChainExtent.Height  ;
-					framebufferInfo.Layers          = 1                        ;
+					framebufferInfo.SType           = framebufferInfo.STypeEnum        ;
+					framebufferInfo.RenderPass      = _renderPass                      ;
+					framebufferInfo.AttachmentCount = SCast<uint32>(attachments.size());
+					framebufferInfo.Attachments     = attachments.data()               ;
+					framebufferInfo.Width           = _swapChainExtent.Width           ;
+					framebufferInfo.Height          = _swapChainExtent.Height          ;
+					framebufferInfo.Layers          = 1                                ;
 
 					if (Framebuffer::Create(_logicalDevice, framebufferInfo, nullptr, _swapChainFrameBuffers[index]) != EResult::Success) 
 					{
@@ -961,6 +1023,25 @@
 				colorBlending_CreationSpec.BlendConstants[2]     = 0.0f                                ;
 				colorBlending_CreationSpec.BlendConstants[3]     = 0.0f                                ;
 
+				Pipeline::DepthStencilState::CreateInfo depthStencil_Info {};
+
+				depthStencil_Info.SType = depthStencil_Info.STypeEnum;
+				depthStencil_Info.DepthTestEnable = EBool::True;
+				depthStencil_Info.DepthWriteEnable = EBool::True;
+				
+				depthStencil_Info.DepthCompareOp = ECompareOperation::Less;
+				
+				depthStencil_Info.DepthBoundsTestEnable = EBool::False;
+
+				depthStencil_Info.MinDepthBounds = 0.0f;
+				depthStencil_Info.MaxDepthBounds = 1.0f;
+
+				depthStencil_Info.StencilTestEnable = EBool::False;
+				depthStencil_Info.Front;   // Optional
+				depthStencil_Info.Back ;   // Optional
+
+
+
 				EDynamicState States[] =
 				{
 					EDynamicState::Viewport ,
@@ -1000,7 +1081,7 @@
 				pipelineInfo.ViewportState      = &viewportState_CreationSpec   ;
 				pipelineInfo.RasterizationState = &rasterizer                   ;
 				pipelineInfo.MultisampleState   = &multisampling_CreationSpec   ;
-				pipelineInfo.DepthStencilState  = nullptr                       ;   // Optional
+				pipelineInfo.DepthStencilState  = &depthStencil_Info            ;   
 				pipelineInfo.ColorBlendState    = &colorBlending_CreationSpec   ;
 				pipelineInfo.DynamicState       = nullptr                       ;   // Optional
 
@@ -1067,20 +1148,20 @@
 				Image::BindMemory(LogicalDevice, _image, _imageMemory, 0);
 			}
 
-			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format)
+			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format, Image::AspectFlags _aspectFlags)
 			{
 				ImageView::CreateInfo viewInfo {};
 
 				viewInfo.SType    = viewInfo.STypeEnum       ;
-				viewInfo.Image    = TextureImage             ;
+				viewInfo.Image    = _image                   ;
 				viewInfo.ViewType = ImageView::EViewType::_2D;
-				viewInfo.Format   = EFormat::R8_G8_B8_A8_SRGB;
+				viewInfo.Format   = _format                  ;
 
-				viewInfo.SubresourceRange.AspectMask     = EImageAspect::Color;
-				viewInfo.SubresourceRange.BaseMipLevel   = 0                  ;
-				viewInfo.SubresourceRange.LevelCount     = 1                  ;
-				viewInfo.SubresourceRange.BaseArrayLayer = 0                  ;
-				viewInfo.SubresourceRange.LayerCount     = 1                  ;
+				viewInfo.SubresourceRange.AspectMask     = _aspectFlags;
+				viewInfo.SubresourceRange.BaseMipLevel   = 0           ;
+				viewInfo.SubresourceRange.LevelCount     = 1           ;
+				viewInfo.SubresourceRange.BaseArrayLayer = 0           ;
+				viewInfo.SubresourceRange.LayerCount     = 1           ;
 
 				ImageView::Handle result;
 
@@ -1274,20 +1355,41 @@
 				colorAttachmentRef.Attachment = 0                                    ;
 				colorAttachmentRef.Layout     = EImageLayout::Color_AttachmentOptimal;
 
+				RenderPass::AttachmentDescription depthAttachment{};
+
+				depthAttachment.Format = FindDepthFormat();
+				depthAttachment.Samples = ESampleCount::_1;
+
+				depthAttachment.LoadOp = EAttachmentLoadOperation::Clear;
+				depthAttachment.StoreOp = EAttachmentStoreOperation::DontCare;
+
+				depthAttachment.StencilLoadOp = EAttachmentLoadOperation::DontCare;
+				depthAttachment.StencilStoreOp = EAttachmentStoreOperation::DontCare;
+
+				depthAttachment.InitialLayout = EImageLayout::Undefined;
+				depthAttachment.FinalLayout = EImageLayout::DepthStencil_AttachmentOptimal;
+
+				RenderPass::AttachmentReference depthAttachmentRef{};
+
+				depthAttachmentRef.Attachment = 1;
+				depthAttachmentRef.Layout = EImageLayout::DepthStencil_AttachmentOptimal;
+
 				RenderPass::SubpassDescription subpass {};
 
-				subpass.PipelineBindPoint    = EPipelineBindPoint::Graphics;
-				subpass.ColorAttachmentCount = 1                           ;
-				subpass.ColorAttachments     = &colorAttachmentRef         ;
+				subpass.PipelineBindPoint      = EPipelineBindPoint::Graphics;
+				subpass.ColorAttachmentCount   = 1                           ;
+				subpass.ColorAttachments       = &colorAttachmentRef         ;
+				subpass.DepthStencilAttachment = &depthAttachmentRef         ;
+
+				StaticArray<RenderPass::AttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
 
 				RenderPass::CreateInfo renderPassInfo{};
 
-				renderPassInfo.SType           = renderPassInfo.STypeEnum;
-				renderPassInfo.AttachmentCount = 1                       ;
-				renderPassInfo.Attachments     = &colorAttachment        ;
-				renderPassInfo.SubpassCount    = 1                       ;
-				renderPassInfo.Subpasses       = &subpass                ;
-
+				renderPassInfo.SType           = renderPassInfo.STypeEnum         ;
+				renderPassInfo.AttachmentCount = SCast<uint32>(attachments.size());
+				renderPassInfo.Attachments     = attachments.data()               ;
+				renderPassInfo.SubpassCount    = 1                                ;
+				renderPassInfo.Subpasses       = &subpass                         ;
 
 				RenderPass::SubpassDependency dependency{};
 
@@ -1303,7 +1405,6 @@
 
 				renderPassInfo.DependencyCount = 1          ;
 				renderPassInfo.Dependencies    = &dependency;
-
 
 				if (RenderPass::Create(_logicalDevice, renderPassInfo, nullptr, _renderPass) != EResult::Success)
 				{
@@ -1523,7 +1624,7 @@
 					textureWidth, 
 					textureHeight,  
 					EFormat::R8_G8_B8_A8_SRGB, 
-					EImageTiling::Optional, 
+					EImageTiling::Optimal, 
 					Image::UsageFlags(EImageUsage::TransferDestination, EImageUsage::Sampled), 
 					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal),
 					TextureImage, 
@@ -1543,7 +1644,7 @@
 
 			void CreateTextureImageView()
 			{
-				TextureImageView = CreateImageView(TextureImage, EFormat::R8_G8_B8_A8_SRGB);
+				TextureImageView = CreateImageView(TextureImage, EFormat::R8_G8_B8_A8_SRGB, Image::AspectFlags(EImageAspect::Color));
 			}
 
 			void CreateTextureSampler()
@@ -1629,8 +1730,8 @@
 
 				using namespace Renderer::Shader;
 
-				auto vertCode = IO::BufferFile(String(Paths::VKTut) + "VKTut_V4_Vert.spv");
-				auto fragCode = IO::BufferFile(String(Paths::VKTut) + "VKTut_V4_Frag.spv");
+				auto vertCode = IO::BufferFile(String(Paths::VKTut) + "VKTut_V5_Vert.spv");
+				auto fragCode = IO::BufferFile(String(Paths::VKTut) + "VKTut_V5_Frag.spv");
 
 				//TODO: FIGURE THIS OUT.
 				Bytecode_Buffer vertBytecode(vertCode.begin(), vertCode.end());
@@ -1713,6 +1814,16 @@
 				return EBool::True;
 			}
 
+			EFormat FindDepthFormat()
+			{
+				return	FindSupportedFormat
+				( 
+					{ EFormat::D32_SFloat, EFormat::D32_SFloat_S8_UInt, EFormat::D24_UNormalized_S8_UInt }, 
+					EImageTiling::Optimal, 
+					EFormatFeatureFlag::DepthStencilAttachment 
+				);
+			}
+
 			QueueFamilyIndices FindQueueFamilies
 			(
 				PhysicalDevice::Handle _deviceHandle ,
@@ -1784,6 +1895,27 @@
 				throw RuntimeError("Failed to find suitable memory type!");
 			}
 
+			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features)
+			{
+				for (EFormat format : _canidates)
+				{
+					FormatProperties properties;
+
+					PhysicalDevice::GetFormatProperties(PhysicalDevice, format, properties);
+
+					if (_tiling == EImageTiling::Linear && (properties.LinearTilingFeatures & _features) == _features)
+					{
+						return format;
+					}
+					else if (_tiling == EImageTiling::Optimal && (properties.OptimalTilingFeatures & _features) == _features)
+					{
+						return format;
+					}
+				}
+
+				throw RuntimeError("Failed to find supported format!");
+			}
+
 			ExtensionIdentifierList GetRequiredExtensions()
 			{
 				Stack
@@ -1808,6 +1940,11 @@
 			CStrArray> GetRequiredVulkanAppExtensions(uint32& _numExtensions)
 			{
 				return CStrArray(SAL::GLFW::GetRequiredVulkanAppExtensions(_numExtensions));
+			}
+
+			bool HasStencilComponent(EFormat _format)
+			{
+				return _format == EFormat::D32_SFloat_S8_UInt || _format == EFormat::D24_UNormalized_S8_UInt;
 			}
 
 			bool IsDeviceSuitable(PhysicalDevice::Handle _physicalDevice, Surface::Handle _surface, ExtensionIdentifierList _extensionsSpecified)
@@ -2064,13 +2201,24 @@
 
 				barrier.SubresourceRange.AspectMask.Set(EImageAspect::Color);
 
+				if (_newLayout == EImageLayout::DepthStencil_AttachmentOptimal)
+				{
+					barrier.SubresourceRange.AspectMask.Set(EImageAspect::Depth);
+
+					if (HasStencilComponent(_format))
+					{
+						barrier.SubresourceRange.AspectMask.Add(EImageAspect::Stencil);
+					}
+				}
+				else
+				{
+					barrier.SubresourceRange.AspectMask.Set(EImageAspect::Color);
+				}
+
 				barrier.SubresourceRange.BaseMipLevel   = 0;
 				barrier.SubresourceRange.LevelCount     = 1;
 				barrier.SubresourceRange.BaseArrayLayer = 0;
 				barrier.SubresourceRange.LayerCount     = 1;
-
-				//barrier.SrcAccessMask = 0;   // TODO
-				//barrier.DstAccessMask = 0;   // TODO
 
 				Pipeline::StageFlags sourceStage     ;
 				Pipeline::StageFlags destinationStage;
@@ -2091,6 +2239,15 @@
 
 					sourceStage     .Set(EPipelineStageFlag::Transfer       );
 					destinationStage.Set(EPipelineStageFlag::FragementShader);
+				}
+				else if (_oldLayout == EImageLayout::Undefined && _newLayout == EImageLayout::DepthStencil_AttachmentOptimal)
+				{
+					barrier.SrcAccessMask = 0;
+
+					barrier.DstAccessMask.Set(EAccessFlag::DepthStencilAttachmentRead, EAccessFlag::DepthStencilAttachmentWrite);
+
+					sourceStage     .Set(EPipelineStageFlag::TopOfPipe         );
+					destinationStage.Set(EPipelineStageFlag::EarlyFragmentTests);
 				}
 				else
 				{
@@ -2122,7 +2279,7 @@
 
 				ubo.ModelSpace = glm::rotate(glm::mat4(1.0f), time * glm::radians(25.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-				ubo.Viewport = glm::lookAt(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+				ubo.Viewport = glm::lookAt(glm::vec3(1.8f, 1.2f, 1.2f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
 				ubo.Projection = glm::perspective(glm::radians(45.0f), SwapChain_Extent.Width / (float) SwapChain_Extent.Height, 0.1f, 10.0f);
 
@@ -2199,8 +2356,6 @@
 					ShaderModule::Destory(LogicalDevice, shaders[0], nullptr);
 					ShaderModule::Destory(LogicalDevice, shaders[1], nullptr);
 
-					CreateFrameBuffers(LogicalDevice, RenderPass, SwapChain_Extent, SwapChain_ImageViews, SwapChain_Framebuffers);
-
 					CreateCommandPool(PhysicalDevice, LogicalDevice, SurfaceHandle, CommandPool);
 
 					CreateVertexBuffers(PhysicalDevice, LogicalDevice, VertexBuffer, VertexBufferMemory);
@@ -2210,6 +2365,10 @@
 					CreateUniformBuffers();
 
 					CreateDescriptorPool();
+
+					CreateDepthResources();
+
+					CreateFrameBuffers(LogicalDevice, RenderPass, SwapChain_Extent, SwapChain_ImageViews, SwapChain_Framebuffers);
 
 					CreateTextureImage();
 
@@ -2253,6 +2412,8 @@
 
 					ShaderModule::Destory(LogicalDevice, shaders[0], nullptr);
 					ShaderModule::Destory(LogicalDevice, shaders[1], nullptr);
+
+					CreateDepthResources();
 
 					CreateFrameBuffers(LogicalDevice, RenderPass, SwapChain_Extent, SwapChain_ImageViews, SwapChain_Framebuffers);
 
