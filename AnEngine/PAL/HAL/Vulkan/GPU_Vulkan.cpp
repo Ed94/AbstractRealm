@@ -289,6 +289,12 @@
 				const String EdsCryingCat_TexturePath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.jpg";
 
 				uint32 MipMapLevels;
+
+				ESampleCount MSAA_Samples = ESampleCount::_1;
+
+				Image::Handle ColorImage;
+				LogicalDevice::Memory::Handle ColorImageMemory;
+				ImageView::Handle ColorImageView;
 				
 				//Image::Handle TextureImage;
 
@@ -358,6 +364,12 @@
 				CommandBufferList&       _commandBuffers
 			)
 			{
+				ImageView::Destroy(LogicalDevice, ColorImageView, nullptr);
+
+				Image::Destroy(LogicalDevice, ColorImage, nullptr);
+
+				LogicalDevice::Memory::Free(LogicalDevice, ColorImageMemory, nullptr);
+
 				ImageView::Destroy(LogicalDevice, DepthImageView, nullptr);
 
 				Image::Destroy(LogicalDevice, DepthImage, nullptr);
@@ -689,6 +701,28 @@
 				}
 			}
 
+			void CreateColorResources()
+			{
+				EFormat colorFormat = SwapChain_ImageFormat;
+
+				CreateImage
+				(
+					SwapChain_Extent.Width, 
+					SwapChain_Extent.Height, 
+					1, 
+					MSAA_Samples, 
+					colorFormat, 
+					EImageTiling::Optimal, 
+					Image::UsageFlags(EImageUsage::Transient_Attachment, EImageUsage::Color_Attachment), 
+					EMemoryPropertyFlag::DeviceLocal, 
+					ColorImage, 
+					ColorImageMemory
+				);
+
+
+				ColorImageView = CreateImageView(ColorImage, colorFormat, EImageAspect::Color, 1);
+			}
+
 			void CreateCommandPool
 			(
 				PhysicalDevice::Handle _physicalDevice, 
@@ -720,6 +754,7 @@
 					SwapChain_Extent.Width, 
 					SwapChain_Extent.Height, 
 					1,
+					MSAA_Samples,   // TODO: Change me.
 					depthFormat, 
 					EImageTiling::Optimal, 
 					EImageUsage::DepthStencil_Attachment, 
@@ -869,10 +904,11 @@
 
 				for (DataSize index = 0; index < _swapChainImageViews.size(); index++) 
 				{
-					StaticArray<ImageView::Handle, 2> attachments = 
+					StaticArray<ImageView::Handle, 3> attachments = 
 					{
-						_swapChainImageViews[index],
-						DepthImageView
+						ColorImageView,
+						DepthImageView,
+						_swapChainImageViews[index]
 					};
 
 					Framebuffer::CreateInfo framebufferInfo {};
@@ -1006,7 +1042,7 @@
 
 				multisampling_CreationSpec.SType                 = multisampling_CreationSpec.STypeEnum;
 				multisampling_CreationSpec.EnableSampleShading   = EBool::False                        ;
-				multisampling_CreationSpec.RasterizationSamples  = ESampleCount::_1                    ;
+				multisampling_CreationSpec.RasterizationSamples  = MSAA_Samples                        ;
 				multisampling_CreationSpec.MinSampleShading      = 1.0f                                ;
 				multisampling_CreationSpec.SampleMask            = nullptr                             ;
 				multisampling_CreationSpec.EnableAlphaToCoverage = EBool::False                        ;
@@ -1123,6 +1159,7 @@
 				uint32                         _width      , 
 				uint32                         _height     , 
 				uint32                         _mipLevels  ,
+				ESampleCount                   _numSamples ,
 				EFormat                        _format     , 
 				EImageTiling                   _tiling     , 
 				Image::UsageFlags              _usage      , 
@@ -1138,16 +1175,16 @@
 				imageInfo.Extent.Width  = SCast<uint32>(_width );
 				imageInfo.Extent.Height = SCast<uint32>(_height);
 				imageInfo.Extent.Depth  = 1                     ;
-				imageInfo.MipmapLevels  = _mipLevels          ;
+				imageInfo.MipmapLevels  = _mipLevels            ;
 				imageInfo.ArrayLayers   = 1                     ;
 
-				imageInfo.Format       = _format;
-				imageInfo.Tiling       = _tiling   ;
-				imageInfo.InitalLayout = EImageLayout::Undefined  ;
-				imageInfo.Usage        = _usage;
-				imageInfo.SharingMode  = ESharingMode::Excusive;
-				imageInfo.Samples      = ESampleCount::_1      ;
-				imageInfo.Flags        = 0                     ;
+				imageInfo.Format       = _format                ;
+				imageInfo.Tiling       = _tiling                ;
+				imageInfo.InitalLayout = EImageLayout::Undefined;
+				imageInfo.Usage        = _usage                 ;
+				imageInfo.SharingMode  = ESharingMode::Excusive ;
+				imageInfo.Samples      = _numSamples            ;
+				imageInfo.Flags        = 0                      ;
 
 				if (Image::Create(LogicalDevice, imageInfo, nullptr, _image) != EResult::Success)
 					throw RuntimeError("Failed to create image!");
@@ -1359,7 +1396,7 @@
 				RenderPass::AttachmentDescription colorAttachment {};
 
 				colorAttachment.Format  = _imageFormat;
-				colorAttachment.Samples = ESampleCount::_1;
+				colorAttachment.Samples = MSAA_Samples;
 
 				colorAttachment.LoadOp  = EAttachmentLoadOperation ::Clear;
 				colorAttachment.StoreOp = EAttachmentStoreOperation::Store;
@@ -1368,17 +1405,17 @@
 				colorAttachment.StencilStoreOp = EAttachmentStoreOperation::DontCare;
 
 				colorAttachment.InitialLayout = EImageLayout::Undefined        ;
-				colorAttachment.FinalLayout   = EImageLayout::PresentSource_KHR;
+				colorAttachment.FinalLayout   = EImageLayout::Color_AttachmentOptimal;
 
-				RenderPass::AttachmentReference colorAttachmentRef{};
+				RenderPass::AttachmentReference colorAttachmentRef {};
 
 				colorAttachmentRef.Attachment = 0                                    ;
 				colorAttachmentRef.Layout     = EImageLayout::Color_AttachmentOptimal;
 
-				RenderPass::AttachmentDescription depthAttachment{};
+				RenderPass::AttachmentDescription depthAttachment {};
 
 				depthAttachment.Format = FindDepthFormat();
-				depthAttachment.Samples = ESampleCount::_1;
+				depthAttachment.Samples = MSAA_Samples;
 
 				depthAttachment.LoadOp = EAttachmentLoadOperation::Clear;
 				depthAttachment.StoreOp = EAttachmentStoreOperation::DontCare;
@@ -1389,10 +1426,31 @@
 				depthAttachment.InitialLayout = EImageLayout::Undefined;
 				depthAttachment.FinalLayout = EImageLayout::DepthStencil_AttachmentOptimal;
 
-				RenderPass::AttachmentReference depthAttachmentRef{};
+				RenderPass::AttachmentReference depthAttachmentRef {};
 
 				depthAttachmentRef.Attachment = 1;
 				depthAttachmentRef.Layout = EImageLayout::DepthStencil_AttachmentOptimal;
+
+				RenderPass::AttachmentDescription colorAttachmentResolve {};
+
+				colorAttachmentResolve.Format = SwapChain_ImageFormat;
+
+				colorAttachmentResolve.Samples = ESampleCount::_1;
+
+				colorAttachmentResolve.LoadOp  = EAttachmentLoadOperation ::DontCare;
+				colorAttachmentResolve.StoreOp = EAttachmentStoreOperation::Store   ;
+
+				colorAttachmentResolve.StencilLoadOp  = EAttachmentLoadOperation ::DontCare;
+				colorAttachmentResolve.StencilStoreOp = EAttachmentStoreOperation::DontCare;
+
+				colorAttachmentResolve.InitialLayout = EImageLayout::Undefined        ;
+				colorAttachmentResolve.FinalLayout   = EImageLayout::PresentSource_KHR;
+
+				RenderPass::AttachmentReference colorAttachmentResolveRef {};
+
+				colorAttachmentResolveRef.Attachment = 2;
+
+				colorAttachmentResolveRef.Layout = EImageLayout::Color_AttachmentOptimal;
 
 				RenderPass::SubpassDescription subpass {};
 
@@ -1400,8 +1458,9 @@
 				subpass.ColorAttachmentCount   = 1                           ;
 				subpass.ColorAttachments       = &colorAttachmentRef         ;
 				subpass.DepthStencilAttachment = &depthAttachmentRef         ;
+				subpass.ResolveAttachments     = &colorAttachmentResolveRef  ;
 
-				StaticArray<RenderPass::AttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
+				StaticArray<RenderPass::AttachmentDescription, 3> attachments = { colorAttachment, depthAttachment, colorAttachmentResolve };
 
 				RenderPass::CreateInfo renderPassInfo{};
 
@@ -1646,6 +1705,7 @@
 					textureWidth, 
 					textureHeight,  
 					MipMapLevels,
+					ESampleCount::_1,   // TODO: Change me.
 					EFormat::R8_G8_B8_A8_SRGB, 
 					EImageTiling::Optimal, 
 					Image::UsageFlags(EImageUsage::TransferDestination, EImageUsage::Sampled, EImageUsage::TransferSource), 
@@ -2067,6 +2127,24 @@
 				CommandBuffer_EndSingleTimeCommands(commandBuffer);
 			}
 
+			ESampleCount GetMaxUsableSampleCount()
+			{
+				PhysicalDevice::Properties properties;
+
+				PhysicalDevice::GetProperties(PhysicalDevice, properties);
+
+				SampleCountFlags counts(properties.LimitsSpec.FramebufferColorSampleCounts, properties.LimitsSpec.FramebufferDepthSampleCounts);
+
+				if (counts.Has(ESampleCount::_64)) return ESampleCount::_64;
+				if (counts.Has(ESampleCount::_32)) return ESampleCount::_32;
+				if (counts.Has(ESampleCount::_16)) return ESampleCount::_16;
+				if (counts.Has(ESampleCount::_8 )) return ESampleCount::_8 ;
+				if (counts.Has(ESampleCount::_4 )) return ESampleCount::_4 ;
+				if (counts.Has(ESampleCount::_2 )) return ESampleCount::_2 ;
+
+				return ESampleCount::_1;
+			}
+
 			ExtensionIdentifierList GetRequiredExtensions()
 			{
 				Stack
@@ -2219,6 +2297,8 @@
 					if (IsDeviceSuitable(device, _surface, _extensionsSpecified))
 					{
 						_physicalDevice = device;
+						
+						MSAA_Samples = GetMaxUsableSampleCount();
 
 						break;
 					}
@@ -2468,7 +2548,7 @@
 
 				UniformBufferObject ubo {};
 
-				ubo.ModelSpace = glm::rotate(glm::mat4(1.0f), time * glm::radians(25.0f), glm::vec3(0.0f, 0.0f, 0.5f));
+				ubo.ModelSpace = glm::rotate(glm::mat4(1.0f), /*time **/ glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 0.5f));
 
 				ubo.Viewport = glm::lookAt(glm::vec3(1.7f, 1.7f, 1.7f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));   // The default
 				//ubo.Viewport = glm::lookAt(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)); crying cat
@@ -2560,6 +2640,8 @@
 
 					CreateDescriptorPool();
 
+					CreateColorResources();
+
 					CreateDepthResources();
 
 					CreateFrameBuffers(LogicalDevice, RenderPass, SwapChain_Extent, SwapChain_ImageViews, SwapChain_Framebuffers);
@@ -2607,6 +2689,8 @@
 
 					ShaderModule::Destory(LogicalDevice, shaders[0], nullptr);
 					ShaderModule::Destory(LogicalDevice, shaders[1], nullptr);
+
+					CreateColorResources();
 
 					CreateDepthResources();
 

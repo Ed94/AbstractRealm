@@ -255,7 +255,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			(
 				uint32                         _width,
 				uint32                         _height,
-				uint32 _mipMapsLevels,
+				uint32                         _mipLevels,
+				ESampleCount                   _numSamples,
 				EFormat                        _format,
 				EImageTiling                   _tiling,
 				Image::UsageFlags              _usage,
