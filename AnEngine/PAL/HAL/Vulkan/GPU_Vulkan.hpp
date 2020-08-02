@@ -255,6 +255,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			(
 				uint32                         _width,
 				uint32                         _height,
+				uint32 _mipMapsLevels,
 				EFormat                        _format,
 				EImageTiling                   _tiling,
 				Image::UsageFlags              _usage,
@@ -263,14 +264,15 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				LogicalDevice::Memory::Handle& _imageMemory
 			);
 
-			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format, Image::AspectFlags _aspectFlags);
+			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
 
 			void CreateImageViews
 			(
 				LogicalDevice::Handle _logicalDevice       ,
 				ImageList&            _swapChainImages     , 
 				EFormat          _swapChainImageFormat,
-				ImageViewList&        _imageViewContainer      // Will be populated.
+				ImageViewList&        _imageViewContainer,      // Will be populated.
+				uint32 _mipMapLevels
 			);
 
 			void CreateLogicalDevice
@@ -346,6 +348,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features);
 
+			void GenerateMipMaps(Image::Handle _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels);
+
 			ExtensionIdentifierList GetRequiredExtensions();
 
 			Where<Meta::WindowingPlatform == Meta::EWindowingPlatform::GLFW,
@@ -375,7 +379,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EPresentationMode Surface_SwapChain_ChoosePresentationMode(const SurfacePresentationModeList& _surfacePresentationModes);
 
-			void TransitionImageLayout(Image::Handle _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout);
+			void TransitionImageLayout(Image::Handle _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout, uint32 _mipMapLevels);
 
 			void Initialize_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
 

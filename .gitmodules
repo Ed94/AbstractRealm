@@ -73,3 +73,6 @@
 [submodule "AnEngine/PAL/ThirdParty/Libraries/stb"]
 	path = AnEngine/PAL/ThirdParty/Libraries/stb
 	url = git@github.com:nothings/stb
+[submodule "AnEngine/PAL/ThirdParty/Libraries/tinyobjloader"]
+	path = AnEngine/PAL/ThirdParty/Libraries/tinyobjloader
+	url = git@github.com:tinyobjloader/tinyobjloader

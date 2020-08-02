@@ -104,7 +104,7 @@
       <ConformanceMode>true</ConformanceMode>
       <FloatingPointModel>Fast</FloatingPointModel>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

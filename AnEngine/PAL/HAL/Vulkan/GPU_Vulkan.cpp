@@ -16,7 +16,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
 #include <chrono>
+#include <unordered_map>
 
 
 #if VULCAN_INTERFACE == VAULTED_THERMALS_INTERFACE
@@ -124,6 +128,13 @@
 
 
 			#pragma region VKTut_V1
+
+			struct UniformBufferObject
+			{
+				alignas(16) glm::mat4 ModelSpace;
+				alignas(16) glm::mat4 Viewport  ;
+				alignas(16) glm::mat4 Projection;
+			};
 
 				using AttributeDescription = Pipeline::VertexInputState::AttributeDescription;
 				using BindingDescription   = Pipeline::VertexInputState::BindingDescription  ;
@@ -266,13 +277,20 @@
 					0, 1, 2, 2, 3, 0,
 					4, 5, 6, 6, 7, 4
 				};
+				
 
-				struct UniformBufferObject
-				{
-					alignas(16) glm::mat4 ModelSpace;
-					alignas(16) glm::mat4 Viewport  ;
-					alignas(16) glm::mat4 Projection;
-				};
+				DynamicArray<Vertex> ModelVerticies;
+				DynamicArray<uint32> ModelIndicies;
+
+				const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
+				const String VikingRoom_TexturePath = "Engine/Data/Models/VikingRoom/viking_room.png";
+
+				const String EdsCryingCat_ModelPath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.obj";
+				const String EdsCryingCat_TexturePath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.jpg";
+
+				uint32 MipMapLevels;
+				
+				//Image::Handle TextureImage;
 
 
 			#pragma endregion VKTut_V1
@@ -629,7 +647,7 @@
 
 							CommandBuffer::BindVertexBuffers(_commandBufferContainer[index], 0, 1, vertexBuffers, offsets);
 
-							CommandBuffer::BindIndexBuffer(_commandBufferContainer[index], IndexBuffer, 0, EIndexType::uInt16);
+							CommandBuffer::BindIndexBuffer(_commandBufferContainer[index], IndexBuffer, 0, EIndexType::uInt32);
 
 							//vkCmdBindDescriptorSets(_commandBufferContainer[index], VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLayout, 0, 1, &DescriptorSets[index], 0, nullptr);
 
@@ -648,7 +666,7 @@
 							CommandBuffer::DrawIndexed
 							(
 								_commandBufferContainer[index],
-								SCast<uint32>(SquareIndices.size()),
+								SCast<uint32>(ModelIndicies.size()),
 								1,
 								0,
 								0,
@@ -701,6 +719,7 @@
 				(
 					SwapChain_Extent.Width, 
 					SwapChain_Extent.Height, 
+					1,
 					depthFormat, 
 					EImageTiling::Optimal, 
 					EImageUsage::DepthStencil_Attachment, 
@@ -709,9 +728,9 @@
 					DepthImageMemory
 				);
 
-				DepthImageView = CreateImageView(DepthImage, depthFormat, Image::AspectFlags(EImageAspect::Depth));
+				DepthImageView = CreateImageView(DepthImage, depthFormat, Image::AspectFlags(EImageAspect::Depth), 1);
 
-				TransitionImageLayout(DepthImage, depthFormat, EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal);
+				TransitionImageLayout(DepthImage, depthFormat, EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal, 1);
 
 
 			}
@@ -1103,6 +1122,7 @@
 			(
 				uint32                         _width      , 
 				uint32                         _height     , 
+				uint32                         _mipLevels  ,
 				EFormat                        _format     , 
 				EImageTiling                   _tiling     , 
 				Image::UsageFlags              _usage      , 
@@ -1118,7 +1138,7 @@
 				imageInfo.Extent.Width  = SCast<uint32>(_width );
 				imageInfo.Extent.Height = SCast<uint32>(_height);
 				imageInfo.Extent.Depth  = 1                     ;
-				imageInfo.MipmapLevels  = 1                     ;
+				imageInfo.MipmapLevels  = _mipLevels          ;
 				imageInfo.ArrayLayers   = 1                     ;
 
 				imageInfo.Format       = _format;
@@ -1148,7 +1168,7 @@
 				Image::BindMemory(LogicalDevice, _image, _imageMemory, 0);
 			}
 
-			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format, Image::AspectFlags _aspectFlags)
+			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels)
 			{
 				ImageView::CreateInfo viewInfo {};
 
@@ -1159,7 +1179,7 @@
 
 				viewInfo.SubresourceRange.AspectMask     = _aspectFlags;
 				viewInfo.SubresourceRange.BaseMipLevel   = 0           ;
-				viewInfo.SubresourceRange.LevelCount     = 1           ;
+				viewInfo.SubresourceRange.LevelCount     = _miplevels  ;
 				viewInfo.SubresourceRange.BaseArrayLayer = 0           ;
 				viewInfo.SubresourceRange.LayerCount     = 1           ;
 
@@ -1213,7 +1233,7 @@
 
 			void CreateIndexBuffer()
 			{
-				DeviceSize bufferSize = sizeof(SquareIndices[0]) * SquareIndices.size();
+				DeviceSize bufferSize = sizeof(ModelIndicies[0]) * ModelIndicies.size();
 
 				Buffer::UsageFlags usuageFlags; usuageFlags.Set(EBufferUsage::TransferSource);
 
@@ -1233,7 +1253,7 @@
 
 				LogicalDevice::Memory::Map(LogicalDevice, stagingBufferMemory, 0, bufferSize, mapflags, vertexData);
 
-				memcpy(vertexData, SquareIndices.data(), DataSize(bufferSize));
+				memcpy(vertexData, ModelIndicies.data(), DataSize(bufferSize));
 
 				LogicalDevice::Memory::Unmap(LogicalDevice, stagingBufferMemory);
 
@@ -1581,15 +1601,17 @@
 				}
 			}
 
-			void CreateTextureImage()
+			void CreateTextureImage(RoCStr _filePath)
 			{
 				int textureWidth, textureHeight, textureChannels;
 
 				using ImageBytes = stbi_uc;
 
-				ImageBytes* imageData = stbi_load("Engine/Data/Textures/DaFace.png", &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
+				ImageBytes* imageData = stbi_load(_filePath, &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
 
 				DeviceSize imageSize = textureWidth * textureHeight	 * 4;
+
+				MipMapLevels = SCast<uint32>(std::floor(std::log2(std::max(textureWidth, textureHeight)))) + 1;
 
 				if (!imageData)
 				{
@@ -1623,19 +1645,24 @@
 				(
 					textureWidth, 
 					textureHeight,  
+					MipMapLevels,
 					EFormat::R8_G8_B8_A8_SRGB, 
 					EImageTiling::Optimal, 
-					Image::UsageFlags(EImageUsage::TransferDestination, EImageUsage::Sampled), 
+					Image::UsageFlags(EImageUsage::TransferDestination, EImageUsage::Sampled, EImageUsage::TransferSource), 
 					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal),
 					TextureImage, 
 					TextureImageMemory
 				);
 
-				TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_SRGB, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal);
+				TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_SRGB, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal, MipMapLevels);
 
 				CopyBufferToImage(stagingBuffer, TextureImage, SCast<uint32>(textureWidth), SCast<uint32>(textureHeight));
 
-				TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_SRGB, EImageLayout::TransferDestination_Optimal, EImageLayout::Shader_ReadonlyOptimal);
+				//TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_SRGB, EImageLayout::TransferDestination_Optimal, EImageLayout::Shader_ReadonlyOptimal, MipMapLevels);
+
+				//transitioned to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL while generating mipmaps
+
+				GenerateMipMaps(TextureImage, EFormat::R8_G8_B8_A8_SRGB, textureWidth, textureHeight, MipMapLevels);
 
 				Buffer::Destroy(LogicalDevice, stagingBuffer, nullptr);
 
@@ -1644,7 +1671,7 @@
 
 			void CreateTextureImageView()
 			{
-				TextureImageView = CreateImageView(TextureImage, EFormat::R8_G8_B8_A8_SRGB, Image::AspectFlags(EImageAspect::Color));
+				TextureImageView = CreateImageView(TextureImage, EFormat::R8_G8_B8_A8_SRGB, Image::AspectFlags(EImageAspect::Color), MipMapLevels);
 			}
 
 			void CreateTextureSampler()
@@ -1670,9 +1697,10 @@
 				samplerInfo.CompareOperation = ECompareOperation::Always;
 
 				samplerInfo.MipmapMode = ESamplerMipmapMode::Linear;
-				samplerInfo.MipLodBias = 0.0f;
-				samplerInfo.MinimumLod = 0.0f;
-				samplerInfo.MaxLod     = 0.0f;
+				samplerInfo.MipLodBias = 0.0f                      ;
+				samplerInfo.MinimumLod = 0.0f                      ;
+				//samplerInfo.MinimumLod = SCast<float32>(MipMapLevels / 2);
+				samplerInfo.MaxLod     = SCast<float32>(MipMapLevels);
 
 				if (Sampler::Create(LogicalDevice, samplerInfo, nullptr, TextureSampler) != EResult::Success)
 					throw RuntimeError("Failed to create texture sampler!");
@@ -1747,7 +1775,7 @@
 
 			void CreateVertexBuffers(PhysicalDevice::Handle _physicalDevice, LogicalDevice::Handle _device, Buffer::Handle& _vertexBuffer, Memory::Handle& _vertexBufferMemory)
 			{
-				DeviceSize bufferSize = sizeof(SquareVerticies[0]) * SquareVerticies.size();
+				DeviceSize bufferSize = sizeof(ModelVerticies[0]) * ModelVerticies.size();
 
 				Buffer::UsageFlags usuageFlags; usuageFlags.Set(EBufferUsage::TransferSource);
 
@@ -1767,7 +1795,7 @@
 
 				LogicalDevice::Memory::Map(_device, stagingBufferMemory, 0, bufferSize, mapflags, vertexData);
 
-					memcpy(vertexData, SquareVerticies.data(), DataSize(bufferSize));
+					memcpy(vertexData, ModelVerticies.data(), DataSize(bufferSize));
 
 				LogicalDevice::Memory::Unmap(_device, stagingBufferMemory);
 
@@ -1916,6 +1944,129 @@
 				throw RuntimeError("Failed to find supported format!");
 			}
 
+			void GenerateMipMaps(Image::Handle _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
+			{
+				// Check if image format supports linear blitting
+				FormatProperties formatProperties;
+				
+				PhysicalDevice::GetFormatProperties(PhysicalDevice, _format, formatProperties);
+
+				if (!(formatProperties.OptimalTilingFeatures.Has(EFormatFeatureFlag::SampledImageFilterLinear)))
+				{
+					throw std::runtime_error("Texture image format does not support linear blitting!");
+				}
+
+				CommandBuffer::Handle commandBuffer = CommandBuffer_BeginSingleTimeCommands();
+
+				Image::Memory_Barrier barrier{};
+
+				barrier.SType = barrier.STypeEnum;
+				barrier.Image = _image;
+				barrier.SrcQueueFamilyIndex = QueueFamily_Ignored;
+				barrier.DstQueueFamilyIndex = QueueFamily_Ignored;
+				barrier.SubresourceRange.AspectMask.Set(EImageAspect::Color);
+				barrier.SubresourceRange.BaseArrayLayer = 0;
+				barrier.SubresourceRange.LayerCount = 1;
+				barrier.SubresourceRange.LevelCount = 1;
+
+				sint32 mipWidth = _textureWidth;
+				sint32 mipHeight = _textureHeight;
+
+				for (uint32_t index = 1; index < _mipLevels; index++)
+				{
+					barrier.SubresourceRange.BaseMipLevel = index - 1;
+
+					barrier.OldLayout = EImageLayout::TransferDestination_Optimal;
+					barrier.NewLayout = EImageLayout::TransferSource_Optimal;
+
+					barrier.SrcAccessMask.Set(EAccessFlag::TransferWrite);
+					barrier.DstAccessMask.Set(EAccessFlag::TransferRead);
+
+					CommandBuffer::SubmitPipelineBarrier
+					(
+						commandBuffer,
+						EPipelineStageFlag::Transfer, EPipelineStageFlag::Transfer, 0,
+						0, nullptr,
+						0, nullptr,
+						1, &barrier
+					);
+
+					Image::Blit blit{};
+
+					blit.SrcOffsets[0].X = 0;
+					blit.SrcOffsets[0].Y = 0;
+					blit.SrcOffsets[0].Z = 0;
+
+					blit.SrcOffsets[1].X = mipWidth;
+					blit.SrcOffsets[1].Y = mipHeight;
+					blit.SrcOffsets[1].Z = 1;
+
+					blit.SrcSubresource.AspectMask.Set(EImageAspect::Color);
+					blit.SrcSubresource.MipLevel = index - 1;
+					blit.SrcSubresource.BaseArrayLayer = 0;
+					blit.SrcSubresource.LayerCount = 1;
+
+					blit.DstOffsets[0].X = 0;
+					blit.DstOffsets[0].Y = 0; 
+					blit.DstOffsets[0].Z = 0;
+
+					blit.DstOffsets[1].X = mipWidth > 1 ? mipWidth / 2 : 1;
+					blit.DstOffsets[1].Y = mipHeight > 1 ? mipHeight / 2 : 1; 
+					blit.DstOffsets[1].Z = 1;
+
+					blit.DstSubresource.AspectMask.Set(EImageAspect::Color);
+					blit.DstSubresource.MipLevel = index;
+					blit.DstSubresource.BaseArrayLayer = 0;
+					blit.DstSubresource.LayerCount = 1;
+
+					CommandBuffer::BlitImage
+					(
+						commandBuffer,
+						_image, EImageLayout::TransferSource_Optimal,
+						_image, EImageLayout::TransferDestination_Optimal,
+						1, &blit,
+						EFilter::Linear
+					);
+
+					barrier.OldLayout = EImageLayout::TransferSource_Optimal;
+					barrier.NewLayout = EImageLayout::Shader_ReadonlyOptimal;
+
+					barrier.SrcAccessMask.Set(EAccessFlag::TransferRead);
+					barrier.DstAccessMask.Set(EAccessFlag::ShaderRead  );
+
+					CommandBuffer::SubmitPipelineBarrier
+					(
+						commandBuffer,
+						EPipelineStageFlag::Transfer, EPipelineStageFlag::FragementShader, 0,
+						0, nullptr,
+						0, nullptr,
+						1, &barrier
+					);
+
+					if (mipWidth > 1) mipWidth /= 2;
+					if (mipHeight > 1) mipHeight /= 2;
+				}
+
+				barrier.SubresourceRange.BaseMipLevel = _mipLevels - 1;
+
+				barrier.OldLayout = EImageLayout::TransferDestination_Optimal;
+				barrier.NewLayout = EImageLayout::Shader_ReadonlyOptimal     ;
+
+				barrier.SrcAccessMask.Set(EAccessFlag::TransferWrite);
+				barrier.DstAccessMask.Set(EAccessFlag::ShaderRead   );
+
+				CommandBuffer::SubmitPipelineBarrier
+				(
+					commandBuffer,
+					EPipelineStageFlag::Transfer, EPipelineStageFlag::FragementShader, 0,
+					0, nullptr,
+					0, nullptr,
+					1, &barrier
+				);
+
+				CommandBuffer_EndSingleTimeCommands(commandBuffer);
+			}
+
 			ExtensionIdentifierList GetRequiredExtensions()
 			{
 				Stack
@@ -1980,6 +2131,46 @@
 					deviceFeatures.SamplerAnisotropy      ;
 
 				return result;
+			}
+
+			void LoadModel(String _modelPath)
+			{
+				tinyobj::attrib_t attrib;
+
+				DynamicArray<tinyobj::shape_t> shapes;
+
+				DynamicArray<tinyobj::material_t> materials;
+
+				String warning, error;
+
+				if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warning, &error, _modelPath.c_str()))
+					throw RuntimeError(warning + error);
+
+				for (const auto& shape : shapes)
+				{
+					for (const auto& index : shape.mesh.indices)
+					{
+						Vertex vertex {};
+
+						vertex.Position = 
+						{
+							attrib.vertices[3 * index.vertex_index + 0],
+							attrib.vertices[3 * index.vertex_index + 1],
+							attrib.vertices[3 * index.vertex_index + 2]
+						};
+
+						vertex.TextureCoordinates = 
+						{
+							attrib.texcoords[2 * index.texcoord_index + 0],
+							1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+						};
+
+						vertex.Color = { 1.0f, 1.0f, 1.0f };
+
+						ModelVerticies.push_back(vertex);
+						ModelIndicies.push_back(ModelIndicies.size());
+					}
+				}
 			}
 
 			bool PhysicalDevice_CheckExtensionSupport(PhysicalDevice::Handle _handle, ExtensionIdentifierList _extensionsSpecified)
@@ -2183,7 +2374,7 @@
 				return EPresentationMode::FIFO;
 			}
 
-			void TransitionImageLayout(Image::Handle _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout)
+			void TransitionImageLayout(Image::Handle _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout, uint32 _mipMapLevels)
 			{
 				CommandBuffer::Handle commandBuffer = CommandBuffer_BeginSingleTimeCommands();
 
@@ -2215,10 +2406,10 @@
 					barrier.SubresourceRange.AspectMask.Set(EImageAspect::Color);
 				}
 
-				barrier.SubresourceRange.BaseMipLevel   = 0;
-				barrier.SubresourceRange.LevelCount     = 1;
-				barrier.SubresourceRange.BaseArrayLayer = 0;
-				barrier.SubresourceRange.LayerCount     = 1;
+				barrier.SubresourceRange.BaseMipLevel   = 0            ;
+				barrier.SubresourceRange.LevelCount     = _mipMapLevels;
+				barrier.SubresourceRange.BaseArrayLayer = 0            ;
+				barrier.SubresourceRange.LayerCount     = 1            ;
 
 				Pipeline::StageFlags sourceStage     ;
 				Pipeline::StageFlags destinationStage;
@@ -2277,9 +2468,10 @@
 
 				UniformBufferObject ubo {};
 
-				ubo.ModelSpace = glm::rotate(glm::mat4(1.0f), time * glm::radians(25.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+				ubo.ModelSpace = glm::rotate(glm::mat4(1.0f), time * glm::radians(25.0f), glm::vec3(0.0f, 0.0f, 0.5f));
 
-				ubo.Viewport = glm::lookAt(glm::vec3(1.8f, 1.2f, 1.2f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+				ubo.Viewport = glm::lookAt(glm::vec3(1.7f, 1.7f, 1.7f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));   // The default
+				//ubo.Viewport = glm::lookAt(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)); crying cat
 
 				ubo.Projection = glm::perspective(glm::radians(45.0f), SwapChain_Extent.Width / (float) SwapChain_Extent.Height, 0.1f, 10.0f);
 
@@ -2358,6 +2550,8 @@
 
 					CreateCommandPool(PhysicalDevice, LogicalDevice, SurfaceHandle, CommandPool);
 
+					LoadModel(VikingRoom_ModelPath);
+
 					CreateVertexBuffers(PhysicalDevice, LogicalDevice, VertexBuffer, VertexBufferMemory);
 
 					CreateIndexBuffer();
@@ -2370,7 +2564,8 @@
 
 					CreateFrameBuffers(LogicalDevice, RenderPass, SwapChain_Extent, SwapChain_ImageViews, SwapChain_Framebuffers);
 
-					CreateTextureImage();
+					//CreateTextureImage("Engine/Data/Textures/DaFace.png");   // Single face thing;
+					CreateTextureImage(VikingRoom_TexturePath.c_str());   // Viking model related.
 
 					CreateTextureImageView();
 
