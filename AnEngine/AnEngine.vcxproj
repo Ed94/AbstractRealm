@@ -323,10 +323,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CoreVersions.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CPP_STL.hpp">
       <SubType>
       </SubType>
@@ -348,6 +344,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_PhysicalDevice.hpp">
       <SubType>
       </SubType>
@@ -357,10 +357,6 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Platform.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Queries.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -391,7 +387,7 @@
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_Bitmask.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_ConventionEnforcer.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory.hpp">
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory_Corridors.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -499,7 +495,6 @@
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
-    <ClCompile Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\Samples\HelloTriangle.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL.cpp" />
     <ClCompile Include="PAL\OSAL\Windowing.cpp" />

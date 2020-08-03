@@ -89,21 +89,20 @@
     <ClInclude Include="PAL\HAL\GPU_HAL_CoreDefs.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_ConventionEnforcer.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_Bitmask.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Resource.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Sampler.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CoreVersions.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Backend.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Initialization.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_SyncAndCacheControl.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_RenderPass.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Shaders.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Pipelines.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Queries.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Command.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CPP_STL.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\stb\stb_image.h" />
     <ClInclude Include="Renderer\Shader\VKTut\VKTut.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory_Corridors.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -129,6 +128,5 @@
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_dx9.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
-    <ClCompile Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\Samples\HelloTriangle.cpp" />
   </ItemGroup>
 </Project>

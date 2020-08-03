@@ -39,6 +39,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 		{
 			using namespace VaultedThermals;
 			using namespace VaultedThermals::Vault_01;
+
 			using namespace VaultedThermals::SPIR_V;
 
 			// Usings
@@ -50,14 +51,14 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			//using 
 
-			using CommandBufferList           = std::vector< VkCommandBuffer  >;   // TODO: Wrap
+			using CommandBufferList           = std::vector< CommandBuffer::Handle>; 
 			using ExtensionIdentifierList     = std::vector< RoCStr           >;
-			using FenceList                   = std::vector< VkFence          >;
-			using FrameBufferList             = std::vector< VkFramebuffer    >;   // TODO: Wrap
+			using FenceList                   = std::vector< Fence::Handle          >;
+			using FrameBufferList             = std::vector< Framebuffer::Handle    >;   
 			using ImageList                   = std::vector< Image::Handle    >;
 			using ImageViewList               = std::vector< ImageView::Handle>;
 			//using PhysicalDeviceList          = std::vector< PhysicalDevice   >;
-			using SemaphoreList               = std::vector< VkSemaphore      >;   // TODO: Wrap
+			using SemaphoreList               = std::vector< Semaphore::Handle      >;   
 			using SurfaceFormatList           = std::vector< Surface::Format  >;
 			using SurfacePresentationModeList = std::vector< EPresentationMode>;
 			using ValidationLayerList         = std::vector< RoCStr           >;
@@ -262,7 +263,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				Image::UsageFlags              _usage,
 				Memory::PropertyFlags          _properties,
 				Image::Handle& _image,
-				LogicalDevice::Memory::Handle& _imageMemory
+				Memory::Handle& _imageMemory
 			);
 
 			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);

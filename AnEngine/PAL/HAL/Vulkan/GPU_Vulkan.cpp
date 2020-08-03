@@ -80,7 +80,7 @@
 				Memory::Handle IndexBufferMemory;
 
 				DynamicArray<Buffer::Handle> UniformBuffers;
-				DynamicArray<LogicalDevice::Memory::Handle> UniformBuffersMemory;
+				DynamicArray<Memory::Handle> UniformBuffersMemory;
 
 				DescriptorPool::Handle DescriptorPool;	
 
@@ -88,7 +88,7 @@
 
 				Image::Handle TextureImage;
 
-				LogicalDevice::Memory::Handle TextureImageMemory;
+				Memory::Handle TextureImageMemory;
 
 				ImageView::Handle TextureImageView;
 
@@ -96,7 +96,7 @@
 
 				Image::Handle DepthImage;
 
-				LogicalDevice::Memory::Handle DepthImageMemory;
+				Memory::Handle DepthImageMemory;
 
 				ImageView::Handle DepthImageView;
 
@@ -293,7 +293,7 @@
 				ESampleCount MSAA_Samples = ESampleCount::_1;
 
 				Image::Handle ColorImage;
-				LogicalDevice::Memory::Handle ColorImageMemory;
+				Memory::Handle ColorImageMemory;
 				ImageView::Handle ColorImageView;
 				
 				//Image::Handle TextureImage;
@@ -320,11 +320,11 @@
 				using LayerPropertyList = std::vector<ValidationLayers::LayerProperties>;
 
 
-				uInt32&& layerCount = ValidationLayers::GetNumberOfLayers();
+				uInt32&& layerCount = Vault_02::ValidationLayers::GetNumberOfLayers();
 
 				stack<LayerPropertyList> availableLayers(layerCount);
 
-				ValidationLayers::GetAvailableLayers(availableLayers.data());
+				Vault_02::ValidationLayers::GetAvailableLayers(availableLayers.data());
 
 
 				stack<bool> layerFound = false;
@@ -368,13 +368,13 @@
 
 				Image::Destroy(LogicalDevice, ColorImage, nullptr);
 
-				LogicalDevice::Memory::Free(LogicalDevice, ColorImageMemory, nullptr);
+				Memory::Free(LogicalDevice, ColorImageMemory, nullptr);
 
 				ImageView::Destroy(LogicalDevice, DepthImageView, nullptr);
 
 				Image::Destroy(LogicalDevice, DepthImage, nullptr);
 
-				LogicalDevice::Memory::Free(LogicalDevice, DepthImageMemory, nullptr);
+				Memory::Free(LogicalDevice, DepthImageMemory, nullptr);
 
 				for (DataSize index = 0; index < _swapChainFramebuffers.size(); index++)
 				{
@@ -399,7 +399,7 @@
 				for (DataSize index = 0; index < _swapChainImageViews.size(); index++)
 				{
 					Buffer::Destroy(_logicalDevice, UniformBuffers[index], nullptr);
-					LogicalDevice::Memory::Free(_logicalDevice, UniformBuffersMemory[index], nullptr);
+					Memory::Free(_logicalDevice, UniformBuffersMemory[index], nullptr);
 				}
 				
 				DescriptorPool::Destroy(_logicalDevice, DescriptorPool, nullptr);
@@ -466,20 +466,20 @@
 
 				CommandBuffer::BufferImageRegion region {};
 
-				region.bufferOffset = 0;
-				region.bufferRowLength = 0;
-				region.imageSubresource.AspectMask.Set(EImageAspect::Color);
-				region.imageSubresource.MipLevel = 0;
-				region.imageSubresource.BaseArrayLayer = 0;
-				region.imageSubresource.LayerCount = 1;
+				region.BufferOffset = 0;
+				region.BufferRowLength = 0;
+				region.ImageSubresource.AspectMask.Set(EImageAspect::Color);
+				region.ImageSubresource.MipLevel = 0;
+				region.ImageSubresource.BaseArrayLayer = 0;
+				region.ImageSubresource.LayerCount = 1;
 
-				region.imageOffset.Y = 0; 
-				region.imageOffset.Y = 0; 
-				region.imageOffset.Z = 0;
+				region.ImageOffset.Y = 0; 
+				region.ImageOffset.Y = 0; 
+				region.ImageOffset.Z = 0;
 
-				region.imageExtent.Width  = _width ;
-				region.imageExtent.Height = _height;
-				region.imageExtent.Depth  = 1      ;
+				region.ImageExtent.Width  = _width ;
+				region.ImageExtent.Height = _height;
+				region.ImageExtent.Depth  = 1      ;
 
 				CommandBuffer::CopyBufferToImage
 				(
@@ -585,7 +585,7 @@
 				allocationInfo.AllocationSize = memReq.Size;
 				allocationInfo.MemoryTypeIndex = FindMemoryType(PhysicalDevice, memReq.MemoryTypeBits, _propertyFlags);
 
-				if (LogicalDevice::Memory::Allocate(LogicalDevice, allocationInfo, nullptr, _bufferMemory) != EResult::Success)
+				if (Memory::Allocate(LogicalDevice, allocationInfo, nullptr, _bufferMemory) != EResult::Success)
 					throw RuntimeError("Failed to allocate vertex buffer memory!");
 
 				Buffer::BindMemory(LogicalDevice, _buffer, _bufferMemory, 0);
@@ -860,9 +860,9 @@
 			{
 				Pipeline::Layout::DescriptorSet::Binding uboLayoutBinding {};
 
-				uboLayoutBinding.Binding = 0;
-				uboLayoutBinding.Type    = EDescriptorType::UniformBuffer;
-				uboLayoutBinding.Count   = 1;
+				uboLayoutBinding.BindingID = 0;
+				uboLayoutBinding.Type      = EDescriptorType::UniformBuffer;
+				uboLayoutBinding.Count     = 1;
 
 				uboLayoutBinding.StageFlags = EShaderStageFlag::Vertex;
 
@@ -870,9 +870,9 @@
 
 				Pipeline::Layout::DescriptorSet::Binding samplerLayoutBinding{};
 
-				samplerLayoutBinding.Binding = 1;
-				samplerLayoutBinding.Count   = 1;
-				samplerLayoutBinding.Type    = EDescriptorType::CombinedImageSampler;
+				samplerLayoutBinding.BindingID = 1;
+				samplerLayoutBinding.Count     = 1;
+				samplerLayoutBinding.Type      = EDescriptorType::CombinedImageSampler;
 
 				samplerLayoutBinding.ImmutableSamplers = nullptr;
 
@@ -1156,16 +1156,16 @@
 
 			void CreateImage
 			(
-				uint32                         _width      , 
-				uint32                         _height     , 
-				uint32                         _mipLevels  ,
-				ESampleCount                   _numSamples ,
-				EFormat                        _format     , 
-				EImageTiling                   _tiling     , 
-				Image::UsageFlags              _usage      , 
-				Memory::PropertyFlags          _properties , 
-				Image::Handle&                 _image      , 
-				LogicalDevice::Memory::Handle& _imageMemory
+				uint32                _width      , 
+				uint32                _height     , 
+				uint32                _mipLevels  ,
+				ESampleCount          _numSamples ,
+				EFormat               _format     , 
+				EImageTiling          _tiling     , 
+				Image::UsageFlags     _usage      , 
+				Memory::PropertyFlags _properties , 
+				Image::Handle&        _image      , 
+				Memory::Handle&       _imageMemory
 			)
 			{
 				Image::CreateInfo imageInfo {};
@@ -1199,7 +1199,7 @@
 				allocationInfo.AllocationSize = memReq.Size;
 				allocationInfo.MemoryTypeIndex = FindMemoryType(PhysicalDevice, memReq.MemoryTypeBits, _properties);
 
-				if (LogicalDevice::Memory::Allocate(LogicalDevice, allocationInfo, nullptr, _imageMemory) != EResult::Success)
+				if (Memory::Allocate(LogicalDevice, allocationInfo, nullptr, _imageMemory) != EResult::Success)
 					throw RuntimeError("Failed to allocate image memory!");
 
 				Image::BindMemory(LogicalDevice, _image, _imageMemory, 0);
@@ -1288,11 +1288,11 @@
 
 				Memory::MapFlags mapflags;
 
-				LogicalDevice::Memory::Map(LogicalDevice, stagingBufferMemory, 0, bufferSize, mapflags, vertexData);
+				Memory::Map(LogicalDevice, stagingBufferMemory, 0, bufferSize, mapflags, vertexData);
 
 				memcpy(vertexData, ModelIndicies.data(), DataSize(bufferSize));
 
-				LogicalDevice::Memory::Unmap(LogicalDevice, stagingBufferMemory);
+				Memory::Unmap(LogicalDevice, stagingBufferMemory);
 
 				CreateBuffer
 				(
@@ -1307,7 +1307,7 @@
 
 				Buffer::Destroy(LogicalDevice, stagingBuffer, nullptr);
 
-				LogicalDevice::Memory::Free(LogicalDevice, stagingBufferMemory, nullptr);
+				Memory::Free(LogicalDevice, stagingBufferMemory, nullptr);
 			}
 
 			void CreateLogicalDevice
@@ -1679,7 +1679,7 @@
 
 				Buffer::Handle stagingBuffer;
 
-				LogicalDevice::Memory::Handle stagingBufferMemory;
+				Memory::Handle stagingBufferMemory;
 
 				CreateBuffer
 				(
@@ -1692,11 +1692,11 @@
 
 				void* data;
 
-				LogicalDevice::Memory::Map(LogicalDevice, stagingBufferMemory, 0, imageSize, 0, data);
+				Memory::Map(LogicalDevice, stagingBufferMemory, 0, imageSize, 0, data);
 
 					memcpy(data, imageData, SCast<DataSize>(imageSize));
 
-				LogicalDevice::Memory::Unmap(LogicalDevice, stagingBufferMemory);
+				Memory::Unmap(LogicalDevice, stagingBufferMemory);
 
 				stbi_image_free(imageData);
 
@@ -1726,7 +1726,7 @@
 
 				Buffer::Destroy(LogicalDevice, stagingBuffer, nullptr);
 
-				LogicalDevice::Memory::Free(LogicalDevice, stagingBufferMemory, nullptr);
+				Memory::Free(LogicalDevice, stagingBufferMemory, nullptr);
 			}
 
 			void CreateTextureImageView()
@@ -1853,11 +1853,11 @@
 
 				Memory::MapFlags mapflags;
 
-				LogicalDevice::Memory::Map(_device, stagingBufferMemory, 0, bufferSize, mapflags, vertexData);
+				Memory::Map(_device, stagingBufferMemory, 0, bufferSize, mapflags, vertexData);
 
 					memcpy(vertexData, ModelVerticies.data(), DataSize(bufferSize));
 
-				LogicalDevice::Memory::Unmap(_device, stagingBufferMemory);
+				Memory::Unmap(_device, stagingBufferMemory);
 
 				CreateBuffer
 				(
@@ -1872,7 +1872,7 @@
 
 				Buffer::Destroy(LogicalDevice, stagingBuffer, nullptr);
 
-				LogicalDevice::Memory::Free(LogicalDevice, stagingBufferMemory, nullptr);
+				Memory::Free(LogicalDevice, stagingBufferMemory, nullptr);
 			}
 
 			Bool DebugCallback
@@ -1920,13 +1920,13 @@
 			{
 				QueueFamilyIndices indices{};
 
-				using QueueFamilyPropertiesListing = std::vector<Vault_02::PhysicalDevice::Properties::QueueFamily>;
+				using QueueFamilyPropertiesListing = std::vector<Vault_02::PhysicalDevice::QueueFamilyProperties>;
 
-				uint32 queueFamilyCount = Vault_02::PhysicalDevice::Properties::QueueFamily::GetCount(_deviceHandle);
+				uint32 queueFamilyCount = Vault_02::PhysicalDevice::QueueFamilyProperties::GetCount(_deviceHandle);
 
 				QueueFamilyPropertiesListing queueFamilies(queueFamilyCount);
 
-				Vault_02::PhysicalDevice::Properties::QueueFamily::Get(_deviceHandle, queueFamilies.data());
+				Vault_02::PhysicalDevice::QueueFamilyProperties::Get(_deviceHandle, queueFamilies.data());
 
 				int index = 0;
 
@@ -1973,7 +1973,7 @@
 					if 
 					(
 						_typeFilter & (1 << index) &&
-						(memProperties.Types[index].propertyFlags & _properties) == _properties
+						(memProperties.Types[index].PropertyFlags & _properties) == _properties
 					)
 					{
 						return index;
@@ -2281,22 +2281,20 @@
 				ExtensionIdentifierList _extensionsSpecified
 			)
 			{
-				stack<uint32> numDevices = Vault_02::PhysicalDevice::GetNumOfDevices(_applicationInstance);
+				Vault_02::PhysicalDevice::List physicalDevices;
+					
+				Vault_02::AppInstance::GetAvailablePhysicalDevices(_applicationInstance, physicalDevices);
 
-				if (numDevices == 0)
+				if (physicalDevices.Count == 0)
 					throw std::runtime_error("Physical device count 0. No GPUs found with Vulkan support.");
 
 				using PhysicalDeviceList = std::vector<PhysicalDevice::Handle>;
 
-				PhysicalDeviceList physicalDevices(numDevices);
-
-				Vault_02::PhysicalDevice::GetAvailableDevices(_applicationInstance, physicalDevices.data());
-
-				for (const auto& device : physicalDevices)
+				for (DeviceSize index = 0; index < physicalDevices.Count; index++)
 				{
-					if (IsDeviceSuitable(device, _surface, _extensionsSpecified))
+					if (IsDeviceSuitable(physicalDevices.Vector[index], _surface, _extensionsSpecified))
 					{
-						_physicalDevice = device;
+						_physicalDevice = physicalDevices.Vector[index];
 						
 						MSAA_Samples = GetMaxUsableSampleCount();
 
@@ -2559,11 +2557,11 @@
 
 				void* uniformData;
 
-				LogicalDevice::Memory::Map(LogicalDevice, UniformBuffersMemory[_currentImage], 0, sizeof(ubo), 0, uniformData);
+				Memory::Map(LogicalDevice, UniformBuffersMemory[_currentImage], 0, sizeof(ubo), 0, uniformData);
 				
 					memcpy(uniformData, &ubo, sizeof(ubo));
 				
-				LogicalDevice::Memory::Unmap(LogicalDevice, UniformBuffersMemory[_currentImage]);
+				Memory::Unmap(LogicalDevice, UniformBuffersMemory[_currentImage]);
 			}
 
 			// GPU_HAL
@@ -2765,7 +2763,7 @@
 					submitInfo.SignalSemaphores     = signalSemaphores;
 
 
-					Fence::Reset(LogicalDevice, InFlightFences[CurrentFrame], 1);
+					Fence::Reset(LogicalDevice, &InFlightFences[CurrentFrame], 1);
 
 					if (CommandBuffer::SubmitToQueue(GraphicsQueue, 1, &submitInfo, InFlightFences[CurrentFrame]) != EResult::Success) 
 						throw std::runtime_error("Failed to submit draw command buffer!");
@@ -2824,17 +2822,17 @@
 
 					Image::Destroy(LogicalDevice, TextureImage, nullptr);
 
-					LogicalDevice::Memory::Free(LogicalDevice, TextureImageMemory, nullptr);
+					Memory::Free(LogicalDevice, TextureImageMemory, nullptr);
 
 					Pipeline::Layout::DescriptorSet::Destroy(LogicalDevice, DescriptorSetLayout, nullptr);
 					
 					Buffer::Destroy(LogicalDevice, IndexBuffer, nullptr);
 
-					LogicalDevice::Memory::Free(LogicalDevice, IndexBufferMemory, nullptr);
+					Memory::Free(LogicalDevice, IndexBufferMemory, nullptr);
 
 					Buffer::Destroy(LogicalDevice, VertexBuffer, nullptr);
 
-					LogicalDevice::Memory::Free(LogicalDevice, VertexBufferMemory, nullptr);
+					Memory::Free(LogicalDevice, VertexBufferMemory, nullptr);
 
 					for (DataSize index = 0; index < MaxFramesInFlight; index++) 
 					{
