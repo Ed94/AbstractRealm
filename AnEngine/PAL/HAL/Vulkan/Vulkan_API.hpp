@@ -20,6 +20,8 @@ Defines the Vulkan API used with the GPU_HAL.
 
 #if VULCAN_INTERFACE == VAULTED_THERMALS_INTERFACE
 
+	#define VT_Option__Use_Short_Namespace
+	#define VT_Option__USE_STL_EXCEPTIONS
 	#include "VaultedThermals/VaultedThermals.hpp"
 
 #endif

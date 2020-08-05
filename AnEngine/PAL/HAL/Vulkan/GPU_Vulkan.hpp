@@ -37,10 +37,10 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 	{
 		namespace Platform_Vulkan
 		{
-			using namespace VaultedThermals;
-			using namespace VaultedThermals::Vault_01;
+			using namespace VT;
+			using namespace VT::Vault_1;
 
-			using namespace VaultedThermals::SPIR_V;
+			using namespace VT::SPIR_V;
 
 			// Usings
 
@@ -119,7 +119,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				// Moved to an extent from the Vulkan TriangleTest
 				// Eventually this will be organized into a proper structural setup for modular use.
 
-				eGlobal AppInstance::Handle AppGPU;
+				eGlobal Vault_5::AppInstance AppGPU;
 
 				eGlobal CommandBufferList CommandBuffers;
 				eGlobal VkCommandPool     CommandPool   ;   // TODO: Wrap
@@ -171,7 +171,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 				eGlobal ExtensionIdentifierList DeviceExtensions;
 
-				eGlobal PhysicalDevice::Handle PhysicalDevice;
+				//eGlobal PhysicalDevice::Handle PhysicalDevice;
 
 				eGlobal ValidationLayerList ValidationLayerIdentifiers;
 			//)
@@ -209,20 +209,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				const ptr<ValidationLayerList> _optionalValidationLayers, 
 				const ptr<DebugMessenger::CreateInfo> _optionalDebugMessengerCreateSpec,
 				AppInstance::Handle& _applicationInstance
-			);
-
-			void CreateCommandBuffers
-			(
-				LogicalDevice::Handle _logicalDevice         ,
-
-				VkPipeline            _graphicsPipeline      ,
-
-				FrameBufferList&      _swapChain_FrameBuffers,
-				Extent2D              _swapChain_Extent      ,
-				VkRenderPass          _renderPass            ,
-
-				VkCommandPool         _commandPool           ,
-				CommandBufferList&    _commandBufferContainer
 			);
 
 			void CreateCommandPool
@@ -268,15 +254,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
 
-			void CreateImageViews
-			(
-				LogicalDevice::Handle _logicalDevice       ,
-				ImageList&            _swapChainImages     , 
-				EFormat          _swapChainImageFormat,
-				ImageViewList&        _imageViewContainer,      // Will be populated.
-				uint32 _mipMapLevels
-			);
-
 			void CreateLogicalDevice
 			(
 				PhysicalDevice::Handle        _physicalDevice          , 
@@ -295,12 +272,11 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				VkRenderPass&         _renderPass       // Will be provided.
 			);
 
-			void CreateSurface
-			(
-				AppInstance::Handle _applicationInstance,
-				Window*             _window             , 
-				Surface::Handle&    _surfaceHandle          // Will be provided.
-			);
+			//void CreateAppInstance
+			//(
+			//	Window*             _window             , 
+			//	Surface::Handle&    _surfaceHandle          // Will be provided.
+			//);
 
 			void CreateSwapChain
 			(
@@ -325,11 +301,9 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				FenceList&     _imagesInFlight
 			);
 
-			ShaderModule::Handle CreateShaderModule(LogicalDevice::Handle _logicalDevice, const IO::FileBuffer& code);
+			//ShaderModule::Handle CreateShaderModule(LogicalDevice::Handle _logicalDevice, const IO::FileBuffer& code);
 
 			StaticArray<ShaderModule::Handle, 2> CreateTriShaders(LogicalDevice::Handle _logicalDevice);
-
-			StaticArray<ShaderModule::Handle, 2> Create_VKTut_V1_Shaders(LogicalDevice::Handle _logicalDevice);
 
 			void CreateVertexBuffers(PhysicalDevice::Handle _physicalDevice, LogicalDevice::Handle _device, Buffer::Handle& _vertexBuffer, Memory::Handle& _vertexBufferMemory);
 
@@ -344,9 +318,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EFormat FindDepthFormat();
 
-			QueueFamilyIndices FindQueueFamilies(PhysicalDevice::Handle _deviceHandle, Surface::Handle _surfaceHandle);
-
-			uint32 FindMemoryType(PhysicalDevice::Handle _device,  uint32 _typeFilter, Memory::PropertyFlags _properties);
+			QueueFamilyIndices FindQueueFamilies(Vault_5::PhysicalDevice _physicalDevice, Surface::Handle _surfaceHandle);
 
 			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features);
 
@@ -357,11 +329,9 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			Where<Meta::WindowingPlatform == Meta::EWindowingPlatform::GLFW,
 			CStrArray> GetRequiredVulkanAppExtensions(uint32& _numExtensions);
 
-			bool IsDeviceSuitable(PhysicalDevice::Handle _deviceHandle, Surface::Handle _surface, ExtensionIdentifierList _extensionsSpecified);
+			//bool IsDeviceSuitable(PhysicalDevice::Handle _deviceHandle, Surface::Handle _surface, ExtensionIdentifierList _extensionsSpecified);
 			
-			bool PhysicalDevice_CheckExtensionSupport(PhysicalDevice::Handle _handle, ExtensionIdentifierList _extensionsSpecified);
 			
-			void PickPhysicalDevice(AppInstance::Handle _applicationInstance, PhysicalDevice::Handle& _physicalDevice, Surface::Handle _surface, ExtensionIdentifierList _extensionSpecified);
 
 			void PopulateDebugMessengerCreateInfo(DebugMessenger::CreateInfo& _msngrCreateInfo);
 
@@ -369,11 +339,11 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			int RateDeviceSuitability(PhysicalDevice::Handle _deviceHandle);
 
-			void SetupDebugMessenger
+			/*void SetupDebugMessenger
 			(
 				AppInstance::Handle _applicationInstance,
 				DebugMessenger::Handle& _debugMessenger
-			);
+			);*/
 
 			Extent2D Surface_SwapChain_ChooseExtent(const Surface::Capabilities& _capabilities, const ptr<Window> _window);
 

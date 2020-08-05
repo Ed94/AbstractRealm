@@ -33,7 +33,7 @@ namespace SAL::GLFW
 {
 	using namespace LAL;
 	using namespace OSAL;
-	using namespace VaultedThermals;
+	using namespace VT;
 
 	// Enums
 
