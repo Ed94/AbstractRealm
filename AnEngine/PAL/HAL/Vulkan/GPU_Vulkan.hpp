@@ -133,13 +133,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				eGlobal SwapChain::Handle SwapChain;
 
 				eGlobal Extent2D      SwapChain_Extent     ;
-				eGlobal ImageList     SwapChain_Images     ;
 				eGlobal EFormat       SwapChain_ImageFormat;
-				eGlobal ImageViewList SwapChain_ImageViews ;
-
-				eGlobal FrameBufferList SwapChain_Framebuffers;
-
-				eGlobal RenderPass::Handle RenderPass;   // TODO: Wrap.
 
 				eGlobal RenderContextList RenderContextPool;    // Contains a reference to every created render context. (Early implementation...)
 
@@ -168,59 +162,20 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			*/
 			bool CheckValidationLayerSupport(ValidationLayerList& _validationLayersSpecified);
 
-			void CleanupSwapChain
-			(
-				LogicalDevice::Handle    _logicalDevice,
-				Pipeline::Layout::Handle _pipelineLayout,
-				VkPipeline               _graphicsPipeline,
-				SwapChain::Handle        _swapChain,
-				ImageViewList&           _swapChainImageViews,
-				FrameBufferList&         _swapChainFramebuffers,
-				VkRenderPass             _renderPass,
-				VkCommandPool            _commandPool,
-				CommandBufferList&       _commandBuffers
-			);
+			void CleanupSwapChain();
 
 			/*
 			Creates a GPU application instance. 
 
 			Note: If using optional debug features, both validation layers and the debug messenger must be provided, otherwise this will fail.
 			*/
-			void CreateApplicationInstance
-			(
-				RoCStr _appName, 
-				AppVersion& _version, 
-				const ptr<ValidationLayerList> _optionalValidationLayers, 
-				const ptr<DebugMessenger::CreateInfo> _optionalDebugMessengerCreateSpec,
-				AppInstance::Handle& _applicationInstance
-			);
+			void CreateApplicationInstance(RoCStr _appName, AppVersion& _version);
 
-			void CreateCommandPool
-			(
-				PhysicalDevice::Handle _physicalDevice, 
-				LogicalDevice::Handle _logicalDevice, 
-				Surface::Handle _surfaceHandle, 
-				VkCommandPool& _commandPool
-			);
+			void CreateCommandPool();
 
-			void CreateFrameBuffers
-			(
-				LogicalDevice::Handle _logicalDevice,
-				VkRenderPass          _renderPass,
-				Extent2D              _swapChainExtent,
-				ImageViewList& _swapChainImageViews,
-				FrameBufferList& _swapChainFrameBuffers
-			);
+			void CreateFrameBuffers();
 
-			void CreateGraphicsPipeline
-			(
-				LogicalDevice::Handle     _logicalDevice   ,
-				Extent2D                  _swapChainExtent ,
-				StaticArray<ShaderModule::Handle, 2> _shaders,
-				Pipeline::Layout::Handle& _pipelineLayout  ,
-				RenderPass::Handle        _renderPass      ,
-				VkPipeline&               _graphicsPipeline   // Will be provided.
-			);
+			void CreateGraphicsPipeline(StaticArray<ShaderModule::Handle, 2> _shaders);
 
 			void CreateImage
 			(
@@ -250,68 +205,23 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				Vault_4::Memory& _imageMemory
 			);
 
-			Vault_4::ImageView CreateImageView(Vault_4::Image _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
+			Vault_4::ImageView CreateImageView(Vault_4::Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
 
 			void CreateImageViews
 			(
 				LogicalDevice::Handle _logicalDevice,
-				ImageList& _swapChainImages,
+				DynamicArray<Vault_4::Image>& _swapChainImages,
 				EFormat               _swapChainImageFormat,
-				ImageViewList& _imageViewContainer      // Will be populated.
+				DynamicArray<Vault_4::ImageView>& _imageViewContainer      // Will be populated.
 			);
 
-			void CreateLogicalDevice
-			(
-				PhysicalDevice::Handle        _physicalDevice          , 
-				Surface::Handle               _surfaceHanle            ,
-				ExtensionIdentifierList       _extensionsToSpecify     ,
-				ptr<ValidationLayerList>      _optionalValidationLayers,
-				LogicalDevice::Handle&        _logicalDevice           ,   // Will be provided.
-				LogicalDevice::Queue::Handle& _graphicsQueue           ,   // Will be provided.
-				LogicalDevice::Queue::Handle& _presentationQueue           // Will be provided.
-			);	
+			void CreateLogicalDevice();	
 
-			void CreateRenderPass
-			(
-				LogicalDevice::Handle _logicalDevice,
-				EFormat          _imageFormat  ,
-				VkRenderPass&         _renderPass       // Will be provided.
-			);
+			void CreateSwapChain(OSAL::Window* _window);
 
-			//void CreateAppInstance
-			//(
-			//	Window*             _window             , 
-			//	Surface::Handle&    _surfaceHandle          // Will be provided.
-			//);
+			void CreateSyncObjects();
 
-			void CreateSwapChain
-			(
-				OSAL::Window* _window,
-				PhysicalDevice::Handle _physicalDevice,
-				LogicalDevice::Handle  _logicalDevice,
-				Surface::Handle        _surfaceHandle,
-				SwapChain::Handle&     _swapChain,
-				EFormat&          _swapChainImageFormat,
-				Extent2D&              _swapChainExtent,
-				ImageList&             _swapChain_Images
-			);
-
-			void CreateSyncObjects
-			(
-				LogicalDevice::Handle _logicalDevicce,
-				sint32         _maxFramesInFlight,
-				ImageList      _swapChainImages,
-				SemaphoreList& _imageAvailableSemaphores,
-				SemaphoreList& _renderFinishedSemaphores,
-				FenceList&     _inFlightFences,
-				FenceList&     _imagesInFlight
-			);
-
-			//ShaderModule::Handle CreateShaderModule(LogicalDevice::Handle _logicalDevice, const IO::FileBuffer& code);
-
-			StaticArray<ShaderModule::Handle, 2> CreateTriShaders(LogicalDevice::Handle _logicalDevice);
-
-			void CreateVertexBuffers(PhysicalDevice::Handle _physicalDevice, LogicalDevice::Handle _device, Buffer::Handle& _vertexBuffer, Memory::Handle& _vertexBufferMemory);
+			void CreateVertexBuffers(Buffer::Handle& _vertexBuffer, Memory::Handle& _vertexBufferMemory);
 
 			// Exposed but really should not be used directly unless for another implementation I guess.
 			Bool DebugCallback
