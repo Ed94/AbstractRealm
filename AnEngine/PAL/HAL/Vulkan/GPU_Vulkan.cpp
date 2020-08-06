@@ -83,11 +83,11 @@
 
 				Pipeline::Handle GraphicsPipeline;
 
-				FenceList InFlightFences;
-				FenceList ImagesInFlight;
+			DynamicArray<Vault_4::Fence> InFlightFences;
+			DynamicArray<Vault_4::Fence> ImagesInFlight;
 
-				SemaphoreList ImageAvailable_Semaphores;
-				SemaphoreList RenderFinished_Semaphores;
+			DynamicArray<Vault_4::Semaphore> ImageAvailable_Semaphores;
+			DynamicArray<Vault_4::Semaphore> RenderFinished_Semaphores;
 
 				RenderContextList RenderContextPool; 
 
@@ -1460,8 +1460,8 @@
 				ImageAvailable_Semaphores.resize(MaxFramesInFlight);
 				RenderFinished_Semaphores.resize(MaxFramesInFlight);
 
-				InFlightFences.resize(MaxFramesInFlight                      );
-				ImagesInFlight.resize(SwapChain_Images.size(), VK_NULL_HANDLE);
+				InFlightFences.resize(MaxFramesInFlight      );
+				ImagesInFlight.resize(SwapChain_Images.size());
 
 				Semaphore::CreateInfo semaphore_CreationSpec {};
 
@@ -1475,16 +1475,14 @@
 
 				for (DataSize index = 0; index < MaxFramesInFlight; index++)
 				{
-					if
-						(
-							Semaphore::Create(LogicalDevice.GetHandle(), semaphore_CreationSpec, nullptr, ImageAvailable_Semaphores[index]) != EResult::Success ||
-							Semaphore::Create(LogicalDevice.GetHandle(), semaphore_CreationSpec, nullptr, RenderFinished_Semaphores[index]) != EResult::Success ||
-							Fence    ::Create(LogicalDevice.GetHandle(), fence_CreationSpec    , nullptr, InFlightFences           [index]) != EResult::Success
-						)
-					{
+					EResult&& 
+					
+					result = ImageAvailable_Semaphores[index].Create(LogicalDevice, semaphore_CreationSpec);
+					result = RenderFinished_Semaphores[index].Create(LogicalDevice, semaphore_CreationSpec);
+					result = InFlightFences           [index].Create(LogicalDevice, fence_CreationSpec    );
 
+					if (result != EResult::Success)
 						throw std::runtime_error("Failed to create synchronization objects for a frame!");
-					}
 				}
 			}
 
@@ -2395,9 +2393,9 @@
 			
 			ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window)
 			{
-				RenderContext renderContext {};
+				RawRenderContext renderContext {};
 
-				// Fill this shit
+				//renderContext.
 
 				RenderContextPool.push_back(renderContext);
 
@@ -2511,7 +2509,8 @@
 
 				void DrawFrame(ptr<Window> _window)
 				{
-					Fence::WaitForFences(LogicalDevice.GetHandle(), 1, &InFlightFences[CurrentFrame], EBool::True, UInt64Max);
+					//Fence::WaitForFences(LogicalDevice.GetHandle(), 1, &InFlightFences[CurrentFrame], EBool::True, UInt64Max);
+					InFlightFences[CurrentFrame].WaitFor(UInt64Max);
 
 					uint32 imageIndex;
 
@@ -2521,7 +2520,7 @@
 						    LogicalDevice.GetHandle()              , 
 							SwapChain                              , 
 							UInt64Max                              , 
-							ImageAvailable_Semaphores[CurrentFrame], 
+							ImageAvailable_Semaphores[CurrentFrame].GetHandle(), 
 							Fence::NullHandle                      ,
 							imageIndex
 						);
@@ -2537,8 +2536,9 @@
 						throw std::runtime_error("Failed to acquire swap chain image!");
 					}
 
-					if (ImagesInFlight[imageIndex] != NullHandle) 
-						Fence::WaitForFences(LogicalDevice.GetHandle(), 1, &ImagesInFlight[imageIndex], EBool::True, UInt64Max);
+					if (ImagesInFlight[imageIndex].GetHandle() != NullHandle) 
+						ImagesInFlight[imageIndex].WaitFor(UInt64Max);
+						//Fence::WaitForFences(LogicalDevice.GetHandle(), 1, &ImagesInFlight[imageIndex].GetHandle(), EBool::True, UInt64Max);
 
 					ImagesInFlight[imageIndex] = InFlightFences[CurrentFrame];
 
@@ -2549,7 +2549,7 @@
 					submitInfo.SType = CommandBuffer::SubmitInfo::STypeEnum;
 
 
-					Semaphore::Handle waitSemaphores[] = { ImageAvailable_Semaphores[CurrentFrame] };
+					Semaphore::Handle waitSemaphores[] = { ImageAvailable_Semaphores[CurrentFrame].GetHandle() };
 
 					Pipeline::StageFlags waitStages[1] {};
 
@@ -2563,15 +2563,16 @@
 					submitInfo.CommandBuffers     = &CommandBuffers[imageIndex];
 
 
-					Semaphore::Handle signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame] };
+					Semaphore::Handle signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame].GetHandle() };
 
 					submitInfo.SignalSemaphoreCount = 1               ;
 					submitInfo.SignalSemaphores     = signalSemaphores;
 
 
-					Fence::Reset(LogicalDevice.GetHandle(), &InFlightFences[CurrentFrame], 1);
+					//Fence::Reset(LogicalDevice.GetHandle(), &InFlightFences[CurrentFrame], 1);
+					InFlightFences[CurrentFrame].Reset();
 
-					if (CommandBuffer::SubmitToQueue(GraphicsQueue->GetHandle(), 1, &submitInfo, InFlightFences[CurrentFrame]) != EResult::Success) 
+					if (CommandBuffer::SubmitToQueue(GraphicsQueue->GetHandle(), 1, &submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
 						throw std::runtime_error("Failed to submit draw command buffer!");
 
 
@@ -2626,9 +2627,13 @@
 
 					for (DataSize index = 0; index < MaxFramesInFlight; index++) 
 					{
-						Semaphore::Destroy(LogicalDevice.GetHandle(), RenderFinished_Semaphores[index], nullptr);   // TODO: Wrap
-						Semaphore::Destroy(LogicalDevice.GetHandle(), ImageAvailable_Semaphores[index], nullptr);   // TODO: Wrap
-						Fence::Destroy    (LogicalDevice.GetHandle(), InFlightFences           [index], nullptr);   // TODO: Wrap
+						//Semaphore::Destroy(LogicalDevice.GetHandle(), RenderFinished_Semaphores[index], nullptr);   
+						//Semaphore::Destroy(LogicalDevice.GetHandle(), ImageAvailable_Semaphores[index], nullptr);   
+						//Fence::Destroy    (LogicalDevice.GetHandle(), InFlightFences           [index], nullptr);   
+
+						RenderFinished_Semaphores[index].Destroy();
+						ImageAvailable_Semaphores[index].Destroy();
+						InFlightFences           [index].Destroy();
 					}
 
 					CommandPool::Destroy(LogicalDevice.GetHandle(), CommandPool, nullptr);   // TODO: Wrap

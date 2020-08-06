@@ -77,24 +77,23 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				SurfacePresentationModeList PresentationModes;
 			};
 
-			struct RenderContext : ARenderContext
+			struct RawRenderContext : ARenderContext
 			{
-				ptr<Window> Window;
+				AppInstance::Handle          ApplicationInstance;
+				PhysicalDevice::Handle       PhysicalDevice;
+				LogicalDevice::Handle        LogicalDevice;
+				uint32                       QueueFamilyIndex;
+				LogicalDevice::Queue::Handle Queue;
+				VkPipelineCache              PipelineCache;
+				DescriptorPool::Handle       DescriptorPool;
+				Memory::AllocationCallbacks* Allocator;
+				uint32                       MinimumFrameBuffers;
+				uint32                       FrameBufferCount;
 
-				AppInstance::Handle    AppGPU;
-				PhysicalDevice::Handle PhysicalDevice;
-				LogicalDevice::Handle LogicalDevice;
-				LogicalDevice::Queue::Handle GraphicsQueue;
-				LogicalDevice::Queue::Handle PresentationQueue;
-				//QueueFamilyIndices QueueFamilies;
-				VkPipelineCache PipelineCache;   // PipelineCache TODO: Wrap the type...
-				// DescriptorPool
-				const VkAllocationCallbacks* Allocator;
-				// MinImageCount
-				// 
+				void(*CheckResultFunction)(VkResult returnCode);
 			};
 
-			using RenderContextList = DynamicArray<RenderContext>;
+			using RenderContextList = DynamicArray<RawRenderContext>;
 
 			
 			// Static Data
@@ -122,11 +121,11 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 				eGlobal Pipeline::Handle GraphicsPipeline;
 
-				eGlobal FenceList InFlightFences;
-				eGlobal FenceList ImagesInFlight;
+				//eGlobal FenceList InFlightFences;
+				//eGlobal FenceList ImagesInFlight;
 
-				eGlobal SemaphoreList ImageAvailable_Semaphores;
-				eGlobal SemaphoreList RenderFinished_Semaphores;
+				//eGlobal SemaphoreList ImageAvailable_Semaphores;
+				//eGlobal SemaphoreList RenderFinished_Semaphores;
 
 				eGlobal Surface::Handle SurfaceHandle;
 
