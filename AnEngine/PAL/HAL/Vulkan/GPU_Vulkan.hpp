@@ -55,7 +55,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			using ExtensionIdentifierList     = std::vector< RoCStr           >;
 			using FenceList                   = std::vector< Fence::Handle          >;
 			using FrameBufferList             = std::vector< Framebuffer::Handle    >;   
-			using ImageList                   = std::vector< Image::Handle    >;
+			using ImageList                   = std::vector< Image::Handle>;
 			using ImageViewList               = std::vector< ImageView::Handle>;
 			//using PhysicalDeviceList          = std::vector< PhysicalDevice   >;
 			using SemaphoreList               = std::vector< Semaphore::Handle      >;   
@@ -236,7 +236,29 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				Memory::Handle& _imageMemory
 			);
 
-			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
+			void CreateImage_V4
+			(
+				uint32                _width,
+				uint32                _height,
+				uint32                _mipLevels,
+				ESampleCount          _numSamples,
+				EFormat               _format,
+				EImageTiling          _tiling,
+				Image::UsageFlags     _usage,
+				Memory::PropertyFlags _properties,
+				Vault_4::Image& _image,
+				Vault_4::Memory& _imageMemory
+			);
+
+			Vault_4::ImageView CreateImageView(Vault_4::Image _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
+
+			void CreateImageViews
+			(
+				LogicalDevice::Handle _logicalDevice,
+				ImageList& _swapChainImages,
+				EFormat               _swapChainImageFormat,
+				ImageViewList& _imageViewContainer      // Will be populated.
+			);
 
 			void CreateLogicalDevice
 			(

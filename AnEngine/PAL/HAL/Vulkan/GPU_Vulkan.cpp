@@ -70,8 +70,8 @@
 			Vault_4::LogicalDevice::Queue* PresentationQueue;
 
 			
-				CommandBufferList CommandBuffers;
-				VkCommandPool     CommandPool   ;   // TODO: Wrap
+				CommandBufferList   CommandBuffers;
+				CommandPool::Handle CommandPool   ;   // TODO: Wrap
 
 				//PhysicalDeviceList  PhysicalDevices      ;
 				DebugMessenger::Handle     DebugMessenger_Handle;
@@ -97,7 +97,7 @@
 
 				Extent2D      SwapChain_Extent     ;
 				ImageList     SwapChain_Images     ;
-				EFormat  SwapChain_ImageFormat;
+				EFormat       SwapChain_ImageFormat;
 				ImageViewList SwapChain_ImageViews ;
 
 				FrameBufferList SwapChain_Framebuffers;
@@ -113,23 +113,23 @@
 				DynamicArray<Vault_4::Buffer> UniformBuffers;
 				DynamicArray<Vault_4::Memory> UniformBuffersMemory;
 
-				DescriptorPool::Handle DescriptorPool;	
+				Vault_4::DescriptorPool DescriptorPool;	
 
 				DynamicArray<DescriptorSet::Handle> DescriptorSets;
 
-				Image::Handle TextureImage;
+				Vault_4::Image TextureImage;
 
-				Memory::Handle TextureImageMemory;
+				Vault_4::Memory TextureImageMemory;
 
-				ImageView::Handle TextureImageView;
+				Vault_4::ImageView TextureImageView;
 
 				Vault_4::Sampler TextureSampler;
 
-				Image::Handle DepthImage;
+				Vault_4::Image DepthImage;
 
-				Memory::Handle DepthImageMemory;
+				Vault_4::Memory DepthImageMemory;
 
-				ImageView::Handle DepthImageView;
+				Vault_4::ImageView DepthImageView;
 
 
 			//);
@@ -330,9 +330,9 @@
 
 				ESampleCount MSAA_Samples = ESampleCount::_1;
 
-				Image::Handle ColorImage;
-				Memory::Handle ColorImageMemory;
-				ImageView::Handle ColorImageView;
+				Vault_4::Image ColorImage;
+				Vault_4::Memory ColorImageMemory;
+				Vault_4::ImageView ColorImageView;
 				
 				//Image::Handle TextureImage;
 
@@ -402,17 +402,29 @@
 				CommandBufferList&       _commandBuffers
 			)
 			{
-				ImageView::Destroy(LogicalDevice.GetHandle(), ColorImageView, nullptr);
+				//ImageView::Destroy(LogicalDevice.GetHandle(), ColorImageView, nullptr);
 
-				Image::Destroy(LogicalDevice.GetHandle(), ColorImage, nullptr);
+				ColorImageView.Destroy();
 
-				Memory::Free(LogicalDevice.GetHandle(), ColorImageMemory, nullptr);
+				//Image::Destroy(LogicalDevice.GetHandle(), ColorImage, nullptr);
 
-				ImageView::Destroy(LogicalDevice.GetHandle(), DepthImageView, nullptr);
+				ColorImage.Destroy();
 
-				Image::Destroy(LogicalDevice.GetHandle(), DepthImage, nullptr);
+				//Memory::Free(LogicalDevice.GetHandle(), ColorImageMemory, nullptr);
 
-				Memory::Free(LogicalDevice.GetHandle(), DepthImageMemory, nullptr);
+				ColorImageMemory.Free();
+
+				//ImageView::Destroy(LogicalDevice.GetHandle(), DepthImageView, nullptr);
+
+				DepthImageView.Destroy();
+
+				//Image::Destroy(LogicalDevice.GetHandle(), DepthImage, nullptr);
+
+				DepthImage.Destroy();
+
+				//Memory::Free(LogicalDevice.GetHandle(), DepthImageMemory, nullptr);
+
+				DepthImageMemory.Free();
 
 				for (DataSize index = 0; index < _swapChainFramebuffers.size(); index++)
 				{
@@ -430,6 +442,8 @@
 				for (DataSize index = 0; index < _swapChainImageViews.size(); index++)
 				{
 					ImageView::Destroy(_logicalDevice, _swapChainImageViews[index], nullptr);
+
+					//_swapChainImageViews[index].Destroy();
 				}
 
 				SwapChain::Destroy(_logicalDevice, _swapChain, nullptr);
@@ -443,7 +457,9 @@
 					UniformBuffersMemory[index].Free();
 				}
 				
-				DescriptorPool::Destroy(_logicalDevice, DescriptorPool, nullptr);
+				//DescriptorPool::Destroy(_logicalDevice, DescriptorPool, nullptr);
+
+				DescriptorPool.Destroy();
 			}
 
 			void CopyBufferToImage(Buffer::Handle _buffer, Image::Handle _image, uint32 _width, uint32 _height)
@@ -647,7 +663,7 @@
 			{
 				EFormat colorFormat = SwapChain_ImageFormat;
 
-				CreateImage
+				CreateImage_V4
 				(
 					SwapChain_Extent.Width, 
 					SwapChain_Extent.Height, 
@@ -691,7 +707,7 @@
 			{
 				EFormat depthFormat = FindDepthFormat();
 
-				CreateImage
+				CreateImage_V4
 				(
 					SwapChain_Extent.Width, 
 					SwapChain_Extent.Height, 
@@ -707,7 +723,7 @@
 
 				DepthImageView = CreateImageView(DepthImage, depthFormat, Image::AspectFlags(EImageAspect::Depth), 1);
 
-				TransitionImageLayout(DepthImage, depthFormat, EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal, 1);
+				TransitionImageLayout(DepthImage.GetHandle(), depthFormat, EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal, 1);
 			}
 
 			void CreateDescriptorPool()
@@ -720,7 +736,7 @@
 				poolSizes[1].Type = EDescriptorType::Sampler;
 				poolSizes[1].Count = SCast<uint32>(SwapChain_Images.size());
 
-				DescriptorPool::CreateInfo poolInfo {};
+				Vault_4::DescriptorPool::CreateInfo poolInfo {};
 
 				poolInfo.SType         = poolInfo.STypeEnum             ;
 				poolInfo.PoolSizeCount = SCast<uint32>(poolSizes.size());
@@ -728,7 +744,8 @@
 
 				poolInfo.MaxSets = SCast<uint32>(SwapChain_Images.size());
 
-				if (DescriptorPool::Create(LogicalDevice.GetHandle(), poolInfo, nullptr, DescriptorPool) != EResult::Success)
+				//if (DescriptorPool::Create(LogicalDevice.GetHandle(), poolInfo, nullptr, DescriptorPool) != EResult::Success)
+				if (DescriptorPool.Create(LogicalDevice, poolInfo, nullptr) != EResult::Success)
 					throw RuntimeError("Failed to create descriptor pool!");
 			}
 
@@ -739,7 +756,7 @@
 				DescriptorSet::AllocateInfo allocInfo{};
 
 				allocInfo.SType              = allocInfo.STypeEnum;
-				allocInfo.DescriptorPool     = DescriptorPool;
+				allocInfo.DescriptorPool     = DescriptorPool.GetHandle();
 				allocInfo.DescriptorSetCount = SCast<uint32>(SwapChain_Images.size());
 				allocInfo.SetLayouts         = layouts.data();
 
@@ -760,7 +777,7 @@
 					DescriptorSet::ImageInfo imageInfo{};
 
 					imageInfo.ImageLayout = EImageLayout::Shader_ReadonlyOptimal;
-					imageInfo.ImageView   = TextureImageView                    ;
+					imageInfo.ImageView   = TextureImageView.GetHandle()                    ;
 					imageInfo.Sampler     = TextureSampler.GetHandle()          ;
 
 
@@ -846,8 +863,8 @@
 				{
 					StaticArray<ImageView::Handle, 3> attachments = 
 					{
-						ColorImageView,
-						DepthImageView,
+						ColorImageView.GetHandle(),
+						DepthImageView.GetHandle(),
 						_swapChainImageViews[index]
 					};
 
@@ -1134,14 +1151,73 @@
 				Image::BindMemory(LogicalDevice.GetHandle(), _image, _imageMemory, 0);
 			}
 
-			ImageView::Handle CreateImageView(Image::Handle _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels)
+			void CreateImage_V4
+			(
+				uint32                _width      , 
+				uint32                _height     , 
+				uint32                _mipLevels  ,
+				ESampleCount          _numSamples ,
+				EFormat               _format     , 
+				EImageTiling          _tiling     , 
+				Image::UsageFlags     _usage      , 
+				Memory::PropertyFlags _properties , 
+				Vault_4::Image&        _image      , 
+				Vault_4::Memory&       _imageMemory
+			)
 			{
-				ImageView::CreateInfo viewInfo {};
+				Vault_4::Image::CreateInfo imageInfo;
 
-				viewInfo.SType    = viewInfo.STypeEnum       ;
-				viewInfo.Image    = _image                   ;
+				imageInfo.ImageType     = EImageType::_2D       ;
+				imageInfo.Extent.Width  = SCast<uint32>(_width );
+				imageInfo.Extent.Height = SCast<uint32>(_height);
+				imageInfo.Extent.Depth  = 1                     ;
+				imageInfo.MipmapLevels  = _mipLevels            ;
+				imageInfo.ArrayLayers   = 1                     ;
+
+				imageInfo.Format       = _format                ;
+				imageInfo.Tiling       = _tiling                ;
+				imageInfo.InitalLayout = EImageLayout::Undefined;
+				imageInfo.Usage        = _usage                 ;
+				imageInfo.SharingMode  = ESharingMode::Exclusive ;
+				imageInfo.Samples      = _numSamples            ;
+				imageInfo.Flags        = 0                      ;
+
+				//if (Image::Create(LogicalDevice.GetHandle(), imageInfo, nullptr, _image) != EResult::Success)
+				if (_image.Create(LogicalDevice, imageInfo, Memory::DefaultAllocator) != EResult::Success)
+					throw RuntimeError("Failed to create image!");
+
+				//Memory::Requirements memReq;
+
+				//Image::GetMemoryRequirements(LogicalDevice.GetHandle(), _image, memReq);
+
+				Vault_4::Memory::AllocateInfo allocationInfo;
+
+				//allocationInfo.SType = allocationInfo.STypeEnum;
+				allocationInfo.AllocationSize = _image.GetMemoryRequirements().Size;
+				allocationInfo.MemoryTypeIndex = PhysicalDevice.FindMemoryType(_image.GetMemoryRequirements().MemoryTypeBits, _properties);
+
+				//if (Memory::Allocate(LogicalDevice.GetHandle(), allocationInfo, nullptr, _imageMemory) != EResult::Success)
+				if (_imageMemory.Allocate(LogicalDevice, allocationInfo, Memory::DefaultAllocator) != EResult::Success)
+					throw RuntimeError("Failed to allocate image memory!");
+
+				//Image::BindMemory(LogicalDevice.GetHandle(), _image, _imageMemory, 0);
+
+				_image.BindMemory(_imageMemory, Memory::ZeroOffset);
+			}
+
+			Vault_4::ImageView CreateImageView(Vault_4::Image _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels)
+			{
+				Vault_4::ImageView::CreateInfo viewInfo;
+
+				//viewInfo.SType    = viewInfo.STypeEnum       ;
+				viewInfo.Image    = _image.GetHandle()       ;
 				viewInfo.ViewType = ImageView::EViewType::_2D;
 				viewInfo.Format   = _format                  ;
+
+				viewInfo.Components.R = EComponentSwizzle::Identitity;
+				viewInfo.Components.G = EComponentSwizzle::Identitity;
+				viewInfo.Components.B = EComponentSwizzle::Identitity;
+				viewInfo.Components.A = EComponentSwizzle::Identitity;
 
 				viewInfo.SubresourceRange.AspectMask     = _aspectFlags;
 				viewInfo.SubresourceRange.BaseMipLevel   = 0           ;
@@ -1149,9 +1225,10 @@
 				viewInfo.SubresourceRange.BaseArrayLayer = 0           ;
 				viewInfo.SubresourceRange.LayerCount     = 1           ;
 
-				ImageView::Handle result;
+				Vault_4::ImageView result;
 
-				if (ImageView::Create(LogicalDevice.GetHandle(), viewInfo, nullptr, result) != EResult::Success )
+				//if (ImageView::Create(LogicalDevice.GetHandle(), viewInfo, nullptr, result) != EResult::Success )
+				if (result.Create(LogicalDevice, viewInfo, Memory::DefaultAllocator) != EResult::Success )
 					throw RuntimeError("Failed to create texture image view!");
 
 				return result;
@@ -1169,9 +1246,9 @@
 
 				for (DataSize index = 0; index < _swapChainImages.size(); index++)
 				{
-					ImageView::CreateInfo creationSpec {};
+					Vault_4::ImageView::CreateInfo creationSpec;
 
-					creationSpec.SType    = creationSpec.STypeEnum ;
+					//creationSpec.SType    = creationSpec.STypeEnum ;
 					creationSpec.Image    = _swapChainImages[index];
 					creationSpec.ViewType = EImageViewType::_2D    ;
 					creationSpec.Format   = _swapChainImageFormat  ;
@@ -1188,7 +1265,9 @@
 					creationSpec.SubresourceRange.BaseArrayLayer = 0;
 					creationSpec.SubresourceRange.LayerCount     = 1;
 
-					EResult&& creationResult = ImageView::Create(_logicalDevice, creationSpec, nullptr, _imageViewContainer[index]);
+					EResult&& creationResult = 
+						//_imageViewContainer[index].Create(LogicalDevice, creationSpec, Memory::DefaultAllocator);
+						ImageView::Create(_logicalDevice, creationSpec, nullptr, _imageViewContainer[index]);
 
 					if (creationResult != EResult::Success)
 					{
@@ -1611,7 +1690,7 @@
 
 				stbi_image_free(imageData);
 
-				CreateImage
+				CreateImage_V4
 				(
 					textureWidth, 
 					textureHeight,  
@@ -1625,11 +1704,11 @@
 					TextureImageMemory
 				);
 
-				TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_SRGB, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal, MipMapLevels);
+				TransitionImageLayout(TextureImage.GetHandle(), EFormat::R8_G8_B8_A8_SRGB, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal, MipMapLevels);
 
-				CopyBufferToImage(stagingBuffer, TextureImage, SCast<uint32>(textureWidth), SCast<uint32>(textureHeight));
+				CopyBufferToImage(stagingBuffer, TextureImage.GetHandle(), SCast<uint32>(textureWidth), SCast<uint32>(textureHeight));
 
-				GenerateMipMaps(TextureImage, EFormat::R8_G8_B8_A8_SRGB, textureWidth, textureHeight, MipMapLevels);
+				GenerateMipMaps(TextureImage.GetHandle(), EFormat::R8_G8_B8_A8_SRGB, textureWidth, textureHeight, MipMapLevels);
 
 				Buffer::Destroy(LogicalDevice.GetHandle(), stagingBuffer, nullptr);
 
@@ -1689,8 +1768,13 @@
 				Bytecode_Buffer triShader_Vert_Bytecode(triShader_VertCode.begin(), triShader_VertCode.end());
 				Bytecode_Buffer triShader_Frag_Bytecode(triShader_FragCode.begin(), triShader_FragCode.end());
 
-				ShaderModule::Handle triShaderModule_Vert = Vault_2::ShaderModule::Create(_logicalDevice, triShader_VertCode.data(), triShader_VertCode.size());
-				ShaderModule::Handle triShaderModule_Frag = Vault_2::ShaderModule::Create(_logicalDevice, triShader_FragCode.data(), triShader_VertCode.size());
+				ShaderModule::Handle triShaderModule_Vert; 
+
+				Vault_2::ShaderModule::Create(_logicalDevice, Vault_2::ShaderModule::CreateInfo(triShader_VertCode.data(), triShader_VertCode.size()), nullptr, triShaderModule_Vert);
+
+				ShaderModule::Handle triShaderModule_Frag;
+
+				Vault_2::ShaderModule::Create(_logicalDevice, Vault_2::ShaderModule::CreateInfo(triShader_FragCode.data(), triShader_FragCode.size()), nullptr, triShaderModule_Frag);
 
 				StaticArray<ShaderModule::Handle, 2> result = { triShaderModule_Vert, triShaderModule_Frag };
 
@@ -1740,8 +1824,13 @@
 				Bytecode_Buffer vertBytecode(vertCode.begin(), vertCode.end());
 				Bytecode_Buffer fragBytecode(fragCode.begin(), fragCode.end());
 
-				ShaderModule::Handle vertShaderModule = Vault_2::ShaderModule::Create(_logicalDevice, vertCode.data(), vertCode.size());
-				ShaderModule::Handle fragShaderModule = Vault_2::ShaderModule::Create(_logicalDevice, fragCode.data(), fragCode.size());
+				ShaderModule::Handle vertShaderModule;
+				
+				Vault_2::ShaderModule::Create(_logicalDevice, Vault_2::ShaderModule::CreateInfo(vertCode.data(), vertCode.size()), nullptr, vertShaderModule);
+				
+				ShaderModule::Handle fragShaderModule;
+				
+				Vault_2::ShaderModule::Create(_logicalDevice, Vault_2::ShaderModule::CreateInfo(fragCode.data(), fragCode.size()), nullptr, fragShaderModule);
 
 				StaticArray<ShaderModule::Handle, 2> result = { vertShaderModule, fragShaderModule };
 
@@ -2706,14 +2795,20 @@
 
 					TextureSampler.Destroy();
 
-					ImageView::Destroy(LogicalDevice.GetHandle(), TextureImageView, nullptr);
+					//ImageView::Destroy(LogicalDevice.GetHandle(), TextureImageView, nullptr);
 
-					Image::Destroy(LogicalDevice.GetHandle(), TextureImage, nullptr);
+					TextureImageView.Destroy();
 
-					Memory::Free(LogicalDevice.GetHandle(), TextureImageMemory, nullptr);
+					//Image::Destroy(LogicalDevice.GetHandle(), TextureImage, nullptr);
+
+					TextureImage.Destroy();
+
+					//Memory::Free(LogicalDevice.GetHandle(), TextureImageMemory, nullptr);
+
+					TextureImageMemory.Free();
 
 					Pipeline::Layout::DescriptorSet::Destroy(LogicalDevice.GetHandle(), DescriptorSetLayout, nullptr);
-					
+
 					//Buffer::Destroy(LogicalDevice.GetHandle(), IndexBuffer, nullptr);
 					IndexBuffer.Destroy();
 
