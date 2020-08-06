@@ -23,27 +23,23 @@ namespace SAL::Imgui
 				{
 					case Meta::EGPUPlatformAPI::Vulkan:
 					{
-						using HAL::GPU::Platform_Vulkan::RenderContext;
+						using HAL::GPU::Platform_Vulkan::RawRenderContext;
 
-						/* Not ready.
-						RenderContext& renderContext =  dref(RCast<RenderContext>(HAL::GPU::GetRenderContext(_window)));
+						RawRenderContext& renderContext =  dref(RCast<RawRenderContext>(HAL::GPU::GetRenderContext(_window)));
 
 						ImGui_ImplVulkan_InitInfo initSpec {};
 
-						initSpec.Instance = renderContext.AppGPU;
-						initSpec.PhysicalDevice = renderContext.PhysicalDevice;
-						initSpec.Device = renderContext.LogicalDevice;
-						initSpec.QueueFamily = renderContext.QueueFamilies.GraphicsFamily.value();
-						initSpec.Queue = renderContext.GraphicsQueue;
-						initSpec.PipelineCache = renderContext.PipelineCache;
-						//initSpec.DescriptorPool TODO: Come back when you have finished the vulkan tutorial and have a full descriptor pool based on the imgui tut.
-						initSpec.Allocator = renderContext.Allocator;
-						//initSpec.MinImageCount
-						//initSpec.ImageCount;
-						//initSpec.CheckVkResultFn;
-
-						*/
-						
+						initSpec.Instance        = renderContext.ApplicationInstance;
+						initSpec.PhysicalDevice  = renderContext.PhysicalDevice     ;
+						initSpec.Device          = renderContext.LogicalDevice      ;
+						initSpec.QueueFamily     = renderContext.QueueFamilyIndex   ;
+						initSpec.Queue           = renderContext.Queue              ;
+						initSpec.PipelineCache   = renderContext.PipelineCache      ;
+						initSpec.DescriptorPool  = renderContext.DescriptorPool     ;
+						initSpec.Allocator       = renderContext.Allocator->operator const VkAllocationCallbacks*();
+						initSpec.MinImageCount   = renderContext.MinimumFrameBuffers;
+						initSpec.ImageCount      = renderContext.FrameBufferCount   ;
+						initSpec.CheckVkResultFn = renderContext.CheckResultFunction;
 					}
 				}
 			}

@@ -84,7 +84,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				LogicalDevice::Handle        LogicalDevice;
 				uint32                       QueueFamilyIndex;
 				LogicalDevice::Queue::Handle Queue;
-				VkPipelineCache              PipelineCache;
+				Pipeline::Cache::Handle      PipelineCache;
 				DescriptorPool::Handle       DescriptorPool;
 				Memory::AllocationCallbacks* Allocator;
 				uint32                       MinimumFrameBuffers;
@@ -117,9 +117,9 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 				//eGlobal QueueFamilyIndices QueueFamilies;
 
-				eGlobal Pipeline::Layout::Handle PipelineLayout;
+				//eGlobal Pipeline::Layout::Handle PipelineLayout;
 
-				eGlobal Pipeline::Handle GraphicsPipeline;
+				//eGlobal Pipeline::Handle GraphicsPipeline;
 
 				//eGlobal FenceList InFlightFences;
 				//eGlobal FenceList ImagesInFlight;

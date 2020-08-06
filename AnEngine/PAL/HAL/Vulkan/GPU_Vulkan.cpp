@@ -68,20 +68,19 @@
 
 			Vault_4::LogicalDevice::Queue* GraphicsQueue    ;
 			Vault_4::LogicalDevice::Queue* PresentationQueue;
-
 			
 				CommandBufferList   CommandBuffers;
-				CommandPool::Handle CommandPool   ;   // TODO: Wrap
+				CommandPool::Handle CommandPool   ;   
 
-				//PhysicalDeviceList  PhysicalDevices      ;
 				DebugMessenger::Handle     DebugMessenger_Handle;
 				DebugMessenger::CreateInfo DebugMessenger_CreationSpec;
 
-				Pipeline::Layout::DescriptorSet::Handle DescriptorSetLayout;
+			Vault_4::Pipeline::Layout::DescriptorSet DescriptorSetLayout;
+			Vault_4::Pipeline::Layout                PipelineLayout     ;
 
-				Pipeline::Layout::Handle PipelineLayout;
+			Vault_4::Pipeline::Cache PipelineCache;
 
-				Pipeline::Handle GraphicsPipeline;
+			Vault_4::GraphicsPipeline GraphicsPipeline;
 
 			DynamicArray<Vault_4::Fence> InFlightFences;
 			DynamicArray<Vault_4::Fence> ImagesInFlight;
@@ -156,6 +155,14 @@
 			{
 				ValidationLayer_Khronos
 			};
+
+			uint32 MipMapLevels;
+
+			ESampleCount MSAA_Samples = ESampleCount::_1;
+
+			Vault_4::Image ColorImage;
+			Vault_4::Memory ColorImageMemory;
+			Vault_4::ImageView ColorImageView;
 
 
 			/**
@@ -327,13 +334,7 @@
 				const String EdsCryingCat_ModelPath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.obj";
 				const String EdsCryingCat_TexturePath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.jpg";
 
-				uint32 MipMapLevels;
-
-				ESampleCount MSAA_Samples = ESampleCount::_1;
-
-				Vault_4::Image ColorImage;
-				Vault_4::Memory ColorImageMemory;
-				Vault_4::ImageView ColorImageView;
+				
 				
 			#pragma endregion VKTut_V1
 
@@ -356,7 +357,7 @@
 				using LayerPropertyList = std::vector<ValidationLayers::LayerProperties>;
 
 
-				uInt32&& layerCount = Vault_2::ValidationLayers::GetNumberOfLayers();
+				uInt32 layerCount = Vault_2::ValidationLayers::GetNumberOfLayers();
 
 				stack<LayerPropertyList> availableLayers(layerCount);
 
@@ -404,9 +405,13 @@
 
 				CommandBuffer::Free(LogicalDevice.GetHandle(), CommandPool, static_cast<uint32_t>(CommandBuffers.size()), CommandBuffers.data());
 
-				Pipeline::Destroy(LogicalDevice.GetHandle(), GraphicsPipeline, nullptr);
+				//Pipeline::Destroy(LogicalDevice.GetHandle(), GraphicsPipeline, nullptr);
 
-				Pipeline::Layout::Destroy(LogicalDevice.GetHandle(), PipelineLayout, nullptr);
+				//Pipeline::Layout::Destroy(LogicalDevice.GetHandle(), PipelineLayout, nullptr);
+
+				GraphicsPipeline.Destroy();
+
+				PipelineLayout.Destroy();
 
 				RenderPass.Destroy();
 
@@ -516,7 +521,7 @@
 					appCreateSpec.Next = nullptr;
 				}
 
-				EResult&& creationResult = AppGPU.Create(appSpec, appCreateSpec);  
+				EResult creationResult = AppGPU.Create(appSpec, appCreateSpec);  
 
 				if (creationResult != EResult::Success) 
 					throw std::runtime_error("Triangle Test: Failed to create Vulkan app instance.");
@@ -570,7 +575,7 @@
 
 						CommandBuffer::BeginRenderPass(CommandBuffers[index], renderPassInfo, ESubpassContents::Inline);
 
-							CommandBuffer::BindPipeline(CommandBuffers[index], EPipelineBindPoint::Graphics, GraphicsPipeline);
+							CommandBuffer::BindPipeline(CommandBuffers[index], EPipelineBindPoint::Graphics, GraphicsPipeline.GetHandle());
 
 							Vault_4::Buffer::Handle vertexBuffers = VertexBuffer.GetHandle();
 
@@ -584,7 +589,7 @@
 							(
 								CommandBuffers[index],
 								EPipelineBindPoint::Graphics,
-								PipelineLayout,
+								PipelineLayout.GetHandle(),
 								0,
 								1,
 								&DescriptorSets[index],
@@ -692,7 +697,7 @@
 
 			void CreateDescriptorSets()
 			{
-				DynamicArray<Pipeline::Layout::DescriptorSet::Handle> layouts(SwapChain_Images.size(), DescriptorSetLayout);
+				DynamicArray<Pipeline::Layout::DescriptorSet::Handle> layouts(SwapChain_Images.size(), DescriptorSetLayout.GetHandle());
 
 				DescriptorSet::AllocateInfo allocInfo{};
 
@@ -779,13 +784,15 @@
 				StaticArray<Pipeline::Layout::DescriptorSet::Binding, 2> bindings =
 				{ uboLayoutBinding, samplerLayoutBinding };
 				
-				Pipeline::Layout::DescriptorSet::CreateInfo layoutInfo {};
+				Vault_4::Pipeline::Layout::DescriptorSet::CreateInfo layoutInfo;
 
-				layoutInfo.SType = layoutInfo.STypeEnum;
 				layoutInfo.BindingCount = SCast<uint32>(bindings.size());
 				layoutInfo.Bindings = bindings.data();
 
-				if (Pipeline::Layout::DescriptorSet::Create(LogicalDevice.GetHandle(), layoutInfo, nullptr, DescriptorSetLayout) != EResult::Success)
+				DescriptorSetLayout.Assign(LogicalDevice, layoutInfo);
+
+				//if (Pipeline::Layout::DescriptorSet::Create(LogicalDevice.GetHandle(), layoutInfo, nullptr, DescriptorSetLayout) != EResult::Success)
+				if (DescriptorSetLayout.Create() != EResult::Success)
 					throw RuntimeError("Failed to create descriptor set layout!");
 			}
 
@@ -979,16 +986,17 @@
 				dynamicState.StateCount = 2                     ;
 				dynamicState.States     = States                ;
 
-				Pipeline::Layout::CreateInfo pipelineLayout_CreationSpec {};
+				Vault_4::Pipeline::Layout::CreateInfo pipelineLayout_CreationSpec {};
 
 				pipelineLayout_CreationSpec.SType                  = pipelineLayout_CreationSpec.STypeEnum;
 				pipelineLayout_CreationSpec.SetLayoutCount         = 1                                    ;
-				pipelineLayout_CreationSpec.SetLayouts             = &DescriptorSetLayout                 ;
+				pipelineLayout_CreationSpec.SetLayouts             = &DescriptorSetLayout.GetHandle()     ;
 				pipelineLayout_CreationSpec.PushConstantRangeCount = 0                                    ;
 				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr                              ;
 
-				EResult&& piplineLayout_CreationResult = 
-					Pipeline::Layout::Create(LogicalDevice.GetHandle(), pipelineLayout_CreationSpec, nullptr, PipelineLayout);
+				EResult piplineLayout_CreationResult = 
+					PipelineLayout.Create(LogicalDevice, pipelineLayout_CreationSpec);
+					//Pipeline::Layout::Create(LogicalDevice.GetHandle(), pipelineLayout_CreationSpec, nullptr, PipelineLayout);
 
 
 				if (piplineLayout_CreationResult != EResult::Success)
@@ -996,9 +1004,8 @@
 					throw std::runtime_error("Failed to create pipeline layout!");
 				}
 
-				Pipeline::Graphics::CreateInfo pipelineInfo {};
+				Vault_4::Pipeline::Graphics::CreateInfo pipelineInfo;
 
-				pipelineInfo.SType      = pipelineInfo.STypeEnum;
 				pipelineInfo.StageCount = 2                     ;
 				pipelineInfo.Stages     = shaderStages          ;
 
@@ -1011,7 +1018,7 @@
 				pipelineInfo.ColorBlendState    = &colorBlending_CreationSpec   ;
 				pipelineInfo.DynamicState       = nullptr                       ;   // Optional
 
-				pipelineInfo.Layout = PipelineLayout;
+				pipelineInfo.Layout = PipelineLayout.GetHandle();
 
 				pipelineInfo.RenderPass = RenderPass.GetHandle();
 				pipelineInfo.Subpass    = 0          ;
@@ -1019,10 +1026,12 @@
 				pipelineInfo.BasePipelineHandle = VK_NULL_HANDLE;   // Optional
 				pipelineInfo.BasePipelineIndex  = -1            ;   // Optional
 
-				if (Pipeline::Graphics::Create(LogicalDevice.GetHandle(), VK_NULL_HANDLE, 1, pipelineInfo, nullptr, GraphicsPipeline) != EResult::Success) 
-				{
+				//if (Pipeline::Graphics::Create(LogicalDevice.GetHandle(), VK_NULL_HANDLE, 1, pipelineInfo, nullptr, GraphicsPipeline) != EResult::Success) 
+
+				EResult returnCode = GraphicsPipeline.Create(LogicalDevice, pipelineInfo);
+
+				if (returnCode != EResult::Success) 
 					throw std::runtime_error("Failed to create graphics pipeline!");
-				}
 			}	
 
 			void CreateImage
@@ -1184,7 +1193,7 @@
 
 				// Hard coded vertex data...
 
-				VoidPtr&& address = ModelIndicies.data();
+				VoidPtr address = ModelIndicies.data();
 
 				Vault_2::Memory::WriteToGPU(LogicalDevice.GetHandle(), stagingBufferMemory, 0, bufferSize, 0, address);
 
@@ -1440,9 +1449,9 @@
 				creationSpec.CompositeAlpha   = ECompositeAlpha::Opaque                       ;
 				creationSpec.PresentationMode = presentationMode                              ;
 				creationSpec.Clipped          = true                                          ;
-				creationSpec.OldSwapchain     = SwapChain::NullHandle                         ;
+				creationSpec.OldSwapchain     = Null<SwapChain::Handle>                       ;
 
-				EResult&& creationResult = SwapChain::Create(LogicalDevice.GetHandle(), creationSpec, nullptr, SwapChain);
+				EResult creationResult = SwapChain::Create(LogicalDevice.GetHandle(), creationSpec, nullptr, SwapChain);
 
 				if (creationResult != EResult::Success)
 				{
@@ -1475,7 +1484,7 @@
 
 				for (DataSize index = 0; index < MaxFramesInFlight; index++)
 				{
-					EResult&& 
+					EResult
 					
 					result = ImageAvailable_Semaphores[index].Create(LogicalDevice, semaphore_CreationSpec);
 					result = RenderFinished_Semaphores[index].Create(LogicalDevice, semaphore_CreationSpec);
@@ -1780,7 +1789,7 @@
 			{
 				QueueFamilyIndices indices {};
 
-				auto&& queueFamilies = _physicalDevice.GetAvailableQueueFamilies();
+				auto queueFamilies = _physicalDevice.GetAvailableQueueFamilies();
 
 				int index = 0;
 
@@ -1813,10 +1822,7 @@
 					}
 
 					
-					if 
-					(
-						indices.Graphics.has_value()
-					)
+					if (indices.Graphics.has_value())
 					{
 						break;
 					}
@@ -2045,7 +2051,7 @@
 					swapChainAdequate = !swapChainSupport.Formats.empty() && !swapChainSupport.PresentationModes.empty();
 				}
 
-				bool&& result = 
+				bool result = 
 					bool(deviceFeatures.GeometryShader) &&
 					QueueIndices.Graphics.has_value() &&
 					presentationSupport &&
@@ -2102,7 +2108,7 @@
 					
 				AppGPU.GetAvailablePhysicalDevices(physicalDevices);
 
-				auto&& size = physicalDevices.size();
+				auto size = physicalDevices.size();
 
 				if (size == 0)
 					throw std::runtime_error("Physical device count 0. No GPUs found with Vulkan support.");
@@ -2111,7 +2117,6 @@
 
 				for (DeviceSize index = 0; index < size; index++)
 				{
-					//PhysDevice.AssignHandle(physicalDevices[index]);
 					if (IsDeviceSuitable(physicalDevices[index], SurfaceHandle, DeviceExtensions))
 					{
 						PhysicalDevice = physicalDevices[index];
@@ -2122,7 +2127,7 @@
 					}
 				}
 
-				if (PhysicalDevice.GetHandle() == PhysicalDevice::NullHandle)
+				if (PhysicalDevice.GetHandle() == Null<PhysicalDevice::Handle>)
 				{
 					throw std::runtime_error("Not able to find suitable Vulkan supported GPU.");
 				}
@@ -2204,7 +2209,7 @@
 
 				PopulateDebugMessengerCreateInfo(msngrCreateSpec);
 
-				EResult&& creationResult = DebugMessenger::Create(AppGPU.GetHandle(), msngrCreateSpec, nullptr, DebugMessenger_Handle);
+				EResult creationResult = DebugMessenger::Create(AppGPU.GetHandle(), msngrCreateSpec, nullptr, DebugMessenger_Handle);
 
 				if (creationResult != EResult::Success) throw std::runtime_error("Failed to setup debug messenger!");
 			}
@@ -2395,8 +2400,6 @@
 			{
 				RawRenderContext renderContext {};
 
-				//renderContext.
-
 				RenderContextPool.push_back(renderContext);
 
 				return &RenderContextPool.back();
@@ -2509,19 +2512,18 @@
 
 				void DrawFrame(ptr<Window> _window)
 				{
-					//Fence::WaitForFences(LogicalDevice.GetHandle(), 1, &InFlightFences[CurrentFrame], EBool::True, UInt64Max);
 					InFlightFences[CurrentFrame].WaitFor(UInt64Max);
 
 					uint32 imageIndex;
 
-					EResult&& result = 
+					EResult result = 
 						SwapChain::AcquireNextImage
 						(
 						    LogicalDevice.GetHandle()              , 
 							SwapChain                              , 
 							UInt64Max                              , 
 							ImageAvailable_Semaphores[CurrentFrame].GetHandle(), 
-							Fence::NullHandle                      ,
+							Null<Fence::Handle>                     ,
 							imageIndex
 						);
 						
@@ -2536,9 +2538,8 @@
 						throw std::runtime_error("Failed to acquire swap chain image!");
 					}
 
-					if (ImagesInFlight[imageIndex].GetHandle() != NullHandle) 
+					if (ImagesInFlight[imageIndex].GetHandle() != Null<Fence::Handle>) 
 						ImagesInFlight[imageIndex].WaitFor(UInt64Max);
-						//Fence::WaitForFences(LogicalDevice.GetHandle(), 1, &ImagesInFlight[imageIndex].GetHandle(), EBool::True, UInt64Max);
 
 					ImagesInFlight[imageIndex] = InFlightFences[CurrentFrame];
 
@@ -2615,15 +2616,16 @@
 					TextureSampler    .Destroy();
 					TextureImageView  .Destroy();
 					TextureImage      .Destroy();
-					TextureImageMemory.Free();
+					TextureImageMemory.Free   ();
 
-					Pipeline::Layout::DescriptorSet::Destroy(LogicalDevice.GetHandle(), DescriptorSetLayout, nullptr);
+					//Pipeline::Layout::DescriptorSet::Destroy(LogicalDevice.GetHandle(), DescriptorSetLayout, nullptr);
+					DescriptorSetLayout.Destroy();
 
 					IndexBuffer      .Destroy();
-					IndexBufferMemory.Free();
+					IndexBufferMemory.Free   ();
 
 					VertexBuffer      .Destroy();
-					VertexBufferMemory.Free();
+					VertexBufferMemory.Free   ();
 
 					for (DataSize index = 0; index < MaxFramesInFlight; index++) 
 					{
