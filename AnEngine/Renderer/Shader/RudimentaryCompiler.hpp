@@ -25,7 +25,7 @@ namespace Renderer::Shader
 
 	using shaderc::Compiler      ;
 	using shaderc::CompileOptions;
-	
+
 	using ShaderKind = shaderc_shader_kind;
 
 	shaderc::Compiler       ShaderC_Compiler      ;

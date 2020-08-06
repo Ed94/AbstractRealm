@@ -70,21 +70,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			// Structs
 
-			struct QueueFamilyIndices
-			{
-				Maybe<uint32> GraphicsFamily;
-				Maybe<uint32> PresentationFamily;
-
-
-				bool IsComplete()
-				{
-					return
-						GraphicsFamily.has_value() &&
-						PresentationFamily.has_value()
-						;
-				}
-			};
-
 			struct SwapChainSupportDetails
 			{
 				Surface::Capabilities       Capabilities;
@@ -101,7 +86,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				LogicalDevice::Handle LogicalDevice;
 				LogicalDevice::Queue::Handle GraphicsQueue;
 				LogicalDevice::Queue::Handle PresentationQueue;
-				QueueFamilyIndices QueueFamilies;
+				//QueueFamilyIndices QueueFamilies;
 				VkPipelineCache PipelineCache;   // PipelineCache TODO: Wrap the type...
 				// DescriptorPool
 				const VkAllocationCallbacks* Allocator;
@@ -119,7 +104,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				// Moved to an extent from the Vulkan TriangleTest
 				// Eventually this will be organized into a proper structural setup for modular use.
 
-				eGlobal Vault_5::AppInstance AppGPU;
+				eGlobal Vault_4::AppInstance   AppGPU;
+				eGlobal Vault_4::LogicalDevice LogicalDevice;
 
 				eGlobal CommandBufferList CommandBuffers;
 				eGlobal VkCommandPool     CommandPool   ;   // TODO: Wrap
@@ -127,11 +113,10 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				//eGlobal PhysicalDeviceList  PhysicalDevices      ;
 				eGlobal DebugMessenger::Handle   DebugMessenger_Handle;
 
-				eGlobal LogicalDevice::Handle LogicalDevice    ;
-				eGlobal LogicalDevice::Queue::Handle         GraphicsQueue    ;
-				eGlobal LogicalDevice::Queue::Handle         PresentationQueue;
+				//eGlobal LogicalDevice::Queue::Handle         GraphicsQueue    ;
+				//eGlobal LogicalDevice::Queue::Handle         PresentationQueue;
 
-				eGlobal QueueFamilyIndices QueueFamilies;
+				//eGlobal QueueFamilyIndices QueueFamilies;
 
 				eGlobal Pipeline::Layout::Handle PipelineLayout;
 
@@ -158,7 +143,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 				eGlobal RenderContextList RenderContextPool;    // Contains a reference to every created render context. (Early implementation...)
 
-				eGlobal Buffer::Handle VertexBuffer;
 			//);
 
 			//Data
@@ -318,7 +302,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EFormat FindDepthFormat();
 
-			QueueFamilyIndices FindQueueFamilies(Vault_5::PhysicalDevice _physicalDevice, Surface::Handle _surfaceHandle);
+			//QueueFamilyIndices FindQueueFamilies(Vault_5::PhysicalDevice _physicalDevice, Surface::Handle _surfaceHandle);
 
 			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features);
 
