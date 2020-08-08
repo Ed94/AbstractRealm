@@ -69,11 +69,12 @@
 			LogicalDevice::Queue* GraphicsQueue    ;
 			LogicalDevice::Queue* PresentationQueue;
 			
-			std::vector<CommandBuffer> CommandBuffers;
+			std::vector<CommandBuffer        > CommandBuffers;
 			std::vector<CommandBuffer::Handle> CommandBufferHandles;
-			V4::CommandPool   CommandPool   ;   
 
-			V4::DebugMessenger DebugMessenger;
+			V4::CommandPool CommandPool;   
+
+			V4::DebugMessenger         DebugMessenger;
 			DebugMessenger::CreateInfo DebugMessenger_CreationSpec;
 
 			Pipeline::Layout::DescriptorSet DescriptorSetLayout;
@@ -116,7 +117,7 @@
 
 			V4::DescriptorPool DescriptorPool;	
 
-			DynamicArray<DescriptorSet> DescriptorSets;
+			DynamicArray<DescriptorSet        > DescriptorSets      ;
 			DynamicArray<DescriptorSet::Handle> DescriptorSetHandles;
 
 			Image TextureImage;
@@ -165,8 +166,6 @@
 			*/
 			const Buffer::CreateInfo StagingBufferInfo = Buffer::CreateInfo(EBufferUsage::TransferSource, ESharingMode::Exclusive);
 
-
-			
 
 			#pragma region VKTut_V1
 
@@ -392,9 +391,13 @@
 					SwapChain_Framebuffers[index].Destroy();
 				}
 
-				auto handles = CommandBuffers[0].GetHandles();	
+				//auto handles = CommandBuffers[0].GetHandles();	
 
-				CommandBuffers[0].Free();
+				//CommandBuffers[0].Free();
+
+
+
+
 
 				GraphicsPipeline.Destroy();
 
@@ -420,7 +423,7 @@
 
 			void CopyBufferToImage(Buffer _buffer, Image _image, uint32 _width, uint32 _height)
 			{
-				CommandBuffer commandBuffer; commandBuffer.BeginSingleTimeCommands(LogicalDevice, CommandPool);
+				CommandBuffer commandBuffer = CommandPool.BeginSingleTimeCommands();
 
 				CommandBuffer::BufferImageRegion region {};
 
@@ -441,7 +444,7 @@
 
 				commandBuffer.CopyBufferToImage(_buffer, _image, VT::Corridors::EImageLayout::TransferDestination_Optimal, 1, &region);
 				
-				commandBuffer.EndSingleTimeCommands(*GraphicsQueue);
+				CommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
 			}
 
 			void CreateApplicationInstance
@@ -505,19 +508,8 @@
 
 			void CreateCommandBuffers()
 			{
-				CommandBuffers.resize(SwapChain_Framebuffers.size());
-
-				CommandBuffer::AllocateInfo allocSpec;
-
-				allocSpec.Pool        = CommandPool.GetHandle()      ;
-				allocSpec.Level       = ECommandBufferLevel::Primary ;
-				allocSpec.BufferCount = uint32(CommandBuffers.size());
-
-				//if (CommandBuffer::Allocate(LogicalDevice.GetHandle(), allocSpec, CommandBuffers.data()) != EResult::Success) 
-				if (CommandBuffer::Allocate(LogicalDevice, allocSpec, CommandBuffers, CommandBufferHandles) != EResult::Success) 
-				{
+				if (CommandPool.Allocate(ECommandBufferLevel::Primary, SwapChain_Images.size(), CommandBuffers, CommandBufferHandles) != EResult::Success) 
 					throw std::runtime_error("failed to allocate command buffers!");
-				}
 
 				for (DataSize index = 0; index < CommandBuffers.size(); index++) 
 				{
@@ -604,7 +596,6 @@
 					ColorImageMemory
 				);
 
-
 				ColorImageView = CreateImageView(ColorImage, colorFormat, EImageAspect::Color, 1);
 			}
 
@@ -613,9 +604,8 @@
 				CommandPool::CreateInfo poolInfo {};
 
 				poolInfo.QueueFamilyIndex = QueueIndices.Graphics.value();
-				poolInfo.Flags            = CommandPool::CreateFlgas()         ;             // Optional
+				poolInfo.Flags            = CommandPool::CreateFlgas()   ;             // Optional
 																					    
-				//if (CommandPool::Create(LogicalDevice.GetHandle(), poolInfo, nullptr, CommandPool) != EResult::Success) 
 				if (CommandPool.Create(LogicalDevice, poolInfo) != EResult::Success) 
 				{
 					throw std::runtime_error("failed to create command pool!");
@@ -670,15 +660,13 @@
 			{
 				DynamicArray<Pipeline::Layout::DescriptorSet::Handle> layouts(SwapChain_Images.size(), DescriptorSetLayout.GetHandle());
 
-				DescriptorSet::AllocateInfo allocInfo{};
+				DescriptorPool::AllocateInfo allocInfo{};
 
 				allocInfo.DescriptorPool     = DescriptorPool.GetHandle();
 				allocInfo.DescriptorSetCount = SCast<uint32>(SwapChain_Images.size());
 				allocInfo.SetLayouts         = layouts.data();
 
-				DescriptorSets.resize(SwapChain_Images.size());
-
-				if (DescriptorSet::Allocate(LogicalDevice, allocInfo, DescriptorSets, DescriptorSetHandles) != EResult::Success)
+				if (DescriptorPool.Allocate(allocInfo, DescriptorSets, DescriptorSetHandles) != EResult::Success)
 					throw std::runtime_error("failed to allocate descriptor sets!");
 
 				for (DataSize index = 0; index < SwapChain_Images.size(); index++)
@@ -939,8 +927,11 @@
 				depthStencil_Info.MaxDepthBounds = 1.0f;
 
 				depthStencil_Info.StencilTestEnable = EBool::False;
-				depthStencil_Info.Front;   // Optional
-				depthStencil_Info.Back ;   // Optional
+
+				StencilOperationState nullStencil {};
+
+				depthStencil_Info.Front = nullStencil;   // Optional
+				depthStencil_Info.Back = nullStencil;   // Optional
 
 				EDynamicState States[] =
 				{
@@ -972,7 +963,7 @@
 					throw std::runtime_error("Failed to create pipeline layout!");
 				}
 
-				Pipeline::Graphics::CreateInfo pipelineInfo;
+				Pipeline::Graphics::CreateInfo pipelineInfo {};
 
 				pipelineInfo.StageCount = 2                     ;
 				pipelineInfo.Stages     = shaderStages          ;
@@ -985,6 +976,7 @@
 				pipelineInfo.DepthStencilState  = &depthStencil_Info            ;   
 				pipelineInfo.ColorBlendState    = &colorBlending_CreationSpec   ;
 				pipelineInfo.DynamicState       = nullptr                       ;   // Optional
+				pipelineInfo.TessellationState = nullptr;
 
 				pipelineInfo.Layout = PipelineLayout.GetHandle();
 
@@ -994,7 +986,9 @@
 				pipelineInfo.BasePipelineHandle = VK_NULL_HANDLE;   // Optional
 				pipelineInfo.BasePipelineIndex  = -1            ;   // Optional
 
-				//if (Pipeline::Graphics::Create(LogicalDevice.GetHandle(), VK_NULL_HANDLE, 1, pipelineInfo, nullptr, GraphicsPipeline) != EResult::Success) 
+				//V4::GraphicsPipeline::Handle test;
+
+				//if (Pipeline::Graphics::Parent::Create(LogicalDevice.GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &test) != EResult::Success) 
 
 				EResult returnCode = GraphicsPipeline.Create(LogicalDevice, pipelineInfo);
 
@@ -1179,18 +1173,11 @@
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				CommandBuffer commandStageBuffer; commandStageBuffer.BeginSingleTimeCommands(LogicalDevice, CommandPool);
 
-				//Vault_2::CommandBuffer::CopyBuffer(stagingBuffer, IndexBuffer.GetHandle(), copyInfo, LogicalDevice.GetHandle(), CommandPool, GraphicsQueue->GetHandle());
-
-				commandStageBuffer.CopyBuffer(stagingBuffer, IndexBuffer, 1, &copyInfo);
+				CommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, *GraphicsQueue);
 
 				stagingBuffer.Destroy();
 				stagingBufferMemory.Free();
-
-				//Buffer::Destroy(LogicalDevice.GetHandle(), stagingBuffer, Memory::DefaultAllocator);
-
-				//Memory::Free(LogicalDevice.GetHandle(), stagingBufferMemory, Memory::DefaultAllocator);
 			}
 
 			void CreateLogicalDevice()	
@@ -1384,7 +1371,7 @@
 					numImagesDesired = swapChainSupport.Capabilities.MaxImageCount;
 				}
 
-				SwapChain::CreateInfo creationSpec {};
+				SwapChain::CreateInfo creationSpec;
 
 				creationSpec.Surface          = Surface.GetHandle();
 				creationSpec.MinImageCount    = numImagesDesired        ;
@@ -1705,7 +1692,7 @@
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				CommandBuffer::CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, LogicalDevice, CommandPool, *GraphicsQueue);
+				CommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, *GraphicsQueue);
 
 				stagingBuffer.Destroy(); stagingBufferMemory.Free();
 			}
@@ -1833,7 +1820,7 @@
 					throw std::runtime_error("Texture image format does not support linear blitting!");
 				}
 
-				CommandBuffer commandBuffer; commandBuffer.BeginSingleTimeCommands(LogicalDevice, CommandPool);
+				CommandBuffer commandBuffer = CommandPool.BeginSingleTimeCommands();
 
 				Image::Memory_Barrier barrier{};
 
@@ -1931,7 +1918,7 @@
 					1, &barrier
 				);
 
-				commandBuffer.EndSingleTimeCommands(*GraphicsQueue);
+				CommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
 			}
 
 			ExtensionIdentifierList GetRequiredExtensions()
@@ -2108,13 +2095,15 @@
 			{
 				SwapChainSupportDetails details;
 
-				Surface.GetPhysicalDeviceCapabilities(_deviceHandle, details.Capabilities);
+				Surface.AssignPhysicalDevice(_deviceHandle);
 
-				Surface.GetAvailableFormats(_deviceHandle, details.Formats);
+				Surface.GetPhysicalDeviceCapabilities(details.Capabilities);
+
+				Surface.GetAvailableFormats(details.Formats);
 
 				uint32 presentationModeCount;
 
-				Surface.GetSupportedPresentationModes(_deviceHandle, details.PresentationModes);
+				Surface.GetSupportedPresentationModes(details.PresentationModes);
 
 				return details;
 			}
@@ -2209,7 +2198,7 @@
 
 			void TransitionImageLayout(Image& _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout, uint32 _mipMapLevels)
 			{
-				CommandBuffer commandBuffer; commandBuffer.BeginSingleTimeCommands(LogicalDevice, CommandPool);   
+				CommandBuffer commandBuffer = CommandPool.BeginSingleTimeCommands();   
 
 				Image::Memory_Barrier barrier {};
 
@@ -2285,7 +2274,7 @@
 					1, &barrier
 				);
 				
-				commandBuffer.EndSingleTimeCommands(*GraphicsQueue);
+				CommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
 			}
 
 			void UpdateUniformBuffers(uint32 _currentImage)
