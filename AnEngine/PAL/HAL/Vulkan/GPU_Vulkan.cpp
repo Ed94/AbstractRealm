@@ -56,88 +56,83 @@
 
 			// Static Data
 
-			Vault_4::AppInstance AppGPU;
+			AppInstance AppGPU;
 
-			Vault_4::PhysicalDevice PhysicalDevice;
+			V4::PhysicalDevice PhysicalDevice;
 
 			QueueFamilyIndices QueueIndices;
 
-			Vault_4::LogicalDevice LogicalDevice;
+			V4::LogicalDevice LogicalDevice;
 
-			std::vector<Vault_4::LogicalDevice::Queue> DeviceQueues;
+			std::vector<LogicalDevice::Queue> DeviceQueues;
 
-			Vault_4::LogicalDevice::Queue* GraphicsQueue    ;
-			Vault_4::LogicalDevice::Queue* PresentationQueue;
+			LogicalDevice::Queue* GraphicsQueue    ;
+			LogicalDevice::Queue* PresentationQueue;
 			
-				CommandBufferList   CommandBuffers;
-				CommandPool::Handle CommandPool   ;   
+			std::vector<CommandBuffer> CommandBuffers;
+			std::vector<CommandBuffer::Handle> CommandBufferHandles;
+			V4::CommandPool   CommandPool   ;   
 
-				DebugMessenger::Handle     DebugMessenger_Handle;
-				DebugMessenger::CreateInfo DebugMessenger_CreationSpec;
+			V4::DebugMessenger DebugMessenger;
+			DebugMessenger::CreateInfo DebugMessenger_CreationSpec;
 
-			Vault_4::Pipeline::Layout::DescriptorSet DescriptorSetLayout;
-			Vault_4::Pipeline::Layout                PipelineLayout     ;
+			Pipeline::Layout::DescriptorSet DescriptorSetLayout;
+			Pipeline::Layout                PipelineLayout     ;
 
-			Vault_4::Pipeline::Cache PipelineCache;
+			Pipeline::Cache PipelineCache;
 
-			Vault_4::GraphicsPipeline GraphicsPipeline;
+			V4::GraphicsPipeline GraphicsPipeline;
 
-			DynamicArray<Vault_4::Fence> InFlightFences;
-			DynamicArray<Vault_4::Fence> ImagesInFlight;
+			DynamicArray<Fence> InFlightFences;
+			DynamicArray<Fence> ImagesInFlight;
 
-			DynamicArray<Vault_4::Semaphore> ImageAvailable_Semaphores;
-			DynamicArray<Vault_4::Semaphore> RenderFinished_Semaphores;
+			DynamicArray<Semaphore> ImageAvailable_Semaphores;
+			DynamicArray<Semaphore> RenderFinished_Semaphores;
 
-				RenderContextList RenderContextPool; 
+			std::vector<RawRenderContext> RenderContextPool; 
 
-				Surface::Handle SurfaceHandle;
+			V4::Surface Surface;
 
-				SwapChain::Handle SwapChain;
+			V4::SwapChain SwapChain;
 
-				Extent2D SwapChain_Extent     ;
-				EFormat  SwapChain_ImageFormat;
+			Extent2D SwapChain_Extent     ;
+			V4::EFormat  SwapChain_ImageFormat;
 
-			DynamicArray<Vault_4::Image>     SwapChain_Images     ;
-			DynamicArray<Vault_4::ImageView> SwapChain_ImageViews ;
+			DynamicArray<Image>     SwapChain_Images     ;
+			DynamicArray<ImageView> SwapChain_ImageViews ;
 
-			DynamicArray<Vault_4::Framebuffer> SwapChain_Framebuffers;
+			DynamicArray<Framebuffer> SwapChain_Framebuffers;
 
-			Vault_4::RenderPass RenderPass;   
+			V4::RenderPass RenderPass;   
 
-			Vault_4::Buffer VertexBuffer;
-			Vault_4::Memory VertexBufferMemory;
+			Buffer VertexBuffer;
+			Memory VertexBufferMemory;
 
-			Vault_4::Buffer IndexBuffer;
-			Vault_4::Memory IndexBufferMemory;
+			Buffer IndexBuffer;
+			Memory IndexBufferMemory;
 
-			DynamicArray<Vault_4::Buffer> UniformBuffers;
-			DynamicArray<Vault_4::Memory> UniformBuffersMemory;
+			DynamicArray<Buffer> UniformBuffers;
+			DynamicArray<Memory> UniformBuffersMemory;
 
-			Vault_4::DescriptorPool DescriptorPool;	
+			V4::DescriptorPool DescriptorPool;	
 
-			DynamicArray<DescriptorSet::Handle> DescriptorSets;
+			DynamicArray<DescriptorSet> DescriptorSets;
+			DynamicArray<DescriptorSet::Handle> DescriptorSetHandles;
 
-			Vault_4::Image TextureImage;
+			Image TextureImage;
 
-			Vault_4::Memory TextureImageMemory;
+			Memory TextureImageMemory;
 
-			Vault_4::ImageView TextureImageView;
+			ImageView TextureImageView;
 
-			Vault_4::Sampler TextureSampler;
+			Sampler TextureSampler;
 
-			Vault_4::Image DepthImage;
+			Image DepthImage;
 
-			Vault_4::Memory DepthImageMemory;
+			Memory DepthImageMemory;
 
-			Vault_4::ImageView DepthImageView;
+			ImageView DepthImageView;
 
-
-			//);
-
-			Data
-			(
-				
-			);
 
 			bool FramebufferResized = false;
 
@@ -160,15 +155,15 @@
 
 			ESampleCount MSAA_Samples = ESampleCount::_1;
 
-			Vault_4::Image ColorImage;
-			Vault_4::Memory ColorImageMemory;
-			Vault_4::ImageView ColorImageView;
+			Image ColorImage;
+			Memory ColorImageMemory;
+			ImageView ColorImageView;
 
 
 			/**
 			* @brief Note: Need to define size.
 			*/
-			const Vault_2::Buffer::CreateInfo StagingBufferInfo = Vault_2::Buffer::CreateInfo(EBufferUsage::TransferSource, ESharingMode::Exclusive);
+			const Buffer::CreateInfo StagingBufferInfo = Buffer::CreateInfo(EBufferUsage::TransferSource, ESharingMode::Exclusive);
 
 
 			
@@ -345,7 +340,7 @@
 			(
 				      MessageServerityFlags         _messageServerity, 
 				      MessageTypeFlags              _messageType     ,
-				const DebugMessenger::CallbackData  _callbackData    , 
+				const V1::DebugMessenger::CallbackData  _callbackData    , 
 				      ptr<void>                     _userData
 			);
 
@@ -354,15 +349,9 @@
 
 			bool CheckValidationLayerSupport(ValidationLayerList& _validationLayersSpecified)
 			{
-				using LayerPropertyList = std::vector<ValidationLayers::LayerProperties>;
+				std::vector<ValidationLayers::LayerProperties> availableLayers;
 
-
-				uInt32 layerCount = Vault_2::ValidationLayers::GetNumberOfLayers();
-
-				stack<LayerPropertyList> availableLayers(layerCount);
-
-				Vault_2::ValidationLayers::GetAvailableLayers(availableLayers.data());
-
+				ValidationLayers::GetAvailableLayers(availableLayers);
 
 				stack<bool> layerFound = false;
 
@@ -403,11 +392,9 @@
 					SwapChain_Framebuffers[index].Destroy();
 				}
 
-				CommandBuffer::Free(LogicalDevice.GetHandle(), CommandPool, static_cast<uint32_t>(CommandBuffers.size()), CommandBuffers.data());
+				auto handles = CommandBuffers[0].GetHandles();	
 
-				//Pipeline::Destroy(LogicalDevice.GetHandle(), GraphicsPipeline, nullptr);
-
-				//Pipeline::Layout::Destroy(LogicalDevice.GetHandle(), PipelineLayout, nullptr);
+				CommandBuffers[0].Free();
 
 				GraphicsPipeline.Destroy();
 
@@ -420,7 +407,7 @@
 					SwapChain_ImageViews[index].Destroy();
 				}
 
-				SwapChain::Destroy(LogicalDevice.GetHandle(), SwapChain, nullptr);
+				SwapChain.Destroy();
 
 				for (DataSize index = 0; index < SwapChain_ImageViews.size(); index++)
 				{
@@ -431,9 +418,9 @@
 				DescriptorPool.Destroy();
 			}
 
-			void CopyBufferToImage(Buffer::Handle _buffer, Image::Handle _image, uint32 _width, uint32 _height)
+			void CopyBufferToImage(Buffer _buffer, Image _image, uint32 _width, uint32 _height)
 			{
-				CommandBuffer::Handle commandBuffer = Vault_2::CommandBuffer::BeginSingleTimeCommands(LogicalDevice.GetHandle(), CommandPool);
+				CommandBuffer commandBuffer; commandBuffer.BeginSingleTimeCommands(LogicalDevice, CommandPool);
 
 				CommandBuffer::BufferImageRegion region {};
 
@@ -452,17 +439,9 @@
 				region.ImageExtent.Height = _height;
 				region.ImageExtent.Depth  = 1      ;
 
-				CommandBuffer::CopyBufferToImage
-				(
-					commandBuffer,
-					_buffer,
-					_image,
-					EImageLayout::TransferDestination_Optimal,
-					1,
-					&region
-				);
-
-				Vault_2::CommandBuffer::EndSingleTimeCommands(commandBuffer, CommandPool, LogicalDevice.GetHandle(), GraphicsQueue->GetHandle());
+				commandBuffer.CopyBufferToImage(_buffer, _image, VT::Corridors::EImageLayout::TransferDestination_Optimal, 1, &region);
+				
+				commandBuffer.EndSingleTimeCommands(*GraphicsQueue);
 			}
 
 			void CreateApplicationInstance
@@ -473,11 +452,8 @@
 			{
 				using Meta::EEngineVersion;
 
-				Stack
-				(
-					Vault_4::AppInstance::AppInfo    appSpec       {};
-					Vault_4::AppInstance::CreateInfo appCreateSpec {};
-				);
+				AppInstance::AppInfo    appSpec       {};
+				AppInstance::CreateInfo appCreateSpec {};
 
 				if (Vulkan_EnableValidationLayers)
 				{
@@ -531,32 +507,31 @@
 			{
 				CommandBuffers.resize(SwapChain_Framebuffers.size());
 
-				CommandBuffer::AllocateInfo allocSpec {};
+				CommandBuffer::AllocateInfo allocSpec;
 
-				allocSpec.SType       = allocSpec.STypeEnum          ;
-				allocSpec.Pool        = CommandPool                  ;
+				allocSpec.Pool        = CommandPool.GetHandle()      ;
 				allocSpec.Level       = ECommandBufferLevel::Primary ;
 				allocSpec.BufferCount = uint32(CommandBuffers.size());
 
-				if (CommandBuffer::Allocate(LogicalDevice.GetHandle(), allocSpec, CommandBuffers.data()) != EResult::Success) 
+				//if (CommandBuffer::Allocate(LogicalDevice.GetHandle(), allocSpec, CommandBuffers.data()) != EResult::Success) 
+				if (CommandBuffer::Allocate(LogicalDevice, allocSpec, CommandBuffers, CommandBufferHandles) != EResult::Success) 
 				{
 					throw std::runtime_error("failed to allocate command buffers!");
 				}
 
 				for (DataSize index = 0; index < CommandBuffers.size(); index++) 
 				{
-					CommandBuffer::BeginInfo beginInfo {};
+					CommandBuffer::BeginInfo beginInfo;
 
 					beginInfo.SType           = beginInfo.STypeEnum;
 					beginInfo.Flags           = 0                  ;   // Optional
 					beginInfo.InheritanceInfo = nullptr            ;   // Optional
 
-					if (CommandBuffer::BeginRecord(CommandBuffers[index], beginInfo) != EResult::Success) 
+					if (CommandBuffers[index].BeginRecord(beginInfo) != EResult::Success) 
 						throw std::runtime_error("Failed to begin recording command buffer!");
 
 						RenderPass::BeginInfo renderPassInfo{};
 
-						renderPassInfo.SType       = renderPassInfo.STypeEnum                 ;
 						renderPassInfo.RenderPass  = RenderPass.GetHandle()                   ;
 						renderPassInfo.Framebuffer = SwapChain_Framebuffers[index].GetHandle();
 
@@ -573,33 +548,30 @@
 						renderPassInfo.ClearValueCount = SCast<uint32>(clearValues.size());
 						renderPassInfo.ClearValues     = clearValues.data()               ;
 
-						CommandBuffer::BeginRenderPass(CommandBuffers[index], renderPassInfo, ESubpassContents::Inline);
+						//CommandBuffer::BeginRenderPass(CommandBuffers[index], renderPassInfo, ESubpassContents::Inline);
+						CommandBuffers[index].BeginRenderPass(renderPassInfo, ESubpassContents::Inline);
 
-							CommandBuffer::BindPipeline(CommandBuffers[index], EPipelineBindPoint::Graphics, GraphicsPipeline.GetHandle());
+							CommandBuffers[index].BindPipeline(EPipelineBindPoint::Graphics, GraphicsPipeline);
 
-							Vault_4::Buffer::Handle vertexBuffers = VertexBuffer.GetHandle();
+							Buffer::Handle vertexBuffers = VertexBuffer.GetHandle();
 
 							DeviceSize offsets = 0;
 
-							CommandBuffer::BindVertexBuffers(CommandBuffers[index], 0, 1, vertexBuffers, offsets);
+							CommandBuffers[index].BindVertexBuffers(0, 1, &vertexBuffers, &offsets);
 
-							CommandBuffer::BindIndexBuffer(CommandBuffers[index], IndexBuffer.GetHandle(), 0, EIndexType::uInt32);
+							CommandBuffers[index].BindIndexBuffer(IndexBuffer, 0, EIndexType::uInt32);
 
-							CommandBuffer::BindDescriptorSets
+							CommandBuffers[index].BindDescriptorSets
 							(
-								CommandBuffers[index],
 								EPipelineBindPoint::Graphics,
-								PipelineLayout.GetHandle(),
+								PipelineLayout,
 								0,
 								1,
-								&DescriptorSets[index],
-								0,
-								nullptr
+								&DescriptorSets[index].GetHandle()
 							);
 
-							CommandBuffer::DrawIndexed
+							CommandBuffers[index].DrawIndexed
 							(
-								CommandBuffers[index],
 								SCast<uint32>(ModelIndicies.size()),
 								1,
 								0,
@@ -607,9 +579,9 @@
 								0
 							);
 
-						CommandBuffer::EndRenderPass(CommandBuffers[index]);
+						CommandBuffers[index].EndRenderPass();
 
-					if (CommandBuffer::EndRecord(CommandBuffers[index]) != EResult::Success) 
+					if (CommandBuffers[index].EndRecord() != EResult::Success) 
 						throw std::runtime_error("Failed to record command buffer!");
 				}
 			}
@@ -640,11 +612,11 @@
 			{
 				CommandPool::CreateInfo poolInfo {};
 
-				poolInfo.SType            = poolInfo.STypeEnum                 ;
 				poolInfo.QueueFamilyIndex = QueueIndices.Graphics.value();
 				poolInfo.Flags            = CommandPool::CreateFlgas()         ;             // Optional
 																					    
-				if (CommandPool::Create(LogicalDevice.GetHandle(), poolInfo, nullptr, CommandPool) != EResult::Success) 
+				//if (CommandPool::Create(LogicalDevice.GetHandle(), poolInfo, nullptr, CommandPool) != EResult::Success) 
+				if (CommandPool.Create(LogicalDevice, poolInfo) != EResult::Success) 
 				{
 					throw std::runtime_error("failed to create command pool!");
 				}
@@ -670,7 +642,7 @@
 
 				DepthImageView = CreateImageView(DepthImage, depthFormat, Image::AspectFlags(EImageAspect::Depth), 1);
 
-				TransitionImageLayout(DepthImage.GetHandle(), depthFormat, EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal, 1);
+				TransitionImageLayout(DepthImage, depthFormat, EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal, 1);
 			}
 
 			void CreateDescriptorPool()
@@ -683,9 +655,8 @@
 				poolSizes[1].Type = EDescriptorType::Sampler;
 				poolSizes[1].Count = SCast<uint32>(SwapChain_Images.size());
 
-				Vault_4::DescriptorPool::CreateInfo poolInfo {};
+				DescriptorPool::CreateInfo poolInfo {};
 
-				poolInfo.SType         = poolInfo.STypeEnum             ;
 				poolInfo.PoolSizeCount = SCast<uint32>(poolSizes.size());
 				poolInfo.PoolSizes     = poolSizes.data()               ;
 
@@ -701,14 +672,13 @@
 
 				DescriptorSet::AllocateInfo allocInfo{};
 
-				allocInfo.SType              = allocInfo.STypeEnum;
 				allocInfo.DescriptorPool     = DescriptorPool.GetHandle();
 				allocInfo.DescriptorSetCount = SCast<uint32>(SwapChain_Images.size());
 				allocInfo.SetLayouts         = layouts.data();
 
 				DescriptorSets.resize(SwapChain_Images.size());
 
-				if (DescriptorSet::Allocate(LogicalDevice.GetHandle(), allocInfo, DescriptorSets.data()) != EResult::Success)
+				if (DescriptorSet::Allocate(LogicalDevice, allocInfo, DescriptorSets, DescriptorSetHandles) != EResult::Success)
 					throw std::runtime_error("failed to allocate descriptor sets!");
 
 				for (DataSize index = 0; index < SwapChain_Images.size(); index++)
@@ -727,12 +697,11 @@
 					imageInfo.Sampler     = TextureSampler.GetHandle()          ;
 
 
-					StaticArray<DescriptorSet::Write, 2> descriptorWrites {};
+					StaticArray<DescriptorSet::Write, 2> descriptorWrites;
 
 					//DescriptorSet::Write descriptorWrite{};
 					
-					descriptorWrites[0].SType           = DescriptorSet::Write::STypeEnum;
-					descriptorWrites[0].DstSet          = DescriptorSets[index]          ;
+					descriptorWrites[0].DstSet          = DescriptorSets[index].GetHandle()          ;
 					descriptorWrites[0].DstBinding      = 0                              ;
 					descriptorWrites[0].DstArrayElement = 0                              ;
 
@@ -743,8 +712,7 @@
 					descriptorWrites[0].ImageInfo       = nullptr    ; // Optional
 					descriptorWrites[0].TexelBufferView = nullptr    ; // Optional
 
-					descriptorWrites[1].SType           = DescriptorSet::Write::STypeEnum;
-					descriptorWrites[1].DstSet          = DescriptorSets[index]          ;
+					descriptorWrites[1].DstSet          = DescriptorSets[index].GetHandle()          ;
 					descriptorWrites[1].DstBinding      = 1                              ;
 					descriptorWrites[1].DstArrayElement = 0                              ;
 
@@ -755,7 +723,7 @@
 					descriptorWrites[1].ImageInfo       = &imageInfo; // Optional
 					descriptorWrites[1].TexelBufferView = nullptr   ; // Optional
 
-					DescriptorSet::Update(LogicalDevice.GetHandle(), SCast<uint32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
+					DescriptorSets[0].Update(SCast<uint32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
 				}
 			}
 
@@ -784,7 +752,7 @@
 				StaticArray<Pipeline::Layout::DescriptorSet::Binding, 2> bindings =
 				{ uboLayoutBinding, samplerLayoutBinding };
 				
-				Vault_4::Pipeline::Layout::DescriptorSet::CreateInfo layoutInfo;
+				Pipeline::Layout::DescriptorSet::CreateInfo layoutInfo;
 
 				layoutInfo.BindingCount = SCast<uint32>(bindings.size());
 				layoutInfo.Bindings = bindings.data();
@@ -809,7 +777,7 @@
 						SwapChain_ImageViews[index].GetHandle()
 					};
 
-					Vault_4::Framebuffer::CreateInfo framebufferInfo {};
+					Framebuffer::CreateInfo framebufferInfo {};
 
 					framebufferInfo.SType           = framebufferInfo.STypeEnum        ;
 					framebufferInfo.RenderPass      = RenderPass.GetHandle()           ;
@@ -832,7 +800,7 @@
 			Note: This was enough for the Vulkan_TriangleTest, this will need modification most likely for higher level stuff.
 			(At least shader wise)
 			*/
-			void CreateGraphicsPipeline(StaticArray<Vault_4::ShaderModule, 2>& _shaders)
+			void CreateGraphicsPipeline(StaticArray<ShaderModule, 2>& _shaders)
 			{
 				Pipeline::ShaderStage::CreateInfo vertexShaderStage_CreeationSpec{};
 				Pipeline::ShaderStage::CreateInfo fragShaderStage_CreationSpec{};
@@ -986,7 +954,7 @@
 				dynamicState.StateCount = 2                     ;
 				dynamicState.States     = States                ;
 
-				Vault_4::Pipeline::Layout::CreateInfo pipelineLayout_CreationSpec {};
+				Pipeline::Layout::CreateInfo pipelineLayout_CreationSpec {};
 
 				pipelineLayout_CreationSpec.SType                  = pipelineLayout_CreationSpec.STypeEnum;
 				pipelineLayout_CreationSpec.SetLayoutCount         = 1                                    ;
@@ -1004,7 +972,7 @@
 					throw std::runtime_error("Failed to create pipeline layout!");
 				}
 
-				Vault_4::Pipeline::Graphics::CreateInfo pipelineInfo;
+				Pipeline::Graphics::CreateInfo pipelineInfo;
 
 				pipelineInfo.StageCount = 2                     ;
 				pipelineInfo.Stages     = shaderStages          ;
@@ -1044,8 +1012,8 @@
 				EImageTiling          _tiling     , 
 				Image::UsageFlags     _usage      , 
 				Memory::PropertyFlags _properties , 
-				Image::Handle&        _image      , 
-				Memory::Handle&       _imageMemory
+				Image&        _image      , 
+				Memory&       _imageMemory
 			)
 			{
 				Image::CreateInfo imageInfo {};
@@ -1066,23 +1034,18 @@
 				imageInfo.Samples      = _numSamples            ;
 				imageInfo.Flags        = 0                      ;
 
-				if (Image::Create(LogicalDevice.GetHandle(), imageInfo, nullptr, _image) != EResult::Success)
+				if (_image.Create(LogicalDevice, imageInfo) != EResult::Success)
 					throw RuntimeError("Failed to create image!");
-
-				Memory::Requirements memReq;
-
-				Image::GetMemoryRequirements(LogicalDevice.GetHandle(), _image, memReq);
 
 				Memory::AllocateInfo allocationInfo {};
 
-				allocationInfo.SType = allocationInfo.STypeEnum;
-				allocationInfo.AllocationSize = memReq.Size;
-				allocationInfo.MemoryTypeIndex = PhysicalDevice.FindMemoryType(memReq.MemoryTypeBits, _properties);
+				allocationInfo.AllocationSize = _image.GetMemoryRequirements().Size;
+				allocationInfo.MemoryTypeIndex = PhysicalDevice.FindMemoryType(_image.GetMemoryRequirements().MemoryTypeBits, _properties);
 
-				if (Memory::Allocate(LogicalDevice.GetHandle(), allocationInfo, nullptr, _imageMemory) != EResult::Success)
+				if (_imageMemory.Allocate(LogicalDevice, allocationInfo) != EResult::Success)
 					throw RuntimeError("Failed to allocate image memory!");
 
-				Image::BindMemory(LogicalDevice.GetHandle(), _image, _imageMemory, 0);
+				_image.BindMemory(_imageMemory, 0);
 			}
 
 			void CreateImage_V4
@@ -1095,11 +1058,11 @@
 				EImageTiling          _tiling     , 
 				Image::UsageFlags     _usage      , 
 				Memory::PropertyFlags _properties , 
-				Vault_4::Image&        _image      , 
-				Vault_4::Memory&       _imageMemory
+				Image&        _image      , 
+				Memory&       _imageMemory
 			)
 			{
-				Vault_4::Image::CreateInfo imageInfo;
+				Image::CreateInfo imageInfo;
 
 				imageInfo.ImageType     = EImageType::_2D       ;
 				imageInfo.Extent.Width  = SCast<uint32>(_width );
@@ -1119,7 +1082,7 @@
 				if (_image.Create(LogicalDevice, imageInfo, Memory::DefaultAllocator) != EResult::Success)
 					throw RuntimeError("Failed to create image!");
 
-				Vault_4::Memory::AllocateInfo allocationInfo;
+				Memory::AllocateInfo allocationInfo;
 
 				allocationInfo.AllocationSize = _image.GetMemoryRequirements().Size;
 				allocationInfo.MemoryTypeIndex = PhysicalDevice.FindMemoryType(_image.GetMemoryRequirements().MemoryTypeBits, _properties);
@@ -1130,9 +1093,9 @@
 				_image.BindMemory(_imageMemory, Memory::ZeroOffset);
 			}
 
-			Vault_4::ImageView CreateImageView(Vault_4::Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels)
+			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels)
 			{
-				Vault_4::ImageView::CreateInfo viewInfo;
+				ImageView::CreateInfo viewInfo;
 
 				viewInfo.Image    = _image.GetHandle()       ;
 				viewInfo.ViewType = ImageView::EViewType::_2D;
@@ -1149,7 +1112,7 @@
 				viewInfo.SubresourceRange.BaseArrayLayer = 0           ;
 				viewInfo.SubresourceRange.LayerCount     = 1           ;
 
-				Vault_4::ImageView result;
+				ImageView result;
 
 				if (result.Create(LogicalDevice, viewInfo, Memory::DefaultAllocator) != EResult::Success )
 					throw RuntimeError("Failed to create texture image view!");
@@ -1171,33 +1134,33 @@
 			{
 				DeviceSize bufferSize = sizeof(ModelIndicies[0]) * ModelIndicies.size();
 
-				Buffer::Handle     stagingBuffer;
-				Vault_2::Buffer::CreateInfo stagingBufferInfo {};
-				Memory::Handle     stagingBufferMemory;
+				Buffer     stagingBuffer;
+				Buffer::CreateInfo stagingBufferInfo {};
+				Memory stagingBufferMemory;
 
 				stagingBufferInfo.SharingMode = ESharingMode::Exclusive;
 				stagingBufferInfo.Size        = bufferSize            ; 
 
 				stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-				Vault_2::Buffer::CreateAndBind
+				stagingBuffer.CreateAndBind
 				(
-					PhysicalDevice.GetHandle(), 
-					LogicalDevice.GetHandle(),
+					PhysicalDevice, 
+					LogicalDevice,
 					stagingBufferInfo, 
-					stagingBuffer, 
 					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
-					stagingBufferMemory, 
-					nullptr
+					stagingBufferMemory
 				);
 
 				// Hard coded vertex data...
 
 				VoidPtr address = ModelIndicies.data();
 
-				Vault_2::Memory::WriteToGPU(LogicalDevice.GetHandle(), stagingBufferMemory, 0, bufferSize, 0, address);
+				//Vault_2::Memory::WriteToGPU(LogicalDevice.GetHandle(), stagingBufferMemory, 0, bufferSize, 0, address);
 
-				Vault_2::Buffer::CreateInfo indexBufferInfo {};
+				stagingBufferMemory.WriteToGPU(0, bufferSize, 0, address);
+
+				Buffer::CreateInfo indexBufferInfo {};
 
 				indexBufferInfo.SharingMode = ESharingMode::Exclusive;
 				indexBufferInfo.Size        = bufferSize;
@@ -1216,22 +1179,29 @@
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				Vault_2::CommandBuffer::CopyBuffer(stagingBuffer, IndexBuffer.GetHandle(), copyInfo, LogicalDevice.GetHandle(), CommandPool, GraphicsQueue->GetHandle());
+				CommandBuffer commandStageBuffer; commandStageBuffer.BeginSingleTimeCommands(LogicalDevice, CommandPool);
 
-				Buffer::Destroy(LogicalDevice.GetHandle(), stagingBuffer, Memory::DefaultAllocator);
+				//Vault_2::CommandBuffer::CopyBuffer(stagingBuffer, IndexBuffer.GetHandle(), copyInfo, LogicalDevice.GetHandle(), CommandPool, GraphicsQueue->GetHandle());
 
-				Memory::Free(LogicalDevice.GetHandle(), stagingBufferMemory, Memory::DefaultAllocator);
+				commandStageBuffer.CopyBuffer(stagingBuffer, IndexBuffer, 1, &copyInfo);
+
+				stagingBuffer.Destroy();
+				stagingBufferMemory.Free();
+
+				//Buffer::Destroy(LogicalDevice.GetHandle(), stagingBuffer, Memory::DefaultAllocator);
+
+				//Memory::Free(LogicalDevice.GetHandle(), stagingBufferMemory, Memory::DefaultAllocator);
 			}
 
 			void CreateLogicalDevice()	
 			{
-				std::vector<Vault_4::LogicalDevice::Queue::CreateInfo> queueCreateInfos;
+				std::vector<LogicalDevice::Queue::CreateInfo> queueCreateInfos;
 
 				float32 queuePriority = 1.0f;
 
 				for (auto queueFamily : QueueIndices.GetSet())
 				{
-					Vault_4::LogicalDevice::Queue::CreateInfo createInfo{};
+					LogicalDevice::Queue::CreateInfo createInfo{};
 
 					createInfo.QueueFamilyIndex = queueFamily;
 					createInfo.QueueCount       = 1;
@@ -1254,7 +1224,7 @@
 
 				physDeviceFeatures.SamplerAnisotropy = EBool::True;	
 
-				Vault_4::LogicalDevice::CreateInfo createInfo{};
+				LogicalDevice::CreateInfo createInfo{};
 
 				createInfo.QueueCreateInfoCount  = queueCreateInfos.size()    ;
 				createInfo.QueueCreateInfos      = queueCreateInfos.data()    ;
@@ -1358,7 +1328,7 @@
 
 				StaticArray<RenderPass::AttachmentDescription, 3> attachments = { colorAttachment, depthAttachment, colorAttachmentResolve };
 
-				Vault_4::RenderPass::CreateInfo renderPassInfo;
+				RenderPass::CreateInfo renderPassInfo;
 
 				renderPassInfo.AttachmentCount = SCast<uint32>(attachments.size());
 				renderPassInfo.Attachments     = attachments.data()               ;
@@ -1390,11 +1360,10 @@
 			{
 				Surface::CreateInfo createInfo{};
 
-				createInfo.SType       = createInfo.STypeEnum             ;
 				createInfo.OSWinHandle = OSAL::GetOS_WindowHandle(_window); 
 				createInfo.OSAppHandle = Surface::GetOS_AppHandle()       ;
 
-				if (Vault_1::Surface::Create(AppGPU.GetHandle(), createInfo, Memory::DefaultAllocator, SurfaceHandle) != EResult::Success) 
+				if (Surface.Create(AppGPU, createInfo) != EResult::Success) 
 				{
 					throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
 				}
@@ -1402,7 +1371,7 @@
 
 			void CreateSwapChain(OSAL::Window* _window)
 			{
-				SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(PhysicalDevice, SurfaceHandle);
+				SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(PhysicalDevice);
 				Surface::Format         surfaceFormat    = Surface_SwapChain_ChooseFormat(swapChainSupport.Formats);
 				EPresentationMode       presentationMode = Surface_SwapChain_ChoosePresentationMode(swapChainSupport.PresentationModes);
 				Extent2D                extent           = Surface_SwapChain_ChooseExtent(swapChainSupport.Capabilities,_window);
@@ -1417,8 +1386,7 @@
 
 				SwapChain::CreateInfo creationSpec {};
 
-				creationSpec.SType            = creationSpec.STypeEnum  ;
-				creationSpec.Surface          = SurfaceHandle           ;
+				creationSpec.Surface          = Surface.GetHandle();
 				creationSpec.MinImageCount    = numImagesDesired        ;
 				creationSpec.ImageFormat      = surfaceFormat.Format    ;
 				creationSpec.ImageColorSpace  = surfaceFormat.ColorSpace;
@@ -1451,14 +1419,16 @@
 				creationSpec.Clipped          = true                                          ;
 				creationSpec.OldSwapchain     = Null<SwapChain::Handle>                       ;
 
-				EResult creationResult = SwapChain::Create(LogicalDevice.GetHandle(), creationSpec, nullptr, SwapChain);
+				EResult creationResult = SwapChain.Create(LogicalDevice, creationSpec);
 
 				if (creationResult != EResult::Success)
 				{
 					throw std::runtime_error("Failed to create the swap chain!");
 				}
 
-				Vault_4::Temp_GetImages(LogicalDevice, SwapChain, SwapChain_Images);
+				//Temp_GetImages(LogicalDevice, SwapChain, SwapChain_Images);
+
+				SwapChain.GetImages(SwapChain_Images);
 
 				SwapChain_ImageFormat = surfaceFormat.Format;
 				SwapChain_Extent      = extent              ;
@@ -1512,31 +1482,31 @@
 					throw RuntimeError("Failed to load image data!");
 				}
 
-				Buffer::Handle stagingBuffer;
+				Buffer stagingBuffer;
 
-				Memory::Handle stagingBufferMemory;
+				Memory stagingBufferMemory;
 
-				Vault_2::Buffer::CreateInfo stagingBufferInfo {};
+				Buffer::CreateInfo stagingBufferInfo {};
 
 				stagingBufferInfo.Size = imageSize;
 				stagingBufferInfo.SharingMode = ESharingMode::Exclusive;
 
 				stagingBufferInfo.Usage.Set(EImageUsage::TransferSource);
 
-				Vault_2::Buffer::CreateAndBind
+				stagingBuffer.CreateAndBind
 				(
-					PhysicalDevice.GetHandle(),
-					LogicalDevice.GetHandle(),
+					PhysicalDevice,
+					LogicalDevice,
 					stagingBufferInfo,
-					stagingBuffer,
 					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
-					stagingBufferMemory,
-					nullptr
+					stagingBufferMemory
 				);
 
 				VoidPtr address = imageData;
 
-				Vault_2::Memory::WriteToGPU(LogicalDevice.GetHandle(), stagingBufferMemory, 0, imageSize, 0, address);
+				//Vault_2::Memory::WriteToGPU(LogicalDevice.GetHandle(), stagingBufferMemory, 0, imageSize, 0, address);
+
+				stagingBufferMemory.WriteToGPU(0, imageSize, 0, address);
 
 				stbi_image_free(imageData);
 
@@ -1554,15 +1524,17 @@
 					TextureImageMemory
 				);
 
-				TransitionImageLayout(TextureImage.GetHandle(), EFormat::R8_G8_B8_A8_SRGB, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal, MipMapLevels);
+				TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_SRGB, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal, MipMapLevels);
 
-				CopyBufferToImage(stagingBuffer, TextureImage.GetHandle(), SCast<uint32>(textureWidth), SCast<uint32>(textureHeight));
+				CopyBufferToImage(stagingBuffer, TextureImage, SCast<uint32>(textureWidth), SCast<uint32>(textureHeight));
 
-				GenerateMipMaps(TextureImage.GetHandle(), EFormat::R8_G8_B8_A8_SRGB, textureWidth, textureHeight, MipMapLevels);
+				GenerateMipMaps(TextureImage, EFormat::R8_G8_B8_A8_SRGB, textureWidth, textureHeight, MipMapLevels);
 
-				Buffer::Destroy(LogicalDevice.GetHandle(), stagingBuffer, nullptr);
+				//Buffer::Destroy(LogicalDevice.GetHandle(), stagingBuffer, nullptr);
 
-				Memory::Free(LogicalDevice.GetHandle(), stagingBufferMemory, nullptr);
+				//Memory::Free(LogicalDevice.GetHandle(), stagingBufferMemory, nullptr);
+
+				stagingBuffer.Destroy(); stagingBufferMemory.Free();
 			}
 
 			void CreateTextureImageView()
@@ -1572,7 +1544,7 @@
 
 			void CreateTextureSampler()
 			{
-				Vault_4::Sampler::CreateInfo samplerInfo {};
+				Sampler::CreateInfo samplerInfo {};
 
 				samplerInfo.SType = samplerInfo.STypeEnum;
 
@@ -1603,7 +1575,7 @@
 					throw RuntimeError("Failed to create texture sampler!");
 			}
 
-			StaticArray<ShaderModule::Handle, 2> CreateTriShaders(LogicalDevice::Handle _logicalDevice)
+			StaticArray<ShaderModule, 2> CreateTriShaders(LogicalDevice::Handle _logicalDevice)
 			{
 				using Bytecode_Buffer = DynamicArray<Bytecode>;
 
@@ -1618,15 +1590,14 @@
 				Bytecode_Buffer triShader_Vert_Bytecode(triShader_VertCode.begin(), triShader_VertCode.end());
 				Bytecode_Buffer triShader_Frag_Bytecode(triShader_FragCode.begin(), triShader_FragCode.end());
 
-				ShaderModule::Handle triShaderModule_Vert; 
+				ShaderModule::CreateInfo vertInfo(triShader_VertCode.data(), triShader_VertCode.size());
+				ShaderModule::CreateInfo fragInfo(triShader_FragCode.data(), triShader_FragCode.size());
 
-				Vault_2::ShaderModule::Create(_logicalDevice, Vault_2::ShaderModule::CreateInfo(triShader_VertCode.data(), triShader_VertCode.size()), nullptr, triShaderModule_Vert);
+				ShaderModule triShaderModule_Vert; triShaderModule_Vert.Create(LogicalDevice, vertInfo);
 
-				ShaderModule::Handle triShaderModule_Frag;
+				ShaderModule triShaderModule_Frag; triShaderModule_Frag.Create(LogicalDevice, fragInfo);
 
-				Vault_2::ShaderModule::Create(_logicalDevice, Vault_2::ShaderModule::CreateInfo(triShader_FragCode.data(), triShader_FragCode.size()), nullptr, triShaderModule_Frag);
-
-				StaticArray<ShaderModule::Handle, 2> result = { triShaderModule_Vert, triShaderModule_Frag };
+				StaticArray<ShaderModule, 2> result = { triShaderModule_Vert, triShaderModule_Frag };
 
 				return result;
 			}
@@ -1638,7 +1609,7 @@
 				UniformBuffers      .resize(SwapChain_Images.size());
 				UniformBuffersMemory.resize(SwapChain_Images.size());
 
-				Vault_2::Buffer::CreateInfo uniformBufferInfo {};
+				Buffer::CreateInfo uniformBufferInfo {};
 
 				uniformBufferInfo.Size = bufferSize;
 				uniformBufferInfo.Usage.Set(EBufferUsage::UniformBuffer);
@@ -1659,7 +1630,7 @@
 
 			}
 
-			StaticArray<Vault_4::ShaderModule, 2> Create_VKTut_Shaders()
+			StaticArray<ShaderModule, 2> Create_VKTut_Shaders()
 			{
 				using Bytecode_Buffer = DynamicArray<Bytecode>;
 
@@ -1674,41 +1645,39 @@
 				Bytecode_Buffer vertBytecode(vertCode.begin(), vertCode.end());
 				Bytecode_Buffer fragBytecode(fragCode.begin(), fragCode.end());
 
-				Vault_4::ShaderModule vertShaderModule; Vault_4::ShaderModule::CreateInfo vertShaderInfo(vertCode.data(), vertCode.size());
-				Vault_4::ShaderModule fragShaderModule; Vault_4::ShaderModule::CreateInfo fragShaderInfo(fragCode.data(), fragCode.size());
+				ShaderModule vertShaderModule; ShaderModule::CreateInfo vertShaderInfo(vertCode.data(), vertCode.size());
+				ShaderModule fragShaderModule; ShaderModule::CreateInfo fragShaderInfo(fragCode.data(), fragCode.size());
 
 				vertShaderModule.Create(LogicalDevice, vertShaderInfo, Memory::DefaultAllocator);
 				fragShaderModule.Create(LogicalDevice, fragShaderInfo, Memory::DefaultAllocator);
 				
-				StaticArray<Vault_4::ShaderModule, 2> result = { vertShaderModule, fragShaderModule };
+				StaticArray<ShaderModule, 2> result = { vertShaderModule, fragShaderModule };
 
 				return result;
 			}
 
-			void CreateVertexBuffers(Vault_4::Buffer& _vertexBuffer, Vault_4::Memory&_vertexBufferMemory)
+			void CreateVertexBuffers(Buffer& _vertexBuffer, Memory&_vertexBufferMemory)
 			{
 				DeviceSize bufferSize = sizeof(ModelVerticies[0]) * ModelVerticies.size();
 
-				Buffer::Handle stagingBuffer;
+				Buffer stagingBuffer;
 
-				Memory::Handle stagingBufferMemory;
+				Memory stagingBufferMemory;
 
-				Vault_2::Buffer::CreateInfo stagingBufferInfo {};
+				Buffer::CreateInfo stagingBufferInfo {};
 
 				stagingBufferInfo.SharingMode = ESharingMode::Exclusive;
 				stagingBufferInfo.Size        = bufferSize;
 
 				stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-				Vault_2::Buffer::CreateAndBind
+				stagingBuffer.CreateAndBind
 				(
-					PhysicalDevice.GetHandle(),
-					LogicalDevice.GetHandle(),
+					PhysicalDevice,
+					LogicalDevice,
 					stagingBufferInfo,
-					stagingBuffer, 
 					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
-					stagingBufferMemory,
-					Memory::DefaultAllocator
+					stagingBufferMemory
 				);
 
 				// Hard coded vertex data...
@@ -1717,9 +1686,9 @@
 
 				Memory::MapFlags mapflags;
 
-				Vault_2::Memory::WriteToGPU(LogicalDevice.GetHandle(), stagingBufferMemory, 0, bufferSize, mapflags, vertexData);
+				stagingBufferMemory.WriteToGPU(0, bufferSize, mapflags, vertexData);
 
-				Vault_2::Buffer::CreateInfo vertexBufferInfo {};
+				Buffer::CreateInfo vertexBufferInfo {};
 
 				vertexBufferInfo.Size = bufferSize;
 				vertexBufferInfo.SharingMode = ESharingMode::Exclusive;
@@ -1731,17 +1700,14 @@
 					LogicalDevice, 
 					vertexBufferInfo, 
 					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
-					VertexBufferMemory, 
-					Memory::DefaultAllocator
+					VertexBufferMemory
 				);
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				Vault_2::CommandBuffer::CopyBuffer(stagingBuffer, _vertexBuffer.GetHandle(), copyInfo, LogicalDevice.GetHandle(), CommandPool, GraphicsQueue->GetHandle());
+				CommandBuffer::CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, LogicalDevice, CommandPool, *GraphicsQueue);
 
-				Buffer::Destroy(LogicalDevice.GetHandle(), stagingBuffer, Memory::DefaultAllocator);
-
-				Memory::Free(LogicalDevice.GetHandle(), stagingBufferMemory, Memory::DefaultAllocator);
+				stagingBuffer.Destroy(); stagingBufferMemory.Free();
 			}
 
 			Bool DebugCallback
@@ -1762,7 +1728,7 @@
 			(
 					  MessageServerityFlags        _messageServerity, 
 					  MessageTypeFlags             _messageType     ,
-				const DebugMessenger::CallbackData _callbackData    , 
+				const V1::DebugMessenger::CallbackData _callbackData    , 
 					  ptr<void>                    _userData
 			)
 			{
@@ -1783,8 +1749,8 @@
 
 			QueueFamilyIndices FindQueueFamilies
 			(
-				Vault_4::PhysicalDevice _physicalDevice,
-				Surface::Handle _surfaceHandle
+				V4::PhysicalDevice _physicalDevice,
+				V4::Surface _surfaceHandle
 			)
 			{
 				QueueFamilyIndices indices {};
@@ -1799,11 +1765,11 @@
 					{
 						indices.Graphics = index;
 
-						DeviceQueues.push_back(Vault_4::LogicalDevice::Queue());
+						DeviceQueues.push_back(LogicalDevice::Queue());
 
 						GraphicsQueue = &DeviceQueues.back();
 
-						GraphicsQueue->SpecifyFamily(index, Vault_4::LogicalDevice::Queue::EType::Graphics);	
+						GraphicsQueue->SpecifyFamily(index, LogicalDevice::Queue::EType::Graphics);	
 					}
 
 					if (queueFamily.QueueFlags.Has(EQueueFlag::Compute))
@@ -1838,13 +1804,11 @@
 				return indices;
 			}
 
-			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features)
+			V4::EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features)
 			{
 				for (EFormat format : _canidates)
 				{
-					FormatProperties properties;
-
-					PhysicalDevice::GetFormatProperties(PhysicalDevice.GetHandle(), format, properties);
+					FormatProperties properties = PhysicalDevice.GetFormatProperties(format);
 
 					if (_tiling == EImageTiling::Linear && (properties.LinearTilingFeatures & _features) == _features)
 					{
@@ -1859,24 +1823,22 @@
 				throw RuntimeError("Failed to find supported format!");
 			}
 
-			void GenerateMipMaps(Image::Handle _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
+			void GenerateMipMaps(Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
 			{
 				// Check if image format supports linear blitting
-				FormatProperties formatProperties;
-				
-				PhysicalDevice::GetFormatProperties(PhysicalDevice.GetHandle(), _format, formatProperties);
+				FormatProperties formatProperties = PhysicalDevice.GetFormatProperties(_format);
 
 				if (!(formatProperties.OptimalTilingFeatures.Has(EFormatFeatureFlag::SampledImageFilterLinear)))
 				{
 					throw std::runtime_error("Texture image format does not support linear blitting!");
 				}
 
-				CommandBuffer::Handle commandBuffer = Vault_2::CommandBuffer::BeginSingleTimeCommands(LogicalDevice.GetHandle(), CommandPool);
+				CommandBuffer commandBuffer; commandBuffer.BeginSingleTimeCommands(LogicalDevice, CommandPool);
 
 				Image::Memory_Barrier barrier{};
 
 				barrier.SType = barrier.STypeEnum;
-				barrier.Image = _image;
+				barrier.Image = _image.GetHandle();
 				barrier.SrcQueueFamilyIndex = QueueFamily_Ignored;
 				barrier.DstQueueFamilyIndex = QueueFamily_Ignored;
 				barrier.SubresourceRange.AspectMask.Set(EImageAspect::Color);
@@ -1897,12 +1859,9 @@
 					barrier.SrcAccessMask.Set(EAccessFlag::TransferWrite);
 					barrier.DstAccessMask.Set(EAccessFlag::TransferRead);
 
-					CommandBuffer::SubmitPipelineBarrier
+					commandBuffer.SubmitPipelineBarrier
 					(
-						commandBuffer,
 						EPipelineStageFlag::Transfer, EPipelineStageFlag::Transfer, 0,
-						0, nullptr,
-						0, nullptr,
 						1, &barrier
 					);
 
@@ -1934,9 +1893,8 @@
 					blit.DstSubresource.BaseArrayLayer = 0;
 					blit.DstSubresource.LayerCount = 1;
 
-					CommandBuffer::BlitImage
+					commandBuffer.BlitImage
 					(
-						commandBuffer,
 						_image, EImageLayout::TransferSource_Optimal,
 						_image, EImageLayout::TransferDestination_Optimal,
 						1, &blit,
@@ -1949,12 +1907,9 @@
 					barrier.SrcAccessMask.Set(EAccessFlag::TransferRead);
 					barrier.DstAccessMask.Set(EAccessFlag::ShaderRead  );
 
-					CommandBuffer::SubmitPipelineBarrier
+					commandBuffer.SubmitPipelineBarrier
 					(
-						commandBuffer,
 						EPipelineStageFlag::Transfer, EPipelineStageFlag::FragementShader, 0,
-						0, nullptr,
-						0, nullptr,
 						1, &barrier
 					);
 
@@ -1970,16 +1925,13 @@
 				barrier.SrcAccessMask.Set(EAccessFlag::TransferWrite);
 				barrier.DstAccessMask.Set(EAccessFlag::ShaderRead   );
 
-				CommandBuffer::SubmitPipelineBarrier
+				commandBuffer.SubmitPipelineBarrier
 				(
-					commandBuffer,
 					EPipelineStageFlag::Transfer, EPipelineStageFlag::FragementShader, 0,
-					0, nullptr,
-					0, nullptr,
 					1, &barrier
 				);
 
-				Vault_2::CommandBuffer::EndSingleTimeCommands(commandBuffer, CommandPool, LogicalDevice.GetHandle(), GraphicsQueue->GetHandle());
+				commandBuffer.EndSingleTimeCommands(*GraphicsQueue);
 			}
 
 			ExtensionIdentifierList GetRequiredExtensions()
@@ -2009,11 +1961,13 @@
 			}
 
 			// TODO: Offload
-			bool CheckQueuesFor_SurfacePresentationSupport(Vault_4::PhysicalDevice _physicalDevice)
+			bool CheckQueuesFor_SurfacePresentationSupport(V4::PhysicalDevice _physicalDevice)
 			{
 				for (auto& queue : DeviceQueues)
 				{
-					if (Vault_2::Surface::CheckForPresentationSupport(_physicalDevice.GetHandle(), SurfaceHandle, queue.GetFamilyIndex()))
+					Bool result; Surface.CheckPhysicalDeviceSupport(_physicalDevice, queue.GetFamilyIndex(), result);
+
+					if (result)
 					{
 						QueueIndices.PresentationSupported = queue.GetFamilyIndex();
 
@@ -2031,7 +1985,7 @@
 				return _format == EFormat::D32_SFloat_S8_UInt || _format == EFormat::D24_UNormalized_S8_UInt;
 			}
 
-			bool IsDeviceSuitable(Vault_4::PhysicalDevice _physicalDevice, Surface::Handle _surface, ExtensionIdentifierList _extensionsSpecified)
+			bool IsDeviceSuitable(V4::PhysicalDevice& _physicalDevice, V4::Surface& _surface, ExtensionIdentifierList _extensionsSpecified)
 			{
 				auto& deviceProperties = _physicalDevice.GetProperties();
 				auto& deviceFeatures   = _physicalDevice.GetFeatures  ();
@@ -2046,7 +2000,7 @@
 
 				if (extensionsSupported)
 				{
-					SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(_physicalDevice.GetHandle(), _surface);
+					SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(_physicalDevice);
 
 					swapChainAdequate = !swapChainSupport.Formats.empty() && !swapChainSupport.PresentationModes.empty();
 				}
@@ -2104,7 +2058,7 @@
 
 			void PickPhysicalDevice()
 			{
-				std::vector<Vault_4::PhysicalDevice> physicalDevices;
+				std::vector<V4::PhysicalDevice> physicalDevices;
 					
 				AppGPU.GetAvailablePhysicalDevices(physicalDevices);
 
@@ -2117,7 +2071,7 @@
 
 				for (DeviceSize index = 0; index < size; index++)
 				{
-					if (IsDeviceSuitable(physicalDevices[index], SurfaceHandle, DeviceExtensions))
+					if (IsDeviceSuitable(physicalDevices[index], Surface, DeviceExtensions))
 					{
 						PhysicalDevice = physicalDevices[index];
 
@@ -2133,7 +2087,7 @@
 				}
 			}
 			
-			void PopulateDebugMessengerCreateInfo(DebugMessenger::CreateInfo& _msngrCreateInfo)
+			void PopulateDebugMessengerCreateInfo(V4::DebugMessenger::CreateInfo& _msngrCreateInfo)
 			{
 				_msngrCreateInfo.SType = DebugMessenger::CreateInfo::STypeEnum;
 
@@ -2150,33 +2104,17 @@
 				_msngrCreateInfo.UserData = nullptr;
 			}
 
-			SwapChainSupportDetails QuerySwapChainSupport(PhysicalDevice::Handle _deviceHandle, Surface::Handle _surfaceHandle)
+			SwapChainSupportDetails QuerySwapChainSupport(V4::PhysicalDevice& _deviceHandle)
 			{
 				SwapChainSupportDetails details;
 
-				Surface::GetPhysicalDeviceCapabilities(_deviceHandle, _surfaceHandle, details.Capabilities);
+				Surface.GetPhysicalDeviceCapabilities(_deviceHandle, details.Capabilities);
 
-				uint32 formatCount;
-
-				formatCount = Vault_2::Surface::GetNumOf_AvailableFormats(_deviceHandle, _surfaceHandle);
-
-				if (formatCount > 0)
-				{
-					details.Formats.resize(formatCount);
-
-					Vault_2::Surface::GetAvailableFormats(_deviceHandle, _surfaceHandle, details.Formats.data());
-				}
+				Surface.GetAvailableFormats(_deviceHandle, details.Formats);
 
 				uint32 presentationModeCount;
 
-				presentationModeCount = Vault_2::Surface::GetNumOf_SupportedPresentationModes(_deviceHandle, _surfaceHandle);
-
-				if (presentationModeCount > 0)
-				{
-					details.PresentationModes.resize(presentationModeCount);
-
-					Vault_2::Surface::GetSupportedPresentationModes(_deviceHandle, _surfaceHandle, details.PresentationModes.data());
-				}
+				Surface.GetSupportedPresentationModes(_deviceHandle, details.PresentationModes);
 
 				return details;
 			}
@@ -2209,7 +2147,7 @@
 
 				PopulateDebugMessengerCreateInfo(msngrCreateSpec);
 
-				EResult creationResult = DebugMessenger::Create(AppGPU.GetHandle(), msngrCreateSpec, nullptr, DebugMessenger_Handle);
+				EResult creationResult = DebugMessenger.Create(AppGPU, msngrCreateSpec);
 
 				if (creationResult != EResult::Success) throw std::runtime_error("Failed to setup debug messenger!");
 			}
@@ -2269,9 +2207,9 @@
 				return EPresentationMode::FIFO;
 			}
 
-			void TransitionImageLayout(Image::Handle _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout, uint32 _mipMapLevels)
+			void TransitionImageLayout(Image& _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout, uint32 _mipMapLevels)
 			{
-				CommandBuffer::Handle commandBuffer = Vault_2::CommandBuffer::BeginSingleTimeCommands(LogicalDevice.GetHandle(), CommandPool);   
+				CommandBuffer commandBuffer; commandBuffer.BeginSingleTimeCommands(LogicalDevice, CommandPool);   
 
 				Image::Memory_Barrier barrier {};
 
@@ -2283,7 +2221,7 @@
 				barrier.SrcQueueFamilyIndex = QueueFamily_Ignored;
 				barrier.DstQueueFamilyIndex = QueueFamily_Ignored;
 
-				barrier.Image = _image;
+				barrier.Image = _image.GetHandle();
 
 				barrier.SubresourceRange.AspectMask.Set(EImageAspect::Color);
 
@@ -2340,17 +2278,14 @@
 					throw std::invalid_argument("unsupported layout transition!");
 				}
 
-				CommandBuffer::SubmitPipelineBarrier
+				commandBuffer.SubmitPipelineBarrier
 				(
-					commandBuffer,
 					sourceStage, destinationStage,   // TODO
 					0, 
-					0, nullptr,
-					0, nullptr,
 					1, &barrier
 				);
 				
-				Vault_2::CommandBuffer::EndSingleTimeCommands(commandBuffer, CommandPool, LogicalDevice.GetHandle(), GraphicsQueue->GetHandle());
+				commandBuffer.EndSingleTimeCommands(*GraphicsQueue);
 			}
 
 			void UpdateUniformBuffers(uint32 _currentImage)
@@ -2374,7 +2309,7 @@
 
 				void* address = &ubo;
 
-				Vault_2::Memory::WriteToGPU(LogicalDevice.GetHandle(), UniformBuffersMemory[_currentImage], 0, sizeof(ubo), 0, address);
+				UniformBuffersMemory[_currentImage].WriteToGPU(0, sizeof(ubo), 0, address);
 			}
 
 			// GPU_HAL
@@ -2393,7 +2328,7 @@
 
 			void WaitFor_GPUIdle()
 			{
-				LogicalDevice::WaitUntilIdle(LogicalDevice.GetHandle());
+				LogicalDevice.WaitUntilIdle();
 			}
 			
 			ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window)
@@ -2423,7 +2358,7 @@
 
 					CreateDescriptorSetLayout();
 
-					StaticArray<Vault_4::ShaderModule, 2> shaders = Create_VKTut_Shaders();
+					StaticArray<ShaderModule, 2> shaders = Create_VKTut_Shaders();
 
 					CreateGraphicsPipeline(shaders);
 
@@ -2486,7 +2421,7 @@
 
 					CreateRenderPass();
 
-					StaticArray<Vault_4::ShaderModule, 2> shaders = Create_VKTut_Shaders();
+					StaticArray<ShaderModule, 2> shaders = Create_VKTut_Shaders();
 
 					CreateGraphicsPipeline(shaders);
 
@@ -2517,10 +2452,8 @@
 					uint32 imageIndex;
 
 					EResult result = 
-						SwapChain::AcquireNextImage
+						SwapChain.AcquireNextImage
 						(
-						    LogicalDevice.GetHandle()              , 
-							SwapChain                              , 
 							UInt64Max                              , 
 							ImageAvailable_Semaphores[CurrentFrame].GetHandle(), 
 							Null<Fence::Handle>                     ,
@@ -2561,7 +2494,7 @@
 					submitInfo.WaitDstStageMask   = waitStages    ;
 
 					submitInfo.CommandBufferCount = 1;
-					submitInfo.CommandBuffers     = &CommandBuffers[imageIndex];
+					submitInfo.CommandBuffers     = &CommandBuffers[imageIndex].GetHandle();
 
 
 					Semaphore::Handle signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame].GetHandle() };
@@ -2573,7 +2506,7 @@
 					//Fence::Reset(LogicalDevice.GetHandle(), &InFlightFences[CurrentFrame], 1);
 					InFlightFences[CurrentFrame].Reset();
 
-					if (CommandBuffer::SubmitToQueue(GraphicsQueue->GetHandle(), 1, &submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
+					if (GraphicsQueue->SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
 						throw std::runtime_error("Failed to submit draw command buffer!");
 
 
@@ -2584,7 +2517,7 @@
 					presentInfo.WaitSemaphores     = signalSemaphores     ;
 
 
-					SwapChain::Handle swapChains[] = { SwapChain };
+					SwapChain::Handle swapChains[] = { SwapChain.GetHandle() };
 
 					presentInfo.SwapchainCount = 1          ;
 					presentInfo.Swapchains     = swapChains ;
@@ -2593,7 +2526,7 @@
 					presentInfo.Results = nullptr; // Optional
 
 
-					result = SwapChain::QueuePresentation(PresentationQueue->GetHandle(), presentInfo);
+					result = PresentationQueue->QueuePresentation(*presentInfo);
 
 					if (result == EResult::Error_OutOfDate_KHR || result == EResult::Suboptimal_KHR || FramebufferResized) 
 					{
@@ -2638,13 +2571,13 @@
 						InFlightFences           [index].Destroy();
 					}
 
-					CommandPool::Destroy(LogicalDevice.GetHandle(), CommandPool, nullptr);   // TODO: Wrap
+					CommandPool.Destroy();   
 
 					LogicalDevice.Destroy();
 
-					if (Vulkan_EnableValidationLayers) DebugMessenger::Destroy(AppGPU.GetHandle(), DebugMessenger_Handle, nullptr);
+					if (Vulkan_EnableValidationLayers) DebugMessenger.Destroy();
 
-					Surface::Destroy(AppGPU.GetHandle(), SurfaceHandle, nullptr);
+					Surface.Destroy();
 				}
 
 				void ReinitializeRenderer(ptr<OSAL::Window> _window)

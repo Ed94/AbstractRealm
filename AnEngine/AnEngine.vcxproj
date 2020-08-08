@@ -387,7 +387,7 @@
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_Bitmask.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_ConventionEnforcer.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory_Corridors.hpp">
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory_Backend.hpp">
       <SubType>
       </SubType>
     </ClInclude>

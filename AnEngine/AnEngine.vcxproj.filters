@@ -102,7 +102,7 @@
     <ClInclude Include="PAL\ThirdParty\Libraries\stb\stb_image.h" />
     <ClInclude Include="Renderer\Shader\VKTut\VKTut.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory_Corridors.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory_Backend.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

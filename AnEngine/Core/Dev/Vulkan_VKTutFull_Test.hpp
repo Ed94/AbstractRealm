@@ -20,9 +20,6 @@ namespace Debug::Vulkan_FullTut_Test
 	using namespace HAL::GPU;
 	using namespace OSAL    ;
 
-	using namespace VT::Vault_1;
-
-
 	BSS
 	(
 		ptr<Window> WindowRef;

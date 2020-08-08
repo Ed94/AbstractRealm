@@ -38,7 +38,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 		namespace Platform_Vulkan
 		{
 			using namespace VT;
-			using namespace VT::Vault_1;
+			using namespace VT::V4;
 
 			using namespace VT::SPIR_V;
 
@@ -96,64 +96,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			using RenderContextList = DynamicArray<RawRenderContext>;
 
 			
-			// Static Data
-
-			//BSS
-			//(
-				// Moved to an extent from the Vulkan TriangleTest
-				// Eventually this will be organized into a proper structural setup for modular use.
-
-				eGlobal Vault_4::AppInstance   AppGPU;
-				eGlobal Vault_4::LogicalDevice LogicalDevice;
-
-				eGlobal CommandBufferList CommandBuffers;
-				eGlobal VkCommandPool     CommandPool   ;   // TODO: Wrap
-
-				//eGlobal PhysicalDeviceList  PhysicalDevices      ;
-				eGlobal DebugMessenger::Handle   DebugMessenger_Handle;
-
-				//eGlobal LogicalDevice::Queue::Handle         GraphicsQueue    ;
-				//eGlobal LogicalDevice::Queue::Handle         PresentationQueue;
-
-				//eGlobal QueueFamilyIndices QueueFamilies;
-
-				//eGlobal Pipeline::Layout::Handle PipelineLayout;
-
-				//eGlobal Pipeline::Handle GraphicsPipeline;
-
-				//eGlobal FenceList InFlightFences;
-				//eGlobal FenceList ImagesInFlight;
-
-				//eGlobal SemaphoreList ImageAvailable_Semaphores;
-				//eGlobal SemaphoreList RenderFinished_Semaphores;
-
-				eGlobal Surface::Handle SurfaceHandle;
-
-				eGlobal SwapChain::Handle SwapChain;
-
-				eGlobal Extent2D      SwapChain_Extent     ;
-				eGlobal EFormat       SwapChain_ImageFormat;
-
-				eGlobal RenderContextList RenderContextPool;    // Contains a reference to every created render context. (Early implementation...)
-
-			//);
-
-			//Data
-			//(
-				eGlobal bool FramebufferResized;
-
-				eGlobal DataSize CurrentFrame;
-
-				eGlobal sint32 MaxFramesInFlight;
-
-				eGlobal ExtensionIdentifierList DeviceExtensions;
-
-				//eGlobal PhysicalDevice::Handle PhysicalDevice;
-
-				eGlobal ValidationLayerList ValidationLayerIdentifiers;
-			//)
-						
-
 			// Functions
 
 			/*
@@ -200,18 +142,18 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				EImageTiling          _tiling,
 				Image::UsageFlags     _usage,
 				Memory::PropertyFlags _properties,
-				Vault_4::Image& _image,
-				Vault_4::Memory& _imageMemory
+				Image& _image,
+				Memory& _imageMemory
 			);
 
-			Vault_4::ImageView CreateImageView(Vault_4::Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
+			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
 
 			void CreateImageViews
 			(
 				LogicalDevice::Handle _logicalDevice,
-				DynamicArray<Vault_4::Image>& _swapChainImages,
+				DynamicArray<Image>& _swapChainImages,
 				EFormat               _swapChainImageFormat,
-				DynamicArray<Vault_4::ImageView>& _imageViewContainer      // Will be populated.
+				DynamicArray<ImageView>& _imageViewContainer      // Will be populated.
 			);
 
 			void CreateLogicalDevice();	
@@ -237,7 +179,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features);
 
-			void GenerateMipMaps(Image::Handle _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels);
+			void GenerateMipMaps(Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels);
 
 			ExtensionIdentifierList GetRequiredExtensions();
 
@@ -248,9 +190,9 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			
 			
 
-			void PopulateDebugMessengerCreateInfo(DebugMessenger::CreateInfo& _msngrCreateInfo);
+			void PopulateDebugMessengerCreateInfo(V4::DebugMessenger::CreateInfo& _msngrCreateInfo);
 
-			SwapChainSupportDetails QuerySwapChainSupport(PhysicalDevice::Handle _deviceHandle, Surface::Handle _surfaceHandle);
+			SwapChainSupportDetails QuerySwapChainSupport(PhysicalDevice& _deviceHandle);
 
 			int RateDeviceSuitability(PhysicalDevice::Handle _deviceHandle);
 
@@ -266,7 +208,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EPresentationMode Surface_SwapChain_ChoosePresentationMode(const SurfacePresentationModeList& _surfacePresentationModes);
 
-			void TransitionImageLayout(Image::Handle _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout, uint32 _mipMapLevels);
+			void TransitionImageLayout(Image& _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout, uint32 _mipMapLevels);
 
 			void Initialize_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
 
