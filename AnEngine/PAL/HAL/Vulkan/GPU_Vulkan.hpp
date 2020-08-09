@@ -199,7 +199,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			uint32 GetMinimumFramebufferCount();
 
-			using RenderCallback = void(*)();
+			using RenderCallback = void(*)(CommandBuffer& _buffer, int _index);
 
 			void AddRenderCallback(RenderCallback _callback);
 

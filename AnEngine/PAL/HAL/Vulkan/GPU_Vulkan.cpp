@@ -580,10 +580,10 @@
 					0
 				);
 
-				/*for (auto renderCallback : RenderCallbacks)
+				for (auto renderCallback : RenderCallbacks)
 				{
-					renderCallback();
-				}*/
+					renderCallback(CommandBuffers[index], index);
+				}
 
 				CommandBuffers[index].EndRenderPass();
 
@@ -914,7 +914,7 @@
 				colorBlend_Attachment.EnableBlend                  = EBool::False        ;
 				colorBlend_Attachment.Source_ColorBlendFactor      = EBlendFactor::One   ;
 				colorBlend_Attachment.Destination_ColorBlendFactor = EBlendFactor::Zero  ;
-				colorBlend_Attachment.ColorOperation               = EBlendOperation::Add;
+				colorBlend_Attachment.ColorOperation              = EBlendOperation::Add;
 				colorBlend_Attachment.Source_AlphaBlendFactor      = EBlendFactor::One   ;
 				colorBlend_Attachment.Destination_AlphaBlendFactor = EBlendFactor::Zero  ;
 				colorBlend_Attachment.AlphaOperation               = EBlendOperation::Add;

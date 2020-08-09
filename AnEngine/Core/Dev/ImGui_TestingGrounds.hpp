@@ -93,9 +93,9 @@ namespace Debug
 
 			Imgui::StyleColorsDark();
 
-			//Imgui::BindToPlatformAndRenderer(TestWindow);
+			Imgui::BindToPlatformAndRenderer(TestWindow);
 
-			//Imgui::SetupFonts();
+			Imgui::SetupFonts();
 		}
 
 
@@ -110,9 +110,9 @@ namespace Debug
 					//Imgui::MakeWindow(WindowSize.Width, WindowSize.Height);
 				}
 
-				//Imgui::MakeFrame();
+				Imgui::MakeFrame();
 
-				//Imgui::Render();
+				Imgui::Render();
 
 				HAL::GPU::Dirty::DrawFrame(TestWindow);
 			}
