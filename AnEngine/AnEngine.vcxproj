@@ -173,6 +173,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
+    <ClInclude Include="Core\Dev\ImGui_StandaloneExample.hpp" />
     <ClInclude Include="Core\Dev\ImGui_TestingGrounds.hpp" />
     <ClInclude Include="Core\Dev\Vulkan_VKTutFull_Test.hpp">
       <SubType>

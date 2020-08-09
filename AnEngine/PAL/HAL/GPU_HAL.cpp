@@ -77,21 +77,21 @@ namespace HAL
 				{
 					case EGPUPlatformAPI::Vulkan:
 					{
-						Initialize_GPUComms_Bind = Platform_Vulkan::Initialize_GPUComms;
+						Initialize_GPUComms_Bind = Vulkan::Initialize_GPUComms;
 
-						Cease_GPUComms_Bind = Platform_Vulkan::Cease_GPUComms;
+						Cease_GPUComms_Bind = Vulkan::Cease_GPUComms;
 							
-						WaitFor_GPUIdle = Platform_Vulkan::WaitFor_GPUIdle;
+						WaitFor_GPUIdle = Vulkan::WaitFor_GPUIdle;
 
-						GetRenderContext_Bind = Platform_Vulkan::GetRenderContext;
+						GetRenderContext_Bind = Vulkan::GetRenderContext;
 
-						Dirty::GetRenderReady_Bind = Platform_Vulkan::Dirty::GetRenderReady;
+						Dirty::GetRenderReady_Bind = Vulkan::Dirty::GetRenderReady;
 
-						Dirty::DeinitalizeRenderReady_Bind = Platform_Vulkan::Dirty::DeInitializeRenderReady;
+						Dirty::DeinitalizeRenderReady_Bind = Vulkan::Dirty::DeInitializeRenderReady;
 
-						Dirty::DrawFrame_Bind = Platform_Vulkan::Dirty::DrawFrame;
+						Dirty::DrawFrame_Bind = Vulkan::Dirty::DrawFrame;
 
-						Dirty::ReinitializeRenderer_Bind = Platform_Vulkan::Dirty::ReinitializeRenderer;
+						Dirty::ReinitializeRenderer_Bind = Vulkan::Dirty::ReinitializeRenderer;
 					}
 				}
 			}

@@ -47,9 +47,11 @@ namespace Debug
 
 
 
-		void WindowSizeChanged(ptr<Window> _window, int, int)
+		void WindowSizeChanged(ptr<Window> _window, int _width, int _height)
 		{
 			WindowResized = true;
+
+			WindowSize.Width = _width; WindowSize.Height = _height;
 		}
 
 
@@ -89,7 +91,11 @@ namespace Debug
 
 			IO_Config = Imgui::GetIO(); (void)IO_Config;   // TODO: Find out what that (void) is for...
 
-			Imgui::HookToWindow(TestWindow);
+			Imgui::StyleColorsDark();
+
+			//Imgui::BindToPlatformAndRenderer(TestWindow);
+
+			//Imgui::SetupFonts();
 		}
 
 
@@ -98,6 +104,15 @@ namespace Debug
 			while (! OSAL::CanClose(TestWindow))
 			{
 				OSAL::PollEvents();
+
+				if (WindowResized)
+				{
+					//Imgui::MakeWindow(WindowSize.Width, WindowSize.Height);
+				}
+
+				//Imgui::MakeFrame();
+
+				//Imgui::Render();
 
 				HAL::GPU::Dirty::DrawFrame(TestWindow);
 			}
@@ -126,7 +141,7 @@ namespace Debug
 		{
 			try
 			{
-				InitializeDependencies();
+ 				InitializeDependencies();
 
 				InitalizeImgui();
 

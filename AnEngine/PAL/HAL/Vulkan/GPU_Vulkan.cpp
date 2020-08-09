@@ -27,13 +27,13 @@
 
 	namespace HAL::GPU
 	{
-		namespace Platform_Vulkan
+		namespace Vulkan
 		{
 			struct QueueFamilyIndices
 			{
-				std::optional<uint32> Graphics;
-				std::optional<uint32> Compute;
-				std::optional<uint32> Transfer;
+				std::optional<uint32> Graphics     ;
+				std::optional<uint32> Compute      ;
+				std::optional<uint32> Transfer     ;
 				std::optional<uint32> SparseBinding;
 
 				std::optional<uint32> PresentationSupported;
@@ -69,12 +69,17 @@
 			LogicalDevice::Queue* GraphicsQueue    ;
 			LogicalDevice::Queue* PresentationQueue;
 			
-			std::vector<CommandBuffer        > CommandBuffers;
+			// Frame objects.
+
+			CommandPool SingleTimeCommandPool;
+			std::vector<CommandPool          > CommandPools        ;   
+			std::vector<CommandBuffer        > CommandBuffers      ;
 			std::vector<CommandBuffer::Handle> CommandBufferHandles;
 
-			V4::CommandPool CommandPool;   
 
-			V4::DebugMessenger         DebugMessenger;
+
+
+			V4::DebugMessenger         DebugMessenger             ;
 			DebugMessenger::CreateInfo DebugMessenger_CreationSpec;
 
 			Pipeline::Layout::DescriptorSet DescriptorSetLayout;
@@ -96,8 +101,8 @@
 
 			V4::SwapChain SwapChain;
 
-			Extent2D SwapChain_Extent     ;
-			V4::EFormat  SwapChain_ImageFormat;
+			Extent2D    SwapChain_Extent     ;
+			V4::EFormat SwapChain_ImageFormat;
 
 			DynamicArray<Image>     SwapChain_Images     ;
 			DynamicArray<ImageView> SwapChain_ImageViews ;
@@ -106,10 +111,10 @@
 
 			V4::RenderPass RenderPass;   
 
-			Buffer VertexBuffer;
+			Buffer VertexBuffer      ;
 			Memory VertexBufferMemory;
 
-			Buffer IndexBuffer;
+			Buffer IndexBuffer      ;
 			Memory IndexBufferMemory;
 
 			DynamicArray<Buffer> UniformBuffers;
@@ -120,32 +125,23 @@
 			DynamicArray<DescriptorSet        > DescriptorSets      ;
 			DynamicArray<DescriptorSet::Handle> DescriptorSetHandles;
 
-			Image TextureImage;
-
-			Memory TextureImageMemory;
-
+			Image     TextureImage;
+			Memory    TextureImageMemory;
 			ImageView TextureImageView;
+			Sampler   TextureSampler;
 
-			Sampler TextureSampler;
+			Image     DepthImage      ;
+			Memory    DepthImageMemory;
+			ImageView DepthImageView  ;
 
-			Image DepthImage;
-
-			Memory DepthImageMemory;
-
-			ImageView DepthImageView;
-
-
-			bool FramebufferResized = false;
-
-			DataSize CurrentFrame = 0;
-
-			sint32 MaxFramesInFlight = 2;
+			Image     ColorImage      ;
+			Memory    ColorImageMemory;
+			ImageView ColorImageView  ;
 
 			ExtensionIdentifierList DeviceExtensions =
 			{
 				Swapchain_ExtensionName
 			};
-
 
 			ValidationLayerList ValidationLayerIdentifiers =
 			{
@@ -156,18 +152,14 @@
 
 			ESampleCount MSAA_Samples = ESampleCount::_1;
 
-			Image ColorImage;
-			Memory ColorImageMemory;
-			ImageView ColorImageView;
+			bool FramebufferResized = false;
+
+			DataSize CurrentFrame = 0;
+
+			sint32 MaxFramesInFlight = 2;
 
 
-			/**
-			* @brief Note: Need to define size.
-			*/
-			const Buffer::CreateInfo StagingBufferInfo = Buffer::CreateInfo(EBufferUsage::TransferSource, ESharingMode::Exclusive);
-
-
-			#pragma region VKTut_V1
+		#pragma region VKTut_V1
 
 			struct UniformBufferObject
 			{
@@ -317,20 +309,46 @@
 					0, 1, 2, 2, 3, 0,
 					4, 5, 6, 6, 7, 4
 				};
-				
 
 				DynamicArray<Vertex> ModelVerticies;
-				DynamicArray<uint32> ModelIndicies;
+				DynamicArray<uint32> ModelIndicies ;
 
 				const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
 				const String VikingRoom_TexturePath = "Engine/Data/Models/VikingRoom/viking_room.png";
 
 				const String EdsCryingCat_ModelPath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.obj";
 				const String EdsCryingCat_TexturePath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.jpg";
-
-				
 				
 			#pragma endregion VKTut_V1
+
+
+		#pragma  region Imgui_Stuff
+
+			bool SwapChain_Recreated = false;
+
+		uint32 GetMinimumFramebufferCount()
+		{
+			return 2;
+		}
+
+		uint32 GetNumberOfFramebuffers()
+		{
+			return SwapChain_Images.size();
+		}
+
+		
+
+		namespace Dirty
+		{
+			EResult RequestDescriptorPool(V4::DescriptorPool& _pool, V4::DescriptorPool::CreateInfo _info)
+			{
+				EResult returnCode = _pool.Create(LogicalDevice, _info);
+
+				return returnCode;
+			}
+		}
+
+		#pragma endregion Imgui_Stuff
 
 
 			// Forwards
@@ -391,19 +409,9 @@
 					SwapChain_Framebuffers[index].Destroy();
 				}
 
-				//auto handles = CommandBuffers[0].GetHandles();	
-
-				//CommandBuffers[0].Free();
-
-
-
-
-
 				GraphicsPipeline.Destroy();
-
-				PipelineLayout.Destroy();
-
-				RenderPass.Destroy();
+				PipelineLayout  .Destroy();
+				RenderPass      .Destroy();
 
 				for (DataSize index = 0; index < SwapChain_ImageViews.size(); index++)
 				{
@@ -423,16 +431,18 @@
 
 			void CopyBufferToImage(Buffer _buffer, Image _image, uint32 _width, uint32 _height)
 			{
-				CommandBuffer commandBuffer = CommandPool.BeginSingleTimeCommands();
+				CommandBuffer commandBuffer = SingleTimeCommandPool.BeginSingleTimeCommands();
 
 				CommandBuffer::BufferImageRegion region {};
 
-				region.BufferOffset = 0;
+				region.BufferOffset    = 0;
 				region.BufferRowLength = 0;
+
 				region.ImageSubresource.AspectMask.Set(EImageAspect::Color);
-				region.ImageSubresource.MipLevel = 0;
+
+				region.ImageSubresource.MipLevel       = 0;
 				region.ImageSubresource.BaseArrayLayer = 0;
-				region.ImageSubresource.LayerCount = 1;
+				region.ImageSubresource.LayerCount     = 1;
 
 				region.ImageOffset.Y = 0; 
 				region.ImageOffset.Y = 0; 
@@ -444,7 +454,7 @@
 
 				commandBuffer.CopyBufferToImage(_buffer, _image, VT::Corridors::EImageLayout::TransferDestination_Optimal, 1, &region);
 				
-				CommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
+				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
 			}
 
 			void CreateApplicationInstance
@@ -482,7 +492,6 @@
 				appCreateSpec.EnabledExtensionCount = SCast<uint32>(extensions.size());
 				appCreateSpec.EnabledExtensionNames = extensions.data()               ;
 
-
 				if (Vulkan_EnableValidationLayers)
 				{
 					appCreateSpec.EnabledLayerCount = SCast<uint32>(ValidationLayerIdentifiers.size());
@@ -506,83 +515,87 @@
 					throw std::runtime_error("Triangle Test: Failed to create Vulkan app instance.");
 			}
 
-			void CreateCommandBuffers()
+			std::vector<RenderCallback> RenderCallbacks;
+
+			void AddRenderCallback(RenderCallback _renderCallback)
 			{
-				if (CommandPool.Allocate(ECommandBufferLevel::Primary, SwapChain_Images.size(), CommandBuffers, CommandBufferHandles) != EResult::Success) 
-					throw std::runtime_error("failed to allocate command buffers!");
+				RenderCallbacks.push_back(_renderCallback);
+			}
 
-				for (DataSize index = 0; index < CommandBuffers.size(); index++) 
+			void RecordToBuffers(int index)
+			{
+				CommandBuffer::BeginInfo beginInfo;
+
+				beginInfo.Flags           = 0                  ;   // Optional
+				beginInfo.InheritanceInfo = nullptr            ;   // Optional
+
+				if (CommandBuffers[index].BeginRecord(beginInfo) != EResult::Success) 
+					throw std::runtime_error("Failed to begin recording command buffer!");
+
+				RenderPass::BeginInfo renderPassInfo{};
+
+				renderPassInfo.RenderPass  = RenderPass.GetHandle()                   ;
+				renderPassInfo.Framebuffer = SwapChain_Framebuffers[index].GetHandle();
+
+				renderPassInfo.RenderArea.Offset.X = 0;
+				renderPassInfo.RenderArea.Offset.Y = 0;
+
+				renderPassInfo.RenderArea.Extent = SwapChain_Extent;
+
+				StaticArray<ClearValue, 2> clearValues {}; 
+
+				clearValues[0].Color        = { 0.0f, 0.0f, 0.0f, 1.0f };
+				clearValues[1].DepthStencil = { 1.0f, 0                };
+
+				renderPassInfo.ClearValueCount = SCast<uint32>(clearValues.size());
+				renderPassInfo.ClearValues     = clearValues.data()               ;
+
+				CommandBuffers[index].BeginRenderPass(renderPassInfo, ESubpassContents::Inline);
+
+				CommandBuffers[index].BindPipeline(EPipelineBindPoint::Graphics, GraphicsPipeline);
+
+				Buffer::Handle vertexBuffers = VertexBuffer.GetHandle();
+
+				DeviceSize offsets = 0;
+
+				CommandBuffers[index].BindVertexBuffers(0, 1, &vertexBuffers, &offsets);
+
+				CommandBuffers[index].BindIndexBuffer(IndexBuffer, 0, EIndexType::uInt32);
+
+				CommandBuffers[index].BindDescriptorSets
+				(
+					EPipelineBindPoint::Graphics,
+					PipelineLayout,
+					0,
+					1,
+					&DescriptorSets[index].GetHandle()
+				);
+
+				CommandBuffers[index].DrawIndexed
+				(
+					SCast<uint32>(ModelIndicies.size()),
+					1,
+					0,
+					0,
+					0
+				);
+
+				/*for (auto renderCallback : RenderCallbacks)
 				{
-					CommandBuffer::BeginInfo beginInfo;
+					renderCallback();
+				}*/
 
-					beginInfo.SType           = beginInfo.STypeEnum;
-					beginInfo.Flags           = 0                  ;   // Optional
-					beginInfo.InheritanceInfo = nullptr            ;   // Optional
+				CommandBuffers[index].EndRenderPass();
 
-					if (CommandBuffers[index].BeginRecord(beginInfo) != EResult::Success) 
-						throw std::runtime_error("Failed to begin recording command buffer!");
-
-						RenderPass::BeginInfo renderPassInfo{};
-
-						renderPassInfo.RenderPass  = RenderPass.GetHandle()                   ;
-						renderPassInfo.Framebuffer = SwapChain_Framebuffers[index].GetHandle();
-
-						renderPassInfo.RenderArea.Offset.X = 0;
-						renderPassInfo.RenderArea.Offset.Y = 0;
-
-						renderPassInfo.RenderArea.Extent = SwapChain_Extent;
-
-						StaticArray<ClearValue, 2> clearValues {}; 
-
-						clearValues[0].Color        = { 0.0f, 0.0f, 0.0f, 1.0f };
-						clearValues[1].DepthStencil = { 1.0f, 0                };
-
-						renderPassInfo.ClearValueCount = SCast<uint32>(clearValues.size());
-						renderPassInfo.ClearValues     = clearValues.data()               ;
-
-						//CommandBuffer::BeginRenderPass(CommandBuffers[index], renderPassInfo, ESubpassContents::Inline);
-						CommandBuffers[index].BeginRenderPass(renderPassInfo, ESubpassContents::Inline);
-
-							CommandBuffers[index].BindPipeline(EPipelineBindPoint::Graphics, GraphicsPipeline);
-
-							Buffer::Handle vertexBuffers = VertexBuffer.GetHandle();
-
-							DeviceSize offsets = 0;
-
-							CommandBuffers[index].BindVertexBuffers(0, 1, &vertexBuffers, &offsets);
-
-							CommandBuffers[index].BindIndexBuffer(IndexBuffer, 0, EIndexType::uInt32);
-
-							CommandBuffers[index].BindDescriptorSets
-							(
-								EPipelineBindPoint::Graphics,
-								PipelineLayout,
-								0,
-								1,
-								&DescriptorSets[index].GetHandle()
-							);
-
-							CommandBuffers[index].DrawIndexed
-							(
-								SCast<uint32>(ModelIndicies.size()),
-								1,
-								0,
-								0,
-								0
-							);
-
-						CommandBuffers[index].EndRenderPass();
-
-					if (CommandBuffers[index].EndRecord() != EResult::Success) 
-						throw std::runtime_error("Failed to record command buffer!");
-				}
+				if (CommandBuffers[index].EndRecord() != EResult::Success) 
+					throw std::runtime_error("Failed to record command buffer!");
 			}
 
 			void CreateColorResources()
 			{
 				EFormat colorFormat = SwapChain_ImageFormat;
 
-				CreateImage_V4
+				CreateImage
 				(
 					SwapChain_Extent.Width, 
 					SwapChain_Extent.Height, 
@@ -599,16 +612,36 @@
 				ColorImageView = CreateImageView(ColorImage, colorFormat, EImageAspect::Color, 1);
 			}
 
-			void CreateCommandPool()
+			void CreateFrameObjects()
 			{
 				CommandPool::CreateInfo poolInfo {};
 
 				poolInfo.QueueFamilyIndex = QueueIndices.Graphics.value();
 				poolInfo.Flags            = CommandPool::CreateFlgas()   ;             // Optional
-																					    
-				if (CommandPool.Create(LogicalDevice, poolInfo) != EResult::Success) 
+
+				SingleTimeCommandPool.Create(LogicalDevice, poolInfo);
+
+				CommandPools.resize(SwapChain_Images.size());
+				CommandBuffers.resize(SwapChain_Images.size());
+				CommandBufferHandles.resize(SwapChain_Images.size());
+
+				for (DeviceSize index = 0; index < SwapChain_Images.size(); index++)
 				{
-					throw std::runtime_error("failed to create command pool!");
+					if (CommandPools[index].Create(LogicalDevice, poolInfo) != EResult::Success)
+					{
+						throw std::runtime_error("failed to create command pool!");
+					}
+
+					CommandPool::AllocateInfo info;
+
+					info.BufferCount = 1;
+					info.Pool = CommandPools[index];
+					info.Level = ECommandBufferLevel::Primary;
+
+					if (CommandPools[index].Allocate(info,  CommandBuffers[index]) != EResult::Success)
+						throw std::runtime_error("failed to allocate command buffers!");
+
+					CommandBufferHandles[index] = CommandBuffers[index].GetHandle();
 				}
 			}
 
@@ -616,7 +649,7 @@
 			{
 				EFormat depthFormat = FindDepthFormat();
 
-				CreateImage_V4
+				CreateImage
 				(
 					SwapChain_Extent.Width, 
 					SwapChain_Extent.Height, 
@@ -687,8 +720,6 @@
 
 					StaticArray<DescriptorSet::Write, 2> descriptorWrites;
 
-					//DescriptorSet::Write descriptorWrite{};
-					
 					descriptorWrites[0].DstSet          = DescriptorSets[index].GetHandle()          ;
 					descriptorWrites[0].DstBinding      = 0                              ;
 					descriptorWrites[0].DstArrayElement = 0                              ;
@@ -747,7 +778,6 @@
 
 				DescriptorSetLayout.Assign(LogicalDevice, layoutInfo);
 
-				//if (Pipeline::Layout::DescriptorSet::Create(LogicalDevice.GetHandle(), layoutInfo, nullptr, DescriptorSetLayout) != EResult::Success)
 				if (DescriptorSetLayout.Create() != EResult::Success)
 					throw RuntimeError("Failed to create descriptor set layout!");
 			}
@@ -767,7 +797,6 @@
 
 					Framebuffer::CreateInfo framebufferInfo {};
 
-					framebufferInfo.SType           = framebufferInfo.STypeEnum        ;
 					framebufferInfo.RenderPass      = RenderPass.GetHandle()           ;
 					framebufferInfo.AttachmentCount = SCast<uint32>(attachments.size());
 					framebufferInfo.Attachments     = attachments.data()               ;
@@ -793,15 +822,11 @@
 				Pipeline::ShaderStage::CreateInfo vertexShaderStage_CreeationSpec{};
 				Pipeline::ShaderStage::CreateInfo fragShaderStage_CreationSpec{};
 
-				vertexShaderStage_CreeationSpec.SType = vertexShaderStage_CreeationSpec.STypeEnum;
-				vertexShaderStage_CreeationSpec.Stage = EShaderStageFlag::Vertex                 ;
-
+				vertexShaderStage_CreeationSpec.Stage = EShaderStageFlag::Vertex;
 				vertexShaderStage_CreeationSpec.Module = _shaders[0].GetHandle();
 				vertexShaderStage_CreeationSpec.Name   = "main"     ;
 
-				fragShaderStage_CreationSpec.SType = fragShaderStage_CreationSpec.STypeEnum;
-				fragShaderStage_CreationSpec.Stage = EShaderStageFlag::Fragment            ;
-
+				fragShaderStage_CreationSpec.Stage = EShaderStageFlag::Fragment;
 				fragShaderStage_CreationSpec.Module = _shaders[1].GetHandle();
 				fragShaderStage_CreationSpec.Name   = "main"     ;
 
@@ -810,8 +835,6 @@
 				// Fixed Function
 
 				Pipeline::VertexInputState::CreateInfo vertexInputState_CreationSpec{};
-
-				vertexInputState_CreationSpec.SType = vertexInputState_CreationSpec.STypeEnum;
 
 				// TODO: Need to figure out how the GPU is going to be fed shader/vertex information etc.
 
@@ -827,8 +850,6 @@
 				vertexInputState_CreationSpec.AttributeDescription = attributes.data();
 
 				Pipeline::InputAssemblyState::CreateInfo inputAssembly_CreationSpec{};
-
-				inputAssembly_CreationSpec.SType = inputAssembly_CreationSpec.STypeEnum;
 
 				inputAssembly_CreationSpec.Topology               = EPrimitiveTopology::TriangleList;
 				inputAssembly_CreationSpec.PrimitiveRestartEnable = false                           ;
@@ -851,19 +872,17 @@
 
 				Pipeline::ViewportState::CreateInfo viewportState_CreationSpec{};
 
-				viewportState_CreationSpec.SType         = viewportState_CreationSpec.STypeEnum;
-				viewportState_CreationSpec.ViewportCount = 1                                   ;
-				viewportState_CreationSpec.Viewports     = &viewport                           ;
-				viewportState_CreationSpec.ScissorCount  = 1                                   ;
-				viewportState_CreationSpec.Scissors      = &scissor                            ;
+				viewportState_CreationSpec.ViewportCount = 1        ;
+				viewportState_CreationSpec.Viewports     = &viewport;
+				viewportState_CreationSpec.ScissorCount  = 1        ;
+				viewportState_CreationSpec.Scissors      = &scissor ;
 
 				Pipeline::RasterizationState::CreateInfo rasterizer{};
 
-				rasterizer.SType                   = rasterizer.STypeEnum;
-				rasterizer.EnableDepthClamp        = EBool::False        ;
-				rasterizer.EnableRasterizerDiscard = EBool::False        ;
-				rasterizer.PolygonMode             = EPolygonMode::Fill  ;
-				rasterizer.LineWidth               = 1.0f                ;
+				rasterizer.EnableDepthClamp        = EBool::False      ;
+				rasterizer.EnableRasterizerDiscard = EBool::False      ;
+				rasterizer.PolygonMode             = EPolygonMode::Fill;
+				rasterizer.LineWidth               = 1.0f              ;
 
 				rasterizer.CullMode.Set(ECullModeFlag::Back);
 
@@ -873,15 +892,14 @@
 				rasterizer.DepthBiasClamp          = 0.0f                        ;
 				rasterizer.DepthBiasSlopeFactor    = 0.0f                        ;
 
-				Pipeline::MultisampleState::CreateInfo multisampling_CreationSpec{};
+				Pipeline::MultiSampleState::CreateInfo multisampling_CreationSpec;
 
-				multisampling_CreationSpec.SType                 = multisampling_CreationSpec.STypeEnum;
-				multisampling_CreationSpec.EnableSampleShading   = EBool::False                        ;
-				multisampling_CreationSpec.RasterizationSamples  = MSAA_Samples                        ;
-				multisampling_CreationSpec.MinSampleShading      = 1.0f                                ;
-				multisampling_CreationSpec.SampleMask            = nullptr                             ;
-				multisampling_CreationSpec.EnableAlphaToCoverage = EBool::False                        ;
-				multisampling_CreationSpec.EnableAlphaToOne      = EBool::False                        ;
+				multisampling_CreationSpec.EnableSampleShading   = EBool::False;
+				multisampling_CreationSpec.RasterizationSamples  = MSAA_Samples;
+				multisampling_CreationSpec.MinSampleShading      = 1.0f        ;
+				multisampling_CreationSpec.SampleMask            = nullptr     ;
+				multisampling_CreationSpec.EnableAlphaToCoverage = EBool::False;
+				multisampling_CreationSpec.EnableAlphaToOne      = EBool::False;
 
 				Pipeline::ColorBlendState::AttachmentState colorBlend_Attachment{};
 
@@ -903,20 +921,18 @@
 
 				Pipeline::ColorBlendState::CreateInfo colorBlending_CreationSpec{};
 
-				colorBlending_CreationSpec.SType                 = colorBlending_CreationSpec.STypeEnum;
-				colorBlending_CreationSpec.EnableLogicOperations = EBool::False                        ;
-				colorBlending_CreationSpec.LogicOperation        = ELogicOperation::Copy               ;
-				colorBlending_CreationSpec.AttachmentCount       = 1                                   ;
-				colorBlending_CreationSpec.Attachments           = &colorBlend_Attachment              ;
-				colorBlending_CreationSpec.BlendConstants[0]     = 0.0f                                ;
-				colorBlending_CreationSpec.BlendConstants[1]     = 0.0f                                ;
-				colorBlending_CreationSpec.BlendConstants[2]     = 0.0f                                ;
-				colorBlending_CreationSpec.BlendConstants[3]     = 0.0f                                ;
+				colorBlending_CreationSpec.EnableLogicOperations = EBool::False          ;
+				colorBlending_CreationSpec.LogicOperation        = ELogicOperation::Copy ;
+				colorBlending_CreationSpec.AttachmentCount       = 1                     ;
+				colorBlending_CreationSpec.Attachments           = &colorBlend_Attachment;
+				colorBlending_CreationSpec.BlendConstants[0]     = 0.0f                  ;
+				colorBlending_CreationSpec.BlendConstants[1]     = 0.0f                  ;
+				colorBlending_CreationSpec.BlendConstants[2]     = 0.0f                  ;
+				colorBlending_CreationSpec.BlendConstants[3]     = 0.0f                  ;
 
 				Pipeline::DepthStencilState::CreateInfo depthStencil_Info {};
 
-				depthStencil_Info.SType = depthStencil_Info.STypeEnum;
-				depthStencil_Info.DepthTestEnable = EBool::True;
+				depthStencil_Info.DepthTestEnable  = EBool::True;
 				depthStencil_Info.DepthWriteEnable = EBool::True;
 				
 				depthStencil_Info.DepthCompareOp = ECompareOperation::Less;
@@ -931,7 +947,7 @@
 				StencilOperationState nullStencil {};
 
 				depthStencil_Info.Front = nullStencil;   // Optional
-				depthStencil_Info.Back = nullStencil;   // Optional
+				depthStencil_Info.Back  = nullStencil;   // Optional
 
 				EDynamicState States[] =
 				{
@@ -941,17 +957,15 @@
 
 				Pipeline::DynamicState::CreateInfo dynamicState {};
 
-				dynamicState.SType      = dynamicState.STypeEnum;
-				dynamicState.StateCount = 2                     ;
-				dynamicState.States     = States                ;
+				dynamicState.StateCount = 2     ;
+				dynamicState.States     = States;
 
 				Pipeline::Layout::CreateInfo pipelineLayout_CreationSpec {};
 
-				pipelineLayout_CreationSpec.SType                  = pipelineLayout_CreationSpec.STypeEnum;
-				pipelineLayout_CreationSpec.SetLayoutCount         = 1                                    ;
-				pipelineLayout_CreationSpec.SetLayouts             = &DescriptorSetLayout.GetHandle()     ;
-				pipelineLayout_CreationSpec.PushConstantRangeCount = 0                                    ;
-				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr                              ;
+				pipelineLayout_CreationSpec.SetLayoutCount         = 1                               ;
+				pipelineLayout_CreationSpec.SetLayouts             = &DescriptorSetLayout.GetHandle();
+				pipelineLayout_CreationSpec.PushConstantRangeCount = 0                               ;
+				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr                         ;
 
 				EResult piplineLayout_CreationResult = 
 					PipelineLayout.Create(LogicalDevice, pipelineLayout_CreationSpec);
@@ -986,11 +1000,7 @@
 				pipelineInfo.BasePipelineHandle = VK_NULL_HANDLE;   // Optional
 				pipelineInfo.BasePipelineIndex  = -1            ;   // Optional
 
-				//V4::GraphicsPipeline::Handle test;
-
-				//if (Pipeline::Graphics::Parent::Create(LogicalDevice.GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &test) != EResult::Success) 
-
-				EResult returnCode = GraphicsPipeline.Create(LogicalDevice, pipelineInfo);
+				EResult returnCode = GraphicsPipeline.Create(LogicalDevice.GetHandle(), pipelineInfo);
 
 				if (returnCode != EResult::Success) 
 					throw std::runtime_error("Failed to create graphics pipeline!");
@@ -1012,7 +1022,6 @@
 			{
 				Image::CreateInfo imageInfo {};
 
-				imageInfo.SType         = imageInfo.STypeEnum   ;
 				imageInfo.ImageType     = EImageType::_2D       ;
 				imageInfo.Extent.Width  = SCast<uint32>(_width );
 				imageInfo.Extent.Height = SCast<uint32>(_height);
@@ -1040,51 +1049,6 @@
 					throw RuntimeError("Failed to allocate image memory!");
 
 				_image.BindMemory(_imageMemory, 0);
-			}
-
-			void CreateImage_V4
-			(
-				uint32                _width      , 
-				uint32                _height     , 
-				uint32                _mipLevels  ,
-				ESampleCount          _numSamples ,
-				EFormat               _format     , 
-				EImageTiling          _tiling     , 
-				Image::UsageFlags     _usage      , 
-				Memory::PropertyFlags _properties , 
-				Image&        _image      , 
-				Memory&       _imageMemory
-			)
-			{
-				Image::CreateInfo imageInfo;
-
-				imageInfo.ImageType     = EImageType::_2D       ;
-				imageInfo.Extent.Width  = SCast<uint32>(_width );
-				imageInfo.Extent.Height = SCast<uint32>(_height);
-				imageInfo.Extent.Depth  = 1                     ;
-				imageInfo.MipmapLevels  = _mipLevels            ;
-				imageInfo.ArrayLayers   = 1                     ;
-
-				imageInfo.Format       = _format                ;
-				imageInfo.Tiling       = _tiling                ;
-				imageInfo.InitalLayout = EImageLayout::Undefined;
-				imageInfo.Usage        = _usage                 ;
-				imageInfo.SharingMode  = ESharingMode::Exclusive ;
-				imageInfo.Samples      = _numSamples            ;
-				imageInfo.Flags        = 0                      ;
-
-				if (_image.Create(LogicalDevice, imageInfo, Memory::DefaultAllocator) != EResult::Success)
-					throw RuntimeError("Failed to create image!");
-
-				Memory::AllocateInfo allocationInfo;
-
-				allocationInfo.AllocationSize = _image.GetMemoryRequirements().Size;
-				allocationInfo.MemoryTypeIndex = PhysicalDevice.FindMemoryType(_image.GetMemoryRequirements().MemoryTypeBits, _properties);
-
-				if (_imageMemory.Allocate(LogicalDevice, allocationInfo, Memory::DefaultAllocator) != EResult::Success)
-					throw RuntimeError("Failed to allocate image memory!");
-
-				_image.BindMemory(_imageMemory, Memory::ZeroOffset);
 			}
 
 			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels)
@@ -1128,9 +1092,9 @@
 			{
 				DeviceSize bufferSize = sizeof(ModelIndicies[0]) * ModelIndicies.size();
 
-				Buffer     stagingBuffer;
+				Buffer             stagingBuffer       ;
 				Buffer::CreateInfo stagingBufferInfo {};
-				Memory stagingBufferMemory;
+				Memory             stagingBufferMemory ;
 
 				stagingBufferInfo.SharingMode = ESharingMode::Exclusive;
 				stagingBufferInfo.Size        = bufferSize            ; 
@@ -1149,8 +1113,6 @@
 				// Hard coded vertex data...
 
 				VoidPtr address = ModelIndicies.data();
-
-				//Vault_2::Memory::WriteToGPU(LogicalDevice.GetHandle(), stagingBufferMemory, 0, bufferSize, 0, address);
 
 				stagingBufferMemory.WriteToGPU(0, bufferSize, 0, address);
 
@@ -1173,10 +1135,9 @@
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
+				SingleTimeCommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, *GraphicsQueue);
 
-				CommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, *GraphicsQueue);
-
-				stagingBuffer.Destroy();
+				stagingBuffer      .Destroy();
 				stagingBufferMemory.Free();
 			}
 
@@ -1303,7 +1264,7 @@
 
 				colorAttachmentResolveRef.Attachment = 2;
 
-				colorAttachmentResolveRef.Layout = EImageLayout::Color_AttachmentOptimal;
+				colorAttachmentResolveRef.Layout = EImageLayout::PresentSource_KHR;
 
 				RenderPass::SubpassDescription subpass {};
 
@@ -1429,13 +1390,9 @@
 				InFlightFences.resize(MaxFramesInFlight      );
 				ImagesInFlight.resize(SwapChain_Images.size());
 
-				Semaphore::CreateInfo semaphore_CreationSpec {};
+				Semaphore::CreateInfo semaphore_CreationSpec;
 
-				semaphore_CreationSpec.SType = semaphore_CreationSpec.STypeEnum;
-
-				Fence::CreateInfo fence_CreationSpec {};
-
-				fence_CreationSpec.SType = fence_CreationSpec.STypeEnum;
+				Fence::CreateInfo fence_CreationSpec;
 
 				fence_CreationSpec.Flags.Set(EFenceCreateFlag::Signaled);
 
@@ -1497,7 +1454,7 @@
 
 				stbi_image_free(imageData);
 
-				CreateImage_V4
+				CreateImage
 				(
 					textureWidth, 
 					textureHeight,  
@@ -1517,10 +1474,6 @@
 
 				GenerateMipMaps(TextureImage, EFormat::R8_G8_B8_A8_SRGB, textureWidth, textureHeight, MipMapLevels);
 
-				//Buffer::Destroy(LogicalDevice.GetHandle(), stagingBuffer, nullptr);
-
-				//Memory::Free(LogicalDevice.GetHandle(), stagingBufferMemory, nullptr);
-
 				stagingBuffer.Destroy(); stagingBufferMemory.Free();
 			}
 
@@ -1532,8 +1485,6 @@
 			void CreateTextureSampler()
 			{
 				Sampler::CreateInfo samplerInfo {};
-
-				samplerInfo.SType = samplerInfo.STypeEnum;
 
 				samplerInfo.MagnificationFilter = EFilter::Linear;
 				samplerInfo.MinimumFilter = EFilter::Linear;
@@ -1554,10 +1505,8 @@
 				samplerInfo.MipmapMode = ESamplerMipmapMode::Linear;
 				samplerInfo.MipLodBias = 0.0f                      ;
 				samplerInfo.MinimumLod = 0.0f                      ;
-				//samplerInfo.MinimumLod = SCast<float32>(MipMapLevels / 2);
 				samplerInfo.MaxLod     = SCast<float32>(MipMapLevels);
 
-				//if (Sampler::Create(LogicalDevice.GetHandle(), samplerInfo, nullptr, TextureSampler) != EResult::Success)
 				if (TextureSampler.Create(LogicalDevice, samplerInfo, nullptr) != EResult::Success)
 					throw RuntimeError("Failed to create texture sampler!");
 			}
@@ -1635,8 +1584,8 @@
 				ShaderModule vertShaderModule; ShaderModule::CreateInfo vertShaderInfo(vertCode.data(), vertCode.size());
 				ShaderModule fragShaderModule; ShaderModule::CreateInfo fragShaderInfo(fragCode.data(), fragCode.size());
 
-				vertShaderModule.Create(LogicalDevice, vertShaderInfo, Memory::DefaultAllocator);
-				fragShaderModule.Create(LogicalDevice, fragShaderInfo, Memory::DefaultAllocator);
+				vertShaderModule.Create(LogicalDevice, vertShaderInfo);
+				fragShaderModule.Create(LogicalDevice, fragShaderInfo);
 				
 				StaticArray<ShaderModule, 2> result = { vertShaderModule, fragShaderModule };
 
@@ -1692,7 +1641,7 @@
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				CommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, *GraphicsQueue);
+				SingleTimeCommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, *GraphicsQueue);
 
 				stagingBuffer.Destroy(); stagingBufferMemory.Free();
 			}
@@ -1820,11 +1769,10 @@
 					throw std::runtime_error("Texture image format does not support linear blitting!");
 				}
 
-				CommandBuffer commandBuffer = CommandPool.BeginSingleTimeCommands();
+				CommandBuffer commandBuffer = SingleTimeCommandPool.BeginSingleTimeCommands();
 
 				Image::Memory_Barrier barrier{};
 
-				barrier.SType = barrier.STypeEnum;
 				barrier.Image = _image.GetHandle();
 				barrier.SrcQueueFamilyIndex = QueueFamily_Ignored;
 				barrier.DstQueueFamilyIndex = QueueFamily_Ignored;
@@ -1918,7 +1866,7 @@
 					1, &barrier
 				);
 
-				CommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
+				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
 			}
 
 			ExtensionIdentifierList GetRequiredExtensions()
@@ -2198,11 +2146,9 @@
 
 			void TransitionImageLayout(Image& _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout, uint32 _mipMapLevels)
 			{
-				CommandBuffer commandBuffer = CommandPool.BeginSingleTimeCommands();   
+				CommandBuffer commandBuffer = SingleTimeCommandPool.BeginSingleTimeCommands();   
 
 				Image::Memory_Barrier barrier {};
-
-				barrier.SType = barrier.STypeEnum;
 
 				barrier.OldLayout = _oldLayout;
 				barrier.NewLayout = _newLayout;
@@ -2274,7 +2220,7 @@
 					1, &barrier
 				);
 				
-				CommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
+				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
 			}
 
 			void UpdateUniformBuffers(uint32 _currentImage)
@@ -2324,6 +2270,22 @@
 			{
 				RawRenderContext renderContext {};
 
+				renderContext.ApplicationInstance = AppGPU                         ;
+				renderContext.PhysicalDevice      = PhysicalDevice                 ;
+				renderContext.LogicalDevice       = LogicalDevice                  ;
+				renderContext.QueueFamilyIndex    = GraphicsQueue->GetFamilyIndex();
+				renderContext.Queue = GraphicsQueue->GetHandle();
+				renderContext.Allocator           = Memory::DefaultAllocator       ;
+				renderContext.PipelineCache       = Null<Pipeline::Cache::Handle>  ;
+				//renderContext.DescriptorPool      = Imgui_DescriptorPool           ;
+				renderContext.ImageFormat = SwapChain_ImageFormat;
+				renderContext.Allocator           = Memory::DefaultAllocator       ;
+				renderContext.RenderPass = RenderPass;
+				renderContext.FrameSize = SwapChain_Extent;
+				//renderContext.MinimumFrameBuffers = 1                              ;
+				//renderContext.FrameBufferCount    =  SwapChain_Images.size()       ;
+				//renderContext.CheckResultFunction = Dirty::Imgui_DebugCallback            ;
+
 				RenderContextPool.push_back(renderContext);
 
 				return &RenderContextPool.back();
@@ -2356,7 +2318,17 @@
 						shader.Destroy();
 					}
 
-					CreateCommandPool();
+					CreateFrameObjects();
+
+					CreateColorResources();
+
+					CreateDepthResources();
+
+					CreateFrameBuffers();
+
+					CreateSyncObjects();
+
+					// Hard coded model setup
 
 					LoadModel(VikingRoom_ModelPath);
 
@@ -2366,29 +2338,23 @@
 
 					CreateUniformBuffers();
 
-					CreateDescriptorPool();
-
-					CreateColorResources();
-
-					CreateDepthResources();
-
-					CreateFrameBuffers();
-
-					CreateTextureImage(VikingRoom_TexturePath.c_str());   // Viking model related.
+					CreateTextureImage(VikingRoom_TexturePath.c_str()); 
 
 					CreateTextureImageView();
 
+					//
+
 					CreateTextureSampler();
 
+					CreateDescriptorPool();
+
 					CreateDescriptorSets();
-
-					CreateCommandBuffers();
-
-					CreateSyncObjects();
 				}
 
 				void RecreateSwapChain(ptr<Window> _window)
 				{
+					SwapChain_Recreated = true;
+
 					OSAL::FrameBufferDimensions dimensions;
 
 					dimensions = OSAL::GetFramebufferDimensions(_window);
@@ -2431,12 +2397,18 @@
 
 					CreateDescriptorSets();
 
-					CreateCommandBuffers();
 				}
+
+				
+
+				std::vector<CommandBuffer::Handle> CommandBuffersToSubmit;
 
 				void DrawFrame(ptr<Window> _window)
 				{
+					SwapChain_Recreated = false;
+
 					InFlightFences[CurrentFrame].WaitFor(UInt64Max);
+
 
 					uint32 imageIndex;
 
@@ -2465,12 +2437,18 @@
 
 					ImagesInFlight[imageIndex] = InFlightFences[CurrentFrame];
 
+
+					// Updating
+
+					CommandPools[imageIndex].Reset(0);
+
+					RecordToBuffers(imageIndex);
+
 					UpdateUniformBuffers(imageIndex);
 
+					// Submit to Graphics Queue
+
 					CommandBuffer::SubmitInfo submitInfo {};
-
-					submitInfo.SType = CommandBuffer::SubmitInfo::STypeEnum;
-
 
 					Semaphore::Handle waitSemaphores[] = { ImageAvailable_Semaphores[CurrentFrame].GetHandle() };
 
@@ -2478,12 +2456,14 @@
 
 					waitStages[0].Set(EPipelineStageFlag::ColorAttachmentOutput);
 
+					CommandBuffersToSubmit.push_back(CommandBuffers[CurrentFrame].GetHandle());
+
 					submitInfo.WaitSemaphoreCount = 1             ;
 					submitInfo.WaitSemaphores     = waitSemaphores;
 					submitInfo.WaitDstStageMask   = waitStages    ;
 
 					submitInfo.CommandBufferCount = 1;
-					submitInfo.CommandBuffers     = &CommandBuffers[imageIndex].GetHandle();
+					submitInfo.CommandBuffers     = &CommandBuffers[imageIndex].GetHandle();// CommandBuffersToSubmit.data();
 
 
 					Semaphore::Handle signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame].GetHandle() };
@@ -2491,17 +2471,17 @@
 					submitInfo.SignalSemaphoreCount = 1               ;
 					submitInfo.SignalSemaphores     = signalSemaphores;
 
-
-					//Fence::Reset(LogicalDevice.GetHandle(), &InFlightFences[CurrentFrame], 1);
 					InFlightFences[CurrentFrame].Reset();
 
 					if (GraphicsQueue->SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
 						throw std::runtime_error("Failed to submit draw command buffer!");
 
+					CommandBuffersToSubmit.clear();
+
+					// Submit to presentation
 
 					SwapChain::PresentationInfo presentInfo{};
 
-					presentInfo.SType              = presentInfo.STypeEnum;
 					presentInfo.WaitSemaphoreCount = 1                    ;
 					presentInfo.WaitSemaphores     = signalSemaphores     ;
 
@@ -2513,7 +2493,6 @@
 					presentInfo.ImageIndices   = &imageIndex;
 
 					presentInfo.Results = nullptr; // Optional
-
 
 					result = PresentationQueue->QueuePresentation(*presentInfo);
 
@@ -2540,7 +2519,6 @@
 					TextureImage      .Destroy();
 					TextureImageMemory.Free   ();
 
-					//Pipeline::Layout::DescriptorSet::Destroy(LogicalDevice.GetHandle(), DescriptorSetLayout, nullptr);
 					DescriptorSetLayout.Destroy();
 
 					IndexBuffer      .Destroy();
@@ -2551,16 +2529,17 @@
 
 					for (DataSize index = 0; index < MaxFramesInFlight; index++) 
 					{
-						//Semaphore::Destroy(LogicalDevice.GetHandle(), RenderFinished_Semaphores[index], nullptr);   
-						//Semaphore::Destroy(LogicalDevice.GetHandle(), ImageAvailable_Semaphores[index], nullptr);   
-						//Fence::Destroy    (LogicalDevice.GetHandle(), InFlightFences           [index], nullptr);   
-
 						RenderFinished_Semaphores[index].Destroy();
 						ImageAvailable_Semaphores[index].Destroy();
 						InFlightFences           [index].Destroy();
 					}
 
-					CommandPool.Destroy();   
+					SingleTimeCommandPool.Destroy();   
+
+					for (auto pool : CommandPools)
+					{
+						pool.Destroy();
+					}
 
 					LogicalDevice.Destroy();
 
@@ -2572,6 +2551,16 @@
 				void ReinitializeRenderer(ptr<OSAL::Window> _window)
 				{
 					RecreateSwapChain(_window);
+				}
+
+				CommandBuffer RequestSingleTimeBuffer()
+				{
+					return SingleTimeCommandPool.BeginSingleTimeCommands();
+				}
+
+				void EndSingleTimeBuffer(CommandBuffer& _buffer)
+				{
+					SingleTimeCommandPool.EndSingleTimeCommands(_buffer, *GraphicsQueue);
 				}
 			}
 		}

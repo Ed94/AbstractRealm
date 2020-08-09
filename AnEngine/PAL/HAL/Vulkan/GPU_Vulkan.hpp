@@ -35,7 +35,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 	namespace HAL::GPU
 	{
-		namespace Platform_Vulkan
+		namespace Vulkan
 		{
 			using namespace VT;
 			using namespace VT::V4;
@@ -51,17 +51,16 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			//using 
 
-			using CommandBufferList           = std::vector< CommandBuffer::Handle>; 
-			using ExtensionIdentifierList     = std::vector< RoCStr           >;
-			using FenceList                   = std::vector< Fence::Handle          >;
-			using FrameBufferList             = std::vector< Framebuffer::Handle    >;   
-			using ImageList                   = std::vector< Image::Handle>;
-			using ImageViewList               = std::vector< ImageView::Handle>;
-			//using PhysicalDeviceList          = std::vector< PhysicalDevice   >;
-			using SemaphoreList               = std::vector< Semaphore::Handle      >;   
-			using SurfaceFormatList           = std::vector< Surface::Format  >;
-			using SurfacePresentationModeList = std::vector< EPresentationMode>;
-			using ValidationLayerList         = std::vector< RoCStr           >;
+			using ExtensionIdentifierList     = std::vector< RoCStr             >;
+			using FenceList                   = std::vector< Fence::Handle      >;
+			using FrameBufferList             = std::vector< Framebuffer::Handle>;   
+			using ImageList                   = std::vector< Image::Handle      >;
+			using ImageViewList               = std::vector< ImageView          >;
+			using PhysicalDeviceList          = std::vector< V4::PhysicalDevice >;
+			using SemaphoreList               = std::vector< Semaphore::Handle  >;   
+			using SurfaceFormatList           = std::vector< Surface::Format    >;
+			using SurfacePresentationModeList = std::vector< EPresentationMode  >;
+			using ValidationLayerList         = std::vector< RoCStr             >;
 
 			// OS
 
@@ -86,9 +85,12 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				LogicalDevice::Queue::Handle Queue;
 				Pipeline::Cache::Handle      PipelineCache;
 				DescriptorPool::Handle       DescriptorPool;
+				EFormat ImageFormat ;
+				V4::RenderPass  RenderPass;
 				Memory::AllocationCallbacks* Allocator;
 				uint32                       MinimumFrameBuffers;
 				uint32                       FrameBufferCount;
+				Extent2D FrameSize;
 
 				void(*CheckResultFunction)(VkResult returnCode);
 			};
@@ -112,27 +114,11 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			*/
 			void CreateApplicationInstance(RoCStr _appName, AppVersion& _version);
 
-			void CreateCommandPool();
+			void CreateFrameObjects();
 
 			void CreateFrameBuffers();
 
-			void CreateGraphicsPipeline(StaticArray<ShaderModule::Handle, 2> _shaders);
-
 			void CreateImage
-			(
-				uint32                         _width,
-				uint32                         _height,
-				uint32                         _mipLevels,
-				ESampleCount                   _numSamples,
-				EFormat                        _format,
-				EImageTiling                   _tiling,
-				Image::UsageFlags              _usage,
-				Memory::PropertyFlags          _properties,
-				Image::Handle& _image,
-				Memory::Handle& _imageMemory
-			);
-
-			void CreateImage_V4
 			(
 				uint32                _width,
 				uint32                _height,
@@ -148,21 +134,11 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
 
-			void CreateImageViews
-			(
-				LogicalDevice::Handle _logicalDevice,
-				DynamicArray<Image>& _swapChainImages,
-				EFormat               _swapChainImageFormat,
-				DynamicArray<ImageView>& _imageViewContainer      // Will be populated.
-			);
-
 			void CreateLogicalDevice();	
 
 			void CreateSwapChain(OSAL::Window* _window);
 
 			void CreateSyncObjects();
-
-			void CreateVertexBuffers(Buffer::Handle& _vertexBuffer, Memory::Handle& _vertexBufferMemory);
 
 			// Exposed but really should not be used directly unless for another implementation I guess.
 			Bool DebugCallback
@@ -192,7 +168,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			void PopulateDebugMessengerCreateInfo(V4::DebugMessenger::CreateInfo& _msngrCreateInfo);
 
-			SwapChainSupportDetails QuerySwapChainSupport(PhysicalDevice& _deviceHandle);
+			SwapChainSupportDetails QuerySwapChainSupport(V4::PhysicalDevice& _deviceHandle);
 
 			int RateDeviceSuitability(PhysicalDevice::Handle _deviceHandle);
 
@@ -216,8 +192,16 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			void WaitFor_GPUIdle();
 
+
 			ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window);
 
+			uint32 GetNumberOfFramebuffers();
+
+			uint32 GetMinimumFramebufferCount();
+
+			using RenderCallback = void(*)();
+
+			void AddRenderCallback(RenderCallback _callback);
 
 			namespace Dirty
 			{
@@ -228,7 +212,17 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				void DrawFrame(ptr<OSAL::Window> _window);
 
 				void ReinitializeRenderer(ptr<OSAL::Window> _window);
+
+				CommandBuffer RequestSingleTimeBuffer();
+
+				EResult RequestDescriptorPool(V4::DescriptorPool& _pool, V4::DescriptorPool::CreateInfo _info);
+
+				void EndSingleTimeBuffer(CommandBuffer& _buffer);
+
+				
 			}
+
+			eGlobal bool SwapChain_Recreated;
 		}
 	}
 

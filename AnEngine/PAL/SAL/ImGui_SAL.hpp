@@ -30,12 +30,23 @@ namespace SAL::Imgui
 
 	namespace PlatformBackend
 	{
-
 		eGlobal data< bool> GLFW_InstallCallbacks;
 	}
 
+	void DrawFrame();
+
 	Where<Meta::WindowingPlatform == Meta::EWindowingPlatform::GLFW,
-	void> HookToWindow(ptr<OSAL::Window> _window);
+	void> BindToPlatformAndRenderer(ptr<OSAL::Window> _window);
+
+	void MakeFrame();
+
+	void Render();
+
+	void MakeWindow(int _width, int _height);
+
+	void SetupFonts();
+
+	void SetupGPU_Resources();
 
 	void VerifyVersion();
 }
