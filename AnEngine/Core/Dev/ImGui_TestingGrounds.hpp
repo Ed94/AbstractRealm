@@ -32,8 +32,6 @@ namespace Debug
 		BSS
 		(
 			ptr<Window> TestWindow;
-
-			Imgui::IO IO_Config;
 		)
 
 		Data
@@ -53,7 +51,6 @@ namespace Debug
 
 			WindowSize.Width = _width; WindowSize.Height = _height;
 		}
-
 
 		void InitializeDependencies()
 		{			
@@ -78,24 +75,8 @@ namespace Debug
 			OSAL::SetWindow_SizeChangeCallback(TestWindow, WindowSizeChanged);
 
 			HAL::GPU::Dirty::GetRenderReady(TestWindow);
-		}
 
-
-		void InitalizeImgui()
-		{
-			using namespace SAL;
-
-			Imgui::VerifyVersion();
-
-			Imgui::CreateContext();
-
-			IO_Config = Imgui::GetIO(); (void)IO_Config;   // TODO: Find out what that (void) is for...
-
-			Imgui::StyleColorsDark();
-
-			Imgui::BindToPlatformAndRenderer(TestWindow);
-
-			Imgui::SetupFonts();
+			Imgui::Initialize(TestWindow);
 		}
 
 
@@ -120,13 +101,11 @@ namespace Debug
 			HAL::GPU::WaitFor_GPUIdle();
 		}
 
-		void DeinitalizeImgui()
-		{
-
-		}
 
 		void DeinitalizeDependencies()
 		{
+			Imgui::Deinitialize();
+
 			HAL::GPU::Dirty::DeinitializeRenderReady(TestWindow);
 
 			HAL::GPU::Cease_GPUComms();
@@ -136,18 +115,13 @@ namespace Debug
 			OSAL::Unload();
 		}
 
-
 		int Exec_ImguiTest()
 		{
 			try
 			{
  				InitializeDependencies();
 
-				InitalizeImgui();
-
 				PrimitiveCycler();
-
-				DeinitalizeImgui();
 
 				DeinitalizeDependencies();
 			}

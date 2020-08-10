@@ -104,6 +104,7 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory_Backend.hpp" />
     <ClInclude Include="Core\Dev\ImGui_StandaloneExample.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\_TutorialRelated.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -129,5 +130,6 @@
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
     <ClCompile Include="Core\Execution\Execute.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />
   </ItemGroup>
 </Project>

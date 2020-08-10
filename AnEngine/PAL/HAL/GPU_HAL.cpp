@@ -85,13 +85,13 @@ namespace HAL
 
 						GetRenderContext_Bind = Vulkan::GetRenderContext;
 
-						Dirty::GetRenderReady_Bind = Vulkan::Dirty::GetRenderReady;
+						Dirty::GetRenderReady_Bind = Vulkan::Dirty::Default_InitalizeRenderer;
 
 						Dirty::DeinitalizeRenderReady_Bind = Vulkan::Dirty::DeInitializeRenderReady;
 
 						Dirty::DrawFrame_Bind = Vulkan::Dirty::DrawFrame;
 
-						Dirty::ReinitializeRenderer_Bind = Vulkan::Dirty::ReinitializeRenderer;
+						Dirty::ReinitializeRenderer_Bind = Vulkan::Dirty::Default_ReinitializeRenderer;
 					}
 				}
 			}

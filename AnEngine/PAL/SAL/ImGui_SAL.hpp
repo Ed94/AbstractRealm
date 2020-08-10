@@ -1,6 +1,7 @@
 #pragma once
 
 
+
 // Includes
 
 #include "Meta/Config/HAL_Config.hpp"
@@ -16,8 +17,6 @@
 
 
 
-
-
 namespace SAL::Imgui
 {
 	using namespace LAL;
@@ -26,6 +25,7 @@ namespace SAL::Imgui
 
 	using ImGui::CreateContext  ;
 	using ImGui::GetIO          ;
+	using ImGui::Render         ;
 	using ImGui::StyleColorsDark;
 
 	namespace PlatformBackend
@@ -33,22 +33,25 @@ namespace SAL::Imgui
 		eGlobal data< bool> GLFW_InstallCallbacks;
 	}
 
-	void DrawFrame();
+	void BindToPlatformAndRenderer(ptr<OSAL::Window> _window);
 
-	Where<Meta::WindowingPlatform == Meta::EWindowingPlatform::GLFW,
-	void> BindToPlatformAndRenderer(ptr<OSAL::Window> _window);
+	void Deinitialize();
+
+	void Initialize(ptr<OSAL::Window> _window);
 
 	void MakeFrame();
 
-	void Render();
-
-	void MakeWindow(int _width, int _height);
-
 	void SetupFonts();
 
-	void SetupGPU_Resources();
+	void SetupGPU_Interface();
 
 	void VerifyVersion();
+
+
+
+
+	// Not Used
+	//void MakeWindow(int _width, int _height);
 }
 
 

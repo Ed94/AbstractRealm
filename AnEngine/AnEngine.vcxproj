@@ -404,6 +404,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\_TutorialRelated.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.hpp">
       <SubType>
       </SubType>
@@ -497,6 +498,7 @@
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL.cpp" />
     <ClCompile Include="PAL\OSAL\Windowing.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />

@@ -6,21 +6,17 @@
 // Includes
 
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include "Renderer/Shader/TriangleShader/TriangleShader.hpp"
-#include "Renderer/Shader/VKTut/VKTut.hpp"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
-
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tiny_obj_loader.h>
-
+// TODO: Put these in LAL
 #include <chrono>
 #include <unordered_map>
+
+
+
+// TUtorial: This needs to be removed from GPU_Vulkan
+// This can be done by making the design of the GPU HAL agnostic to what the tutorial requires.
+#include "_TutorialRelated.hpp"
+
+
 
 
 #if VULCAN_INTERFACE == VAULTED_THERMALS_INTERFACE
@@ -56,87 +52,16 @@
 
 			// Static Data
 
+			// Persistent
+
 			AppInstance AppGPU;
 
 			V4::PhysicalDevice PhysicalDevice;
 
-			QueueFamilyIndices QueueIndices;
+			// Debug
 
-			V4::LogicalDevice LogicalDevice;
-
-			std::vector<LogicalDevice::Queue> DeviceQueues;
-
-			LogicalDevice::Queue* GraphicsQueue    ;
-			LogicalDevice::Queue* PresentationQueue;
-			
-			// Frame objects.
-
-			CommandPool SingleTimeCommandPool;
-			std::vector<CommandPool          > CommandPools        ;   
-			std::vector<CommandBuffer        > CommandBuffers      ;
-			std::vector<CommandBuffer::Handle> CommandBufferHandles;
-
-
-
-
-			V4::DebugMessenger         DebugMessenger             ;
-			DebugMessenger::CreateInfo DebugMessenger_CreationSpec;
-
-			Pipeline::Layout::DescriptorSet DescriptorSetLayout;
-			Pipeline::Layout                PipelineLayout     ;
-
-			Pipeline::Cache PipelineCache;
-
-			V4::GraphicsPipeline GraphicsPipeline;
-
-			DynamicArray<Fence> InFlightFences;
-			DynamicArray<Fence> ImagesInFlight;
-
-			DynamicArray<Semaphore> ImageAvailable_Semaphores;
-			DynamicArray<Semaphore> RenderFinished_Semaphores;
-
-			std::vector<RawRenderContext> RenderContextPool; 
-
-			V4::Surface Surface;
-
-			V4::SwapChain SwapChain;
-
-			Extent2D    SwapChain_Extent     ;
-			V4::EFormat SwapChain_ImageFormat;
-
-			DynamicArray<Image>     SwapChain_Images     ;
-			DynamicArray<ImageView> SwapChain_ImageViews ;
-
-			DynamicArray<Framebuffer> SwapChain_Framebuffers;
-
-			V4::RenderPass RenderPass;   
-
-			Buffer VertexBuffer      ;
-			Memory VertexBufferMemory;
-
-			Buffer IndexBuffer      ;
-			Memory IndexBufferMemory;
-
-			DynamicArray<Buffer> UniformBuffers;
-			DynamicArray<Memory> UniformBuffersMemory;
-
-			V4::DescriptorPool DescriptorPool;	
-
-			DynamicArray<DescriptorSet        > DescriptorSets      ;
-			DynamicArray<DescriptorSet::Handle> DescriptorSetHandles;
-
-			Image     TextureImage;
-			Memory    TextureImageMemory;
-			ImageView TextureImageView;
-			Sampler   TextureSampler;
-
-			Image     DepthImage      ;
-			Memory    DepthImageMemory;
-			ImageView DepthImageView  ;
-
-			Image     ColorImage      ;
-			Memory    ColorImageMemory;
-			ImageView ColorImageView  ;
+			V4::DebugMessenger         DebugMessenger     ;
+			DebugMessenger::CreateInfo DebugMessenger_Info;
 
 			ExtensionIdentifierList DeviceExtensions =
 			{
@@ -148,208 +73,134 @@
 				ValidationLayer_Khronos
 			};
 
-			uint32 MipMapLevels;
+			// Device Related
 
+			V4::LogicalDevice LogicalDevice;
+			QueueFamilyIndices QueueIndices;
+
+			LogicalDevice::Queue* GraphicsQueue    ;
+			LogicalDevice::Queue* PresentationQueue;
+
+			std::vector<LogicalDevice::Queue> DeviceQueues;
+
+			// Command
+
+			CommandPool                        SingleTimeCommandPool;
+			std::vector<CommandPool          > CommandPools         ;   
+			std::vector<CommandBuffer        > CommandBuffers       ;
+			std::vector<CommandBuffer::Handle> CommandBufferHandles ;
+
+			// Model V1 Rendering Pipeline
+
+			V4::GraphicsPipeline GraphicsPipeline;
+
+			V4::RenderPass RenderPass;   
+
+			Pipeline::Cache PipelineCache;   // Implement.
+
+			Pipeline::Layout::DescriptorSet DescriptorSetLayout;
+			Pipeline::Layout                PipelineLayout;
+
+			V4::DescriptorPool DescriptorPool;
+
+			DynamicArray<DescriptorSet        > DescriptorSets      ;
+			DynamicArray<DescriptorSet::Handle> DescriptorSetHandles;
+
+			uint32       MipMapLevels                   ;
 			ESampleCount MSAA_Samples = ESampleCount::_1;
 
-			bool FramebufferResized = false;
+			// Basic Rendering Synch (Upgrade this later)			
 
-			DataSize CurrentFrame = 0;
+			DynamicArray<Fence> InFlightFences;
+			DynamicArray<Fence> ImagesInFlight;
 
-			sint32 MaxFramesInFlight = 2;
+			DynamicArray<Semaphore> ImageAvailable_Semaphores;
+			DynamicArray<Semaphore> RenderFinished_Semaphores;
+
+			// Surface Context
+
+			V4::Surface Surface;
+
+			// SwapChain for surface
+
+			V4::SwapChain SwapChain            ;
+			Extent2D      SwapChain_Extent     ;
+			V4::EFormat   SwapChain_ImageFormat;
+
+			DynamicArray<Image>       SwapChain_Images      ;
+			DynamicArray<ImageView>   SwapChain_ImageViews  ;
+			DynamicArray<Framebuffer> SwapChain_Framebuffers;
+
+			// Related to Rendering State Tracking
+
+			bool     FramebufferResized = false;
+			DataSize CurrentFrame       = 0;
+			sint32   MaxFramesInFlight  = 2;
+			
+			// Not Sure
+
+			Image     DepthImage      ;
+			Memory    DepthImageMemory;
+			ImageView DepthImageView  ;
+
+			Image     ColorImage      ;
+			Memory    ColorImageMemory;
+			ImageView ColorImageView  ;
+
+			RawRenderContext RenderContext_Default;   // Should this still be used?
 
 
 		#pragma region VKTut_V1
 
-			struct UniformBufferObject
-			{
-				alignas(16) glm::mat4 ModelSpace;
-				alignas(16) glm::mat4 Viewport  ;
-				alignas(16) glm::mat4 Projection;
-			};
+			// TODO: Make the GPU hal agnostic to this.
 
-				using AttributeDescription = Pipeline::VertexInputState::AttributeDescription;
-				using BindingDescription   = Pipeline::VertexInputState::BindingDescription  ;
+			Buffer VertexBuffer      ;
+			Memory VertexBufferMemory;
 
-				using VertexAttributes = StaticArray<AttributeDescription, 3>;
+			Buffer IndexBuffer      ;
+			Memory IndexBufferMemory;
 
-				struct Vertex
-				{
-					struct
-					{
-						float32 X, Y, Z;
-					} 
-					
-					Position;
+			DynamicArray<Buffer> UniformBuffers      ;
+			DynamicArray<Memory> UniformBuffersMemory;
 
-					struct
-					{
-						float32 R,G,B;
-					}
-					
-					Color;
-
-					struct 
-					{
-						float32 X, Y;
-					}
-					
-					TextureCoordinates;
-
-
-					static constexpr VertexAttributes GetAttributeDescriptions()
-					{
-						VertexAttributes result{};
-
-						// Position Attributes
-
-						AttributeDescription& posAttrib = result.at(0);
-
-						posAttrib.Binding = 0;
-						posAttrib.Location = 0;
-						posAttrib.Format = EFormat::R32_G32_B32_SFloat;
-						posAttrib.Offset = offsetof(Vertex, Vertex::Position);
-
-						// Color Attributes
-
-						AttributeDescription& colorAttrib = result.at(1);
-
-						colorAttrib.Binding = 0;
-						colorAttrib.Location = 1;
-						colorAttrib.Format = EFormat::R32_G32_B32_SFloat;
-						colorAttrib.Offset = offsetof(Vertex, Vertex::Color);
-
-						// Texture Coordinate Attributes
-
-						AttributeDescription& texCoordAttrib = result.at(2);
-
-						texCoordAttrib.Binding = 0;
-						texCoordAttrib.Location = 2;
-						texCoordAttrib.Format = EFormat::R32_G32_SFloat;
-						texCoordAttrib.Offset = offsetof(Vertex, Vertex::TextureCoordinates);
-
-						return result;
-					}
-
-					static constexpr BindingDescription GetBindingDescription()
-					{
-						BindingDescription result{};
-
-						result.Binding = 0;
-						result.Stride = sizeof(Vertex);
-						result.InputRate = EVertexInputRate::Vertex;
-
-						return result;
-					}
-				};
-
-				const DynamicArray<Vertex> TriangleVerticies = 
-				{
-					{
-						{ 0.0f, -0.5f      }, 
-						{ 1.0f,  0.0f, 0.0f}
-					},
-					{
-						{ 0.5f, 0.5f      }, 
-						{ 0.0f, 1.0f, 0.0f}
-					},
-					{
-						{-0.5f, 0.5f      }, 
-						{ 0.0f, 0.0f, 1.0f}
-					}
-				};
-
-				const DynamicArray<Vertex> SquareVerticies =
-				{
-					{
-						{ -0.5f, -0.5f, 0.0f }, 
-						{  1.0f,  0.0f, 0.0f }, 
-						{  0.0f,  0.0f       }
-					},
-					{
-						{ 0.5f, -0.5f, 0.0f }, 
-						{ 0.0f,  1.0f, 0.0f }, 
-						{ 1.0f,  0.0f       }
-					},
-					{
-						{ 0.5f, 0.5f, 0.0f }, 
-						{ 0.0f, 0.0f, 1.0f }, 
-						{ 1.0f, 1.0f       }
-					},
-					{
-						{ -0.5f, 0.5f, 0.0f }, 
-						{  1.0f, 1.0f, 1.0f }, 
-						{  0.0f, 1.0f       }
-					},
-
-					{ 
-						{ -0.5f, -0.5f, -0.5f }, 
-						{  1.0f,  0.0f,  0.0f }, 
-						{  0.0f,  0.0f        }
-					},
-					{
-						{ 0.5f, -0.5f, -0.5f }, 
-						{ 0.0f,  1.0f,  0.0f }, 
-						{ 1.0f,  0.0f        }
-					},
-					{
-						{ 0.5f, 0.5f, -0.5f }, 
-						{ 0.0f, 0.0f,  1.0f }, 
-						{ 1.0f, 1.0f        }
-					},
-					{
-						{ -0.5f, 0.5f, -0.5f }, 
-						{  1.0f, 1.0f,  1.0f }, 
-						{  0.0f, 1.0f        }
-					}
-				};
-
-				const DynamicArray<uInt16> SquareIndices =
-				{
-					0, 1, 2, 2, 3, 0,
-					4, 5, 6, 6, 7, 4
-				};
-
-				DynamicArray<Vertex> ModelVerticies;
-				DynamicArray<uint32> ModelIndicies ;
-
-				const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
-				const String VikingRoom_TexturePath = "Engine/Data/Models/VikingRoom/viking_room.png";
-
-				const String EdsCryingCat_ModelPath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.obj";
-				const String EdsCryingCat_TexturePath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.jpg";
+			Image     TextureImage      ;
+			Memory    TextureImageMemory;
+			ImageView TextureImageView  ;
+			Sampler   TextureSampler    ;
 				
-			#pragma endregion VKTut_V1
+		#pragma endregion VKTut_V1
 
 
-		#pragma  region Imgui_Stuff
+		#pragma region Staying
 
-			bool SwapChain_Recreated = false;
+			uint32 GetMinimumFramebufferCount()
+			{
+				return 2;
+			}
 
-		uint32 GetMinimumFramebufferCount()
-		{
-			return 2;
-		}
+			uint32 GetNumberOfFramebuffers()
+			{
+				return SwapChain_Images.size();
+			}
 
-		uint32 GetNumberOfFramebuffers()
-		{
-			return SwapChain_Images.size();
-		}
+			CommandBuffer RequestSingleTimeBuffer()
+			{
+				return SingleTimeCommandPool.BeginSingleTimeCommands();
+			}
 
-		
+			void EndSingleTimeBuffer(CommandBuffer& _buffer)
+			{
+				SingleTimeCommandPool.EndSingleTimeCommands(_buffer, *GraphicsQueue);
+			}
 
-		namespace Dirty
-		{
 			EResult RequestDescriptorPool(V4::DescriptorPool& _pool, V4::DescriptorPool::CreateInfo _info)
 			{
 				EResult returnCode = _pool.Create(LogicalDevice, _info);
 
 				return returnCode;
 			}
-		}
 
-		#pragma endregion Imgui_Stuff
-
+		#pragma endregion Staying
 
 			// Forwards
 
@@ -498,9 +349,9 @@
 
 					appCreateSpec.EnabledLayerNames = ValidationLayerIdentifiers.data();
 
-					PopulateDebugMessengerCreateInfo(DebugMessenger_CreationSpec);
+					PopulateDebugMessengerCreateInfo(DebugMessenger_Info);
 
-					appCreateSpec.Next = ptr<DebugMessenger::CreateInfo>(&DebugMessenger_CreationSpec);
+					appCreateSpec.Next = ptr<DebugMessenger::CreateInfo>(&DebugMessenger_Info);
 				}
 				else
 				{
@@ -2268,32 +2119,29 @@
 			
 			ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window)
 			{
-				RawRenderContext renderContext {};
+				return &RenderContext_Default;
+			}
 
-				renderContext.ApplicationInstance = AppGPU                         ;
-				renderContext.PhysicalDevice      = PhysicalDevice                 ;
-				renderContext.LogicalDevice       = LogicalDevice                  ;
-				renderContext.QueueFamilyIndex    = GraphicsQueue->GetFamilyIndex();
-				renderContext.Queue = GraphicsQueue->GetHandle();
-				renderContext.Allocator           = Memory::DefaultAllocator       ;
-				renderContext.PipelineCache       = Null<Pipeline::Cache::Handle>  ;
-				//renderContext.DescriptorPool      = Imgui_DescriptorPool           ;
-				renderContext.ImageFormat = SwapChain_ImageFormat;
-				renderContext.Allocator           = Memory::DefaultAllocator       ;
-				renderContext.RenderPass = RenderPass;
-				renderContext.FrameSize = SwapChain_Extent;
-				//renderContext.MinimumFrameBuffers = 1                              ;
-				//renderContext.FrameBufferCount    =  SwapChain_Images.size()       ;
-				//renderContext.CheckResultFunction = Dirty::Imgui_DebugCallback            ;
-
-				RenderContextPool.push_back(renderContext);
-
-				return &RenderContextPool.back();
+			void SetRenderContext()
+			{
+				RenderContext_Default.ApplicationInstance =  AppGPU                 ;
+				RenderContext_Default.PhysicalDevice      =  PhysicalDevice         ;
+				RenderContext_Default.LogicalDevice       =  LogicalDevice          ;
+				RenderContext_Default.Queue               = *GraphicsQueue          ;
+				RenderContext_Default.Allocator           = Memory::DefaultAllocator;
+				RenderContext_Default.PipelineCache       = PipelineCache           ;
+				RenderContext_Default.ImageFormat         = SwapChain_ImageFormat   ;
+				RenderContext_Default.FrameSize           = SwapChain_Extent        ;
+				RenderContext_Default.Allocator           = Memory::DefaultAllocator;
+				RenderContext_Default.RenderPass          = RenderPass              ;
+				RenderContext_Default.MinimumFrameBuffers = SwapChain.GetMinimumImageCount();
+				RenderContext_Default.FrameBufferCount    =  SwapChain_Images.size();
+				RenderContext_Default.MSAA_Samples        = MSAA_Samples            ;
 			}
 
 			namespace Dirty
 			{
-				void GetRenderReady(ptr<Window> _window)
+				void Default_InitalizeRenderer(ptr<Window> _window)
 				{
 					CreateSurface(_window);
 
@@ -2349,12 +2197,12 @@
 					CreateDescriptorPool();
 
 					CreateDescriptorSets();
+
+					SetRenderContext();
 				}
 
-				void RecreateSwapChain(ptr<Window> _window)
+				void Default_ReinitializeRenderer(ptr<Window> _window)
 				{
-					SwapChain_Recreated = true;
-
 					OSAL::FrameBufferDimensions dimensions;
 
 					dimensions = OSAL::GetFramebufferDimensions(_window);
@@ -2396,17 +2244,12 @@
 					CreateDescriptorPool();
 
 					CreateDescriptorSets();
-
 				}
-
-				
 
 				std::vector<CommandBuffer::Handle> CommandBuffersToSubmit;
 
 				void DrawFrame(ptr<Window> _window)
 				{
-					SwapChain_Recreated = false;
-
 					InFlightFences[CurrentFrame].WaitFor(UInt64Max);
 
 
@@ -2423,7 +2266,7 @@
 						
 					if (result == EResult::Error_OutOfDate_KHR) 
 					{
-						RecreateSwapChain(_window);
+						Default_ReinitializeRenderer(_window);
 
 						return;
 					}
@@ -2500,7 +2343,7 @@
 					{
 						FramebufferResized = false;
 
-						RecreateSwapChain(_window);
+						Default_ReinitializeRenderer(_window);
 					}
 					else if (result != EResult::Success) 
 					{
@@ -2548,20 +2391,10 @@
 					Surface.Destroy();
 				}
 
-				void ReinitializeRenderer(ptr<OSAL::Window> _window)
+				/*void Default_ReinitializeRenderer(ptr<OSAL::Window> _window)
 				{
-					RecreateSwapChain(_window);
-				}
-
-				CommandBuffer RequestSingleTimeBuffer()
-				{
-					return SingleTimeCommandPool.BeginSingleTimeCommands();
-				}
-
-				void EndSingleTimeBuffer(CommandBuffer& _buffer)
-				{
-					SingleTimeCommandPool.EndSingleTimeCommands(_buffer, *GraphicsQueue);
-				}
+					Default_ReinitializeRenderer(_window);
+				}*/
 			}
 		}
 	}

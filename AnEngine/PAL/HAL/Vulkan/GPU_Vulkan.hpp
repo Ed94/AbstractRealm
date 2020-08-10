@@ -11,7 +11,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 #pragma once
 
-
+// Abstract Realm
+#include "GPU_HAL_CoreDefs.hpp"
 #include "Vulkan_API.hpp"
 
 #include "Meta/AppInfo.hpp"
@@ -21,13 +22,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 #include "Core/IO/Basic_FileIO.hpp"
 
-#include "GPU_HAL_CoreDefs.hpp"
-
 #include "OSAL/Platform.hpp"
-
 #include "OSAL/Windowing.hpp"
-
-
 
 
 
@@ -37,17 +33,13 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 	{
 		namespace Vulkan
 		{
-			using namespace VT;
-			using namespace VT::V4;
-
+			using namespace VT        ;
+			using namespace VT::V4    ;
 			using namespace VT::SPIR_V;
-
-			// Usings
 
 			using namespace LAL ;
 			using namespace Meta;
 
-			// Vulkan
 
 			//using 
 
@@ -78,27 +70,43 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			struct RawRenderContext : ARenderContext
 			{
-				AppInstance::Handle          ApplicationInstance;
-				PhysicalDevice::Handle       PhysicalDevice;
-				LogicalDevice::Handle        LogicalDevice;
-				uint32                       QueueFamilyIndex;
-				LogicalDevice::Queue::Handle Queue;
-				Pipeline::Cache::Handle      PipelineCache;
-				DescriptorPool::Handle       DescriptorPool;
-				EFormat ImageFormat ;
-				V4::RenderPass  RenderPass;
-				Memory::AllocationCallbacks* Allocator;
+				AppInstance                  ApplicationInstance;
+				V4::PhysicalDevice           PhysicalDevice     ;
+				V4::LogicalDevice            LogicalDevice      ;
+				uint32                       QueueFamilyIndex   ;
+				LogicalDevice::Queue         Queue              ;
+				Pipeline::Cache              PipelineCache      ;
+				EFormat                      ImageFormat        ;
+				V4::RenderPass               RenderPass         ;
+				Memory::AllocationCallbacks* Allocator          ;
 				uint32                       MinimumFrameBuffers;
-				uint32                       FrameBufferCount;
-				Extent2D FrameSize;
-
-				void(*CheckResultFunction)(VkResult returnCode);
+				uint32                       FrameBufferCount   ;
+				Extent2D                     FrameSize          ;
+				ESampleCount                 MSAA_Samples       ;
 			};
 
 			using RenderContextList = DynamicArray<RawRenderContext>;
 
 			
 			// Functions
+
+
+		#pragma region Staying
+
+			// Descriptor Pool
+
+			EResult RequestDescriptorPool(V4::DescriptorPool& _pool, V4::DescriptorPool::CreateInfo _info);
+			
+			// Command Buffer Related
+
+			void EndSingleTimeBuffer(CommandBuffer& _buffer);
+
+			CommandBuffer RequestSingleTimeBuffer();
+
+		#pragma endregion Staying
+
+
+		#pragma region UnderReview
 
 			/*
 			Checks to see if the validation layers specified are supported.
@@ -205,24 +213,16 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			namespace Dirty
 			{
-				void GetRenderReady(ptr<OSAL::Window> _window);
+				void Default_InitalizeRenderer(ptr<OSAL::Window> _window);
+
+				void Default_ReinitializeRenderer(ptr<OSAL::Window> _window);
 
 				void DeInitializeRenderReady(ptr<OSAL::Window> _window);
 
 				void DrawFrame(ptr<OSAL::Window> _window);
-
-				void ReinitializeRenderer(ptr<OSAL::Window> _window);
-
-				CommandBuffer RequestSingleTimeBuffer();
-
-				EResult RequestDescriptorPool(V4::DescriptorPool& _pool, V4::DescriptorPool::CreateInfo _info);
-
-				void EndSingleTimeBuffer(CommandBuffer& _buffer);
-
-				
 			}
 
-			eGlobal bool SwapChain_Recreated;
+		#pragma endregion UnderReview
 		}
 	}
 
