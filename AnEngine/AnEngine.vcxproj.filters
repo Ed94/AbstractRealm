@@ -110,19 +110,9 @@
     <ClInclude Include="Core\Dev\Console.hpp" />
     <ClInclude Include="Core\Dev\Dev.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_Console.hpp" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\common\acs437.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\common\acsgr.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\common\acsuni.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\common\font437.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\common\iconbmp.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcwin.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\curses.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\curspriv.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\panel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
-    <None Include="PAL\ThirdParty\Libraries\PDCurses\docs\index.html" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PAL\HAL\HAL.cpp" />
@@ -152,55 +142,5 @@
     <ClCompile Include="Core\Dev\Console.cpp" />
     <ClCompile Include="Core\Dev\Dev.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Console.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\addch.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\addchstr.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\addstr.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\attr.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\beep.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\bkgd.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\border.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\clear.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\color.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\debug.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\delch.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\deleteln.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\getch.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\getstr.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\getyx.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\inch.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\inchstr.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\initscr.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\inopts.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\insch.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\insstr.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\instr.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\kernel.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\keyname.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\mouse.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\move.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\outopts.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\overlay.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\pad.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\panel.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\printw.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\refresh.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\scanw.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\scr_dump.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\scroll.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\slk.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\termattr.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\touch.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\util.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\window.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcclip.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcdisp.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcgetsc.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdckbd.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcscrn.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcsetsc.c" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcutil.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="PAL\ThirdParty\Libraries\PDCurses\common\pdcurses.rc" />
   </ItemGroup>
 </Project>

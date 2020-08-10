@@ -2,11 +2,21 @@
 
 
 
+#include "LAL.hpp"
+
 
 
 namespace Dev
 {
-	void Load_DevConsole();
+	using namespace LAL;
 
-	void Console_PrintEngineTitle();
+
+	constexpr uInt16 ConsoleWidth = 120;
+	constexpr uInt16 ConsoleHeight = 50;
+
+	using CharLine = char[ConsoleWidth];
+
+	void CLog(const CharLine _lineToLog);
+
+	void Load_DevConsole();
 }

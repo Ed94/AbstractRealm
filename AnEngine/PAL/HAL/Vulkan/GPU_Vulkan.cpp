@@ -292,7 +292,7 @@
 				region.ImageSubresource.BaseArrayLayer = 0;
 				region.ImageSubresource.LayerCount     = 1;
 
-				region.ImageOffset.Y = 0; 
+				region.ImageOffset.X = 0; 
 				region.ImageOffset.Y = 0; 
 				region.ImageOffset.Z = 0;
 
@@ -2125,7 +2125,6 @@
 				RenderContext_Default.PhysicalDevice      =  PhysicalDevice         ;
 				RenderContext_Default.LogicalDevice       =  LogicalDevice          ;
 				RenderContext_Default.Queue               = *GraphicsQueue          ;
-				RenderContext_Default.Allocator           = Memory::DefaultAllocator;
 				RenderContext_Default.PipelineCache       = PipelineCache           ;
 				RenderContext_Default.ImageFormat         = SwapChain_ImageFormat   ;
 				RenderContext_Default.FrameSize           = SwapChain_Extent        ;

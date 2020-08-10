@@ -15,10 +15,6 @@ Operating System Abstraction Layer: Platform Definitions
 	// Prevents the numeric limits error in LAL.
 	#define NOMINMAX
 
-#ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 	#include <windows.h>
 
 #endif

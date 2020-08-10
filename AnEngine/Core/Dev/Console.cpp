@@ -2,17 +2,10 @@
 #include "Console.hpp"
 
 
-#include "LAL.hpp"
 
 #include "Meta/EngineInfo.hpp"
 
 #include "OSAL/OSAL_Console.hpp"
-
-#ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
-#include "PDCurses/curses.h"
 
 
 
@@ -25,232 +18,179 @@ namespace Dev
 
 	// Private
 
-	WINDOW* pls;
+	OS_Handle ConsoleOutput;
+	OS_Handle ConsoleInput ;
+
+	ConsoleRect ConsoleSize = 
+	{
+		0, 0,
+		ConsoleWidth -1,   // Width
+		ConsoleHeight-1     // Height	
+	};
+
+	ConsoleExtent ConsoleBufferSize = { ConsoleWidth, ConsoleHeight };
+
+	OS_RoCStr ConsoleTitle = L"Abstract Realm: Dev Console";
+
+	StaticArray<OS_Handle, 2> ConsoleBuffers;
+
+	using CharBuffer = CharU[ConsoleHeight * ConsoleWidth];
+
+	CharBuffer    ConsoleCharBuffer; 
+	ConsoleExtent ConsoleCharBufferSize = { ConsoleWidth, ConsoleHeight };
+	ConsoleExtent ConsoleCharPos   = { 0, 0 };
+
+	ConsoleRect ConsoleWriteArea =
+	{
+		0, 0,
+		ConsoleWidth - 1,   // Width
+		ConsoleHeight - 1     // Height	
+	};
+
+	OS_Handle FrontBuffer = ConsoleBuffers[0],
+		      BackBuffer  = ConsoleBuffers[1] ;
+
+	// 0-3, 4-70, 71-90: Engine Title, DevLog, Status
+
+	uInt16 DevLogLineEnd = 40;
+	uInt16 StatusStart   = 45;
+
+
+
+	// Public functions
+
+	std::stringstream CharStream;
+
+	void WriteToBufferLine(int _line)
+	{
+		auto str = CharStream.str();
+
+		for (int index = 0; index < str.size(); index++)
+		{
+			ConsoleCharBuffer[index + ConsoleWidth * _line].Char.UnicodeChar = str.at(index);
+			ConsoleCharBuffer[index + ConsoleWidth * _line].Attributes = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;
+		}
+	}
+
+	void ClearBuffer()
+	{
+		for (uInt16 y = 0; y < ConsoleHeight; ++y)
+		{
+			for (uInt16 x = 0; x < ConsoleWidth; ++x)
+			{
+				ConsoleCharBuffer[x + ConsoleWidth * y].Char.UnicodeChar = ' ';
+				ConsoleCharBuffer[x + ConsoleWidth * y].Attributes = 0;
+			}
+		}
+	}
+
+	void CLog(const CharLine _lineToLog)
+	{
+		static uInt16 linePos = 3;
+
+		if (linePos == DevLogLineEnd) 
+		{
+			linePos = 3;
+		}
+
+		CharStream.str(std::string());
+
+		CharStream << _lineToLog << std::setw(ConsoleWidth - CharStream.str().size()) << ' ';
+
+		WriteToBufferLine(linePos);
+
+		linePos++;
+
+		WriteConsoleOutput(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
+	}
+
+	void Load_CharStream_EngineTitle()
+	{
+		using namespace Meta;
+
+		CharStream << std::setfill('-') << std::setw(ConsoleWidth) << '-';
+
+		WriteToBufferLine(0);
+
+		CharStream.str(std::string());
+
+		CharStream << "Abstract Realm: MVP Build - "
+			<< EEngineVersion::Major << "."
+			<< EEngineVersion::Minor << "."
+			<< EEngineVersion::Patch << std::setfill(' ') << std::setw(ConsoleWidth - CharStream.str().size()) << ' ';
+
+		WriteToBufferLine(1);
+
+		CharStream.str(std::string());
+
+		CharStream << std::setfill('-') << std::setw(ConsoleWidth) << '-';
+
+		WriteToBufferLine(2);
+	}
+
+	void Load_CharStream_DevLog()
+	{
+		for (uInt16 line = 3; line < DevLogLineEnd; line++)
+		{
+			CharStream.str(std::string());
+
+			CharStream << std::setw(ConsoleWidth) << std::setfill(' ') << ' ';
+
+			WriteToBufferLine(line);
+		}
+	}
+
+	void Load_CharStream_Status()
+	{
+		CharStream.str(std::string());
+
+		CharStream << " " << std::setfill('-') << std::setw(ConsoleWidth) << '-';
+		
+		WriteToBufferLine(StatusStart);
+
+		CharStream.str(std::string());
+
+		CharStream << "Status: Not Setup.";
+
+		WriteToBufferLine(StatusStart + 1);
+		
+		for (uInt16 line = StatusStart + 2; line < ConsoleHeight; line++)
+		{
+			CharStream.str(std::string());
+
+			CharStream << std::setfill(' ') << std::setw(ConsoleWidth) << ' ';
+
+			WriteToBufferLine(line);
+		}
+	}
 	
 	void Load_DevConsole()
 	{
-		pls = initscr();
+		cout << "Dev: Load Console Buffer" << endl;
 
+		ConsoleOutput = OSAL::Console_GetHandle(EConsoleHandle::Output);
+		ConsoleInput  = OSAL::Console_GetHandle(EConsoleHandle::Input );
 
+		OSAL::Console_SetTitle(ConsoleTitle);
 
+		OSAL::Console_SetBufferSize(ConsoleOutput, ConsoleBufferSize);
+		OSAL::Console_SetSize      (ConsoleOutput, ConsoleSize);
+		OSAL::Console_SetBufferSize(ConsoleOutput, ConsoleBufferSize);
+
+		cout << "Dev: Console buffers loaded" << endl;
+
+		ClearBuffer();
+
+		WriteConsoleOutputA(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
+
+		SetConsoleCursorPosition (ConsoleOutput, {0, 140});
+
+		Load_CharStream_EngineTitle();
+
+		Load_CharStream_DevLog();
+
+		Load_CharStream_Status();
+
+		CLog("Dev: Console Submodules ready.");
 	}
-
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// Old attempt...
-
-	//OS_Handle ConsoleOutput;
-	//OS_Handle ConsoleInput ;
-
-	//constexpr uInt16 ConsoleWidth  = 140;
-	//constexpr uInt16 ConsoleHeight = 90 ;
-
-	//ConsoleRect ConsoleSize = 
-	//{
-	//	0, 0,
-	//	ConsoleWidth -1,   // Width
-	//	ConsoleHeight-1     // Height	
-	//};
-
-	//ConsoleExtent ConsoleBufferSize = { ConsoleWidth, ConsoleHeight };
-
-
-	//OS_RoCStr ConsoleTitle = L"Abstract Realm: Dev Console";
-
-	//StaticArray<OS_Handle, 2> ConsoleBuffers;
-
-	//using CharBuffer = CharU[ConsoleHeight * ConsoleWidth];
-
-	//using CharLine = CharU[ConsoleWidth];
-
-	//CharBuffer    ConsoleCharBuffer; 
-	//ConsoleExtent ConsoleCharBufferSize = { ConsoleWidth, ConsoleHeight };
-	//ConsoleExtent ConsoleCharPos   = { 0, 0 };
-
-	//ConsoleRect ConsoleWriteArea =
-	//{
-	//	0, 0,
-	//	ConsoleWidth - 1,   // Width
-	//	ConsoleHeight - 1     // Height	
-	//};
-
-	//OS_Handle FrontBuffer = ConsoleBuffers[0],
-	//	      BackBuffer  = ConsoleBuffers[1] ;
-
-	//ConsoleRect Console_EngineTitle
-	//{
-	//	0, 0, 
-	//	ConsoleWidth -1, 
-	//	3
-	//};
-
-
-	//// Public functions
-
-	//void ClearBuffer()
-	//{
-	//	for (uInt16 y = 0; y < ConsoleHeight; ++y)
-	//	{
-	//		for (uInt16 x = 0; x < ConsoleWidth; ++x)
-	//		{
-	//			ConsoleCharBuffer[x + ConsoleWidth * y].Char.UnicodeChar = ' ';
-	//			ConsoleCharBuffer[x + ConsoleWidth * y].Attributes       = 0;
-	//		}
-	//	}
-	//}
-
-	//void SwitchBuffers()
-	//{
-	//	static bool toggle = true;
-
-	//	if (toggle)
-	//	{
-	//		FrontBuffer = ConsoleBuffers[1];
-	//		BackBuffer  = ConsoleBuffers[0];
-
-	//		toggle = false;
-	//	}
-	//	else
-	//	{
-	//		FrontBuffer = ConsoleBuffers[0];
-	//		BackBuffer  = ConsoleBuffers[1];
-
-	//		toggle = true;
-	//	}
-	//}
-
-	//void Load_DevConsole()
-	//{
-	//	cout << "Dev: Load Console Buffer" << endl;
-
-	//	ConsoleOutput = OSAL::Console_GetHandle(EConsoleHandle::Output);
-	//	ConsoleInput  = OSAL::Console_GetHandle(EConsoleHandle::Input );
-
-	//	OSAL::Console_SetTitle(ConsoleTitle);
-
-	//	OSAL::Console_SetBufferSize(ConsoleOutput, ConsoleBufferSize);
-	//	OSAL::Console_SetSize      (ConsoleOutput, ConsoleSize);
-
-	//	for (auto buffer : ConsoleBuffers)
-	//	{
-	//		buffer = OSAL::Console_CreateBuffer();
-
-	//		if (buffer == INVALID_HANDLE_VALUE)
-	//		{
-	//			cerr << "Dev: Error buffer creation failed." << endl;
-	//		}
-
-	//		OSAL::Console_SetBufferSize(buffer, ConsoleBufferSize);
-	//		OSAL::Console_SetSize      (buffer, ConsoleSize      );
-	//	}
-
-	//	cout << "Dev: Console buffers loaded" << endl;
-
-	//	ClearBuffer();
-
-	//	WriteConsoleOutputA(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
-
-	//	SetConsoleCursorPosition (ConsoleOutput, {0, 0});
-
-	//	Console_PrintEngineTitle();
-
-	//	cout << "Dev: First clear complete" << endl;
-	//}
-
-	//void WriteToBuffer(CharBuffer _lines, SHORT _count, SHORT _start)
-	//{
-	//	ConsoleRect pos = 
-	//	{ 0, _start, 
-	//		ConsoleWidth -1, _count + _start
-	//	};
-
-	//	WriteConsoleOutputA(ConsoleOutput, _lines, { ConsoleWidth-1, _count }, { 0, _start }, &pos);
-	//}
-
-	//void Console_PrintEngineTitle()
-	//{
-	//	using namespace Meta;
-
-	//	StaticArray<String, 3> lines;
-
-	//	CharU buffer[ConsoleWidth * 3];
-
-	//	lines[0].append(ConsoleWidth - 1, '-');
-
-	//	lines[1] = "Abstract Realm: MVP Build - ";
-	//	lines[1] += std::to_string(EEngineVersion::Major) + '.' + std::to_string(EEngineVersion::Minor) + '.' + std::to_string(EEngineVersion::Patch) + ' ';
-
-	//	int linesize = lines[1].size();
-
-	//	int leftover = ConsoleWidth - linesize;
-
-	//	lines[1].append(ConsoleWidth - linesize, '-');
-
-	//	lines[2].append(ConsoleWidth, '-');
-
-	//	int indexY = 0;
-
-	//	for (auto line : lines)
-	//	{
-	//		const char* array = line.c_str();
-
-	//		for (uInt16 index = 0; index < ConsoleWidth; index++)
-	//		{
-	//			buffer[index + ConsoleWidth * indexY].Char.UnicodeChar = array[index];
-	//			buffer[index + ConsoleWidth * indexY].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
-	//		}
-
-	//		indexY++;
-	//	}
-
-	//	WriteToBuffer(buffer, 3, 0);
-
-	//	/*cout << std::setfill('-') << std::setw(140); cout << " " << endl;
-
-	//	cout << "Abstract Realm: MVP Build - "
-	//		<< EEngineVersion::Major << "."
-	//		<< EEngineVersion::Minor << "."
-	//		<< EEngineVersion::Patch << endl;
-
-	//	cout << std::setfill('-') << std::setw(140); cout << " " << endl << endl;*/
-	//}
 }
