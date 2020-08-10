@@ -211,16 +211,13 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			void AddRenderCallback(RenderCallback _callback);
 
-			namespace Dirty
-			{
-				void Default_InitalizeRenderer(ptr<OSAL::Window> _window);
+			void Default_InitializeRenderer(ptr<OSAL::Window> _window);
 
-				void Default_ReinitializeRenderer(ptr<OSAL::Window> _window);
+			void Default_ReinitializeRenderer(ptr<OSAL::Window> _window);
 
-				void DeInitializeRenderReady(ptr<OSAL::Window> _window);
+			void Default_DeinitializeRenderer(ptr<OSAL::Window> _window);
 
-				void DrawFrame(ptr<OSAL::Window> _window);
-			}
+			void Default_DrawFrame(ptr<OSAL::Window> _window);
 
 		#pragma endregion UnderReview
 		}

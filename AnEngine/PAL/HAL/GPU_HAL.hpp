@@ -79,24 +79,24 @@ namespace HAL
 		*/
 		ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window);
 
-		// Quick and dirty functionality. Due to lack of better implementation or time to make it.
-		namespace Dirty
-		{
-			/*
-			Does a quick and dirty GPU initialization for rendering.
+	#pragma region WIP
 
-			Note: Only works for one window.
-			*/
-			void GetRenderReady(ptr<OSAL::Window> _window);
+		/*
+		Does a quick and dirty GPU initialization for rendering.
 
-			void DrawFrame(ptr<OSAL::Window> _window);
+		Note: Only works for one window.
+		*/
+		void Default_InitializeRenderer(ptr<OSAL::Window> _window);
 
-			/*
-			Deinitialize of the Dirty_GetRenderReady setup.
-			*/
-			void DeinitializeRenderReady(ptr<OSAL::Window> _window);
+		void Default_DrawFrame(ptr<OSAL::Window> _window);
 
-			void ReinitializeRenderer(ptr<OSAL::Window> _window);
-		}
+		/*
+		Deinitialize of the Dirty_GetRenderReady setup.
+		*/
+		void Default_DeinitializeRenderer(ptr<OSAL::Window> _window);
+
+		void Default_ReinitializeRenderer(ptr<OSAL::Window> _window);
+
+	#pragma endregion WIP
 	}
 }

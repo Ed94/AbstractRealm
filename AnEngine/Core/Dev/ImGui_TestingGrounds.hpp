@@ -74,7 +74,7 @@ namespace Debug
 
 			OSAL::SetWindow_SizeChangeCallback(TestWindow, WindowSizeChanged);
 
-			HAL::GPU::Dirty::GetRenderReady(TestWindow);
+			HAL::GPU::Default_InitializeRenderer(TestWindow);
 
 			Imgui::Initialize(TestWindow);
 		}
@@ -95,7 +95,7 @@ namespace Debug
 
 				Imgui::Render();
 
-				HAL::GPU::Dirty::DrawFrame(TestWindow);
+				HAL::GPU::Default_DrawFrame(TestWindow);
 			}
 
 			HAL::GPU::WaitFor_GPUIdle();
@@ -106,7 +106,7 @@ namespace Debug
 		{
 			Imgui::Deinitialize();
 
-			HAL::GPU::Dirty::DeinitializeRenderReady(TestWindow);
+			HAL::GPU::Default_DeinitializeRenderer(TestWindow);
 
 			HAL::GPU::Cease_GPUComms();
 

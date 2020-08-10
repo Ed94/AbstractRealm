@@ -43,13 +43,10 @@ namespace HAL
 			using Delegate_WaitFor_GPUIdle    = Function<decltype(WaitFor_GPUIdle)>;
 			using Delegate_GetRenderContext   = Function<decltype(GetRenderContext)>;
 
-			namespace Dirty
-			{
-				using Delegate_GetRenderReady         = Function<decltype(HAL::GPU::Dirty::GetRenderReady)>;
-				using Delegate_DeInitalizeRenderReady = Function<decltype(HAL::GPU::Dirty::DeinitializeRenderReady)>;
-				using Delegate_DrawFrame              = Function<decltype(HAL::GPU::Dirty::DrawFrame)>;
-				using Delegate_ReinitalizeRenderer    = Function<decltype(HAL::GPU::Dirty::ReinitializeRenderer)>;
-			}
+			using Delegate_GetRenderReady         = Function<decltype(HAL::GPU::Default_InitializeRenderer)>;
+			using Delegate_DeInitalizeRenderReady = Function<decltype(HAL::GPU::Default_DeinitializeRenderer)>;
+			using Delegate_DrawFrame              = Function<decltype(HAL::GPU::Default_DrawFrame)>;
+			using Delegate_ReinitalizeRenderer    = Function<decltype(HAL::GPU::Default_ReinitializeRenderer)>;
 			
 
 
@@ -60,14 +57,14 @@ namespace HAL
 				Delegate_WaitFor_GPUIdle    WaitFor_GPUIdle         ;
 				Delegate_GetRenderContext   GetRenderContext_Bind;
 
-				namespace Dirty
-				{
-					Delegate_GetRenderReady         GetRenderReady_Bind;
-					Delegate_DeInitalizeRenderReady DeinitalizeRenderReady_Bind;
-					Delegate_DrawFrame              DrawFrame_Bind;
+				// WIP
 
-					Delegate_ReinitalizeRenderer ReinitializeRenderer_Bind;
-				}
+				Delegate_GetRenderReady         Default_InitializeRenderer_Bind;
+				Delegate_DeInitalizeRenderReady Default_DeinitializeRenderer_Bind;
+				Delegate_DrawFrame              Default_DrawFrame_Bind;
+
+				Delegate_ReinitalizeRenderer Default_ReinitializeRenderer_Bind;
+
 			//);
 
 
@@ -85,13 +82,15 @@ namespace HAL
 
 						GetRenderContext_Bind = Vulkan::GetRenderContext;
 
-						Dirty::GetRenderReady_Bind = Vulkan::Dirty::Default_InitalizeRenderer;
+						// WIP
 
-						Dirty::DeinitalizeRenderReady_Bind = Vulkan::Dirty::DeInitializeRenderReady;
+						Default_InitializeRenderer_Bind = Vulkan::Default_InitializeRenderer;
 
-						Dirty::DrawFrame_Bind = Vulkan::Dirty::DrawFrame;
+						Default_DeinitializeRenderer_Bind = Vulkan::Default_DeinitializeRenderer;
 
-						Dirty::ReinitializeRenderer_Bind = Vulkan::Dirty::Default_ReinitializeRenderer;
+						Default_DrawFrame_Bind = Vulkan::Default_DrawFrame;
+
+						Default_ReinitializeRenderer_Bind = Vulkan::Default_ReinitializeRenderer;
 					}
 				}
 			}
@@ -130,31 +129,30 @@ namespace HAL
 			return PlatformBackend::GetRenderContext_Bind(_window);
 		}
 
-		// Dirty
+	#pragma region WIP
 
-		namespace Dirty
+		void Default_InitializeRenderer(ptr<OSAL::Window> _window)
 		{
-			void GetRenderReady(ptr<OSAL::Window> _window)
-			{
-				PlatformBackend::Dirty::GetRenderReady_Bind(_window);
-			}
-
-
-			void DeinitializeRenderReady(ptr<OSAL::Window> _window)
-			{
-				PlatformBackend::Dirty::DeinitalizeRenderReady_Bind(_window);
-			}
-
-			void DrawFrame(ptr<OSAL::Window> _window)
-			{
-				PlatformBackend::Dirty::DrawFrame_Bind(_window);
-			}
-
-
-			void ReinitializeRenderer(ptr<OSAL::Window> _window)
-			{
-				PlatformBackend::Dirty::ReinitializeRenderer_Bind(_window);
-			}
+			PlatformBackend::Default_InitializeRenderer_Bind(_window);
 		}
+
+
+		void Default_DeinitializeRenderer(ptr<OSAL::Window> _window)
+		{
+			PlatformBackend::Default_DeinitializeRenderer_Bind(_window);
+		}
+
+		void Default_DrawFrame(ptr<OSAL::Window> _window)
+		{
+			PlatformBackend::Default_DrawFrame_Bind(_window);
+		}
+
+
+		void Default_ReinitializeRenderer(ptr<OSAL::Window> _window)
+		{
+			PlatformBackend::Default_ReinitializeRenderer_Bind(_window);
+		}
+
+	#pragma endregion WIP
 	}
 }

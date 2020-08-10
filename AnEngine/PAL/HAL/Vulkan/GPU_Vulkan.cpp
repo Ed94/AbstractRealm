@@ -18,7 +18,6 @@
 
 
 
-
 #if VULCAN_INTERFACE == VAULTED_THERMALS_INTERFACE
 
 	namespace HAL::GPU
@@ -2139,262 +2138,254 @@
 				RenderContext_Default.MSAA_Samples        = MSAA_Samples            ;
 			}
 
-			namespace Dirty
+			void Default_InitializeRenderer(ptr<Window> _window)
 			{
-				void Default_InitalizeRenderer(ptr<Window> _window)
+				CreateSurface(_window);
+
+				PickPhysicalDevice();
+
+				CreateLogicalDevice();
+
+				CreateSwapChain(_window);
+
+				CreateSwapChain_ImageViews();
+
+				CreateRenderPass();
+
+				CreateDescriptorSetLayout();
+
+				StaticArray<ShaderModule, 2> shaders = Create_VKTut_Shaders();
+
+				CreateGraphicsPipeline(shaders);
+
+				for (auto shader : shaders)
 				{
-					CreateSurface(_window);
-
-					PickPhysicalDevice();
-
-					CreateLogicalDevice();
-
-					CreateSwapChain(_window);
-
-					CreateSwapChain_ImageViews();
-
-					CreateRenderPass();
-
-					CreateDescriptorSetLayout();
-
-					StaticArray<ShaderModule, 2> shaders = Create_VKTut_Shaders();
-
-					CreateGraphicsPipeline(shaders);
-
-					for (auto shader : shaders)
-					{
-						shader.Destroy();
-					}
-
-					CreateFrameObjects();
-
-					CreateColorResources();
-
-					CreateDepthResources();
-
-					CreateFrameBuffers();
-
-					CreateSyncObjects();
-
-					// Hard coded model setup
-
-					LoadModel(VikingRoom_ModelPath);
-
-					CreateVertexBuffers(VertexBuffer, VertexBufferMemory);
-
-					CreateIndexBuffer();
-
-					CreateUniformBuffers();
-
-					CreateTextureImage(VikingRoom_TexturePath.c_str()); 
-
-					CreateTextureImageView();
-
-					//
-
-					CreateTextureSampler();
-
-					CreateDescriptorPool();
-
-					CreateDescriptorSets();
-
-					SetRenderContext();
+					shader.Destroy();
 				}
 
-				void Default_ReinitializeRenderer(ptr<Window> _window)
+				CreateFrameObjects();
+
+				CreateColorResources();
+
+				CreateDepthResources();
+
+				CreateFrameBuffers();
+
+				CreateSyncObjects();
+
+				// Hard coded model setup
+
+				LoadModel(VikingRoom_ModelPath);
+
+				CreateVertexBuffers(VertexBuffer, VertexBufferMemory);
+
+				CreateIndexBuffer();
+
+				CreateUniformBuffers();
+
+				CreateTextureImage(VikingRoom_TexturePath.c_str()); 
+
+				CreateTextureImageView();
+
+				//
+
+				CreateTextureSampler();
+
+				CreateDescriptorPool();
+
+				CreateDescriptorSets();
+
+				SetRenderContext();
+			}
+
+			void Default_ReinitializeRenderer(ptr<Window> _window)
+			{
+				OSAL::FrameBufferDimensions dimensions;
+
+				dimensions = OSAL::GetFramebufferDimensions(_window);
+
+				while (dimensions.Width == 0 || dimensions.Height == 0)
 				{
-					OSAL::FrameBufferDimensions dimensions;
+					OSAL::GetFramebufferDimensions(_window);
 
-					dimensions = OSAL::GetFramebufferDimensions(_window);
-
-					while (dimensions.Width == 0 || dimensions.Height == 0)
-					{
-						OSAL::GetFramebufferDimensions(_window);
-
-						SAL::GLFW::WaitForEvents();
-					}
-
-					LogicalDevice.WaitUntilIdle();
-
-					CleanupSwapChain();
-
-					CreateSwapChain(_window);
-
-					CreateSwapChain_ImageViews();
-
-					CreateRenderPass();
-
-					StaticArray<ShaderModule, 2> shaders = Create_VKTut_Shaders();
-
-					CreateGraphicsPipeline(shaders);
-
-					for (auto shader : shaders)
-					{
-						shader.Destroy();
-					}
-
-					CreateColorResources();
-
-					CreateDepthResources();
-
-					CreateFrameBuffers();
-
-					CreateUniformBuffers();
-
-					CreateDescriptorPool();
-
-					CreateDescriptorSets();
+					SAL::GLFW::WaitForEvents();
 				}
 
-				std::vector<CommandBuffer::Handle> CommandBuffersToSubmit;
+				LogicalDevice.WaitUntilIdle();
 
-				void DrawFrame(ptr<Window> _window)
+				CleanupSwapChain();
+
+				CreateSwapChain(_window);
+
+				CreateSwapChain_ImageViews();
+
+				CreateRenderPass();
+
+				StaticArray<ShaderModule, 2> shaders = Create_VKTut_Shaders();
+
+				CreateGraphicsPipeline(shaders);
+
+				for (auto shader : shaders)
 				{
-					InFlightFences[CurrentFrame].WaitFor(UInt64Max);
-
-
-					uint32 imageIndex;
-
-					EResult result = 
-						SwapChain.AcquireNextImage
-						(
-							UInt64Max                              , 
-							ImageAvailable_Semaphores[CurrentFrame].GetHandle(), 
-							Null<Fence::Handle>                     ,
-							imageIndex
-						);
-						
-					if (result == EResult::Error_OutOfDate_KHR) 
-					{
-						Default_ReinitializeRenderer(_window);
-
-						return;
-					}
-					else if (result != EResult::Success && result != EResult::Suboptimal_KHR) 
-					{
-						throw std::runtime_error("Failed to acquire swap chain image!");
-					}
-
-					if (ImagesInFlight[imageIndex].GetHandle() != Null<Fence::Handle>) 
-						ImagesInFlight[imageIndex].WaitFor(UInt64Max);
-
-					ImagesInFlight[imageIndex] = InFlightFences[CurrentFrame];
-
-
-					// Updating
-
-					CommandPools[imageIndex].Reset(0);
-
-					RecordToBuffers(imageIndex);
-
-					UpdateUniformBuffers(imageIndex);
-
-					// Submit to Graphics Queue
-
-					CommandBuffer::SubmitInfo submitInfo {};
-
-					Semaphore::Handle waitSemaphores[] = { ImageAvailable_Semaphores[CurrentFrame].GetHandle() };
-
-					Pipeline::StageFlags waitStages[1] {};
-
-					waitStages[0].Set(EPipelineStageFlag::ColorAttachmentOutput);
-
-					CommandBuffersToSubmit.push_back(CommandBuffers[CurrentFrame].GetHandle());
-
-					submitInfo.WaitSemaphoreCount = 1             ;
-					submitInfo.WaitSemaphores     = waitSemaphores;
-					submitInfo.WaitDstStageMask   = waitStages    ;
-
-					submitInfo.CommandBufferCount = 1;
-					submitInfo.CommandBuffers     = &CommandBuffers[imageIndex].GetHandle();// CommandBuffersToSubmit.data();
-
-
-					Semaphore::Handle signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame].GetHandle() };
-
-					submitInfo.SignalSemaphoreCount = 1               ;
-					submitInfo.SignalSemaphores     = signalSemaphores;
-
-					InFlightFences[CurrentFrame].Reset();
-
-					if (GraphicsQueue->SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
-						throw std::runtime_error("Failed to submit draw command buffer!");
-
-					CommandBuffersToSubmit.clear();
-
-					// Submit to presentation
-
-					SwapChain::PresentationInfo presentInfo{};
-
-					presentInfo.WaitSemaphoreCount = 1                    ;
-					presentInfo.WaitSemaphores     = signalSemaphores     ;
-
-
-					SwapChain::Handle swapChains[] = { SwapChain.GetHandle() };
-
-					presentInfo.SwapchainCount = 1          ;
-					presentInfo.Swapchains     = swapChains ;
-					presentInfo.ImageIndices   = &imageIndex;
-
-					presentInfo.Results = nullptr; // Optional
-
-					result = PresentationQueue->QueuePresentation(*presentInfo);
-
-					if (result == EResult::Error_OutOfDate_KHR || result == EResult::Suboptimal_KHR || FramebufferResized) 
-					{
-						FramebufferResized = false;
-
-						Default_ReinitializeRenderer(_window);
-					}
-					else if (result != EResult::Success) 
-					{
-						throw std::runtime_error("failed to present swap chain image!");
-					}
-
-					CurrentFrame = (CurrentFrame + 1) % MaxFramesInFlight;
+					shader.Destroy();
 				}
 
-				void DeInitializeRenderReady(ptr<OSAL::Window> _window)
-				{
-					CleanupSwapChain();
+				CreateColorResources();
 
-					TextureSampler    .Destroy();
-					TextureImageView  .Destroy();
-					TextureImage      .Destroy();
-					TextureImageMemory.Free   ();
+				CreateDepthResources();
 
-					DescriptorSetLayout.Destroy();
+				CreateFrameBuffers();
 
-					IndexBuffer      .Destroy();
-					IndexBufferMemory.Free   ();
+				CreateUniformBuffers();
 
-					VertexBuffer      .Destroy();
-					VertexBufferMemory.Free   ();
+				CreateDescriptorPool();
 
-					for (DataSize index = 0; index < MaxFramesInFlight; index++) 
-					{
-						RenderFinished_Semaphores[index].Destroy();
-						ImageAvailable_Semaphores[index].Destroy();
-						InFlightFences           [index].Destroy();
-					}
+				CreateDescriptorSets();
+			}
 
-					SingleTimeCommandPool.Destroy();   
+			std::vector<CommandBuffer::Handle> CommandBuffersToSubmit;
 
-					for (auto pool : CommandPools)
-					{
-						pool.Destroy();
-					}
+			void Default_DrawFrame(ptr<Window> _window)
+			{
+				InFlightFences[CurrentFrame].WaitFor(UInt64Max);
 
-					LogicalDevice.Destroy();
 
-					if (Vulkan_EnableValidationLayers) DebugMessenger.Destroy();
+				uint32 imageIndex;
 
-					Surface.Destroy();
-				}
-
-				/*void Default_ReinitializeRenderer(ptr<OSAL::Window> _window)
+				EResult result = 
+					SwapChain.AcquireNextImage
+					(
+						UInt64Max                              , 
+						ImageAvailable_Semaphores[CurrentFrame].GetHandle(), 
+						Null<Fence::Handle>                     ,
+						imageIndex
+					);
+					
+				if (result == EResult::Error_OutOfDate_KHR) 
 				{
 					Default_ReinitializeRenderer(_window);
-				}*/
+
+					return;
+				}
+				else if (result != EResult::Success && result != EResult::Suboptimal_KHR) 
+				{
+					throw std::runtime_error("Failed to acquire swap chain image!");
+				}
+
+				if (ImagesInFlight[imageIndex].GetHandle() != Null<Fence::Handle>) 
+					ImagesInFlight[imageIndex].WaitFor(UInt64Max);
+
+				ImagesInFlight[imageIndex] = InFlightFences[CurrentFrame];
+
+
+				// Updating
+
+				CommandPools[imageIndex].Reset(0);
+
+				RecordToBuffers(imageIndex);
+
+				UpdateUniformBuffers(imageIndex);
+
+				// Submit to Graphics Queue
+
+				CommandBuffer::SubmitInfo submitInfo {};
+
+				Semaphore::Handle waitSemaphores[] = { ImageAvailable_Semaphores[CurrentFrame].GetHandle() };
+
+				Pipeline::StageFlags waitStages[1] {};
+
+				waitStages[0].Set(EPipelineStageFlag::ColorAttachmentOutput);
+
+				CommandBuffersToSubmit.push_back(CommandBuffers[CurrentFrame].GetHandle());
+
+				submitInfo.WaitSemaphoreCount = 1             ;
+				submitInfo.WaitSemaphores     = waitSemaphores;
+				submitInfo.WaitDstStageMask   = waitStages    ;
+
+				submitInfo.CommandBufferCount = 1;
+				submitInfo.CommandBuffers     = &CommandBuffers[imageIndex].GetHandle();// CommandBuffersToSubmit.data();
+
+
+				Semaphore::Handle signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame].GetHandle() };
+
+				submitInfo.SignalSemaphoreCount = 1               ;
+				submitInfo.SignalSemaphores     = signalSemaphores;
+
+				InFlightFences[CurrentFrame].Reset();
+
+				if (GraphicsQueue->SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
+					throw std::runtime_error("Failed to submit draw command buffer!");
+
+				CommandBuffersToSubmit.clear();
+
+				// Submit to presentation
+
+				SwapChain::PresentationInfo presentInfo{};
+
+				presentInfo.WaitSemaphoreCount = 1                    ;
+				presentInfo.WaitSemaphores     = signalSemaphores     ;
+
+
+				SwapChain::Handle swapChains[] = { SwapChain.GetHandle() };
+
+				presentInfo.SwapchainCount = 1          ;
+				presentInfo.Swapchains     = swapChains ;
+				presentInfo.ImageIndices   = &imageIndex;
+
+				presentInfo.Results = nullptr; // Optional
+
+				result = PresentationQueue->QueuePresentation(*presentInfo);
+
+				if (result == EResult::Error_OutOfDate_KHR || result == EResult::Suboptimal_KHR || FramebufferResized) 
+				{
+					FramebufferResized = false;
+
+					Default_ReinitializeRenderer(_window);
+				}
+				else if (result != EResult::Success) 
+				{
+					throw std::runtime_error("failed to present swap chain image!");
+				}
+
+				CurrentFrame = (CurrentFrame + 1) % MaxFramesInFlight;
+			}
+
+			void Default_DeinitializeRenderer(ptr<OSAL::Window> _window)
+			{
+				CleanupSwapChain();
+
+				TextureSampler    .Destroy();
+				TextureImageView  .Destroy();
+				TextureImage      .Destroy();
+				TextureImageMemory.Free   ();
+
+				DescriptorSetLayout.Destroy();
+
+				IndexBuffer      .Destroy();
+				IndexBufferMemory.Free   ();
+
+				VertexBuffer      .Destroy();
+				VertexBufferMemory.Free   ();
+
+				for (DataSize index = 0; index < MaxFramesInFlight; index++) 
+				{
+					RenderFinished_Semaphores[index].Destroy();
+					ImageAvailable_Semaphores[index].Destroy();
+					InFlightFences           [index].Destroy();
+				}
+
+				SingleTimeCommandPool.Destroy();   
+
+				for (auto pool : CommandPools)
+				{
+					pool.Destroy();
+				}
+
+				LogicalDevice.Destroy();
+
+				if (Vulkan_EnableValidationLayers) DebugMessenger.Destroy();
+
+				Surface.Destroy();
 			}
 		}
 	}
