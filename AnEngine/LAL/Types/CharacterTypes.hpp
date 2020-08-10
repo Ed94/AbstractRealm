@@ -14,4 +14,6 @@ namespace LAL
 	using CStr = char*;
 
 	using RoCStr = const char*;
+
+	using CStr16 = wchar_t*;
 }

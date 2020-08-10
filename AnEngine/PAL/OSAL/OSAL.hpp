@@ -14,6 +14,8 @@ Operating System Abstraction Layer
 
 #include "OSAL/Platform.hpp"
 #include "OSAL/Windowing.hpp"
+#include "OSAL/Threading.hpp"
+#include "OSAL/OSAL_Console.hpp"
 
 
 

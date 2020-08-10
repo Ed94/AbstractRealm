@@ -2,7 +2,7 @@
 
 
 
-namespace Core::Cycler
+namespace Core::Execution
 {
 	
 
@@ -15,6 +15,10 @@ namespace Core::Cycler
 			CriticalFailure,
 			Completed
 		};
+
+	protected:
+
+
 
 	private:
 		

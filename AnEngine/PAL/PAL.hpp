@@ -17,5 +17,5 @@ Platform Abstraction Layer
 
 namespace PAL
 {
-
+	//void LoadModule();
 }

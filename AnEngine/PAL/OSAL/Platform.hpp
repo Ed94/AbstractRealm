@@ -9,8 +9,19 @@ Operating System Abstraction Layer: Platform Definitions
 
 // Includes
 
-// Windows
-#include <windows.h>
+#ifdef _WIN32
+	// Windows
+	
+	// Prevents the numeric limits error in LAL.
+	#define NOMINMAX
+
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+	#include <windows.h>
+
+#endif
 
 // Engine
 #include "LAL/LAL.hpp"
@@ -54,11 +65,26 @@ namespace OSAL
 		struct PlatformTypes_Maker<EOS::Windows>
 		{
 			using OS_AppHandle    = HINSTANCE;
+			using OS_Handle       = HANDLE   ;
 			using OS_WindowHandle = HWND     ;
+
+			using OS_CStr   = LPTSTR ;
+			using OS_RoCStr = LPCTSTR;
+
+			//static constexpr OS_Handle InvalidHandle = INVALID_HANDLE_VALUE;
 		};
 
 		using PlatformTypes = PlatformTypes_Maker<OSAL::OS>;
 	}
 
 	using PlatformTypes = PlatformBackend::PlatformTypes;
+
+
+	using OS_AppHandle    = PlatformTypes::OS_AppHandle   ;
+	using OS_Handle       = PlatformTypes::OS_Handle      ;
+	using OS_WindowHandle = PlatformTypes::OS_WindowHandle;
+	using OS_CStr         = PlatformTypes::OS_CStr        ;
+	using OS_RoCStr       = PlatformTypes::OS_RoCStr      ;
+
+	//constexpr OS_Handle OS_InvalidHandle = PlatformTypes::InvalidHandle;
 }

@@ -76,3 +76,6 @@
 [submodule "AnEngine/PAL/ThirdParty/Libraries/tinyobjloader"]
 	path = AnEngine/PAL/ThirdParty/Libraries/tinyobjloader
 	url = git@github.com:tinyobjloader/tinyobjloader
+[submodule "AnEngine/PAL/ThirdParty/Libraries/PDCurses"]
+	path = AnEngine/PAL/ThirdParty/Libraries/PDCurses
+	url = git@github.com:wmcbrine/PDCurses

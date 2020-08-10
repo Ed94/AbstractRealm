@@ -6,43 +6,48 @@
 
 
 
-namespace Core::Cycler
+namespace Core::Execution
 {
 	enum class CyclerType
 	{
-		Core      ,
-		Debugger  ,
-		Editor    ,
-		IO        ,
-		Profile   ,
-		Render    ,
-		Simulation,
-		UI        ,
-		UserManage,
+		Core       ,
+		Debugger   ,
+		Editor     ,
+		IO         ,  
+		Profile    ,
+		Render     ,
+		Simulation ,
+		UI         ,
+		UserManager,
 		Custom
+	};
+
+	enum class EReturnCode
+	{
+		CriticalFailure,
+		Completed
 	};
 
 	class ACycler
 	{
 	public:
-		enum class ReturnCode
-		{
-			CriticalFailure,
-			Completed
-		};
+		
 
 	public:
 		~ACycler() {};
 
-		virtual void       Initiate          ();
-		virtual ReturnCode Initiate_withRCode();
+		virtual void        Initiate          () = NULL;
+		virtual EReturnCode Initiate_withRCode() = NULL;
 	};
 
 	class Cycler : public ACycler
 	{
 	public:
-		implem void       Initiate          ();
-		implem ReturnCode Initiate_withRCode();
+
+		Cycler();
+
+		implem void        Initiate          ();
+		implem EReturnCode Initiate_withRCode();
 
 	private:
 

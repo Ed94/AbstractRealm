@@ -100,11 +100,11 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <FloatingPointModel>Fast</FloatingPointModel>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;F:\Projects\AnEngine\AnEngine\PAL\ThirdParty\Libraries\PDCurses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,10 +172,18 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Dev\Exec_GLFW_GLM_Test.hpp" />
-    <ClInclude Include="Core\Dev\ImGui_StandaloneExample.hpp" />
-    <ClInclude Include="Core\Dev\ImGui_TestingGrounds.hpp" />
-    <ClInclude Include="Core\Dev\Vulkan_VKTutFull_Test.hpp">
+    <ClInclude Include="Core\Dev\Console.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Dev\DebugExec\Exec_GLFW_GLM_Test.hpp" />
+    <ClInclude Include="Core\Dev\DebugExec\ImGui_StandaloneExample.hpp" />
+    <ClInclude Include="Core\Dev\DebugExec\ImGui_TestingGrounds.hpp" />
+    <ClInclude Include="Core\Dev\DebugExec\Vulkan_VKTutFull_Test.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Dev\Dev.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -200,6 +208,14 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Core\Memory\MemTypes.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="LAL\STL_Chrono.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="LAL\STL_Thread.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -409,6 +425,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\OSAL\OSAL_Console.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\OSAL\Platform.hpp">
       <SubType>
       </SubType>
@@ -448,6 +468,15 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\common\acs437.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\common\acsgr.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\common\acsuni.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\common\font437.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\common\iconbmp.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\curses.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\curspriv.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\panel.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcwin.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\stb\stb_image.h" />
     <ClInclude Include="Renderer\Shader\RudimentaryCompiler.hpp">
       <SubType>
@@ -488,9 +517,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
+    <None Include="PAL\ThirdParty\Libraries\PDCurses\docs\index.html" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Execution\Execute.cpp" />
+    <ClCompile Include="Core\Cycler\Cycler.cpp" />
+    <ClCompile Include="Core\Dev\Console.cpp" />
+    <ClCompile Include="Core\Dev\Dev.cpp" />
+    <ClCompile Include="Core\Execution\EntryPoint.cpp" />
+    <ClCompile Include="Core\Execution\Executer.cpp" />
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
@@ -500,6 +534,8 @@
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Console.cpp" />
+    <ClCompile Include="PAL\OSAL\Threading.cpp" />
     <ClCompile Include="PAL\OSAL\Windowing.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
     <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
@@ -511,6 +547,56 @@
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_draw.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\addch.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\addchstr.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\addstr.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\attr.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\beep.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\bkgd.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\border.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\clear.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\color.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\debug.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\delch.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\deleteln.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\getch.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\getstr.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\getyx.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\inch.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\inchstr.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\initscr.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\inopts.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\insch.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\insstr.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\instr.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\kernel.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\keyname.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\mouse.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\move.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\outopts.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\overlay.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\pad.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\panel.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\printw.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\refresh.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\scanw.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\scroll.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\scr_dump.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\slk.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\termattr.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\touch.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\util.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\pdcurses\window.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcclip.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcdisp.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcgetsc.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdckbd.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcscrn.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcsetsc.c" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\PDCurses\wincon\pdcutil.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PAL\ThirdParty\Libraries\PDCurses\common\pdcurses.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

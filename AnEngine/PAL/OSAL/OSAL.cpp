@@ -7,6 +7,10 @@ namespace OSAL
 {
 	using namespace Meta;
 
+
+
+	// Public
+
 	void Load()
 	{
 		switch (WindowingPlatform)
@@ -16,6 +20,8 @@ namespace OSAL
 				SAL::GLFW::Initalize();
 			}
 		}
+
+		
 	}
 
 	void Unload()
@@ -35,5 +41,14 @@ namespace OSAL
 		{
 			SAL::GLFW::PollEvents();
 		}
+	}
+
+
+	// Private
+
+
+	void GetProessInformation()
+	{
+
 	}
 }

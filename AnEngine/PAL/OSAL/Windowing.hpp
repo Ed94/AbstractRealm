@@ -115,7 +115,6 @@ namespace OSAL
 	}
 
 
-	using PlatformBackend::PlatformTypes;
 	using PlatformBackend::Window;
 	using PlatformBackend::WindowSize_CallbackFunc;
 	using PlatformBackend::WindowedMode;

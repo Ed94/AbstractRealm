@@ -34,5 +34,7 @@ standard c++.
 #include "STL_String.hpp"
 #include "STL_Exceptions.hpp"
 #include "Utilities/STL_Functions.hpp"
+#include "STL_Chrono.hpp"
+#include "STL_Thread.hpp"
 
 
