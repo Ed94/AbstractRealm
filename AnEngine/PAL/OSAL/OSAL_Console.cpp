@@ -6,8 +6,6 @@
 
 namespace OSAL
 {
-	using PlatformBackend::ConsoleAPI;
-
 	OS_Handle Console_CreateBuffer()
 	{
 		return ConsoleAPI::CreateBuffer();

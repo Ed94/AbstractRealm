@@ -6,21 +6,25 @@ Operating System Abstraction Layer: Platform Definitions
 #pragma once
 
 
-
 // Includes
 
 #ifdef _WIN32
 	// Windows
 	
+	//#include "targetver.h"
 	// Prevents the numeric limits error in LAL.
 	#define NOMINMAX
-
+	#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+	// Windows Header Files
 	#include <windows.h>
+	#include <corecrt_io.h>
+	#include <fcntl.h>
 
 #endif
 
 // Engine
 #include "LAL/LAL.hpp"
+#include "OSAL_Backend.hpp"
 
 
 
@@ -68,6 +72,8 @@ namespace OSAL
 			using OS_RoCStr = LPCTSTR;
 
 			//static constexpr OS_Handle InvalidHandle = INVALID_HANDLE_VALUE;
+
+			using ExitValT = int;
 		};
 
 		using PlatformTypes = PlatformTypes_Maker<OSAL::OS>;
@@ -81,6 +87,7 @@ namespace OSAL
 	using OS_WindowHandle = PlatformTypes::OS_WindowHandle;
 	using OS_CStr         = PlatformTypes::OS_CStr        ;
 	using OS_RoCStr       = PlatformTypes::OS_RoCStr      ;
+	using ExitValT        = PlatformTypes::ExitValT       ;
 
 	//constexpr OS_Handle OS_InvalidHandle = PlatformTypes::InvalidHandle;
 }

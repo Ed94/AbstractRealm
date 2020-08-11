@@ -10,6 +10,8 @@
 
 
 
+
+
 namespace Dev
 {
 	using namespace LAL;
@@ -98,7 +100,7 @@ namespace Dev
 
 			CharStream.str(String());
 
-			CalendarDate dateSnapshot = OSAL::GetTime_UTC();
+			CalendarDate dateSnapshot = OSAL::GetTime_Local();
 
 			CharStream
 				<< "[" << put_time(&dateSnapshot,"%F %I:%M:%S %p") << "] "
@@ -188,10 +190,7 @@ namespace Dev
 	void Load_DevConsole()
 	{
 		cout << "Dev: Load Console Buffer" << endl;
-
-		ConsoleOutput = OSAL::Console_GetHandle(EConsoleHandle::Output);
-		ConsoleInput  = OSAL::Console_GetHandle(EConsoleHandle::Input );
-
+		
 		OSAL::Console_SetTitle(ConsoleTitle);
 
 		OSAL::Console_SetBufferSize(ConsoleOutput, ConsoleBufferSize);
@@ -213,5 +212,13 @@ namespace Dev
 		Load_CharStream_Status();
 
 		CLog("Dev: Console Submodules ready.");
+	}
+
+	void SetConsole_IOHooks()
+	{
+		ConsoleOutput = OSAL::Console_GetHandle(EConsoleHandle::Output);
+		ConsoleInput  = OSAL::Console_GetHandle(EConsoleHandle::Input);
+
+		OSAL::Console_Bind_IOBuffersTo_OSIO();
 	}
 }

@@ -1,0 +1,23 @@
+/*****************************************************************//**
+ * \file   OSAL_EntryPoint.hpp
+ * \brief  This header must be included after the entry point is defined.
+ * OSAL_SpeicifyEntryPoint must be used after including header to specify entry point.
+ * 
+ * \author Edward
+ * \date   August 2020
+ *********************************************************************/
+
+
+#pragma once
+
+
+
+#include "Platform.hpp"
+
+
+
+
+namespace OSAL
+{
+	using FN_EntryPoint = Function<ExitValT()>;
+}

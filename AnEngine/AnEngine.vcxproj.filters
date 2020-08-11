@@ -113,6 +113,7 @@
     <ClInclude Include="PAL\OSAL\OSAL_Backend.hpp" />
     <ClInclude Include="PAL\HAL\HAL_Backend.hpp" />
     <ClInclude Include="PAL\OSAL\Timing.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_EntryPoint.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -140,12 +141,12 @@
     <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />
     <ClCompile Include="Core\Cycler\Cycler.cpp" />
     <ClCompile Include="Core\Execution\Executer.cpp" />
-    <ClCompile Include="Core\Execution\EntryPoint.cpp" />
     <ClCompile Include="PAL\OSAL\Threading.cpp" />
     <ClCompile Include="Core\Dev\Console.cpp" />
     <ClCompile Include="Core\Dev\Dev.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Console.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Backend.cpp" />
     <ClCompile Include="PAL\OSAL\Timing.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_EntryPoint.cpp" />
   </ItemGroup>
 </Project>

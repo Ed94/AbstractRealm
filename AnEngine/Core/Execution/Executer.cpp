@@ -2,20 +2,23 @@
 #include "Executer.hpp"
 
 
-#include "Meta/EngineInfo.hpp"
-#include "Dev/Dev.hpp"
-#include "OSAL/OSAL.hpp"
-#include "HAL/GPU_HAL.hpp"
-
 
 namespace Core::Execution
 {
-	using namespace Meta;
-
-	int InitiateExecution()
+	OSAL::ExitValT EntryPoint()
 	{
+		OSAL::Record_EntryPoint_StartExecution();
+
 		if (UseDebug)
 		{
+			using namespace LAL;
+
+			if (!AllocConsole()) return 0;
+
+			Dev::SetConsole_IOHooks();
+
+			cout << "EntryPoint: Starting the Core Execution Module" << endl;
+
 			cout << "Core:Execution: Initiate Execution" << endl;
 
 			cout << setfill('-') << setw(140); cout << " " << endl;
@@ -36,7 +39,11 @@ namespace Core::Execution
 
 		HAL::GPU::Load();
 
-		std::chrono::duration<float64> delta;
+
+
+
+
+		/*std::chrono::duration<float64> delta;
 
 		while (true)
 		{
@@ -47,6 +54,11 @@ namespace Core::Execution
 			auto end = SteadyClock::now();
 
 			delta = std::chrono::duration_cast<decltype(delta)>(end - begin);
+		}*/
+
+		if (UseDebug)
+		{
+			FreeConsole();
 		}
 
 		return EXIT_SUCCESS;

@@ -4,6 +4,8 @@ Execute
 Last Modified: 5/18/2020
 
 Currently the only defined main in the engine. You can manually define what procedure to execute here...
+
+// Old console entry point....
 */
 
 
@@ -24,7 +26,7 @@ int main()
 
 	cout << "EntryPoint: Starting the Core Execution Module" << endl;
 
-	Core::Execution::InitiateExecution();
+	//Core::Execution::InitiateExecution();
 
 	return EXIT_SUCCESS;
 }

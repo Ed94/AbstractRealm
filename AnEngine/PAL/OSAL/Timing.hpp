@@ -15,7 +15,7 @@ namespace OSAL
 		template<>
 		struct TimingAPI_Maker<EOS::Windows>
 		{
-			static constexpr auto GetTime_Local = localtime_s;
+			static constexpr auto TimeLocal = localtime_s;
 		};
 
 		using TimingAPI = TimingAPI_Maker<OSAL::OS>;
@@ -23,11 +23,13 @@ namespace OSAL
 
 	using PlatformBackend::TimingAPI;
 
-	constexpr auto GetTime_Local = TimingAPI::GetTime_Local;
+	constexpr auto TimeLocal = TimingAPI::TimeLocal;
 
 	void Record_EntryPoint_StartExecution();
 
 	void Load_Timing();
 
-	CalendarDate GetTime_UTC();
+	CalendarDate& GetTime_Local();
+
+	CalendarDate& GetTime_UTC();
 }

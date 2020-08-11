@@ -13,10 +13,16 @@ Last Modified: 5/18/2020
 #include "LAL/LAL.hpp"
 
 
+#include "Meta/EngineInfo.hpp"
+#include "Dev/Dev.hpp"
+#include "OSAL/OSAL.hpp"
+#include "HAL/GPU_HAL.hpp"
+
 
 namespace Core::Execution
 {
 	using namespace LAL;
+	using namespace Meta;
 
 
 	enum class EExecutionType
@@ -68,5 +74,7 @@ namespace Core::Execution
 	/**
 	 * Loads the Core's execution module and starts up the .
 	 */
-	int InitiateExecution();
+	OSAL::ExitValT EntryPoint();
 }
+
+

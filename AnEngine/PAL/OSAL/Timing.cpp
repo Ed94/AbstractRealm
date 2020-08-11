@@ -8,9 +8,6 @@
 
 namespace OSAL
 {
-	
-
-
 	template<typename Period>
 	using NanoPeriod = std::ratio_multiply<Period, std::giga>;
 
@@ -45,6 +42,9 @@ namespace OSAL
 
 	SysTimePoint EntryPoint_StartExecution;	
 
+	CalendarDate TimeUTC_Buffer;
+	CalendarDate TimeLocal_Buffer;
+
 
 
 	void GetClock_Accuracies()
@@ -68,12 +68,21 @@ namespace OSAL
 		EntryPoint_StartExecution = SystemClock::now();
 	}
 
-	CalendarDate GetTime_UTC()
+	CalendarDate& GetTime_UTC()
 	{
 		const Time timeSnap = SystemClock::to_time_t(SystemClock::now());;
 
-		CalendarDate date; GetTime_Local(&date, &timeSnap);
-	
-		return date;
+		TimeUTC_Buffer = *TimeUTC(&timeSnap);
+
+		return TimeUTC_Buffer;
+	}
+
+	CalendarDate& GetTime_Local()
+	{
+		const Time timeSnap = SystemClock::to_time_t(SystemClock::now());;
+
+		TimeLocal(&TimeLocal_Buffer, &timeSnap);
+
+		return TimeLocal_Buffer;
 	}
 }

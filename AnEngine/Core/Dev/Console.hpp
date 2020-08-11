@@ -19,4 +19,6 @@ namespace Dev
 	void CLog(String _lineToLog);
 
 	void Load_DevConsole();
+
+	void SetConsole_IOHooks();
 }
