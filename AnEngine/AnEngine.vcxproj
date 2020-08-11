@@ -109,7 +109,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Release\src;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
@@ -481,8 +481,6 @@
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_rectpack.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_textedit.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_truetype.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\misc\cpp\imgui_stdlib.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\Library.hpp">
       <SubType>
       </SubType>
@@ -533,6 +531,7 @@
     <ClCompile Include="Core\Dev\Console.cpp" />
     <ClCompile Include="Core\Dev\Dev.cpp" />
     <ClCompile Include="Core\Execution\Executer.cpp" />
+    <ClCompile Include="Core\Execution\Exec_Primitive.cpp" />
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
@@ -550,14 +549,12 @@
     <ClCompile Include="PAL\OSAL\Windowing.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
     <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_dx9.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_demo.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_draw.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\misc\cpp\imgui_stdlib.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

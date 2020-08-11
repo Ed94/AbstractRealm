@@ -4,6 +4,9 @@
 
 #include "LAL/LAL.hpp"
 
+#include "Execution/Executer.hpp"
+#include <atomic>
+
 
 
 namespace Core::Execution
@@ -22,17 +25,8 @@ namespace Core::Execution
 		Custom
 	};
 
-	enum class EReturnCode
-	{
-		CriticalFailure,
-		Completed
-	};
-
 	class ACycler
 	{
-	public:
-		
-
 	public:
 		~ACycler() {};
 
@@ -49,8 +43,36 @@ namespace Core::Execution
 		implem void        Initiate          ();
 		implem EReturnCode Initiate_withRCode();
 
-	private:
+		void BindExecuter(ptr<AExecuter> _executerToBind);
 
-		bool exist;
+		void Lapse();
+
+		void Toggle();
+
+		bool Lapsed() { return lapsed; };
+
+		Duration64 GetDeltaTime() { return deltaTime; }
+
+		Duration64 GetAverageDelta() { return averageDelta; }
+
+		float64 GetCycle() { return cycles; }
+
+		operator ptr<ACycler>();
+
+		//operator ptr<ACycler>();
+
+	protected:
+
+		void CalculateStats();
+
+		ptr<AExecuter> executer;
+
+		float64 cycles;
+
+		Duration64 deltaTime, averageDelta;
+
+		SteadyTimePoint cycleStart, cycleEnd;
+
+		bool exist, lapsed, pause;
 	};
 }

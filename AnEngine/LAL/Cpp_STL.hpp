@@ -20,6 +20,7 @@ C++ Standard Library
 #include <limits>
 #include <memory>
 #include <optional>
+#include <queue>
 #include <stdexcept>
 #include <set>
 #include <string>

@@ -64,9 +64,28 @@ namespace Dev
 
 	std::stringstream CharStream;
 
-	void WriteToBufferLine(int _line, WORD _flags)
+	StaticArray<std::stringstream, 4> StatusStreams;
+
+	void WriteTo_Buffer(int _line, WORD _flags)
 	{
 		auto str = CharStream.str();
+
+		if (_line > ConsoleHeight -1) cerr << "wtf2" << endl;
+
+		
+
+		for (int index = 0; index < str.size(); index++)
+		{
+			ConsoleCharBuffer[index + ConsoleWidth * _line].Char.UnicodeChar = str.at(index);
+			ConsoleCharBuffer[index + ConsoleWidth * _line].Attributes = _flags;
+		}
+	}
+
+	void WriteTo_StatusModule(int _line, WORD _flags)
+	{
+		auto str = StatusStreams[_line].str();
+
+		_line = StatusStart + _line + 1;
 
 		for (int index = 0; index < str.size(); index++)
 		{
@@ -87,13 +106,31 @@ namespace Dev
 		}
 	}
 
+	bool CLog_ShouldWriteToConsole = true;
+	void CLog_ToggleWriteToConsole() {  CLog_ShouldWriteToConsole ^= true; }
+
+	void CLog_Status(String _info, int _line)
+	{
+		if (Meta::UseDebug)
+		{
+			StatusStreams[_line].str(String());
+
+			StatusStreams[_line]
+				<< _info
+				<< setfill(' ')
+				<< setw(ConsoleWidth - StatusStreams[_line].str().size()) << ' ';
+
+			WriteTo_StatusModule(_line, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		}
+	}
+
 	void CLog(String _lineToLog)
 	{
 		if (Meta::UseDebug)
 		{
 			static uInt16 linePos = 4;
 
-			if (linePos == StatusStart )
+			if (linePos == StatusStart +1 )
 			{
 				linePos = 4;
 			}
@@ -108,23 +145,57 @@ namespace Dev
 				<< setfill(' ')
 				<< setw(ConsoleWidth - CharStream.str().size()) << ' ';
 
-			WriteToBufferLine(linePos-1, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
+			WriteTo_Buffer(linePos-1, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 
 			CharStream.str(String());
 
 			CharStream
 				<< setfill('-')
-				<< setw(ConsoleWidth) << '-';
+				<< setw(ConsoleWidth- CharStream.str().size()) << '-';
 
-			WriteToBufferLine(linePos++, BACKGROUND_INTENSITY );
+			WriteTo_Buffer(linePos++, BACKGROUND_INTENSITY );
 
-			WriteConsoleOutput(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
+			if (CLog_ShouldWriteToConsole)
+				WriteConsoleOutput(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
 		}
 	}
 
+	void Console_UpdateBuffer()
+	{
+		WriteConsoleOutput(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
+	}
+
+
 	void CLog_Error(String _lineToLog)
 	{
+		static uInt16 linePos = 4;
 
+		if (linePos == StatusStart +1)
+		{
+			linePos = 4;
+		}
+
+		CharStream.str(String());
+
+		CalendarDate dateSnapshot = OSAL::GetTime_Local();
+
+		CharStream
+			<< "[" << put_time(&dateSnapshot, "%F %I:%M:%S %p") << "] "
+			<< _lineToLog
+			<< setfill(' ')
+			<< setw(ConsoleWidth - CharStream.str().size()) << ' ';
+
+		WriteTo_Buffer(linePos - 1, FOREGROUND_RED | FOREGROUND_INTENSITY);
+
+		CharStream.str(String());
+
+		CharStream
+			<< setfill('^')
+			<< setw(ConsoleWidth) << '^';
+
+		WriteTo_Buffer(linePos++, FOREGROUND_RED);
+
+		WriteConsoleOutput(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
 	}
 	
 	void Load_CharStream_EngineTitle()
@@ -133,7 +204,7 @@ namespace Dev
 
 		CharStream << setfill('-') << setw(ConsoleWidth) << '-';
 
-		WriteToBufferLine(0, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		WriteTo_Buffer(0, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
 		CharStream.str(std::string());
 
@@ -142,13 +213,13 @@ namespace Dev
 			<< EEngineVersion::Minor << "."
 			<< EEngineVersion::Patch << setfill(' ') << setw(ConsoleWidth - CharStream.str().size()) << ' ';
 
-		WriteToBufferLine(1, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		WriteTo_Buffer(1, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
 		CharStream.str(String());
 
 		CharStream << setfill('-') << setw(ConsoleWidth) << '-';
 
-		WriteToBufferLine(2, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		WriteTo_Buffer(2, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	}
 
 	void Load_CharStream_DevLog()
@@ -159,7 +230,7 @@ namespace Dev
 
 			CharStream << setw(ConsoleWidth) << setfill(' ') << ' ';
 
-			WriteToBufferLine(line, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
+			WriteTo_Buffer(line, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 		}
 	}
 
@@ -169,13 +240,13 @@ namespace Dev
 
 		CharStream << setfill('=') << setw(ConsoleWidth) << '=';
 		
-		WriteToBufferLine(StatusStart, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		WriteTo_Buffer(StatusStart, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
 		CharStream.str(std::string());
 
 		CharStream << "Status: Not Setup.";
 
-		WriteToBufferLine(StatusStart + 1, FOREGROUND_RED | FOREGROUND_INTENSITY);
+		WriteTo_Buffer(StatusStart + 1, FOREGROUND_RED | FOREGROUND_INTENSITY);
 		
 		for (uInt16 line = StatusStart + 2; line < ConsoleHeight; line++)
 		{
@@ -183,7 +254,7 @@ namespace Dev
 
 			CharStream << setfill(' ') << setw(ConsoleWidth) << ' ';
 
-			WriteToBufferLine(line, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
+			WriteTo_Buffer(line, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 		}
 	}
 	
@@ -220,5 +291,7 @@ namespace Dev
 		ConsoleInput  = OSAL::Console_GetHandle(EConsoleHandle::Input);
 
 		OSAL::Console_Bind_IOBuffersTo_OSIO();
+
+		cout << "Dev: Console IO Buffers hooked to OS IO" << endl;
 	}
 }

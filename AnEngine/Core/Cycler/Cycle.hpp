@@ -10,11 +10,6 @@ namespace Core::Execution
 	class Cycle
 	{
 	public:
-		enum class ReturnCode
-		{
-			CriticalFailure,
-			Completed
-		};
 
 	protected:
 

@@ -18,6 +18,13 @@ namespace LAL
 	using HighResTimePeriod = HighResClock::period              ;
 	using HighResTimePoint  = HighResClock::time_point          ;
 
+	template<class RepresentiveType, class Period = std::ratio<1>>
+	using Duration = std::chrono::duration<RepresentiveType, Period>;
+
+	using Duration64 = Duration<float64>;
+
+	//template<class ToDuration>
+	//using CastTODuration = std::chrono::duration_cast<ToDuration>;
 
 
 	using Time = std::time_t;

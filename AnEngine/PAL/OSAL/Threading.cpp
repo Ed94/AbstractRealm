@@ -5,7 +5,44 @@
 
 namespace OSAL
 {
-	uint32 NumberOfLogicalCores;  
+	uint32 NumberOfLogicalCores;   
+
+	
+	namespace Backend
+	{
+		void ThreadManager::GenerateThreads()
+		{
+			threads.resize(NumberOfLogicalCores - 1);
+		}
+
+		void ThreadManager::DecommissionThread(DataSize _handle)
+		{
+			threads.at(_handle - 1).join();
+		}
+
+		DataSize ThreadManager::GetNumOfActiveThreads()
+		{
+			DataSize num = 0;
+
+			for (DataSize num = 0; num < threads.size(); num++)
+			{
+				if (threads[num].joinable())
+				{
+					num++;
+				}
+			}
+
+			return num;
+		}
+
+		ThreadManager Threads;
+	}
+
+	void GenerateThreads() { Backend::Threads.GenerateThreads(); }
+
+	DataSize GetNumOfActiveThreads() { return Backend::Threads.GetNumOfActiveThreads(); }
+
+	void DecommissionThread(DataSize _handle) { Backend::Threads.DecommissionThread(_handle); }
 
 	void QueryThreadInfo()
 	{

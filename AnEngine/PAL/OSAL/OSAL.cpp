@@ -23,6 +23,8 @@ namespace OSAL
 
 		QueryThreadInfo();	
 
+		GenerateThreads();
+
 		switch (WindowingPlatform)
 		{
 			case EWindowingPlatform::GLFW:

@@ -27,54 +27,105 @@ namespace Core::Execution
 
 	enum class EExecutionType
 	{
-		Primitive,   // A rudimentary execution system. (Used by cycle for example)
+		Primitive,   // A rudimentary execution system. 
 		Engine   ,   // The executer for the engine level routines.
 		Editor       // The executer for the editor level routines.
 	};
 
-	template<EExecutionType>
-	class Executer
+	// Possibly be used later to optimize execution calls...
+	enum class EParameterFlag
 	{
-	public:
-		 Executer();
-		~Executer();
+		DeltaTime,
 
-	protected:
+	};
 
-	private:
+	enum class EReturnCode
+	{
+		CriticalFailure,
+		Completed
 	};
 
 
-	template<>
-	class Executer<EExecutionType::Primitive>
+	class AExecuter
+	{
+	public:
+		~AExecuter() {};
+
+		virtual void Execute() = NULL;
+		//virtual void Execute(Duration64 _deltaTime) = NULL;
+	};
+
+	template<typename FN_Type>
+	class PrimitiveExecuter : AExecuter
+	{
+	public:
+		using FN_Procedure = Function<FN_Type>;
+
+		unbound constexpr EExecutionType Type = EExecutionType::Primitive;
+
+		implem void Bind(Function<FN_Type> _procedure);
+
+		implem void Execute();
+		//implem void Execute(Duration64 _deltaTime);
+
+		operator ptr<AExecuter>()
+		{
+			return RCast<AExecuter>(this);
+		}
+
+	protected:
+	private:
+		FN_Procedure procedure;
+	};
+
+	class EngineExecuter : AExecuter
+	{
+	public:
+		unbound constexpr EExecutionType Type = EExecutionType::Engine;
+
+		template<typename FN_Type>
+		void Add(Function<FN_Type> _routine);
+
+		implem void Execute();
+		//implem void Execute(Duration64 _deltaTime);
+
+	protected:
+		void ToggleIdle();
+
+	private:	
+		Queue<ptr<AExecuter>> queue;
+	};
+
+	
+	class EditorExecuter : AExecuter
 	{
 	public:
 	protected:
 	private:
+		Queue<ptr<AExecuter>> queue;
 	};
-
-	template<>
-	class Executer<EExecutionType::Engine>
-	{
-	public:
-	protected:
-	private:
-	};
-
-	template<>
-	class Executer<EExecutionType::Editor>
-	{
-	public:
-	protected:
-	private:
-	};
-
 
 
 	/**
-	 * Loads the Core's execution module and starts up the .
+	 * Engine application entry point.
 	 */
 	OSAL::ExitValT EntryPoint();
+}
+
+
+namespace Core::Execution
+{
+	template<typename FN_Type>
+	void PrimitiveExecuter<FN_Type>::Bind(Function<FN_Type> _procedure)
+	{
+		procedure = _procedure;
+	}
+
+	template<typename FN_Type>
+	void PrimitiveExecuter<FN_Type>::Execute()
+	{
+		procedure();
+	}
 }
 
 

@@ -17,6 +17,9 @@
 
 namespace LAL
 {
+	template<typename Type>
+	using Queue = std::queue<Type>;
+
 	template<typename Type, DataSize NumberOfElements>
 	using StaticArray = std::array<Type, NumberOfElements>;
 
