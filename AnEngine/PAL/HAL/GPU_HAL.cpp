@@ -22,7 +22,9 @@ Note: For now this is going to be a big copy and paste to an extent from the tri
 #include "Meta/Config/OSAL_Config.hpp"
 #include "OSAL/Platform.hpp"
 
-#include "GLFW_SAL.hpp"
+#include "Dev/Dev.hpp"
+
+//#include "GLFW_SAL.hpp"
 
 
 
@@ -101,6 +103,8 @@ namespace HAL
 
 		void Load()
 		{
+			
+
 			PlatformBackend::Determine_PlatformBindings();
 		}
 

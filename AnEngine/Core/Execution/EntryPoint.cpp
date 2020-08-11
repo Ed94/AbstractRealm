@@ -10,6 +10,7 @@ Currently the only defined main in the engine. You can manually define what proc
 #include "LAL/LAL.hpp"
 
 
+#include "OSAL/Timing.hpp"
 
 #include "Executer.hpp"
 
@@ -18,6 +19,8 @@ Currently the only defined main in the engine. You can manually define what proc
 int main()
 {
 	using namespace LAL;
+
+	OSAL::Record_EntryPoint_StartExecution();
 
 	cout << "EntryPoint: Starting the Core Execution Module" << endl;
 

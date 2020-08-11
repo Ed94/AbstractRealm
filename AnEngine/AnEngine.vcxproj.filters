@@ -110,6 +110,9 @@
     <ClInclude Include="Core\Dev\Console.hpp" />
     <ClInclude Include="Core\Dev\Dev.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_Console.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_Backend.hpp" />
+    <ClInclude Include="PAL\HAL\HAL_Backend.hpp" />
+    <ClInclude Include="PAL\OSAL\Timing.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -142,5 +145,7 @@
     <ClCompile Include="Core\Dev\Console.cpp" />
     <ClCompile Include="Core\Dev\Dev.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Console.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Backend.cpp" />
+    <ClCompile Include="PAL\OSAL\Timing.cpp" />
   </ItemGroup>
 </Project>

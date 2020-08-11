@@ -10,17 +10,20 @@ Operating System Abstraction Layer
 
 // Includes
 
-#include "LAL/LAL.hpp"
+
 
 #include "OSAL/Platform.hpp"
 #include "OSAL/Windowing.hpp"
 #include "OSAL/Threading.hpp"
+#include "OSAL/Timing.hpp"
 #include "OSAL/OSAL_Console.hpp"
 
 
 
 namespace OSAL
 {
+	
+
 	/*
 	Loads the OSAL submodule.
 

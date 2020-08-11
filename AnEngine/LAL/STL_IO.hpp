@@ -26,4 +26,7 @@ namespace LAL
 	using std::cerr;
 	using std::cout;
 	using std::endl;
+
+	using std::setfill;
+	using std::setw   ;
 }

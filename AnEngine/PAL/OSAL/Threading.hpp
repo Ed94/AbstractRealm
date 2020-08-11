@@ -1,14 +1,14 @@
 #pragma once
 
 
-#include "LAL.hpp"
+
+#include "OSAL_Backend.hpp"
+
 
 
 namespace OSAL
 {
-	using namespace LAL;
-
-	void QueryInfo();
+	void QueryThreadInfo();
 
 	uint32 GetNumberOfLogicalCores();
 }

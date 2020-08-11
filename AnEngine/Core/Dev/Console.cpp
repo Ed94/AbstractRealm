@@ -6,6 +6,7 @@
 #include "Meta/EngineInfo.hpp"
 
 #include "OSAL/OSAL_Console.hpp"
+#include "OSAL/Timing.hpp"
 
 
 
@@ -52,7 +53,7 @@ namespace Dev
 
 	// 0-3, 4-70, 71-90: Engine Title, DevLog, Status
 
-	uInt16 DevLogLineEnd = 40;
+	uInt16 DevLogLineEnd = 44;
 	uInt16 StatusStart   = 45;
 
 
@@ -61,14 +62,14 @@ namespace Dev
 
 	std::stringstream CharStream;
 
-	void WriteToBufferLine(int _line)
+	void WriteToBufferLine(int _line, WORD _flags)
 	{
 		auto str = CharStream.str();
 
 		for (int index = 0; index < str.size(); index++)
 		{
 			ConsoleCharBuffer[index + ConsoleWidth * _line].Char.UnicodeChar = str.at(index);
-			ConsoleCharBuffer[index + ConsoleWidth * _line].Attributes = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;
+			ConsoleCharBuffer[index + ConsoleWidth * _line].Attributes = _flags;
 		}
 	}
 
@@ -84,48 +85,68 @@ namespace Dev
 		}
 	}
 
-	void CLog(const CharLine _lineToLog)
+	void CLog(String _lineToLog)
 	{
-		static uInt16 linePos = 3;
-
-		if (linePos == DevLogLineEnd) 
+		if (Meta::UseDebug)
 		{
-			linePos = 3;
+			static uInt16 linePos = 4;
+
+			if (linePos == StatusStart )
+			{
+				linePos = 4;
+			}
+
+			CharStream.str(String());
+
+			CalendarDate dateSnapshot = OSAL::GetTime_UTC();
+
+			CharStream
+				<< "[" << put_time(&dateSnapshot,"%F %I:%M:%S %p") << "] "
+				<< _lineToLog 
+				<< setfill(' ')
+				<< setw(ConsoleWidth - CharStream.str().size()) << ' ';
+
+			WriteToBufferLine(linePos-1, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
+
+			CharStream.str(String());
+
+			CharStream
+				<< setfill('-')
+				<< setw(ConsoleWidth) << '-';
+
+			WriteToBufferLine(linePos++, BACKGROUND_INTENSITY );
+
+			WriteConsoleOutput(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
 		}
-
-		CharStream.str(std::string());
-
-		CharStream << _lineToLog << std::setw(ConsoleWidth - CharStream.str().size()) << ' ';
-
-		WriteToBufferLine(linePos);
-
-		linePos++;
-
-		WriteConsoleOutput(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
 	}
 
+	void CLog_Error(String _lineToLog)
+	{
+
+	}
+	
 	void Load_CharStream_EngineTitle()
 	{
 		using namespace Meta;
 
-		CharStream << std::setfill('-') << std::setw(ConsoleWidth) << '-';
+		CharStream << setfill('-') << setw(ConsoleWidth) << '-';
 
-		WriteToBufferLine(0);
+		WriteToBufferLine(0, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
 		CharStream.str(std::string());
 
 		CharStream << "Abstract Realm: MVP Build - "
 			<< EEngineVersion::Major << "."
 			<< EEngineVersion::Minor << "."
-			<< EEngineVersion::Patch << std::setfill(' ') << std::setw(ConsoleWidth - CharStream.str().size()) << ' ';
+			<< EEngineVersion::Patch << setfill(' ') << setw(ConsoleWidth - CharStream.str().size()) << ' ';
 
-		WriteToBufferLine(1);
+		WriteToBufferLine(1, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
-		CharStream.str(std::string());
+		CharStream.str(String());
 
-		CharStream << std::setfill('-') << std::setw(ConsoleWidth) << '-';
+		CharStream << setfill('-') << setw(ConsoleWidth) << '-';
 
-		WriteToBufferLine(2);
+		WriteToBufferLine(2, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	}
 
 	void Load_CharStream_DevLog()
@@ -134,9 +155,9 @@ namespace Dev
 		{
 			CharStream.str(std::string());
 
-			CharStream << std::setw(ConsoleWidth) << std::setfill(' ') << ' ';
+			CharStream << setw(ConsoleWidth) << setfill(' ') << ' ';
 
-			WriteToBufferLine(line);
+			WriteToBufferLine(line, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 		}
 	}
 
@@ -144,23 +165,23 @@ namespace Dev
 	{
 		CharStream.str(std::string());
 
-		CharStream << " " << std::setfill('-') << std::setw(ConsoleWidth) << '-';
+		CharStream << setfill('=') << setw(ConsoleWidth) << '=';
 		
-		WriteToBufferLine(StatusStart);
+		WriteToBufferLine(StatusStart, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
 		CharStream.str(std::string());
 
 		CharStream << "Status: Not Setup.";
 
-		WriteToBufferLine(StatusStart + 1);
+		WriteToBufferLine(StatusStart + 1, FOREGROUND_RED | FOREGROUND_INTENSITY);
 		
 		for (uInt16 line = StatusStart + 2; line < ConsoleHeight; line++)
 		{
 			CharStream.str(std::string());
 
-			CharStream << std::setfill(' ') << std::setw(ConsoleWidth) << ' ';
+			CharStream << setfill(' ') << setw(ConsoleWidth) << ' ';
 
-			WriteToBufferLine(line);
+			WriteToBufferLine(line, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 		}
 	}
 	
