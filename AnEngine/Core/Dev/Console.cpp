@@ -37,7 +37,10 @@ namespace Dev
 
 	StaticArray<OS_Handle, 2> ConsoleBuffers;
 
-	using CharBuffer = CharU[ConsoleHeight * ConsoleWidth];
+	//using CharBuffer = CharU[ConsoleHeight * ConsoleWidth];
+
+	//using CharLine = CharU[ConsoleWidth];
+	using CharBuffer = CharU[ConsoleHeight][ConsoleWidth];
 
 	CharBuffer    ConsoleCharBuffer; 
 	ConsoleExtent ConsoleCharBufferSize = { ConsoleWidth, ConsoleHeight };
@@ -58,39 +61,47 @@ namespace Dev
 	uInt16 DevLogLineEnd = 44;
 	uInt16 StatusStart   = 45;
 
+	uInt16 StatusColumnWidth = 35;
+
+
+
+	StaticArray<StaticArray<std::stringstream, 4>, 4> StatusStreams;
+
+	std::stringstream* DevLogStream;
+
+	// This exists only cause of Dev log stream...
+	void Unload_DevConsole()
+	{
+		delete(DevLogStream);
+	}
 
 
 	// Public functions
 
-	std::stringstream CharStream;
-
-	StaticArray<std::stringstream, 4> StatusStreams;
 
 	void WriteTo_Buffer(int _line, WORD _flags)
 	{
-		auto str = CharStream.str();
-
-		if (_line > ConsoleHeight -1) cerr << "wtf2" << endl;
-
-		
+		auto str = DevLogStream->str();
 
 		for (int index = 0; index < str.size(); index++)
 		{
-			ConsoleCharBuffer[index + ConsoleWidth * _line].Char.UnicodeChar = str.at(index);
-			ConsoleCharBuffer[index + ConsoleWidth * _line].Attributes = _flags;
+			ConsoleCharBuffer[_line][index].Char.UnicodeChar = str.at(index);
+			ConsoleCharBuffer[_line][index].Attributes = _flags;
 		}
 	}
 
-	void WriteTo_StatusModule(int _line, WORD _flags)
+	void WriteTo_StatusModule(int _row, int _col, WORD _flags)
 	{
-		auto str = StatusStreams[_line].str();
+		auto str = StatusStreams[_row][_col].str();
 
-		_line = StatusStart + _line + 1;
+		_row = StatusStart + _row + 1;
 
 		for (int index = 0; index < str.size(); index++)
 		{
-			ConsoleCharBuffer[index + ConsoleWidth * _line].Char.UnicodeChar = str.at(index);
-			ConsoleCharBuffer[index + ConsoleWidth * _line].Attributes = _flags;
+			int col = index + StatusColumnWidth * _col;
+
+			ConsoleCharBuffer[_row][col].Char.UnicodeChar = str.at(index);
+			ConsoleCharBuffer[_row][col].Attributes       = _flags;
 		}
 	}
 
@@ -100,8 +111,8 @@ namespace Dev
 		{
 			for (uInt16 x = 0; x < ConsoleWidth; ++x)
 			{
-				ConsoleCharBuffer[x + ConsoleWidth * y].Char.UnicodeChar = ' ';
-				ConsoleCharBuffer[x + ConsoleWidth * y].Attributes = 0;
+				ConsoleCharBuffer[y][x].Char.UnicodeChar = ' ';
+				ConsoleCharBuffer[y][x].Attributes = 0;
 			}
 		}
 	}
@@ -109,18 +120,19 @@ namespace Dev
 	bool CLog_ShouldWriteToConsole = true;
 	void CLog_ToggleWriteToConsole() {  CLog_ShouldWriteToConsole ^= true; }
 
-	void CLog_Status(String _info, int _line)
+	void CLog_Status(String _info, int _row, int _col)
 	{
 		if (Meta::UseDebug)
 		{
-			StatusStreams[_line].str(String());
+			StatusStreams[_row][_col].str(String());
 
-			StatusStreams[_line]
+			StatusStreams[_row][_col]
 				<< _info
 				<< setfill(' ')
-				<< setw(ConsoleWidth - StatusStreams[_line].str().size()) << ' ';
+				<< setw(StatusColumnWidth - StatusStreams[_row][_col].str().size()) << ' ';
 
-			WriteTo_StatusModule(_line, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+			if (CLog_ShouldWriteToConsole)
+				WriteTo_StatusModule(_row, _col, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 		}
 	}
 
@@ -135,34 +147,50 @@ namespace Dev
 				linePos = 4;
 			}
 
-			CharStream.str(String());
+			DevLogStream->str(String());
 
 			CalendarDate dateSnapshot = OSAL::GetTime_Local();
 
-			CharStream
+			*DevLogStream
 				<< "[" << put_time(&dateSnapshot,"%F %I:%M:%S %p") << "] "
 				<< _lineToLog 
 				<< setfill(' ')
-				<< setw(ConsoleWidth - CharStream.str().size()) << ' ';
+				<< setw(ConsoleWidth - DevLogStream->str().size()) << ' ';
 
 			WriteTo_Buffer(linePos-1, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 
-			CharStream.str(String());
+			DevLogStream->str(String());
 
-			CharStream
+			*DevLogStream
 				<< setfill('-')
-				<< setw(ConsoleWidth- CharStream.str().size()) << '-';
+				<< setw(ConsoleWidth- DevLogStream->str().size()) << '-';
 
 			WriteTo_Buffer(linePos++, BACKGROUND_INTENSITY );
 
 			if (CLog_ShouldWriteToConsole)
-				WriteConsoleOutput(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
+				WriteConsoleOutput(ConsoleOutput, &ConsoleCharBuffer[0][0], ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
 		}
 	}
 
 	void Console_UpdateBuffer()
 	{
-		WriteConsoleOutput(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
+		for  (int y = 0; y  < 4; y++)
+		{
+			for (int x = 0; x < 4; x++)
+			{
+				auto str = StatusStreams[y][x].str();
+
+				for (int index = 0; index < str.size(); index++)
+				{
+					int col = index + StatusColumnWidth * x;
+
+					ConsoleCharBuffer[y + StatusStart + 1 ][col].Char.UnicodeChar = str.at(index);
+					ConsoleCharBuffer[y + StatusStart + 1 ][col].Attributes       = FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+				}
+			}
+		}
+
+		WriteConsoleOutput(ConsoleOutput, &ConsoleCharBuffer[0][0], ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
 	}
 
 
@@ -175,49 +203,51 @@ namespace Dev
 			linePos = 4;
 		}
 
-		CharStream.str(String());
+		DevLogStream->str(String());
 
 		CalendarDate dateSnapshot = OSAL::GetTime_Local();
 
-		CharStream
+		*DevLogStream
 			<< "[" << put_time(&dateSnapshot, "%F %I:%M:%S %p") << "] "
 			<< _lineToLog
 			<< setfill(' ')
-			<< setw(ConsoleWidth - CharStream.str().size()) << ' ';
+			<< setw(ConsoleWidth - DevLogStream->str().size()) << ' ';
 
 		WriteTo_Buffer(linePos - 1, FOREGROUND_RED | FOREGROUND_INTENSITY);
 
-		CharStream.str(String());
+		DevLogStream->str(String());
 
-		CharStream
+		*DevLogStream
 			<< setfill('^')
 			<< setw(ConsoleWidth) << '^';
 
 		WriteTo_Buffer(linePos++, FOREGROUND_RED);
 
-		WriteConsoleOutput(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
+		WriteConsoleOutput(ConsoleOutput, &ConsoleCharBuffer[0][0], ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
 	}
 	
 	void Load_CharStream_EngineTitle()
 	{
 		using namespace Meta;
 
-		CharStream << setfill('-') << setw(ConsoleWidth) << '-';
+		DevLogStream->str(std::string());
+
+		*DevLogStream << setfill('-') << setw(ConsoleWidth) << '-';
 
 		WriteTo_Buffer(0, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
-		CharStream.str(std::string());
+		DevLogStream->str(std::string());
 
-		CharStream << "Abstract Realm: MVP Build - "
+		*DevLogStream << "Abstract Realm: MVP Build - "
 			<< EEngineVersion::Major << "."
 			<< EEngineVersion::Minor << "."
-			<< EEngineVersion::Patch << setfill(' ') << setw(ConsoleWidth - CharStream.str().size()) << ' ';
+			<< EEngineVersion::Patch << setfill(' ') << setw(ConsoleWidth - DevLogStream->str().size()) << ' ';
 
 		WriteTo_Buffer(1, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
-		CharStream.str(String());
+		DevLogStream->str(String());
 
-		CharStream << setfill('-') << setw(ConsoleWidth) << '-';
+		*DevLogStream << setfill('-') << setw(ConsoleWidth) << '-';
 
 		WriteTo_Buffer(2, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	}
@@ -226,9 +256,9 @@ namespace Dev
 	{
 		for (uInt16 line = 3; line < DevLogLineEnd; line++)
 		{
-			CharStream.str(std::string());
+			DevLogStream->str(std::string());
 
-			CharStream << setw(ConsoleWidth) << setfill(' ') << ' ';
+			*DevLogStream << setw(ConsoleWidth) << setfill(' ') << ' ';
 
 			WriteTo_Buffer(line, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 		}
@@ -236,23 +266,23 @@ namespace Dev
 
 	void Load_CharStream_Status()
 	{
-		CharStream.str(std::string());
+		DevLogStream->str(std::string());
 
-		CharStream << setfill('=') << setw(ConsoleWidth) << '=';
+		*DevLogStream << setfill('=') << setw(ConsoleWidth) << '=';
 		
 		WriteTo_Buffer(StatusStart, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
-		CharStream.str(std::string());
+		DevLogStream->str(std::string());
 
-		CharStream << "Status: Not Setup.";
+		*DevLogStream << "Status: Not Setup.";
 
 		WriteTo_Buffer(StatusStart + 1, FOREGROUND_RED | FOREGROUND_INTENSITY);
 		
 		for (uInt16 line = StatusStart + 2; line < ConsoleHeight; line++)
 		{
-			CharStream.str(std::string());
+			DevLogStream->str(std::string());
 
-			CharStream << setfill(' ') << setw(ConsoleWidth) << ' ';
+			*DevLogStream << setfill(' ') << setw(ConsoleWidth) << ' ';
 
 			WriteTo_Buffer(line, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 		}
@@ -272,9 +302,11 @@ namespace Dev
 
 		ClearBuffer();
 
-		WriteConsoleOutputA(ConsoleOutput, ConsoleCharBuffer, ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
+		WriteConsoleOutputA(ConsoleOutput, &ConsoleCharBuffer[0][0], ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
 
 		SetConsoleCursorPosition (ConsoleOutput, {0, 140});
+
+		DevLogStream = new std::stringstream;
 
 		Load_CharStream_EngineTitle();
 

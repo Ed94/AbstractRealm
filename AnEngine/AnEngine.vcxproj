@@ -113,6 +113,10 @@
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <HeapReserveSize>3145728 </HeapReserveSize>
+      <StackReserveSize>
+      </StackReserveSize>
+      <StackCommitSize>3145728 </StackCommitSize>
     </Link>
     <PreBuildEvent>
       <Command>

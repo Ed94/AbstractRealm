@@ -62,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		0, 0, 400, 30, 0, 0, hInstance, NULL))
 		return 2;
 
-	Sleep(1000);
+	Sleep(2000);
 
 	PostQuitMessage(0);
 

@@ -14,8 +14,6 @@ namespace Dev
 	constexpr uInt16 ConsoleWidth = 140;
 	constexpr uInt16 ConsoleHeight = 50;
 
-	using CharLine = char[ConsoleWidth];
-
 	void CLog(String _lineToLog);
 
 	void Load_DevConsole();
@@ -26,5 +24,5 @@ namespace Dev
 
 	void Console_UpdateBuffer();
 
-	void CLog_Status(String _info, int _line);
+	void CLog_Status(String _info, int _row, int _col);
 }
