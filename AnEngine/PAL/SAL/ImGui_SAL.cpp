@@ -80,8 +80,16 @@ namespace SAL::Imgui
 
 	// Static Data
 
-	Imgui::IO IO_Config;
+	Imgui::IO* IO_Config;
 
+
+	void Dirty_DoSurfaceStuff(ptr<OSAL::Window> _window)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+
+		glfwMakeContextCurrent(_window);
+	}
 
 
 	// Functions
@@ -130,7 +138,7 @@ namespace SAL::Imgui
 
 				ImGui_ImplVulkan_Init(&initSpec, RenderContext->RenderPass);
 
-				ImGui_ImplVulkan_SetMinImageCount(HAL::GPU::Vulkan::GetMinimumFramebufferCount());
+				//ImGui_ImplVulkan_SetMinImageCount(HAL::GPU::Vulkan::GetMinimumFramebufferCount());
 
 				break;
 			}
@@ -152,9 +160,20 @@ namespace SAL::Imgui
 
 		Imgui::CreateContext();
 
-		IO_Config = Imgui::GetIO(); (void)IO_Config;   // TODO: Find out what that (void) is for...
+		IO_Config = &Imgui::GetIO(); (void)IO_Config;   // TODO: Find out what that (void) is for...
+
+		IO_Config->ConfigFlags |= ImGuiConfigFlags_DockingEnable  ;
+		IO_Config->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 		Imgui::StyleColorsDark();
+
+		ImGuiStyle& style = ImGui::GetStyle();
+
+		if (IO_Config->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 0.0f;
+		}
 
 		Imgui::BindToPlatformAndRenderer(_window);
 
@@ -167,6 +186,12 @@ namespace SAL::Imgui
 		ImGui_ImplGlfw_NewFrame  ();
 
 		ImGui::NewFrame();
+
+		ImGui::DockSpaceOverViewport();
+
+		ImGui::Begin("TestWidow");
+
+		ImGui::End();
 
 		ImGui::ShowDemoWindow();
 	}

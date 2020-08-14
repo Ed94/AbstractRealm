@@ -90,7 +90,11 @@ namespace Core::Execution
 		windowSpec.ClientAPI   = GLFW::EClient_API::No_API      ;
 		windowSpec.Resizable   = GLFW::EBool      ::True        ;
 
+
+
 		EngineWindow = OSAL::Create_Window(windowSpec);
+
+
 
 		OSAL::SetWindow_SizeChangeCallback(EngineWindow, WindowSizeChanged);
 

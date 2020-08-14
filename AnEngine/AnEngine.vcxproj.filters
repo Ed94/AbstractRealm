@@ -106,6 +106,9 @@
     <ClInclude Include="Core\Execution\Cycler.hpp" />
     <ClInclude Include="Core\Execution\MasterExecution.hpp" />
     <ClInclude Include="Core\Concurrency\CyclerPool.hpp" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\LockLessMultiReadPipe.h" />
+    <ClInclude Include="PAL\SAL\EnkiTS_SAL.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -141,5 +144,6 @@
     <ClCompile Include="Core\Execution\MasterExecution.cpp" />
     <ClCompile Include="Core\Execution\Executer_EntryPoint.cpp" />
     <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.cpp" />
   </ItemGroup>
 </Project>

@@ -15,6 +15,8 @@ namespace SAL::GLFW
 		return glfwCreateWindow(_width, _height, _title, _fullscreenCast, _windowToShareWith);
 	}
 
+	//void Set
+
 	void DestroyWindow(ptr<Window> _window)
 	{
 		glfwDestroyWindow(_window);

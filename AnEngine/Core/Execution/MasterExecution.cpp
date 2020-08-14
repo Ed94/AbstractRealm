@@ -28,7 +28,7 @@ namespace Core::Execution
 
 		MasterCycler.BindExecuter(MasterExecuter);
 
-		MasterCycler.AssignInterval(Duration64(1.0 / 60.0));
+		MasterCycler.AssignInterval(Duration64(1.0 / 144.0));
 
 		MasterCycler.Initiate();
 	}
@@ -44,6 +44,8 @@ namespace Core::Execution
 		Imgui::Render();
 
 		HAL::GPU::Default_DrawFrame(EngineWindow);
+
+		Imgui::Dirty_DoSurfaceStuff(EngineWindow);	
 
 		Dev::CLog_Status("Master    Delta: " + ToString(MasterCycler.GetDeltaTime().count()), 0, 0);
 
@@ -62,13 +64,9 @@ namespace Core::Execution
 			}
 		}
 		
-		Dev::Console_UpdateBuffer();
+		//Dev::Console_UpdateBuffer();
 
-		bool CanClose = OSAL::CanClose(EngineWindow);
-
-		Dev::CLog("Can Close: " + ToString(CanClose));
-
-		if (CanClose)
+		if (OSAL::CanClose(EngineWindow))
 		{
 			HAL::GPU::WaitFor_GPUIdle();
 

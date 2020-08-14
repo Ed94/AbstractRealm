@@ -7,7 +7,7 @@
 // This can be done by making the design of the GPU HAL agnostic to what the tutorial requires.
 #include "_TutorialRelated.hpp"
 
-
+#include "Dev/Console.hpp"
 
 #if VULCAN_INTERFACE == VAULTED_THERMALS_INTERFACE
 
@@ -425,7 +425,7 @@
 				{
 					renderCallback(CommandBuffers[index], index);
 				}
-
+				
 				CommandBuffers[index].EndRenderPass();
 
 				if (CommandBuffers[index].EndRecord() != EResult::Success) 
@@ -629,11 +629,11 @@
 
 				for (DataSize index = 0; index < SwapChain_ImageViews.size(); index++) 
 				{
-					StaticArray<ImageView::Handle, 3> attachments = 
+					StaticArray<ImageView::Handle, 2> attachments = 
 					{
-						ColorImageView.GetHandle(),
-						DepthImageView.GetHandle(),
-						SwapChain_ImageViews[index].GetHandle()
+						SwapChain_ImageViews[index].GetHandle(),
+						DepthImageView.GetHandle()
+						//ColorImageView.GetHandle(), // Sampler image.
 					};
 
 					Framebuffer::CreateInfo framebufferInfo {};
@@ -1060,12 +1060,14 @@
 				colorAttachment.StencilStoreOp = EAttachmentStoreOperation::DontCare;
 
 				colorAttachment.InitialLayout = EImageLayout::Undefined        ;
-				colorAttachment.FinalLayout   = EImageLayout::Color_AttachmentOptimal;
+				//colorAttachment.FinalLayout   = EImageLayout::Color_AttachmentOptimal;
+				colorAttachment.FinalLayout   = EImageLayout::PresentSource_KHR;
 
 				RenderPass::AttachmentReference colorAttachmentRef {};
 
 				colorAttachmentRef.Attachment = 0                                    ;
-				colorAttachmentRef.Layout     = EImageLayout::Color_AttachmentOptimal;
+				//colorAttachmentRef.Layout     = EImageLayout::Color_AttachmentOptimal;
+				colorAttachmentRef.Layout   = EImageLayout::Color_AttachmentOptimal;
 
 				RenderPass::AttachmentDescription depthAttachment {};
 
@@ -1113,9 +1115,9 @@
 				subpass.ColorAttachmentCount   = 1                           ;
 				subpass.ColorAttachments       = &colorAttachmentRef         ;
 				subpass.DepthStencilAttachment = &depthAttachmentRef         ;
-				subpass.ResolveAttachments     = &colorAttachmentResolveRef  ;
+				//subpass.ResolveAttachments     = &colorAttachmentResolveRef  ;
 
-				StaticArray<RenderPass::AttachmentDescription, 3> attachments = { colorAttachment, depthAttachment, colorAttachmentResolve };
+				StaticArray<RenderPass::AttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
 
 				RenderPass::CreateInfo renderPassInfo;
 
@@ -1511,6 +1513,10 @@
 			{
 				std::cerr << "Vulkan: Validation Layer: " << _callbackData.Message << std::endl;
 
+	
+
+				//Dev::CLog("Vulkan Validation Layer: " + String(_callbackData.Message));
+
 				return EBool::True;
 			}
 
@@ -1851,7 +1857,9 @@
 					{
 						PhysicalDevice = physicalDevices[index];
 
-						MSAA_Samples = PhysicalDevice.GetMaxSampleCount_ColorAndDepth();
+						//MSAA_Samples = PhysicalDevice.GetMaxSampleCount_ColorAndDepth();
+
+						MSAA_Samples = ESampleCount::_1;
 
 						break;
 					}
@@ -1960,7 +1968,8 @@
 				{
 					if 
 					(
-						availableFormat.Format     == EFormat    ::B8_G8_R8_A8_SRGB   &&
+						//availableFormat.Format     == EFormat    ::B8_G8_R8_A8_SRGB   &&
+						availableFormat.Format     == EFormat    ::B8_G8_R8_A8_UNormalized   &&
 						availableFormat.ColorSpace == EColorSpace::KHR_SRGB_NonLinear         
 					)
 					{

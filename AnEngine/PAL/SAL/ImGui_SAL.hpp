@@ -16,7 +16,6 @@
 
 
 
-
 namespace SAL::Imgui
 {
 	using namespace LAL;
@@ -32,6 +31,8 @@ namespace SAL::Imgui
 	{
 		eGlobal data< bool> GLFW_InstallCallbacks;
 	}
+
+	void Dirty_DoSurfaceStuff(ptr<OSAL::Window> _window);
 
 	void BindToPlatformAndRenderer(ptr<OSAL::Window> _window);
 
