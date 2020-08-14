@@ -11,8 +11,7 @@ Contains type definitions for commonly used raw character types (such as raw cha
 
 namespace LAL
 {
-	using CStr = char*;
-
+	using CStr   =       char*;
 	using RoCStr = const char*;
 
 	using CStr16 = wchar_t*;

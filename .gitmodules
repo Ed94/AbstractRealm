@@ -40,18 +40,9 @@
 [submodule "AnEngine/PAL/ThirdParty/Libraries/bgfx"]
 	path = AnEngine/PAL/ThirdParty/Libraries/bgfx
 	url = git@github.com:bkaradzic/bgfx
-[submodule "AnEngine/PAL/ThirdParty/Libraries/The-Forge"]
-	path = AnEngine/PAL/ThirdParty/Libraries/The-Forge
-	url = git@github.com:ConfettiFX/The-Forge
 [submodule "AnEngine/PAL/ThirdParty/Libraries/rpclib"]
 	path = AnEngine/PAL/ThirdParty/Libraries/rpclib
 	url = git@github.com:rpclib/rpclib
-[submodule "AnEngine/PAL/ThirdParty/Libraries/DiligentEngine"]
-	path = AnEngine/PAL/ThirdParty/Libraries/DiligentEngine
-	url = git@github.com:DiligentGraphics/DiligentEngine
-[submodule "AnEngine/PAL/ThirdParty/Libraries/bsf"]
-	path = AnEngine/PAL/ThirdParty/Libraries/bsf
-	url = git@github.com:GameFoundry/bsf
 [submodule "AnEngine/PAL/ThirdParty/Libraries/rttr"]
 	path = AnEngine/PAL/ThirdParty/Libraries/rttr
 	url = git@github.com:rttrorg/rttr
@@ -79,3 +70,9 @@
 [submodule "AnEngine/PAL/ThirdParty/Libraries/PDCurses"]
 	path = AnEngine/PAL/ThirdParty/Libraries/PDCurses
 	url = git@github.com:wmcbrine/PDCurses
+[submodule "AnEngine/PAL/ThirdParty/Libraries/hpx"]
+	path = AnEngine/PAL/ThirdParty/Libraries/hpx
+	url = git@github.com:STEllAR-GROUP/hpx
+[submodule "AnEngine/PAL/ThirdParty/Libraries/enkiTS"]
+	path = AnEngine/PAL/ThirdParty/Libraries/enkiTS
+	url = git@github.com:dougbinks/enkiTS

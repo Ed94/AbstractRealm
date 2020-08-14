@@ -8,16 +8,17 @@
  *********************************************************************/
 
 
+
 #pragma once
 
 
 
-#include "Platform.hpp"
-
+#include "LAL.hpp"
+#include "OSAL_Platform.hpp"
 
 
 
 namespace OSAL
 {
-	using FN_EntryPoint = Function<ExitValT()>;
+	//using FN_EntryPoint = LAL::Function<ExitValT()>;
 }

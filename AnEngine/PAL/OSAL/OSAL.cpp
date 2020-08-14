@@ -3,6 +3,8 @@
 
 
 
+#include "OSAL_Backend.hpp"
+
 
 
 namespace OSAL
@@ -10,10 +12,7 @@ namespace OSAL
 	using namespace Meta;
 
 
-
 	// Public
-
-	
 
 	void Load()
 	{

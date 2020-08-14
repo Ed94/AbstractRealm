@@ -36,7 +36,7 @@ namespace Meta
 		enum
 		{
 			Major = 0 ,
-			Minor = 82,
+			Minor = 87,
 			Patch = 0
 		};
 	};

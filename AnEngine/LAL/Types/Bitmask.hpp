@@ -7,8 +7,6 @@
 
 
 //#define Bitmaskable 
-#include "Declarations.hpp"
-#include "STL_Reflection.hpp"
 
 
 
@@ -43,12 +41,12 @@
 	public:
 
 		using Representation = BitmaskRepresentation;
-		using Enum = EnumType;
+		using Enum           = EnumType             ;
 
 		Bitmask() : mask(0) {}
 
 		template<typename... BitTypes>
-		Bitmask(BitTypes... _bits)
+		Bitmask(BitTypes... _bits) : mask(0)
 		{
 			mask = (Representation(_bits) | ...);
 		}
@@ -95,10 +93,3 @@
 	};
 
 #endif
-
-
-
-namespace LAL
-{
-	
-}

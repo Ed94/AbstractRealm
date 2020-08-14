@@ -1,7 +1,11 @@
 // Parent Header
 #include "ImGui_SAL.hpp"
 
+
+
 #include "GPU_HAL.hpp"
+
+
 
 namespace SAL::Imgui
 {
@@ -207,33 +211,4 @@ namespace SAL::Imgui
 	{
 		IMGUI_CHECKVERSION();
 	}
-
-
-
-
-#pragma region NotUsed
-
-	/*ImGui_ImplVulkanH_Window WindowDataTemp;
-
-	void MakeWindow(int _width, int _height)
-	{
-		ImGui_ImplVulkan_SetMinImageCount(HAL::GPU::Vulkan::GetMinimumFramebufferCount());
-
-		ImGui_ImplVulkanH_CreateOrResizeWindow
-		(
-			RenderContext->ApplicationInstance,
-			RenderContext->PhysicalDevice,
-			RenderContext->LogicalDevice,
-			&WindowDataTemp,
-			RenderContext->QueueFamilyIndex,
-			RenderContext->Allocator->operator const VkAllocationCallbacks * (),
-			_width,
-			_height,
-			HAL::GPU::Vulkan::GetMinimumFramebufferCount()
-		);
-
-		WindowDataTemp.FrameIndex = 0;
-	}*/
-
-#pragma endregion NotUsed
 }

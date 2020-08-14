@@ -1,13 +1,23 @@
+/* 
+OSAL_Console
+
+This is currently only supports windows and doesn't do a proper abstraction for platform agnosticism. 
+
+*/
+
+
 #pragma once
 
 
 
-#include "OSAL/Platform.hpp"
+#include "OSAL_Platform.hpp"
 
 
 
 namespace OSAL
 {
+	using namespace LAL;
+
 	namespace PlatformBackend
 	{
 		template<OSAL::EOS>
@@ -16,6 +26,20 @@ namespace OSAL
 		template<>
 		struct ConsoleTypes_Maker<EOS::Windows>
 		{
+			enum class EAttributeFlag : WORD
+			{
+				Foreground_Red       = FOREGROUND_RED      ,
+				Foreground_Green     = FOREGROUND_GREEN    ,
+				Foreground_Blue      = FOREGROUND_BLUE     ,
+				Foreground_Intensity = FOREGROUND_INTENSITY,
+				Background_Red       = BACKGROUND_RED      ,
+				Background_Green     = BACKGROUND_GREEN    ,
+				Background_Blue      = BACKGROUND_BLUE     ,
+				Background_Intensity = BACKGROUND_INTENSITY
+			};
+
+			using AttributeFlags = Bitmask<EAttributeFlag, WORD>;
+
 			struct EHandle
 			{
 				using NativeT = DWORD;
@@ -30,6 +54,8 @@ namespace OSAL
 			using CharU  = CHAR_INFO ;
 		};
 
+		SpecifyBitmaskable(ConsoleTypes_Maker<EOS::Windows>::EAttributeFlag);
+
 		using ConsoleTypes = ConsoleTypes_Maker<OSAL::OS>;
 
 		template<OSAL::EOS>
@@ -38,97 +64,92 @@ namespace OSAL
 		template<>
 		struct ConsoleAPI_Maker<EOS::Windows>
 		{
-			using EHandle = ConsoleTypes::EHandle::NativeT;
+			using EHandle = ConsoleTypes::EHandle;
+			using Extent  = ConsoleTypes::Extent ;
+			using Rect    = PSMALL_RECT          ;
+			using CharU   = ConsoleTypes::CharU  ;
 
-			// TODO: Maximize use of generic types / function binds even though this is just for windows.
-			static void Console_Bind_IOBuffersTo_OSIO()
+			// https://stackoverflow.com/questions/311955/redirecting-cout-to-a-console-in-windows
+			static void Bind_IOBuffersTo_OSIO()
 			{
-				// Re-initialize the C runtime "FILE" handles with clean handles bound to "nul". We do this because it has been
-				// observed that the file number of our standard handle file objects can be assigned internally to a value of -2
-				// when not bound to a valid target, which represents some kind of unknown internal invalid state. In this state our
-				// call to "_dup2" fails, as it specifically tests to ensure that the target file number isn't equal to this value
-				// before allowing the operation to continue. We can resolve this issue by first "re-opening" the target files to
-				// use the "nul" device, which will place them into a valid state, after which we can redirect them to our target
-				// using the "_dup2" function.
-
 				FILE* dummyFile;
-				freopen_s(&dummyFile, "nul", "r", stdin);
 
+				freopen_s(&dummyFile, "nul", "r", stdin );
 				freopen_s(&dummyFile, "nul", "w", stdout);
-
 				freopen_s(&dummyFile, "nul", "w", stderr);
 
-				// Redirect unbuffered stdin from the current standard input handle
+				OS_Handle stdHandle = GetConsoleHandle(EHandle::Input);
 
-				HANDLE stdHandle = GetStdHandle(STD_INPUT_HANDLE);
-
-				if (stdHandle != INVALID_HANDLE_VALUE)
+				if (stdHandle != OS_InvalidHandle)
 				{
 					int fileDescriptor = _open_osfhandle((intptr_t)stdHandle, _O_TEXT);
+
 					if (fileDescriptor != -1)
 					{
 						FILE* file = _fdopen(fileDescriptor, "r");
-						if (file != NULL)
+
+						if (file != nullptr)
 						{
 							int dup2Result = _dup2(_fileno(file), _fileno(stdin));
+
 							if (dup2Result == 0)
 							{
-								setvbuf(stdin, NULL, _IONBF, 0);
+								setvbuf(stdin, nullptr, _IONBF, 0);
 							}
 						}
 					}
 				}
 
-				// Redirect unbuffered stdout to the current standard output handle
+				stdHandle = GetConsoleHandle(EHandle::Output);
 
-				stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-
-				if (stdHandle != INVALID_HANDLE_VALUE)
+				if (stdHandle != OS_InvalidHandle)
 				{
 					int fileDescriptor = _open_osfhandle((intptr_t)stdHandle, _O_TEXT);
+
 					if (fileDescriptor != -1)
 					{
 						FILE* file = _fdopen(fileDescriptor, "w");
-						if (file != NULL)
+
+						if (file != nullptr)
 						{
 							int dup2Result = _dup2(_fileno(file), _fileno(stdout));
+
 							if (dup2Result == 0)
 							{
-								setvbuf(stdout, NULL, _IONBF, 0);
+								setvbuf(stdout, nullptr, _IONBF, 0);
 							}
 						}
 					}
 				}
 
-				stdHandle = GetStdHandle(STD_ERROR_HANDLE);
+				stdHandle = GetConsoleHandle(EHandle::Error);
 
-				if (stdHandle != INVALID_HANDLE_VALUE)
+				if (stdHandle != OS_InvalidHandle)
 				{
 					int fileDescriptor = _open_osfhandle((intptr_t)stdHandle, _O_TEXT);
+
 					if (fileDescriptor != -1)
 					{
 						FILE* file = _fdopen(fileDescriptor, "w");
-						if (file != NULL)
+
+						if (file != nullptr)
 						{
 							int dup2Result = _dup2(_fileno(file), _fileno(stderr));
+
 							if (dup2Result == 0)
 							{
-								setvbuf(stderr, NULL, _IONBF, 0);
+								setvbuf(stderr, nullptr, _IONBF, 0);
 							}
 						}
 					}
 				}
 
-				// Clear the error state for each of the C++ standard stream objects. We need to do this, as attempts to access the
-				// standard streams before they refer to a valid target will cause the iostream objects to enter an error state. In
-				// versions of Visual Studio after 2005, this seems to always occur during startup regardless of whether anything
-				// has been read from or written to the targets or not.
-				std::wcin.clear();
-				std::cin.clear();
+				std::wcin .clear();
+				std::cin  .clear();
 				std::wcout.clear();
-				std::cout.clear();
+				std::cout .clear();
 				std::wcerr.clear();
-				std::cerr.clear();
+				std::cerr .clear();
 			}
 
 			static OS_Handle CreateBuffer()
@@ -136,7 +157,17 @@ namespace OSAL
 				return CreateConsoleScreenBuffer(GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
 			}
 
-			static OS_Handle GetConsoleHandle(EHandle _type)
+			static bool Create()
+			{
+				return AllocConsole();
+			}
+
+			static bool Destroy()
+			{
+				return FreeConsole();
+			}
+
+			static OS_Handle GetConsoleHandle(EHandle::NativeT _type)
 			{
 				return GetStdHandle(_type);
 			}
@@ -155,29 +186,40 @@ namespace OSAL
 			{
 				return SetConsoleTitle(_title);
 			}
-		};
 
+			static bool WriteToConsole
+			(
+				OS_Handle _handle     ,
+				CharU*    _buffer     ,
+				Extent    _bufferSize ,
+				Extent    _bufferCoord,
+				Rect      _readRegion
+			)
+			{
+				return WriteConsoleOutput(_handle, _buffer, _bufferSize, _bufferCoord, _readRegion);
+			}
+		};
 
 		using ConsoleAPI = ConsoleAPI_Maker<OSAL::OS>;
 	}
 
 	using PlatformBackend::ConsoleTypes;
-	using PlatformBackend::ConsoleAPI;
+	using PlatformBackend::ConsoleAPI  ;
 
-	using EConsoleHandle = ConsoleTypes::EHandle;
-	using ConsoleRect = ConsoleTypes::Rect;
-	using ConsoleExtent = ConsoleTypes::Extent;
-	using CharU = ConsoleTypes::CharU;
+	using ConslAttribFlags = ConsoleTypes::AttributeFlags;
+	using EConslAttribFlag = ConsoleTypes::EAttributeFlag;
+	using CharU            = ConsoleTypes::CharU         ;
+	using ConsoleExtent    = ConsoleTypes::Extent        ;
+	using ConsoleRect      = ConsoleTypes::Rect          ;
+	using EConsoleHandle   = ConsoleTypes::EHandle       ;
 
-	OS_Handle Console_CreateBuffer();
-	
-	OS_Handle Console_GetHandle(EConsoleHandle::NativeT _type);
-
-	bool Console_SetBufferSize(OS_Handle _handle, ConsoleExtent _extent);
-
-	bool Console_SetSize(OS_Handle _handle, ConsoleRect _rect);
-
-	bool Console_SetTitle(OS_RoCStr _title);
-
-	constexpr auto Console_Bind_IOBuffersTo_OSIO = ConsoleAPI::Console_Bind_IOBuffersTo_OSIO;
+	constexpr auto CreateConsole                 = ConsoleAPI::Create               ;
+	constexpr auto DestroyConsole                = ConsoleAPI::Destroy              ;
+	constexpr auto Console_Bind_IOBuffersTo_OSIO = ConsoleAPI::Bind_IOBuffersTo_OSIO;
+	constexpr auto Console_CreateBuffer          = ConsoleAPI::CreateBuffer         ;
+	constexpr auto Console_GetHandle             = ConsoleAPI::GetConsoleHandle     ;
+	constexpr auto Console_SetBufferSize         = ConsoleAPI::SetBufferSize        ;
+	constexpr auto Console_SetSize               = ConsoleAPI::SetSize              ;
+	constexpr auto Console_SetTitle              = ConsoleAPI::SetTitle             ;
+	constexpr auto WriteToConsole                = ConsoleAPI::WriteToConsole       ;
 }

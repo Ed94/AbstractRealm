@@ -1,18 +1,17 @@
 // Parent Header
-#include "Timing.hpp"
+#include "OSAL_Timing.hpp"
+
+
 
 #include "OSAL_Backend.hpp"
 
-#include "Dev/Dev.hpp"
 
 
 namespace OSAL
 {
-	template<typename Period>
-	using NanoPeriod = std::ratio_multiply<Period, std::giga>;
+	template<typename Period> using NanoPeriod = std::ratio_multiply<Period, std::giga>;
+	template<typename Period> using MiliPeriod = std::ratio_multiply<Period, std::kilo>;
 
-	template<typename Period>
-	using MiliPeriod = std::ratio_multiply<Period, std::kilo>;
 
 	struct SystemTimeInfo
 	{
@@ -42,9 +41,8 @@ namespace OSAL
 
 	SysTimePoint EntryPoint_StartExecution;	
 
-	CalendarDate TimeUTC_Buffer;
 	CalendarDate TimeLocal_Buffer;
-
+	CalendarDate TimeUTC_Buffer  ;
 
 
 	void GetClock_Accuracies()
@@ -58,14 +56,13 @@ namespace OSAL
 		OS_CLog("High Resolution Time Accuracy: " + ToString(HighResTimeStatus.Precison) + " milliseconds");
 	}
 
-	void Load_Timing()
+	CalendarDate& GetTime_Local()
 	{
-		GetClock_Accuracies();
-	}
+		const Time timeSnap = SystemClock::to_time_t(SystemClock::now());;
 
-	void Record_EntryPoint_StartExecution()
-	{
-		EntryPoint_StartExecution = SystemClock::now();
+		TimeLocal(&TimeLocal_Buffer, &timeSnap);
+
+		return TimeLocal_Buffer;
 	}
 
 	CalendarDate& GetTime_UTC()
@@ -77,12 +74,13 @@ namespace OSAL
 		return TimeUTC_Buffer;
 	}
 
-	CalendarDate& GetTime_Local()
+	void Load_Timing()
 	{
-		const Time timeSnap = SystemClock::to_time_t(SystemClock::now());;
+		GetClock_Accuracies();
+	}
 
-		TimeLocal(&TimeLocal_Buffer, &timeSnap);
-
-		return TimeLocal_Buffer;
+	void Record_EntryPoint_StartExecution()
+	{
+		EntryPoint_StartExecution = SystemClock::now();
 	}
 }

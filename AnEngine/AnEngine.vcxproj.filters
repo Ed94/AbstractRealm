@@ -2,8 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="LAL\LAL.hpp" />
-    <ClInclude Include="Core\Execution\Exec_Editor.hpp" />
-    <ClInclude Include="Core\Execution\Exec_Engine.hpp" />
     <ClInclude Include="LAL\Cpp_STL.hpp" />
     <ClInclude Include="LAL\STL_Reflection.hpp" />
     <ClInclude Include="LAL\Types\STL_FundamentalLimits.hpp" />
@@ -11,10 +9,7 @@
     <ClInclude Include="LAL\Types\STL_BasicTypes.hpp" />
     <ClInclude Include="LAL\Utilities\STL_SmartPtrs.hpp" />
     <ClInclude Include="LAL\STL_Memory.hpp" />
-    <ClInclude Include="Core\Execution\Exec_Primitive.hpp" />
     <ClInclude Include="Core\Execution\Executer.hpp" />
-    <ClInclude Include="Core\Cycler\Cycle.hpp" />
-    <ClInclude Include="Core\Cycler\Cycler.hpp" />
     <ClInclude Include="Core\Memory\MemTypes.hpp" />
     <ClInclude Include="Simulation\Math\Vector3D.hpp" />
     <ClInclude Include="Simulation\Math\Vec2D_I.hpp" />
@@ -22,7 +17,6 @@
     <ClInclude Include="Simulation\Units.hpp" />
     <ClInclude Include="Simulation\Math\Constants.hpp" />
     <ClInclude Include="PAL\HAL\Audio_HAL.hpp" />
-    <ClInclude Include="UserManagment\User\User.hpp" />
     <ClInclude Include="PAL\SAL\GLFW_SAL.hpp" />
     <ClInclude Include="PAL\SAL\GLM_SAL.hpp" />
     <ClInclude Include="LAL\Casting.hpp" />
@@ -51,8 +45,6 @@
     <ClInclude Include="LAL\STL_Exceptions.hpp" />
     <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.hpp" />
     <ClInclude Include="PAL\SAL\ImGui_SAL.hpp" />
-    <ClInclude Include="PAL\OSAL\Windowing.hpp" />
-    <ClInclude Include="PAL\OSAL\Platform.hpp" />
     <ClInclude Include="Meta\AppInfo.hpp" />
     <ClInclude Include="Meta\EngineInfo.hpp" />
     <ClInclude Include="Meta\Specification.hpp" />
@@ -67,7 +59,6 @@
     <ClInclude Include="Meta\Config\Simulation_Config.hpp" />
     <ClInclude Include="Meta\Config\HAL_Config.hpp" />
     <ClInclude Include="Meta\Config\OSAL_Config.hpp" />
-    <ClInclude Include="PAL\OSAL\Threading.hpp" />
     <ClInclude Include="PAL\HAL\GPU_HAL_CoreDefs.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_ConventionEnforcer.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\_foreign\Foreign_Bitmask.hpp" />
@@ -97,7 +88,6 @@
     <ClInclude Include="PAL\OSAL\OSAL_Console.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_Backend.hpp" />
     <ClInclude Include="PAL\HAL\HAL_Backend.hpp" />
-    <ClInclude Include="PAL\OSAL\Timing.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_EntryPoint.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imconfig.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui.h" />
@@ -107,6 +97,15 @@
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.h" />
+    <ClInclude Include="User\User.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_Platform.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_Threading.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_Timing.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_Windowing.hpp" />
+    <ClInclude Include="Core\Concurrency\TaskPool.hpp" />
+    <ClInclude Include="Core\Execution\Cycler.hpp" />
+    <ClInclude Include="Core\Execution\MasterExecution.hpp" />
+    <ClInclude Include="Core\Concurrency\CyclerPool.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -119,19 +118,14 @@
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
-    <ClCompile Include="PAL\OSAL\Windowing.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />
-    <ClCompile Include="Core\Cycler\Cycler.cpp" />
-    <ClCompile Include="Core\Execution\Executer.cpp" />
-    <ClCompile Include="PAL\OSAL\Threading.cpp" />
     <ClCompile Include="Core\Dev\Console.cpp" />
     <ClCompile Include="Core\Dev\Dev.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Console.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Backend.cpp" />
-    <ClCompile Include="PAL\OSAL\Timing.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_EntryPoint.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_demo.cpp" />
@@ -139,6 +133,13 @@
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
-    <ClCompile Include="Core\Execution\Exec_Primitive.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Threading.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Timing.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Windowing.cpp" />
+    <ClCompile Include="Core\Execution\PrimitiveExecuter_Implem.hpp" />
+    <ClCompile Include="Core\Execution\Cycler.cpp" />
+    <ClCompile Include="Core\Execution\MasterExecution.cpp" />
+    <ClCompile Include="Core\Execution\Executer_EntryPoint.cpp" />
+    <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
   </ItemGroup>
 </Project>

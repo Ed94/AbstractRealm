@@ -53,7 +53,7 @@ namespace SAL::GLFW
 	// OS Related
 
 	Where<OSAL::IsWindows, OSAL::PlatformTypes::
-		OS_WindowHandle> GetOS_WindowHandle(const ptr<Window> _window)
+	OS_WindowHandle> GetOS_WindowHandle(const ptr<Window> _window)
 	{
 		return glfwGetWin32Window(_window);
 	}
@@ -63,8 +63,7 @@ namespace SAL::GLFW
 		glfwGetFramebufferSize(_window, &_width, &_height);
 	}
 
-	// TODO: use glfw callback func type instead of making it..
-	void SetWidnowSizeCallback(const ptr<Window> _window, void(*_callback)(ptr<Window>, int, int))
+	void SetWidnowSizeCallback(const ptr<Window> _window, WindowSize_Callback _callback)
 	{
 		glfwSetWindowSizeCallback(_window, _callback);
 	}

@@ -8,22 +8,16 @@ Operating System Abstraction Layer
 
 
 
-// Includes
-
-
-
-#include "OSAL/Platform.hpp"
-#include "OSAL/Windowing.hpp"
-#include "OSAL/Threading.hpp"
-#include "OSAL/Timing.hpp"
-#include "OSAL/OSAL_Console.hpp"
+#include "OSAL_Platform.hpp"
+#include "OSAL_Console.hpp"
+#include "OSAL_Timing.hpp"
+#include "OSAL_Threading.hpp"
+#include "OSAL_Windowing.hpp"
 
 
 
 namespace OSAL
 {
-	
-
 	/*
 	Loads the OSAL submodule.
 
@@ -33,7 +27,6 @@ namespace OSAL
 
 
 	void Unload();
-
 
 	/*
 	Currently based of GLFW events (Since there are no other OS related events yet).

@@ -1,5 +1,5 @@
 // Parent Header
-#include "Threading.hpp"
+#include "OSAL_Threading.hpp"
 
 
 
@@ -35,14 +35,14 @@ namespace OSAL
 			return num;
 		}
 
-		ThreadManager Threads;
+		ThreadManager ThreadPool;
 	}
 
-	void GenerateThreads() { Backend::Threads.GenerateThreads(); }
+	void GenerateThreads() { Backend::ThreadPool.GenerateThreads(); }
 
-	DataSize GetNumOfActiveThreads() { return Backend::Threads.GetNumOfActiveThreads(); }
+	DataSize GetNumOfActiveThreads() { return Backend::ThreadPool.GetNumOfActiveThreads(); }
 
-	void DecommissionThread(DataSize _handle) { Backend::Threads.DecommissionThread(_handle); }
+	void DecommissionThread(DataSize _handle) { Backend::ThreadPool.DecommissionThread(_handle); }
 
 	void QueryThreadInfo()
 	{

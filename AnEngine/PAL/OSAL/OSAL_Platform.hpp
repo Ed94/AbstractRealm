@@ -6,7 +6,8 @@ Operating System Abstraction Layer: Platform Definitions
 #pragma once
 
 
-// Includes
+
+// Platform
 
 #ifdef _WIN32
 	// Windows
@@ -24,7 +25,6 @@ Operating System Abstraction Layer: Platform Definitions
 
 // Engine
 #include "LAL/LAL.hpp"
-#include "OSAL_Backend.hpp"
 
 
 
@@ -71,7 +71,7 @@ namespace OSAL
 			using OS_CStr   = LPTSTR ;
 			using OS_RoCStr = LPCTSTR;
 
-			//static constexpr OS_Handle InvalidHandle = INVALID_HANDLE_VALUE;
+			static OS_Handle InvalidHandle() { return INVALID_HANDLE_VALUE; };
 
 			using ExitValT = int;
 		};
@@ -81,7 +81,6 @@ namespace OSAL
 
 	using PlatformTypes = PlatformBackend::PlatformTypes;
 
-
 	using OS_AppHandle    = PlatformTypes::OS_AppHandle   ;
 	using OS_Handle       = PlatformTypes::OS_Handle      ;
 	using OS_WindowHandle = PlatformTypes::OS_WindowHandle;
@@ -89,5 +88,5 @@ namespace OSAL
 	using OS_RoCStr       = PlatformTypes::OS_RoCStr      ;
 	using ExitValT        = PlatformTypes::ExitValT       ;
 
-	//constexpr OS_Handle OS_InvalidHandle = PlatformTypes::InvalidHandle;
+	constexpr auto OS_InvalidHandle = PlatformTypes::InvalidHandle;
 }

@@ -3,13 +3,6 @@
 
 
 
-// Includes
-
-
-
-
-
-
 // TUtorial: This needs to be removed from GPU_Vulkan
 // This can be done by making the design of the GPU HAL agnostic to what the tutorial requires.
 #include "_TutorialRelated.hpp"

@@ -4,16 +4,16 @@
 
 // Includes
 
+#include "LAL/LAL.hpp"
 #include "Meta/Config/HAL_Config.hpp"
 #include "Meta/Config/OSAL_Config.hpp"
-#include "OSAL/Platform.hpp"
-#include "OSAL/Windowing.hpp"
+#include "OSAL/OSAL_Platform.hpp"
+#include "OSAL/OSAL_Windowing.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/examples/imgui_impl_glfw.h"
 #include "imgui/examples/imgui_impl_vulkan.h"
 
-#include "LAL/LAL.hpp"
 
 
 
@@ -46,12 +46,6 @@ namespace SAL::Imgui
 	void SetupGPU_Interface();
 
 	void VerifyVersion();
-
-
-
-
-	// Not Used
-	//void MakeWindow(int _width, int _height);
 }
 
 

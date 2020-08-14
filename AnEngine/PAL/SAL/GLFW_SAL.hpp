@@ -25,7 +25,7 @@ GFLW Software Abstraction Layer
 
 // Engine
 #include "LAL/LAL.hpp"
-#include "OSAL/Platform.hpp"
+#include "OSAL/OSAL_Platform.hpp"
 
 
 
@@ -65,7 +65,7 @@ namespace SAL::GLFW
 	using Monitor = GLFWmonitor;
 	using Window  = GLFWwindow ;
 
-	using WindowSize_CallbackFunc = GLFWwindowsizefun;
+	using WindowSize_Callback = GLFWwindowsizefun;
 
 
 	// Constants
@@ -135,7 +135,7 @@ namespace SAL::GLFW
 
 	void GetFramebufferSize(const ptr<Window> _window, int& _width, int& _height);
 
-	void SetWidnowSizeCallback(const ptr<Window> _window, void(*_callback)(ptr<Window>, int, int));
+	void SetWidnowSizeCallback(const ptr<Window> _window, WindowSize_Callback _callback);
 }
 
 

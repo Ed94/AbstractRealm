@@ -10,19 +10,15 @@ namespace Dev
 {
 	using namespace LAL;
 
-
 	constexpr uInt16 ConsoleWidth = 140;
 	constexpr uInt16 ConsoleHeight = 50;
 
-	void CLog(String _lineToLog);
+	void CLog       (String _info                    );
+	void CLog_Status(String _info, int _row, int _col);
+
+	void Console_UpdateBuffer();
 
 	void Load_DevConsole();
 
 	void SetConsole_IOHooks();
-
-	void CLog_ToggleWriteToConsole();
-
-	void Console_UpdateBuffer();
-
-	void CLog_Status(String _info, int _row, int _col);
 }

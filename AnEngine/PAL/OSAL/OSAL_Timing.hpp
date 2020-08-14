@@ -2,7 +2,7 @@
 
 
 #include "OSAL_Backend.hpp"
-#include "OSAL/Platform.hpp"
+#include "OSAL_Platform.hpp"
 
 
 namespace OSAL

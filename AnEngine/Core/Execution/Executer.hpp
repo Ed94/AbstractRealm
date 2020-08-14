@@ -11,18 +11,19 @@ Last Modified: 5/18/2020
 
 
 #include "LAL/LAL.hpp"
-
-
 #include "Meta/EngineInfo.hpp"
-#include "Dev/Dev.hpp"
 #include "OSAL/OSAL.hpp"
 #include "HAL/GPU_HAL.hpp"
+#include "Dev/Dev.hpp"
+
 
 
 namespace Core::Execution
 {
-	using namespace LAL;
+	using namespace LAL ;
 	using namespace Meta;
+
+	//enum class 
 
 
 	enum class EExecutionType
@@ -45,6 +46,20 @@ namespace Core::Execution
 		Completed
 	};
 
+	enum class EModule
+	{
+		Core       ,
+		Dev        ,
+		Editor     ,
+		IO         ,
+		Manifest   ,
+		Profile    ,
+		Renderer   ,
+		Simulation ,
+		User       ,
+		Custom
+	};
+
 
 	class AExecuter
 	{
@@ -59,11 +74,9 @@ namespace Core::Execution
 	class PrimitiveExecuter : AExecuter
 	{
 	public:
-		using FN_Procedure = Function<FN_Type>;
-
 		unbound constexpr EExecutionType Type = EExecutionType::Primitive;
 
-		implem void Bind(Function<FN_Type> _procedure);
+		implem void Bind(Function<FN_Type> _task);
 
 		implem void Execute();
 		//implem void Execute(Duration64 _deltaTime);
@@ -75,10 +88,10 @@ namespace Core::Execution
 
 	protected:
 	private:
-		FN_Procedure procedure;
+		Function<FN_Type> task;
 	};
 
-	class EngineExecuter : AExecuter
+	class QueuedExecuter : AExecuter
 	{
 	public:
 		unbound constexpr EExecutionType Type = EExecutionType::Engine;
@@ -95,36 +108,33 @@ namespace Core::Execution
 	private:	
 		Queue<ptr<AExecuter>> queue;
 	};
-
 	
-	class EditorExecuter : AExecuter
-	{
-	public:
-	protected:
-	private:
-		Queue<ptr<AExecuter>> queue;
-	};
-
-
 	/**
 	 * Engine application entry point.
 	 */
 	OSAL::ExitValT EntryPoint();
+
+
+	eGlobal ptr<OSAL::Window> EngineWindow;
 }
 
+
+// Template Implementation
+// #include "PrimitiveExecuter_Implem.hpp"
+// TODO ^^ Why doesn't it work? (SEE GLFW FOR WORKING VER)
 
 namespace Core::Execution
 {
 	template<typename FN_Type>
-	void PrimitiveExecuter<FN_Type>::Bind(Function<FN_Type> _procedure)
+	void PrimitiveExecuter<FN_Type>::Bind(Function<FN_Type> _task)
 	{
-		procedure = _procedure;
+		task = _task;
 	}
 
 	template<typename FN_Type>
 	void PrimitiveExecuter<FN_Type>::Execute()
 	{
-		procedure();
+		task();
 	}
 }
 

@@ -11,19 +11,19 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 #pragma once
 
-// Abstract Realm
-#include "GPU_HAL_CoreDefs.hpp"
+
+
 #include "Vulkan_API.hpp"
 
+#include "GPU_HAL_CoreDefs.hpp"
 #include "Meta/AppInfo.hpp"
 #include "Meta/Config/HAL_Config.hpp"
 #include "Meta/EngineInfo.hpp"
 #include "Meta/Config/OSAL_Config.hpp"
-
 #include "Core/IO/Basic_FileIO.hpp"
 
-#include "OSAL/Platform.hpp"
-#include "OSAL/Windowing.hpp"
+#include "OSAL/OSAL_Platform.hpp"
+#include "OSAL/OSAL_Windowing.hpp"
 
 
 

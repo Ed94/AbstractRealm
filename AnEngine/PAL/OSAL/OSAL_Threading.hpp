@@ -10,17 +10,24 @@ namespace OSAL
 {
 	namespace Backend
 	{
+		//struct Thread
+		//{
+		//	DataSize Handle;
+
+		//	//uint16 Core;
+		//};
+
 		struct ThreadManager
 		{
 		public:
 
-			void QueryThreadInfo();
-
-			uint32 GetNumberOfLogicalCores();
-
 			void GenerateThreads();
 
 			DataSize GetNumOfActiveThreads();
+
+			uint32 GetNumberOfLogicalCores();
+
+			void QueryThreadInfo();
 
 			template<class FN_Type, class... Arguments>
 			DataSize RequestThread(Function<FN_Type>&& _threadRoutine, Arguments&&... _args);
@@ -40,13 +47,6 @@ namespace OSAL
 			template<class FN_Type, class... Arguments>
 			DataSize RequestThread(FN_Type&& _threadRoutine, Arguments&&... _args)
 			{
-				/*if (Threads.size() < GetNumberOfLogicalCores())
-				{
-				Threads.push_back(std::move(Thread(_threadRoutine, _args...)));
-
-				return Threads.size();
-				}*/
-
 				DataSize index = 0;
 
 				for (DataSize num = 0; num < threads.size(); num++)
@@ -69,10 +69,10 @@ namespace OSAL
 		};
 
 
-		eGlobal ThreadManager Threads;
+		eGlobal ThreadManager ThreadPool;
 	}
 
-	void QueryThreadInfo();
+	void DecommissionThread(DataSize _handle);
 
 	uint32 GetNumberOfLogicalCores();
 
@@ -80,11 +80,11 @@ namespace OSAL
 
 	DataSize GetNumOfActiveThreads();
 
-	void DecommissionThread(DataSize _handle);
+	void QueryThreadInfo();
 
 	template<class FN_Type, class... Arguments>
 	DataSize RequestThread(FN_Type&& _threadRoutine, Arguments&&... _args)
 	{
-		return Backend::Threads.RequestThread(_threadRoutine, _args...);
+		return Backend::ThreadPool.RequestThread(_threadRoutine, _args...);
 	}
 }

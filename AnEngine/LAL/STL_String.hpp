@@ -1,7 +1,3 @@
-
-
-
-
 #pragma once
 
 
@@ -12,9 +8,9 @@
 
 namespace LAL
 {
-	using String       = std::string;
-	using String16     = std::wstring;
-	using StringStream = std::stringstream;
+	using String       = std::string      ;
+	using String16     = std::wstring     ;
+	using Stringstream = std::stringstream;
 	
 	inline String ToString(int                _val) { return std::to_string(_val); };
 	inline String ToString(long               _val) { return std::to_string(_val); };

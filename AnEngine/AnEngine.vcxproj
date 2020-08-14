@@ -171,11 +171,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Core\Cycler\Cycle.hpp">
+    <ClInclude Include="Core\Concurrency\CyclerPool.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Cycler\Cycler.hpp">
+    <ClInclude Include="Core\Concurrency\TaskPool.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Execution\Cycler.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -198,15 +202,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Execution\Exec_Editor.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="Core\Execution\Exec_Engine.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="Core\Execution\Exec_Primitive.hpp">
+    <ClInclude Include="Core\Execution\MasterExecution.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -448,19 +444,19 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\OSAL\Platform.hpp">
+    <ClInclude Include="PAL\OSAL\OSAL_Platform.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\OSAL\Threading.hpp">
+    <ClInclude Include="PAL\OSAL\OSAL_Threading.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\OSAL\Timing.hpp">
+    <ClInclude Include="PAL\OSAL\OSAL_Timing.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\OSAL\Windowing.hpp">
+    <ClInclude Include="PAL\OSAL\OSAL_Windowing.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -522,7 +518,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="UserManagment\User\User.hpp">
+    <ClInclude Include="User\User.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -531,11 +527,13 @@
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Cycler\Cycler.cpp" />
+    <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
+    <ClCompile Include="Core\Execution\Cycler.cpp" />
     <ClCompile Include="Core\Dev\Console.cpp" />
     <ClCompile Include="Core\Dev\Dev.cpp" />
-    <ClCompile Include="Core\Execution\Executer.cpp" />
-    <ClCompile Include="Core\Execution\Exec_Primitive.cpp" />
+    <ClCompile Include="Core\Execution\Executer_EntryPoint.cpp" />
+    <ClCompile Include="Core\Execution\MasterExecution.cpp" />
+    <ClCompile Include="Core\Execution\PrimitiveExecuter_Implem.hpp" />
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
@@ -548,9 +546,9 @@
     <ClCompile Include="PAL\OSAL\OSAL_Backend.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Console.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_EntryPoint.cpp" />
-    <ClCompile Include="PAL\OSAL\Threading.cpp" />
-    <ClCompile Include="PAL\OSAL\Timing.cpp" />
-    <ClCompile Include="PAL\OSAL\Windowing.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Threading.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Timing.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Windowing.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
     <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
