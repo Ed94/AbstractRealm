@@ -12,10 +12,10 @@
 
 namespace Dev
 {
+	// Usings
+
 	using namespace LAL ;
 	using namespace OSAL;
-
-
 
 	using OSAL::CharU;
 
@@ -77,7 +77,7 @@ namespace Dev
 
 
 
-	// Public functions
+	// Public
 
 	void ClearBuffer()
 	{
@@ -199,6 +199,9 @@ namespace Dev
 
 		WriteToConsole(ConsoleOutput, &ConsoleCharBuffer[0][0], ConsoleCharBufferSize, ConsoleCharPos, &ConsoleWriteArea);
 	}
+
+
+	// Private
 
 	void Load_CharStream_DevLog()
 	{

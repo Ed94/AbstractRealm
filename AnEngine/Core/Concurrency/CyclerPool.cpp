@@ -5,6 +5,8 @@
 
 namespace Core::Concurrency
 {
+	// Structs
+
 	struct Unit
 	{
 		using CyclerT = Cycler;
@@ -27,6 +29,8 @@ namespace Core::Concurrency
 	)
 
 
+
+	// Public
 
 	void CyclerPool::ActivateUnit()
 	{

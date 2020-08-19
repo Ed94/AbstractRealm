@@ -13,10 +13,7 @@ namespace IO
 
 		flags.Set(EOpenFlag::SeekToEOF, EOpenFlag::BinaryMode);
 
-		Heap(EHeap::Allocate, 
-			
-			 File_InputStream fileStream(_fileToBuffer, flags)
-		);
+		Heap(File_InputStream fileStream(_fileToBuffer, flags));
 
 		if (! fileStream.is_open())
 		{
@@ -35,9 +32,7 @@ namespace IO
 
 		fileStream.read(bufferToReturn.data(), streamSize);
 
-		Heap(EHeap::Free, 
-			 fileStream.close();
-		);
+		Heap(fileStream.close());
 
 		return bufferToReturn;
 	}

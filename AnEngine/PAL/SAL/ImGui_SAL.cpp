@@ -67,7 +67,7 @@ namespace SAL::Imgui
 			}
 		}
 
-		void Vulkan_GPU_DrawRender(VT::V4::CommandBuffer& _buffer, int _index)
+		void Vulkan_GPU_DrawRender(VT::V4::CommandBuffer& _buffer, int /* _index */)
 		{
 			ImDrawData* draw_data = ImGui::GetDrawData();
 

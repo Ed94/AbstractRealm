@@ -61,7 +61,6 @@
     <ClInclude Include="PAL\HAL\Vulkan\_TutorialRelated.hpp" />
     <ClInclude Include="Core\Dev\DebugExec\ImGui_StandaloneExample.hpp" />
     <ClInclude Include="Core\Dev\DebugExec\ImGui_TestingGrounds.hpp" />
-    <ClInclude Include="Core\Dev\DebugExec\Vulkan_VKTutFull_Test.hpp" />
     <ClInclude Include="Core\Dev\Console.hpp" />
     <ClInclude Include="Core\Dev\Dev.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_Console.hpp" />

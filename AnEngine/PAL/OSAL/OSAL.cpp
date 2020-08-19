@@ -50,7 +50,7 @@ namespace OSAL
 
 	void PollEvents()
 	{
-		if (WindowingPlatform == Meta::EWindowingPlatform::GLFW)
+		if constexpr (WindowingPlatform == Meta::EWindowingPlatform::GLFW)
 		{
 			SAL::GLFW::PollEvents();
 		}

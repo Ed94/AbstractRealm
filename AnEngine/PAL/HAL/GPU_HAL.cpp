@@ -26,10 +26,13 @@ namespace HAL
 {
 	namespace GPU
 	{
-		using namespace LAL;
+		// Usings
+
+		using namespace LAL ;
 		using namespace Meta;
 
 		using Meta::AppVersion;
+
 
 
 		namespace PlatformBackend
@@ -46,23 +49,25 @@ namespace HAL
 			
 
 
-			//BSS 
-			//(
+			StaticData
+			(
 				Delegate_Initalize_GPUComms Initialize_GPUComms_Bind;
 				Delegate_Cease_GPUComms     Cease_GPUComms_Bind     ;
 				Delegate_WaitFor_GPUIdle    WaitFor_GPUIdle         ;
-				Delegate_GetRenderContext   GetRenderContext_Bind;
+				Delegate_GetRenderContext   GetRenderContext_Bind   ;
 
 				// WIP
 
-				Delegate_GetRenderReady         Default_InitializeRenderer_Bind;
+				Delegate_GetRenderReady         Default_InitializeRenderer_Bind  ;
 				Delegate_DeInitalizeRenderReady Default_DeinitializeRenderer_Bind;
-				Delegate_DrawFrame              Default_DrawFrame_Bind;
+				Delegate_DrawFrame              Default_DrawFrame_Bind           ;
 
 				Delegate_ReinitalizeRenderer Default_ReinitializeRenderer_Bind;
+			);
 
-			//);
 
+
+			// Private
 
 			void Determine_PlatformBindings()
 			{
@@ -93,12 +98,10 @@ namespace HAL
 		}
 
 
-		// Functionality
+		// Public
 
 		void Load()
 		{
-			
-
 			PlatformBackend::Determine_PlatformBindings();
 		}
 

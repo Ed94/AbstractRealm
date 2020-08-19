@@ -9,5 +9,7 @@
 
 namespace Dev
 {
+	// Functions
+
 	void LoadModule();
 }

@@ -10,7 +10,7 @@
 
 namespace Meta
 {
-	// Namespaces
+	// Usings
 
 	using namespace LAL;
 

@@ -24,7 +24,7 @@ namespace OSAL
 		{
 			DataSize num = 0;
 
-			for (DataSize num = 0; num < threads.size(); num++)
+			for (; num < threads.size(); num++)
 			{
 				if (threads[num].joinable())
 				{

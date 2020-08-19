@@ -15,7 +15,7 @@
 
 namespace Core::Execution
 {
-	// Namespaces
+	// Usings
 
 	using namespace LAL ;
 	using namespace Meta;
@@ -46,7 +46,7 @@ namespace Core::Execution
 
 		bool WindowResized = false;
 
-		void WindowSizeChanged(ptr<Window> _window, int _width, int _height)
+		void WindowSizeChanged(ptr<Window> /*_window*/, int _width, int _height)
 		{
 			WindowResized = true;
 
@@ -55,6 +55,8 @@ namespace Core::Execution
 	)
 
 	
+
+	// Public
 
 	OSAL::ExitValT EntryPoint()
 	{

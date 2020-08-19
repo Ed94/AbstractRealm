@@ -12,19 +12,17 @@ namespace SAL::GLFW
 
 	ptr<Window> MakeWindow(int _width, int _height, ptr<const char> _title, ptr<Monitor> _fullscreenCast, ptr<Window> _windowToShareWith)
 	{
-		return glfwCreateWindow(_width, _height, _title, _fullscreenCast, _windowToShareWith);
+		return Heap(glfwCreateWindow(_width, _height, _title, _fullscreenCast, _windowToShareWith));
 	}
-
-	//void Set
 
 	void DestroyWindow(ptr<Window> _window)
 	{
-		glfwDestroyWindow(_window);
+		Heap(glfwDestroyWindow(_window));
 	}
 
 	bool Initalize()
 	{
-		return glfwInit() ? true : false;
+		return Heap(glfwInit()) ? true : false;
 	}
 
 	void PollEvents()
@@ -36,8 +34,9 @@ namespace SAL::GLFW
 
 	void Terminate()
 	{
-		glfwTerminate();
+		Heap(glfwTerminate());
 	}
+
 
 
 	// Vulkan Related
@@ -51,6 +50,8 @@ namespace SAL::GLFW
 	{
 		glfwWaitEvents();
 	}
+
+
 
 	// OS Related
 

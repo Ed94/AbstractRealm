@@ -1,0 +1,45 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 000000000..1a0a6ea29
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,39 @@
++﻿out/build/x64-Debug (default)/.cmake/api/v1/query/client-MicrosoftVS/query.json
++out/build/x64-Debug (default)/.cmake/api/v1/reply/cache-v2-fc010cc047bcd81c3fc0.json
++out/build/x64-Debug (default)/.cmake/api/v1/reply/cmakeFiles-v1-2a888bf41a203448c30f.json
++out/build/x64-Debug (default)/.cmake/api/v1/reply/codemodel-v2-ac17fd0d71c7a4b7834a.json
++out/build/x64-Debug (default)/.cmake/api/v1/reply/index-2020-08-19T22-27-41-0410.json
++out/build/x64-Debug (default)/.cmake/api/v1/reply/target-SDL2-Debug-8c24d53967f34f428860.json
++out/build/x64-Debug (default)/.cmake/api/v1/reply/target-SDL2main-Debug-1a84a238b37aaaa64364.json
++out/build/x64-Debug (default)/.cmake/api/v1/reply/target-SDL2-static-Debug-672228130e8bbc589546.json
++out/build/x64-Debug (default)/VSInheritEnvironments.txt
++out/build/x64-Debug (default)/SDL2ConfigVersion.cmake
++out/build/x64-Debug (default)/rules.ninja
++out/build/x64-Debug (default)/CMakeCache.txt
++out/build/x64-Debug (default)/cmake_uninstall.cmake
++out/build/x64-Debug (default)/cmake_install.cmake
++out/build/x64-Debug (default)/build.ninja
++out/build/x64-Debug (default)/.cmake/api/v1/reply/target-uninstall-Debug-eb9e9d9beeed168b1da6.json
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CompilerIdC/CMakeCCompilerId.c
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CompilerIdC/CMakeCCompilerId.exe
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CompilerIdC/CMakeCCompilerId.obj
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CompilerIdCXX/CMakeCXXCompilerId.cpp
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CompilerIdCXX/CMakeCXXCompilerId.exe
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CompilerIdCXX/CMakeCXXCompilerId.obj
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CMakeCCompiler.cmake
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CMakeCXXCompiler.cmake
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CMakeDetermineCompilerABI_C.bin
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CMakeDetermineCompilerABI_CXX.bin
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CMakeRCCompiler.cmake
++out/build/x64-Debug (default)/CMakeFiles/3.17.20032601-MSVC_2/CMakeSystem.cmake
++out/build/x64-Debug (default)/CMakeFiles/Export/cmake/SDL2Targets.cmake
++out/build/x64-Debug (default)/CMakeFiles/Export/cmake/SDL2Targets-debug.cmake
++out/build/x64-Debug (default)/Testing/Temporary/LastTest.log
++out/build/x64-Debug (default)/include/SDL_config.h
++out/build/x64-Debug (default)/CMakeFiles/TargetDirectories.txt
++out/build/x64-Debug (default)/CMakeFiles/CMakeOutput.log
++out/build/x64-Debug (default)/CMakeFiles/CMakeError.log
++out/build/x64-Debug (default)/CMakeFiles/cmake.check_cache
++out/build/x64-Debug (default)/CMakeFiles/ShowIncludes/main.obj
++out/build/x64-Debug (default)/CMakeFiles/ShowIncludes/main.c
++out/build/x64-Debug (default)/CMakeFiles/ShowIncludes/foo.h

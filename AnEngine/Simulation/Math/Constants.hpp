@@ -14,6 +14,8 @@
 
 namespace Sim
 {
+	// Compile-Time
+
 	constexpr
 	DecN CompareEpsilon()
 	{

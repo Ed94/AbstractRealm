@@ -10,7 +10,6 @@ Last Modified: 5/18/2020
 
 
 
-
 // Macros
 
 // Macro: EComplationIntention:
@@ -31,8 +30,6 @@ Macro version of the compilation intention.
 */
 #define Meta_BuildType \
 	Meta_CompileFor_Development
-
-
 
 
 

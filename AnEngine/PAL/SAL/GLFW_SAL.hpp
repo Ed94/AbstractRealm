@@ -31,9 +31,13 @@ GFLW Software Abstraction Layer
 
 namespace SAL::GLFW
 {
+	// Usings
+
 	using namespace LAL;
 	using namespace OSAL;
 	using namespace VT;
+
+
 
 	// Enums
 
@@ -60,6 +64,7 @@ namespace SAL::GLFW
 	};
 
 
+
 	// Types
 
 	using Monitor = GLFWmonitor;
@@ -68,34 +73,28 @@ namespace SAL::GLFW
 	using WindowSize_Callback = GLFWwindowsizefun;
 
 
-	// Constants
+
+	// Compile-Time
 
 	constexpr ptr<Window > NotShared    = NULL; 
 	constexpr ptr<Monitor> WindowedMode = NULL; 
+
 
 
 	// Functions
 
 	bool CanClose(const ptr<Window> WindowToCheck);
 
-	ptr<Window> MakeWindow
-	(
-				  int      Width                  , 
-				  int      Height                 , 
-		ptr<const char   > Title                  ,
-		ptr<      Monitor> MonitorToFullScreen    ,
-		ptr<      Window > MonitorToShareResources
-	);
-
 	template
 	<
-		typename AppInstanceHandle  ,
-		typename SurfaceHandle,
+		typename AppInstanceHandle,
+		typename SurfaceHandle    ,
+
 		class EResult = VkResult
 	>
 	typename std::enable_if< 
 		sizeof(AppInstanceHandle) == sizeof(VkInstance  ) && 
-		sizeof(SurfaceHandle    ) == sizeof(VkSurfaceKHR), 
+		sizeof(SurfaceHandle    ) == sizeof(VkSurfaceKHR)   , 
 	EResult>::type CreateWindowSurface
 	(
 			  AppInstanceHandle      _appHandle, 
@@ -110,6 +109,15 @@ namespace SAL::GLFW
 	void DestroyWindow(ptr<Window> WindowToDestroy);
 
 	bool Initalize();
+
+	ptr<Window> MakeWindow
+	(
+				  int      Width                  , 
+				  int      Height                 , 
+		ptr<const char   > Title                  ,
+		ptr<      Monitor> MonitorToFullScreen    ,
+		ptr<      Window > MonitorToShareResources
+	);
 
 	void PollEvents();
 

@@ -21,7 +21,7 @@ Last Modified: 5/18/2020
 
 namespace Core::Execution
 {
-	// Namespaces
+	// Usings
 
 	using namespace LAL ;
 	using namespace Meta;
@@ -115,6 +115,10 @@ namespace Core::Execution
 	private:	
 		Queue<ptr<AExecuter>> queue;
 	};
+
+
+
+	// Functions
 	
 	/**
 	 * Engine application entry point.
@@ -122,7 +126,11 @@ namespace Core::Execution
 	OSAL::ExitValT EntryPoint();
 
 
-	eGlobal ptr<OSAL::Window> EngineWindow;
+
+	StaticData
+	(
+		eGlobal ptr<OSAL::Window> EngineWindow;
+	)
 }
 
 

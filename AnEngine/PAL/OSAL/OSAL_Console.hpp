@@ -69,10 +69,6 @@ namespace OSAL
 			using Rect    = PSMALL_RECT          ;
 			using CharU   = ConsoleTypes::CharU  ;
 
-			static FILE* InFile ;
-			static FILE* OutFile;
-			static FILE* ErrFile;
-
 			// CAUSED MEMORY LEAK. (Sigh)
 			// https://stackoverflow.com/questions/311955/redirecting-cout-to-a-console-in-windows   
 			// Chris's answer. (He did it right)
@@ -87,41 +83,74 @@ namespace OSAL
 				freopen_s(&dummyFile, "CONOUT$", "w", stdout);
 				freopen_s(&dummyFile, "CONOUT$", "w", stderr);
 
-				OS_Handle stdHandle = GetConsoleHandle(EHandle::Input);
-
-				// Redirect STDIN if the console has an input handle
-				if (GetStdHandle(STD_INPUT_HANDLE) != INVALID_HANDLE_VALUE)
-					if (freopen_s(&dummyFile, "CONIN$", "r", stdin) != 0)
-						result = false;
-					else
-						setvbuf(stdin, NULL, _IONBF, 0);
-
-				// Redirect STDOUT if the console has an output handle
-				if (GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
-					if (freopen_s(&dummyFile, "CONOUT$", "w", stdout) != 0)
-						result = false;
-					else
-						setvbuf(stdout, NULL, _IONBF, 0);
-
-				// Redirect STDERR if the console has an error handle
-				if (GetStdHandle(STD_ERROR_HANDLE) != INVALID_HANDLE_VALUE)
-					if (freopen_s(&dummyFile, "CONOUT$", "w", stderr) != 0)
-						result = false;
-					else
-						setvbuf(stderr, NULL, _IONBF, 0);
+				Heap
+				(
+					// Redirect STDIN if the console has an input handle
+					if (GetStdHandle(STD_INPUT_HANDLE) != INVALID_HANDLE_VALUE)
+						if (freopen_s(&dummyFile, "CONIN$", "r", stdin) != 0)
+							result = false;
+						else
+							setvbuf(stdin, NULL, _IONBF, 0);
+	
+					// Redirect STDOUT if the console has an output handle
+					if (GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
+						if (freopen_s(&dummyFile, "CONOUT$", "w", stdout) != 0)
+							result = false;
+						else
+							setvbuf(stdout, NULL, _IONBF, 0);
+	
+					// Redirect STDERR if the console has an error handle
+					if (GetStdHandle(STD_ERROR_HANDLE) != INVALID_HANDLE_VALUE)
+						if (freopen_s(&dummyFile, "CONOUT$", "w", stderr) != 0)
+							result = false;
+						else
+							setvbuf(stderr, NULL, _IONBF, 0);
+				);
 
 				// Make C++ standard streams point to console as well.
 				std::ios::sync_with_stdio(true);
 
 				// Clear the error state for each of the C++ standard streams.
 				std::wcout.clear();
-				std::cout.clear();
+				std::cout .clear();
 				std::wcerr.clear();
-				std::cerr.clear();
-				std::wcin.clear();
-				std::cin.clear();
+				std::cerr .clear();
+				std::wcin .clear();
+				std::cin  .clear();
 
 				return true;
+			}
+
+			static bool Unbind_IOBuffersTo_OSIO()
+			{
+				bool result = true;
+
+				FILE* dummyFile;
+
+				// Just to be safe, redirect standard IO to NUL before releasing.
+
+				Heap
+				(
+					// Redirect STDIN to NUL
+					if (freopen_s(&dummyFile, "NUL:", "r", stdin) != 0)
+						result = false;
+					else
+						setvbuf(stdin, NULL, _IONBF, 0);
+	
+					// Redirect STDOUT to NUL
+					if (freopen_s(&dummyFile, "NUL:", "w", stdout) != 0)
+						result = false;
+					else
+						setvbuf(stdout, NULL, _IONBF, 0);
+	
+					// Redirect STDERR to NUL
+					if (freopen_s(&dummyFile, "NUL:", "w", stderr) != 0)
+						result = false;
+					else
+						setvbuf(stderr, NULL, _IONBF, 0);
+				);
+
+				return result;
 			}
 
 			static OS_Handle CreateBuffer()
@@ -135,7 +164,7 @@ namespace OSAL
 
 				if (!created)
 				{
-					created = AllocConsole();
+					created = Heap(AllocConsole());
 
 					created = Bind_IOBuffersTo_OSIO();
 
@@ -149,33 +178,12 @@ namespace OSAL
 
 			static bool Destroy()
 			{
-				bool result = true;
+				bool result = Unbind_IOBuffersTo_OSIO();
 
-				FILE* dummyFile;
-
-				// Just to be safe, redirect standard IO to NUL before releasing.
-
-				// Redirect STDIN to NUL
-				if (freopen_s(&dummyFile, "NUL:", "r", stdin) != 0)
-					result = false;
-				else
-					setvbuf(stdin, NULL, _IONBF, 0);
-
-				// Redirect STDOUT to NUL
-				if (freopen_s(&dummyFile, "NUL:", "w", stdout) != 0)
-					result = false;
-				else
-					setvbuf(stdout, NULL, _IONBF, 0);
-
-				// Redirect STDERR to NUL
-				if (freopen_s(&dummyFile, "NUL:", "w", stderr) != 0)
-					result = false;
-				else
-					setvbuf(stderr, NULL, _IONBF, 0);
+				if (!result) return result;
 
 				// Detach from console
-				if (!FreeConsole())
-					result = false;
+				result = Heap(FreeConsole());
 
 				return result;
 			}

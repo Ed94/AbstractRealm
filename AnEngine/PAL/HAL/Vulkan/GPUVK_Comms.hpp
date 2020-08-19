@@ -12,39 +12,19 @@
 
 namespace HAL::GPU::Vulkan
 {
+	//Usings
+
 	using namespace VT;
 	using namespace VT::Corridors;
 	using namespace VT::V4;
 
 	using namespace LAL;
 
-
-
-	struct QueueFamilyIndices
-	{
-		std::optional<uint32> Graphics;
-		std::optional<uint32> Compute;
-		std::optional<uint32> Transfer;
-		std::optional<uint32> SparseBinding;
-
-		std::optional<uint32> PresentationSupported;
-
-		std::set<uint32> GetSet()
-		{
-			std::set<uint32> queueIndices =
-			{
-				Graphics.value(),
-				Compute.value(),
-				Transfer     .value(),
-				SparseBinding.value(),
-				PresentationSupported.value()
-			};
-
-			return queueIndices;
-		}
-	};
-
 	using LayerandExtensionsList = DynamicArray<LayerAndExtensionProperties>;
+
+
+
+	// Structs
 
 	class PhysicalDevice : public V4::PhysicalDevice
 	{
@@ -182,7 +162,7 @@ namespace HAL::GPU::Vulkan
 		eGlobal DynamicArray<RoCStr>   DesiredInstanceExts   ;  
 		eGlobal DynamicArray<RoCStr>   DesiredDeviceExts     ;
 
-		eGlobal V4::DebugMessenger DebugMessenger;
+		eGlobal V4::DebugMessenger GPU_Messenger;
 
 		eGlobal PhysicalDeviceList PhysicalGPUs;
 		eGlobal LogicalDeviceList  LogicalGPUs ;

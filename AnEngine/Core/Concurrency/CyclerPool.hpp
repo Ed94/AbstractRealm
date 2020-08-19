@@ -9,7 +9,13 @@
 
 namespace Core::Concurrency
 {
+	// Usings
+
 	using namespace Execution;
+
+
+
+	// Structs
 
 	struct CyclerPool
 	{

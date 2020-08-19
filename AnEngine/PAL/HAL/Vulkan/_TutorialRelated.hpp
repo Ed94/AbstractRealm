@@ -24,7 +24,7 @@ namespace HAL::GPU
 {
 	namespace Vulkan
 	{
-		// Namespaces
+		// Usings
 
 		using namespace VT;
 		using namespace VT::V4;

@@ -102,9 +102,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult LogicalDevice::Create()
 	{
-		V4::PhysicalDevice& ref = *(V4::PhysicalDevice*)(physicalDevice);
-
-		EResult result = Parent::Parent::Create(physicalDevice->GetHandle(), info, handle);
+		EResult result = Heap(Parent::Parent::Create(physicalDevice->GetHandle(), info, handle));
 
 		if (result != EResult::Success) return result;
 
@@ -181,19 +179,17 @@ namespace HAL::GPU::Vulkan
 
 		for (auto& queueFamily : physicalDevice->GetAvailableQueueFamilies())
 		{
-			uint32 queueCount = 0;
-
-			QueueFamily       family {};
-			Queue::CreateInfo info   {};
+			QueueFamily       family    {};
+			Queue::CreateInfo queueInfo {};
 
 			family.Priority = 1.0f;
 
-			info.QueueFamilyIndex = familyIndex;
-			info.QueueCount       = 1          ;   // For now only getting one queue of any type.
+			queueInfo.QueueFamilyIndex = familyIndex;
+			queueInfo.QueueCount       = 1          ;   // For now only getting one queue of any type.
 
 			if (queueFamily.QueueFlags.Has(EQueueFlag::Graphics))
 			{
-				queueFamilyInfos.push_back(info);
+				queueFamilyInfos.push_back(queueInfo);
 
 				family.Info = getAddress(queueFamilyInfos.back());
 
@@ -204,7 +200,7 @@ namespace HAL::GPU::Vulkan
 
 			if (queueFamily.QueueFlags == QueueMask::ComputeAsync)
 			{
-				queueFamilyInfos.push_back(info);
+				queueFamilyInfos.push_back(queueInfo);
 
 				family.Info = getAddress(queueFamilyInfos.back());
 
@@ -215,7 +211,7 @@ namespace HAL::GPU::Vulkan
 
 			if (queueFamily.QueueFlags == QueueMask::TransferOnly)
 			{
-				queueFamilyInfos.push_back(info);
+				queueFamilyInfos.push_back(queueInfo);
 
 				family.Info = getAddress(queueFamilyInfos.back());
 
@@ -254,8 +250,8 @@ namespace HAL::GPU::Vulkan
 			}
 		}
 
-		info.QueueCreateInfoCount = queueFamilyInfos.size();
-		info.QueueCreateInfos     = queueFamilyInfos.data();
+		info.QueueCreateInfoCount = SCast<uint32>(queueFamilyInfos.size());
+		info.QueueCreateInfos     = queueFamilyInfos.data()               ;
 	}
 
 	void LogicalDevice::ProcessExtensionSupport()
@@ -276,8 +272,8 @@ namespace HAL::GPU::Vulkan
 			}			
 		}
 
-		info.EnabledExtensionCount = extensionsEnabled.size();
-		info.EnabledExtensionNames = extensionsEnabled.data();
+		info.EnabledExtensionCount = SCast<uint32>(extensionsEnabled.size());
+		info.EnabledExtensionNames = extensionsEnabled.data()               ;
 	}
 
 	void LogicalDevice::ProcessLayerSupport()
@@ -305,7 +301,7 @@ namespace HAL::GPU::Vulkan
 		DynamicArray<RoCStr>   DesiredInstanceExts   ;
 		DynamicArray<RoCStr>   DesiredDeviceExts     ;
 
-		V4::DebugMessenger DebugMessenger;
+		V4::DebugMessenger GPU_Messenger;
 
 		PhysicalDeviceList PhysicalGPUs;
 		LogicalDeviceList  LogicalGPUs ;
@@ -387,7 +383,7 @@ namespace HAL::GPU::Vulkan
 
 			SetupDebugMessenger();
 
-			createSpec.Next = getAddress(DebugMessenger.GetInfo());
+			createSpec.Next = getAddress(GPU_Messenger.GetInfo());
 		}
 		else
 		{
@@ -396,14 +392,14 @@ namespace HAL::GPU::Vulkan
 			createSpec.Next = nullptr;
 		}
 
-		stack<EResult> creationResult = AppGPU_Comms.Create(spec, createSpec);  
+		stack<EResult> creationResult = Heap(AppGPU_Comms.Create(spec, createSpec));  
 
 		if (creationResult != EResult::Success) 
 			throw std::runtime_error("Triangle Test: Failed to create Vulkan app instance.");
 
 		if (Meta::Vulkan::EnableLayers)
 		{
-			creationResult = DebugMessenger.Create(AppGPU_Comms);
+			creationResult = Heap(GPU_Messenger.Create(AppGPU_Comms));
 
 			if (creationResult != EResult::Success)
 				throw std::runtime_error("Failed to setup debug messenger!");
@@ -430,7 +426,7 @@ namespace HAL::GPU::Vulkan
 		createInfo.OSWinHandle = OSAL::GetOS_WindowHandle(testWindow);
 		createInfo.OSAppHandle = Surface::GetOS_AppHandle();
 
-		if (testSurface.Create(AppGPU_Comms, createInfo) != EResult::Success)
+		if (Heap(testSurface.Create(AppGPU_Comms, createInfo) != EResult::Success))
 		{
 			throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
 		}
@@ -480,7 +476,7 @@ namespace HAL::GPU::Vulkan
 			device.AssignPhysicalDevice(PhysicalGPUs[gpuIndex]);
 
 			// Creates the logical device, and the queues retrieve their respective data.
-			EResult result = device.Create();
+			EResult result = Heap(device.Create());
 
 			if (result != EResult::Success)
 			{
@@ -619,14 +615,22 @@ namespace HAL::GPU::Vulkan
 	Bool DebugCallback_Internal
 	(
 		      MessageServerityFlags            _messageServerity, 
-		      MessageTypeFlags                 _messageType     ,
+		      MessageTypeFlags                 ,//_messageType     ,
 		const V1::DebugMessenger::CallbackData _callbackData    , 
-		      ptr<void>                        _userData
+		      ptr<void>                        //_userData
 	)
 	{
-		std::cerr << "Vulkan: Validation Layer: " << _callbackData.Message << std::endl;
+		using ESeverity = EDebugUtilities_MessageSeverity;
 
-		//Dev::CLog("Vulkan Validation Layer: " + String(_callbackData.Message));
+
+		if (_messageServerity.HasOrEither(ESeverity::Info, ESeverity::Verbose, ESeverity::Warning))
+		{
+			//Dev::CLog("Vulkan Validation Layer: " + String(_callbackData.Message));
+		}
+		else if (_messageServerity == uint32(EDebugUtilities_MessageSeverity::Error))
+		{
+			std::cerr << "Vulkan: Validation Layer: " << _callbackData.Message << std::endl;
+		}
 
 		return EBool::True;
 	}
@@ -688,7 +692,7 @@ namespace HAL::GPU::Vulkan
 
 		info.UserData = nullptr;
 
-		DebugMessenger.AssignInfo(info);
+		GPU_Messenger.AssignInfo(info);
 	}
 }
 

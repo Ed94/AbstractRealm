@@ -8,14 +8,20 @@
 
 namespace Dev
 {
+	// Usings
+
 	using namespace LAL;
 
 
 
-	constexpr uInt16 ConsoleWidth = 140;
+	// Compile-Time
+
+	constexpr uInt16 ConsoleWidth  = 140;
 	constexpr uInt16 ConsoleHeight = 50;
 
 
+
+	// Functions
 
 	void CLog       (String _info                    );
 	void CLog_Status(String _info, int _row, int _col);

@@ -26,11 +26,12 @@ namespace HAL
 {
 	namespace GPU
 	{
-		// Usings
+		// Using
 
 		using namespace LAL;
 
 		using Meta::AppVersion;
+
 
 
 		// Functionality
@@ -55,7 +56,6 @@ namespace HAL
 
 
 		// GPU Related
-
 
 		/*
 		Initializes the essential object instances to provide interfacing to the GPU.

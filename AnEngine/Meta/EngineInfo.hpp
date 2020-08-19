@@ -21,7 +21,7 @@ Last Modified: 5/19/2020
 
 namespace Meta
 {
-	// Namespaces 
+	// Usings
 
 	using namespace LAL;
 
@@ -104,8 +104,6 @@ namespace Meta
 	}
 
 
-
-	// Runtime
 
 	StaticData
 	(

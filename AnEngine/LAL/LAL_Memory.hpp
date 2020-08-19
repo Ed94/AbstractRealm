@@ -42,28 +42,39 @@ namespace LAL
 		Free
 	};
 
-#define LAL_TrackHeap
-
-#ifdef LAL_TrackHeap
-	DataSize Internal_Heap_AllocationsLeft();
-
-	void ProcessHeapAction(EHeap _action);
-
 	// Macro Heap manipulation specifier.
-	#define Heap(_EHEAP_, ...) \
-	ProcessHeapAction(_EHEAP_); \
+	#define Heap(...) \
 	__VA_ARGS__
 
-	#define Heap_AllocationsLeft() \
-	Internal_Heap_AllocationsLeft()
-#else
-	// Macro Heap manipulation specifier.
-	#define Heap(_EHEAP_, ...) \
-	__VA_ARGS__
 
-	#define Heap_AllocationsLeft() \
-	0
-#endif
+	// Heap Tracking stuff. Not using for now
+
+//#define LAL_TrackHeap
+
+//#ifdef LAL_TrackHeap
+//
+//	DataSize Internal_Heap_AllocationsLeft();
+//
+//	void ProcessHeapAction(EHeap _action, DataSize _objectsAllocated);
+//
+//	// Macro Heap manipulation specifier.
+//	#define Heap(_EHEAP_, _NumObjects_, ...) \
+//	ProcessHeapAction(_EHEAP_, _NumObjects_); \
+//	__VA_ARGS__
+//
+//	#define Heap_AllocationsLeft() \
+//	Internal_Heap_AllocationsLeft()
+//
+//#else
+//
+//	// Macro Heap manipulation specifier.
+//	#define Heap(_EHEAP_, _NumObj_, ...) \
+//	__VA_ARGS__
+//
+//	#define Heap_AllocationsLeft() \
+//	0
+//
+//#endif
 	
 
 	/*
