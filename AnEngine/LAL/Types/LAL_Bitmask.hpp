@@ -8,6 +8,10 @@
 
 
 
+#include "LAL_Declarations.hpp"
+
+
+
 #ifndef BITMASK_DEFINED
 #define BITMASK_DEFINED
 

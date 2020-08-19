@@ -53,7 +53,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	/**
 	* Due to my lack of knowledge this is the smallest required execution I'm aware of that a Win32 App needs in order to safely close.
 	*/
-	MSG      msg = { 0 };
+	/*MSG      msg = { 0 };
 	WNDCLASS wc  = { 0 };
 
 	wc.lpfnWndProc   = WndProc                   ;
@@ -70,7 +70,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PostQuitMessage(0);
 
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
-		DispatchMessage(&msg);
+		DispatchMessage(&msg);*/
 
 	return 0;
 }
