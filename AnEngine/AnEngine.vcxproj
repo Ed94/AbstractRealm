@@ -75,7 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -190,7 +190,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Dev\DebugExec\Exec_GLFW_GLM_Test.hpp" />
     <ClInclude Include="Core\Dev\DebugExec\ImGui_StandaloneExample.hpp" />
     <ClInclude Include="Core\Dev\DebugExec\ImGui_TestingGrounds.hpp" />
     <ClInclude Include="Core\Dev\DebugExec\Vulkan_VKTutFull_Test.hpp">
@@ -217,15 +216,15 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\STL_Chrono.hpp">
+    <ClInclude Include="LAL\LAL_Chrono.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\STL_Thread.hpp">
+    <ClInclude Include="LAL\LAL_Thread.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Utilities\STL_Functions.hpp">
+    <ClInclude Include="LAL\Utilities\LAL_Functions.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -249,35 +248,35 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\ConventionEnforcer.hpp">
+    <ClInclude Include="LAL\LAL_ConventionEnforcer.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\STL_Containers.hpp">
+    <ClInclude Include="LAL\LAL_Containers.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\STL_Exceptions.hpp">
+    <ClInclude Include="LAL\LAL_Exceptions.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\STL_IO.hpp">
+    <ClInclude Include="LAL\LAL_IO.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\STL_String.hpp">
+    <ClInclude Include="LAL\LAL_String.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Types\Bitmask.hpp">
+    <ClInclude Include="LAL\Types\LAL_Bitmask.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Types\CharacterTypes.hpp">
+    <ClInclude Include="LAL\Types\LAL_CharacterTypes.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Utilities\STL_Ambiguous.hpp">
+    <ClInclude Include="LAL\Utilities\LAL_Ambiguous.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -285,20 +284,20 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Cpp_STL.hpp">
+    <ClInclude Include="LAL\LAL_Cpp_STL.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\STL_Memory.hpp">
+    <ClInclude Include="LAL\LAL_Memory.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Types\STL_BasicTypes.hpp">
+    <ClInclude Include="LAL\Types\LAL_BasicTypes.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Types\STL_FundamentalLimits.hpp" />
-    <ClInclude Include="LAL\Types\STL_FundamentalTypes.hpp">
+    <ClInclude Include="LAL\Types\LAL_FundamentalLimits.hpp" />
+    <ClInclude Include="LAL\Types\LAL_FundamentalTypes.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -306,19 +305,19 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\STL_Reflection.hpp">
+    <ClInclude Include="LAL\LAL_Reflection.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Utilities\STL_SmartPtrs.hpp">
+    <ClInclude Include="LAL\Utilities\LAL_SmartPtrs.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Casting.hpp">
+    <ClInclude Include="LAL\LAL_Casting.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Declarations.hpp">
+    <ClInclude Include="LAL\LAL_Declarations.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -340,7 +339,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Surfaces.hpp">
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Renderer.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -552,12 +551,13 @@
     <ClCompile Include="Core\Execution\MasterExecution.cpp" />
     <ClCompile Include="Core\Execution\PrimitiveExecuter_Implem.hpp" />
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
+    <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
-    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Surfaces.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Renderer.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />

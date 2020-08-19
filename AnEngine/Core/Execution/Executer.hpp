@@ -10,6 +10,7 @@ Last Modified: 5/18/2020
 
 
 
+// Engine
 #include "LAL/LAL.hpp"
 #include "Meta/EngineInfo.hpp"
 #include "OSAL/OSAL.hpp"
@@ -20,11 +21,14 @@ Last Modified: 5/18/2020
 
 namespace Core::Execution
 {
+	// Namespaces
+
 	using namespace LAL ;
 	using namespace Meta;
 
-	//enum class 
 
+
+	// Enums
 
 	enum class EExecutionType
 	{
@@ -60,6 +64,9 @@ namespace Core::Execution
 		Custom
 	};
 
+
+
+	// Classes
 
 	class AExecuter
 	{
@@ -117,6 +124,7 @@ namespace Core::Execution
 
 	eGlobal ptr<OSAL::Window> EngineWindow;
 }
+
 
 
 // Template Implementation

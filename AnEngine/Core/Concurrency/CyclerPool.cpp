@@ -3,7 +3,6 @@
 
 
 
-
 namespace Core::Concurrency
 {
 	struct Unit
@@ -17,10 +16,17 @@ namespace Core::Concurrency
 		DataSize Thread;
 	};
 
-	DynamicArray<Unit> Pool;
 
-	bool   Initiated   = false;
-	uInt16 ActiveUnits = 0    ;
+
+	StaticData
+	(
+		DynamicArray<Unit> Pool;
+
+		bool   Initiated   = false;
+		uInt16 ActiveUnits = 0    ;
+	)
+
+
 
 	void CyclerPool::ActivateUnit()
 	{

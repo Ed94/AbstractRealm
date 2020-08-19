@@ -3,10 +3,8 @@
 */
 
 
+
 #pragma once
-
-
-//#define Bitmaskable 
 
 
 

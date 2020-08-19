@@ -1,7 +1,9 @@
 #pragma once
 
 
-#include "Cpp_STL.hpp"
+
+#include "LAL_Cpp_STL.hpp"
+
 
 
 namespace LAL
@@ -17,6 +19,7 @@ namespace LAL
 	using HighResClock      = std::chrono::high_resolution_clock;
 	using HighResTimePeriod = HighResClock::period              ;
 	using HighResTimePoint  = HighResClock::time_point          ;
+
 
 	template<class RepresentiveType, class Period = std::ratio<1>>
 	using Duration = std::chrono::duration<RepresentiveType, Period>;
@@ -34,6 +37,7 @@ namespace LAL
 	// Time Local is defined in OSAL.
 
 	using std::put_time;
+
 
 	using CalendarDate = std::tm;
 

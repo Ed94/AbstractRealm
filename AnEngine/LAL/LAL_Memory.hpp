@@ -8,8 +8,12 @@ Last Modified: 5/18/2020
 
 #pragma once
 
-#include "Cpp_STL.hpp"
-#include "Types/STL_BasicTypes.hpp"
+
+
+// Engine
+#include "LAL_Cpp_STL.hpp"
+#include "LAL_BasicTypes.hpp"
+
 
 
 namespace LAL
@@ -32,9 +36,35 @@ namespace LAL
 	#define BSS(...) \
 	__VA_ARGS__
 
+	enum class EHeap
+	{
+		Allocate,
+		Free
+	};
+
+#define LAL_TrackHeap
+
+#ifdef LAL_TrackHeap
+	DataSize Internal_Heap_AllocationsLeft();
+
+	void ProcessHeapAction(EHeap _action);
+
 	// Macro Heap manipulation specifier.
-	#define Heap(...) \
+	#define Heap(_EHEAP_, ...) \
+	ProcessHeapAction(_EHEAP_); \
 	__VA_ARGS__
+
+	#define Heap_AllocationsLeft() \
+	Internal_Heap_AllocationsLeft()
+#else
+	// Macro Heap manipulation specifier.
+	#define Heap(_EHEAP_, ...) \
+	__VA_ARGS__
+
+	#define Heap_AllocationsLeft() \
+	0
+#endif
+	
 
 	/*
 	Stack Scope Type Specifier

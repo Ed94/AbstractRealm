@@ -5,6 +5,7 @@ Contains type definitions for commonly used raw character types (such as raw cha
 */
 
 
+
 #pragma once
 
 
@@ -15,6 +16,7 @@ namespace LAL
 	using RoCStr = const char*;
 
 	using CStr16 = wchar_t*;
+
 
 
 	constexpr auto CStr_Compare = strcmp;

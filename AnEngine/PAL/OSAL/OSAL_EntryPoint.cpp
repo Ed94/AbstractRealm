@@ -72,7 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
 		DispatchMessage(&msg);
 
-	return (int)msg.wParam;
+	return 0;
 }
 
 #endif

@@ -10,20 +10,21 @@ Last Modified: 5/19/2020
 
 
 
+// Engine
 #include "LAL/LAL.hpp"
-
-#include "magic_enum.hpp"
-
-
 #include "Meta/Specification.hpp"
+
+// Thirdparty
+#include "magic_enum.hpp"
 
 
 
 namespace Meta
 {
-	// Usings
+	// Namespaces 
 
 	using namespace LAL;
+
 
 	
 	// Enums
@@ -70,7 +71,8 @@ namespace Meta
 	};
 
 
-	// Compile-time
+
+	// Compile Time
 
 	constexpr char EngineName[] = "Abstract Realm";
 
@@ -102,20 +104,22 @@ namespace Meta
 	}
 
 
+
 	// Runtime
 
-	// Static Data
+	StaticData
+	(
+		/*
+		Determines the operational mode of the engine.
 
-	/*
-	Determines the operational mode of the engine.
+		Depending on build type, different operational modes of the engine may be available.
 
-	Depending on build type, different operational modes of the engine may be available.
+		Note: Changing the operational mode will require many modules to reinitialize themselves.
+		*/
+		eGlobal data< EOperationMode> OperationalMode;
 
-	Note: Changing the operational mode will require many modules to reinitialize themselves.
-	*/
-	eGlobal data< EOperationMode> OperationalMode;
-
-	eGlobal data< bool> UseEditor   ;
-	eGlobal data< bool> UseDebug    ;
-	eGlobal data< bool> UseProfiling;
+		eGlobal data< bool> UseEditor   ;
+		eGlobal data< bool> UseDebug    ;
+		eGlobal data< bool> UseProfiling;
+	)
 }

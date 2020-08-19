@@ -83,14 +83,16 @@ namespace OSAL
 				SetWindowCreationParameter(EWindowCreationParameter::ClientAPI, EClient_API::No_API          );
 				SetWindowCreationParameter(EWindowCreationParameter::Resizable, _windowCreationSpec.Resizable);
 
-				return MakeWindow
-				(
-					_windowCreationSpec.WindowSize.Width,
-					_windowCreationSpec.WindowSize.Height,
-					_windowCreationSpec.WindowTitle,
-					_windowCreationSpec.Windowed,
-					_windowCreationSpec.WindowToShareWith
-				);
+				return 
+				
+					MakeWindow
+					(
+						_windowCreationSpec.WindowSize.Width,
+						_windowCreationSpec.WindowSize.Height,
+						_windowCreationSpec.WindowTitle,
+						_windowCreationSpec.Windowed,
+						_windowCreationSpec.WindowToShareWith
+					);
 			}
 
 			static bool CanClose(const ptr<Window> _window)

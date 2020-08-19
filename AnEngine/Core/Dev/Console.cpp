@@ -3,6 +3,7 @@
 
 
 
+// Engine
 #include "Meta/EngineInfo.hpp"
 #include "OSAL/OSAL_Console.hpp"
 #include "OSAL/OSAL_Timing.hpp"
@@ -15,61 +16,65 @@ namespace Dev
 	using namespace OSAL;
 
 
-	// Static Data
-
-	// Private
 
 	using OSAL::CharU;
 
 	using CharBuffer = CharU[ConsoleHeight][ConsoleWidth];
 
-	OS_Handle ConsoleOutput;
-	OS_Handle ConsoleInput ;
 
-	ConsoleRect ConsoleSize = 
-	{
-		0, 0,
-		ConsoleWidth - 1,   // Width
-		ConsoleHeight- 1    // Height	
-	};
 
-	ConsoleExtent ConsoleBufferSize = { ConsoleWidth, ConsoleHeight };
+	StaticData
+	(
+		OS_Handle ConsoleOutput;
+		OS_Handle ConsoleInput;
 
-	OS_RoCStr ConsoleTitle = L"Abstract Realm: Dev Console";
+		ConsoleRect ConsoleSize =
+		{
+			0, 0,
+			ConsoleWidth  - 1,   // Width
+			ConsoleHeight - 1    // Height	
+		};
 
-	StaticArray<OS_Handle, 2> ConsoleBuffers;
+		ConsoleExtent ConsoleBufferSize = { ConsoleWidth, ConsoleHeight };
 
-	CharBuffer ConsoleCharBuffer; 
+		OS_RoCStr ConsoleTitle = L"Abstract Realm: Dev Console";
 
-	ConsoleExtent ConsoleCharBufferSize = { ConsoleWidth, ConsoleHeight };
-	ConsoleExtent ConsoleCharPos        = { 0           , 0             };
+		StaticArray<OS_Handle, 2> ConsoleBuffers;
 
-	ConsoleRect ConsoleWriteArea =
-	{
-		0, 0,
-		ConsoleWidth  - 1,   // Width
-		ConsoleHeight - 1    // Height	
-	};
+		CharBuffer ConsoleCharBuffer;
 
-	OS_Handle FrontBuffer = ConsoleBuffers[0],
-		      BackBuffer  = ConsoleBuffers[1] ;
+		ConsoleExtent ConsoleCharBufferSize = { ConsoleWidth, ConsoleHeight };
+		ConsoleExtent ConsoleCharPos        = { 0           , 0             };
 
-	// 0-3, 4-70, 71-90: Engine Title, DevLog, Status
+		ConsoleRect ConsoleWriteArea =
+		{
+			0, 0,
+			ConsoleWidth  - 1,   // Width
+			ConsoleHeight - 1    // Height	
+		};
 
-	uInt16 DevLogLineEnd = 44;
-	uInt16 StatusStart   = 45;
+		OS_Handle FrontBuffer = ConsoleBuffers[0],
+			      BackBuffer  = ConsoleBuffers[1] ;
 
-	uInt16 StatusColumnWidth = 35;
+		// 0-3, 4-70, 71-90: Engine Title, DevLog, Status
 
-	StaticArray<StaticArray<Stringstream, 4>, 4> StatusStreams;
+		uInt16 DevLogLineEnd = 44;
+		uInt16 StatusStart   = 45;
 
-	Stringstream DevLogStream;
+		uInt16 StatusColumnWidth = 35;
+
+		StaticArray<StaticArray<Stringstream, 4>, 4> StatusStreams;
+
+		Stringstream DevLogStream;
+	)
+
 
 
 	// Forwards
 
 	void WriteTo_Buffer      (int _line,           ConslAttribFlags _flags);
 	void WriteTo_StatusModule(int _row , int _col, ConslAttribFlags _flags);
+
 
 
 	// Public functions
@@ -224,13 +229,6 @@ namespace Dev
 
 		DevLogStream << setfill('-') << setw(ConsoleWidth) << '-';
 
-		WORD test = FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN;
-
-		if (FOREGROUND_RED != WORD(EConslAttribFlag::Foreground_Red))
-		{
-			cout << "whey?" << endl;
-		}
-
 		WriteTo_Buffer
 		(
 			0, 
@@ -327,7 +325,8 @@ namespace Dev
 	{
 		cout << "Dev: Load Console Buffer" << endl;
 
-		SetConsole_IOHooks();
+		ConsoleOutput = OSAL::Console_GetHandle(EConsoleHandle::Output);
+		ConsoleInput  = OSAL::Console_GetHandle(EConsoleHandle::Input );
 		
 		OSAL::Console_SetTitle(ConsoleTitle);
 
@@ -354,12 +353,6 @@ namespace Dev
 		CLog("Dev: Console Submodules ready.");
 
 		Console_UpdateBuffer();
-	}
-
-	void SetConsole_IOHooks()
-	{
-		ConsoleOutput = OSAL::Console_GetHandle(EConsoleHandle::Output);
-		ConsoleInput  = OSAL::Console_GetHandle(EConsoleHandle::Input );
 	}
 
 	void WriteTo_Buffer(int _line, ConslAttribFlags _flags)

@@ -19,6 +19,7 @@ C++ Standard Library
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <queue>
 #include <stdexcept>

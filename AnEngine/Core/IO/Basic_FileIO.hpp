@@ -13,25 +13,31 @@
 
 
 
+// Engine
 #include "LAL/LAL.hpp"
 
 
 
 namespace IO
 {
+	// Namespaces
+
 	using namespace LAL;
 
-	using Path = String;
-
 	using FileBuffer = DynamicArray<char>;
+	using Path       = String            ;
+
+
+
+	// Enums and Masks
 
 	enum class EOpenFlag : std::ios::openmode
 	{
-		SeekToEOF_BeforeWrite = std::ios::app,
+		SeekToEOF_BeforeWrite = std::ios::app   ,
 		BinaryMode            = std::ios::binary,
-		ForInput              = std::ios::in,
-		ForOutput             = std::ios::out,
-		DiscardStreamContents = std::ios::trunc,
+		ForInput              = std::ios::in    ,
+		ForOutput             = std::ios::out   ,
+		DiscardStreamContents = std::ios::trunc ,
 		SeekToEOF             = std::ios::ate
 	};
 
@@ -39,12 +45,16 @@ namespace IO
 
 	using OpenFlags = 
 		Bitmask<EOpenFlag, std::ios::openmode>;
+
+
+
+	// Compile-Time
 		
-		//LAL::Bitmask<EOpenFlag, std::ios::openmode>;
-
-
 	constexpr int FileStream_Beginning = 0;
 
+
+
+	// Functions
 
 	/*
 	Buffers the file to a FileBuffer type.

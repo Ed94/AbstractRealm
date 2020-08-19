@@ -3,46 +3,58 @@
 
 
 
+// Engine
 #include "Cycler.hpp"
 #include "Meta/AppInfo.hpp"
 #include "HAL/GPU_HAL.hpp"
 #include "MasterExecution.hpp"
 #include "Concurrency/CyclerPool.hpp"
-
 #include "ImGui_SAL.hpp"
 
 
 
 namespace Core::Execution
 {
-	using namespace LAL;
+	// Namespaces
+
+	using namespace LAL ;
 	using namespace Meta;
-	using namespace SAL;
+	using namespace SAL ;
+
+
+
+	// Aliases
 
 	using OSAL::Window               ;
 	using OSAL::WindowInfo           ;
 	using OSAL::FrameBufferDimensions;
 
-	ptr<Window> EngineWindow;
-
-	AppVersion AppVer = 
-	{ 
-		EEngineVersion::Major, 
-		EEngineVersion::Minor, 
-		EEngineVersion::Patch 
-	};
-
-	FrameBufferDimensions WindowSize = { 1280, 720 };
-
-	bool WindowResized = false;
 
 
-	void WindowSizeChanged(ptr<Window> _window, int _width, int _height)
-	{
-		WindowResized = true;
+	StaticData
+	(
+		ptr<Window> EngineWindow;
 
-		WindowSize.Width = _width; WindowSize.Height = _height;
-	}
+		AppVersion AppVer = 
+		{ 
+			EEngineVersion::Major, 
+			EEngineVersion::Minor, 
+			EEngineVersion::Patch 
+		};
+
+		FrameBufferDimensions WindowSize = { 1280, 720 };
+
+		bool WindowResized = false;
+
+		void WindowSizeChanged(ptr<Window> _window, int _width, int _height)
+		{
+			WindowResized = true;
+
+			WindowSize.Width = _width; WindowSize.Height = _height;
+		}
+	)
+
+	
 
 	OSAL::ExitValT EntryPoint()
 	{
@@ -51,8 +63,6 @@ namespace Core::Execution
 			using namespace LAL;
 
 			if (!OSAL::CreateConsole()) return 0;
-
-			OSAL::Console_Bind_IOBuffersTo_OSIO();
 
 			cout << "Console IO Buffers hooked to OS IO" << endl;
 
@@ -120,9 +130,9 @@ namespace Core::Execution
 
 		HAL::GPU::Default_DeinitializeRenderer(EngineWindow);
 
-		HAL::GPU::Cease_GPUComms();
-
 		OSAL::Destroy_Window(EngineWindow);
+
+		HAL::GPU::Cease_GPUComms();
 
 		OSAL::Unload();
 
@@ -130,6 +140,11 @@ namespace Core::Execution
 		{
 			OSAL::DestroyConsole();
 		}
+
+		/*if (Heap_AllocationsLeft() > 0)
+		{
+			throw RuntimeError("Heap has not been cleaned up properly.");
+		}*/
 
 		return OSAL::ExitValT(EExitCode::Success);
 	}

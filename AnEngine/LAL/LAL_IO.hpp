@@ -9,9 +9,7 @@
 
 
 
-#include "Cpp_STL.hpp"
-#include <iosfwd>
-
+#include "LAL_Cpp_STL.hpp"
 
 
 
@@ -19,7 +17,7 @@ namespace LAL
 {
 	using File_InputStream = std::ifstream;
 
-	using OStream = std::ostream;
+	using OStream       = std::ostream      ;
 	using OStringStream = std::ostringstream;
 
 

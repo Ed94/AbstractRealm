@@ -5,13 +5,18 @@
 
 namespace IO
 {
+	// Public
+
 	FileBuffer BufferFile(const Path& _fileToBuffer)
 	{
 		OpenFlags flags;
 
 		flags.Set(EOpenFlag::SeekToEOF, EOpenFlag::BinaryMode);
 
-		File_InputStream fileStream(_fileToBuffer, flags);
+		Heap(EHeap::Allocate, 
+			
+			 File_InputStream fileStream(_fileToBuffer, flags)
+		);
 
 		if (! fileStream.is_open())
 		{
@@ -30,7 +35,9 @@ namespace IO
 
 		fileStream.read(bufferToReturn.data(), streamSize);
 
-		fileStream.close();
+		Heap(EHeap::Free, 
+			 fileStream.close();
+		);
 
 		return bufferToReturn;
 	}

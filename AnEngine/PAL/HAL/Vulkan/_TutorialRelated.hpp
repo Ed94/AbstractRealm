@@ -2,7 +2,6 @@
 
 
 
-
 // Engine
 #include "Vulkan_API.hpp"
 
@@ -10,20 +9,14 @@
 #include "Renderer/Shader/TriangleShader/TriangleShader.hpp"
 #include "Renderer/Shader/VKTut/VKTut.hpp"
 
-
 // Raw Libraries
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-
 #include <tiny_obj_loader.h>
-
 #include "stb/stb_image.h"
-
-
-
 
 
 
@@ -31,14 +24,18 @@ namespace HAL::GPU
 {
 	namespace Vulkan
 	{
+		// Namespaces
+
 		using namespace VT;
 		using namespace VT::V4;
 		using namespace VT::SPIR_V;
 
-		using namespace LAL;
+		using namespace LAL ;
 		using namespace Meta;
 
 
+
+		// Structs
 
 		struct UniformBufferObject
 		{
@@ -47,7 +44,6 @@ namespace HAL::GPU
 			alignas(16) glm::mat4 Projection;
 		};
 
-			
 		struct Vertex
 		{
 			using AttributeDescription = Pipeline::VertexInputState::AttributeDescription;
@@ -124,96 +120,101 @@ namespace HAL::GPU
 			}
 		};
 
-		multiDefs const DynamicArray<Vertex> TriangleVerticies = 
-		{
+
+
+		StaticData
+		(
+			multiDefs const DynamicArray<Vertex> TriangleVerticies = 
 			{
-				{ 0.0f, -0.5f      }, 
-				{ 1.0f,  0.0f, 0.0f}
-			},
+				{
+					{ 0.0f, -0.5f      }, 
+					{ 1.0f,  0.0f, 0.0f}
+				},
+				{
+					{ 0.5f, 0.5f      }, 
+					{ 0.0f, 1.0f, 0.0f}
+				},
+				{
+					{-0.5f, 0.5f      }, 
+					{ 0.0f, 0.0f, 1.0f}
+				}
+			};
+
+			multiDefs const DynamicArray<Vertex> SquareVerticies =
 			{
-				{ 0.5f, 0.5f      }, 
-				{ 0.0f, 1.0f, 0.0f}
-			},
+				{
+					{ -0.5f, -0.5f, 0.0f }, 
+					{  1.0f,  0.0f, 0.0f }, 
+					{  0.0f,  0.0f       }
+				},
+				{
+					{ 0.5f, -0.5f, 0.0f }, 
+					{ 0.0f,  1.0f, 0.0f }, 
+					{ 1.0f,  0.0f       }
+				},
+				{
+					{ 0.5f, 0.5f, 0.0f }, 
+					{ 0.0f, 0.0f, 1.0f }, 
+					{ 1.0f, 1.0f       }
+				},
+				{
+					{ -0.5f, 0.5f, 0.0f }, 
+					{  1.0f, 1.0f, 1.0f }, 
+					{  0.0f, 1.0f       }
+				},
+
+				{ 
+					{ -0.5f, -0.5f, -0.5f }, 
+					{  1.0f,  0.0f,  0.0f }, 
+					{  0.0f,  0.0f        }
+				},
+				{
+					{ 0.5f, -0.5f, -0.5f }, 
+					{ 0.0f,  1.0f,  0.0f }, 
+					{ 1.0f,  0.0f        }
+				},
+				{
+					{ 0.5f, 0.5f, -0.5f }, 
+					{ 0.0f, 0.0f,  1.0f }, 
+					{ 1.0f, 1.0f        }
+				},
+				{
+					{ -0.5f, 0.5f, -0.5f }, 
+					{  1.0f, 1.0f,  1.0f }, 
+					{  0.0f, 1.0f        }
+				}
+			};
+
+			multiDefs const DynamicArray<uInt16> SquareIndices =
 			{
-				{-0.5f, 0.5f      }, 
-				{ 0.0f, 0.0f, 1.0f}
-			}
-		};
+				0, 1, 2, 2, 3, 0,
+				4, 5, 6, 6, 7, 4
+			};
 
-		multiDefs const DynamicArray<Vertex> SquareVerticies =
-		{
-			{
-				{ -0.5f, -0.5f, 0.0f }, 
-				{  1.0f,  0.0f, 0.0f }, 
-				{  0.0f,  0.0f       }
-			},
-			{
-				{ 0.5f, -0.5f, 0.0f }, 
-				{ 0.0f,  1.0f, 0.0f }, 
-				{ 1.0f,  0.0f       }
-			},
-			{
-				{ 0.5f, 0.5f, 0.0f }, 
-				{ 0.0f, 0.0f, 1.0f }, 
-				{ 1.0f, 1.0f       }
-			},
-			{
-				{ -0.5f, 0.5f, 0.0f }, 
-				{  1.0f, 1.0f, 1.0f }, 
-				{  0.0f, 1.0f       }
-			},
+			eGlobal DynamicArray<Vertex> ModelVerticies;
+			eGlobal DynamicArray<uint32> ModelIndicies ;
 
-			{ 
-				{ -0.5f, -0.5f, -0.5f }, 
-				{  1.0f,  0.0f,  0.0f }, 
-				{  0.0f,  0.0f        }
-			},
-			{
-				{ 0.5f, -0.5f, -0.5f }, 
-				{ 0.0f,  1.0f,  0.0f }, 
-				{ 1.0f,  0.0f        }
-			},
-			{
-				{ 0.5f, 0.5f, -0.5f }, 
-				{ 0.0f, 0.0f,  1.0f }, 
-				{ 1.0f, 1.0f        }
-			},
-			{
-				{ -0.5f, 0.5f, -0.5f }, 
-				{  1.0f, 1.0f,  1.0f }, 
-				{  0.0f, 1.0f        }
-			}
-		};
+			multiDefs const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
+			multiDefs const String VikingRoom_TexturePath = "Engine/Data/Models/VikingRoom/viking_room.png";
 
-		multiDefs const DynamicArray<uInt16> SquareIndices =
-		{
-			0, 1, 2, 2, 3, 0,
-			4, 5, 6, 6, 7, 4
-		};
+			multiDefs const String EdsCryingCat_ModelPath   = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.obj";
+			multiDefs const String EdsCryingCat_TexturePath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.jpg";
 
-		eGlobal DynamicArray<Vertex> ModelVerticies;
-		eGlobal DynamicArray<uint32> ModelIndicies ;
+			// TODO: Make the GPU hal agnostic to this.
 
-		multiDefs const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
-		multiDefs const String VikingRoom_TexturePath = "Engine/Data/Models/VikingRoom/viking_room.png";
+			eGlobal Buffer VertexBuffer      ;
+			eGlobal Memory VertexBufferMemory;
 
-		multiDefs const String EdsCryingCat_ModelPath   = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.obj";
-		multiDefs const String EdsCryingCat_TexturePath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.jpg";
+			eGlobal Buffer IndexBuffer      ;
+			eGlobal Memory IndexBufferMemory;
 
-		// TODO: Make the GPU hal agnostic to this.
+			eGlobal DynamicArray<Buffer> UniformBuffers      ;
+			eGlobal DynamicArray<Memory> UniformBuffersMemory;
 
-		eGlobal Buffer VertexBuffer      ;
-		eGlobal Memory VertexBufferMemory;
-
-		eGlobal Buffer IndexBuffer      ;
-		eGlobal Memory IndexBufferMemory;
-
-		eGlobal DynamicArray<Buffer> UniformBuffers      ;
-		eGlobal DynamicArray<Memory> UniformBuffersMemory;
-
-		eGlobal Image     TextureImage      ;
-		eGlobal Memory    TextureImageMemory;
-		eGlobal ImageView TextureImageView  ;
-		eGlobal Sampler   TextureSampler    ;
+			eGlobal Image     TextureImage      ;
+			eGlobal Memory    TextureImageMemory;
+			eGlobal ImageView TextureImageView  ;
+			eGlobal Sampler   TextureSampler    ;
+		)
 	}
 }

@@ -69,87 +69,59 @@ namespace OSAL
 			using Rect    = PSMALL_RECT          ;
 			using CharU   = ConsoleTypes::CharU  ;
 
-			// https://stackoverflow.com/questions/311955/redirecting-cout-to-a-console-in-windows
-			static void Bind_IOBuffersTo_OSIO()
-			{
-				FILE* dummyFile;
+			static FILE* InFile ;
+			static FILE* OutFile;
+			static FILE* ErrFile;
 
-				freopen_s(&dummyFile, "nul", "r", stdin );
-				freopen_s(&dummyFile, "nul", "w", stdout);
-				freopen_s(&dummyFile, "nul", "w", stderr);
+			// CAUSED MEMORY LEAK. (Sigh)
+			// https://stackoverflow.com/questions/311955/redirecting-cout-to-a-console-in-windows   
+			// Chris's answer. (He did it right)
+		    // https://stackoverflow.com/questions/191842/how-do-i-get-console-output-in-c-with-a-windows-program
+			static bool Bind_IOBuffersTo_OSIO()
+			{				 
+				bool result = false;
+
+				FILE* dummyFile = nullptr;
+
+				freopen_s(&dummyFile, "CONIN$" , "r", stdin );
+				freopen_s(&dummyFile, "CONOUT$", "w", stdout);
+				freopen_s(&dummyFile, "CONOUT$", "w", stderr);
 
 				OS_Handle stdHandle = GetConsoleHandle(EHandle::Input);
 
-				if (stdHandle != OS_InvalidHandle)
-				{
-					int fileDescriptor = _open_osfhandle((intptr_t)stdHandle, _O_TEXT);
+				// Redirect STDIN if the console has an input handle
+				if (GetStdHandle(STD_INPUT_HANDLE) != INVALID_HANDLE_VALUE)
+					if (freopen_s(&dummyFile, "CONIN$", "r", stdin) != 0)
+						result = false;
+					else
+						setvbuf(stdin, NULL, _IONBF, 0);
 
-					if (fileDescriptor != -1)
-					{
-						FILE* file = _fdopen(fileDescriptor, "r");
+				// Redirect STDOUT if the console has an output handle
+				if (GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
+					if (freopen_s(&dummyFile, "CONOUT$", "w", stdout) != 0)
+						result = false;
+					else
+						setvbuf(stdout, NULL, _IONBF, 0);
 
-						if (file != nullptr)
-						{
-							int dup2Result = _dup2(_fileno(file), _fileno(stdin));
+				// Redirect STDERR if the console has an error handle
+				if (GetStdHandle(STD_ERROR_HANDLE) != INVALID_HANDLE_VALUE)
+					if (freopen_s(&dummyFile, "CONOUT$", "w", stderr) != 0)
+						result = false;
+					else
+						setvbuf(stderr, NULL, _IONBF, 0);
 
-							if (dup2Result == 0)
-							{
-								setvbuf(stdin, nullptr, _IONBF, 0);
-							}
-						}
-					}
-				}
+				// Make C++ standard streams point to console as well.
+				std::ios::sync_with_stdio(true);
 
-				stdHandle = GetConsoleHandle(EHandle::Output);
-
-				if (stdHandle != OS_InvalidHandle)
-				{
-					int fileDescriptor = _open_osfhandle((intptr_t)stdHandle, _O_TEXT);
-
-					if (fileDescriptor != -1)
-					{
-						FILE* file = _fdopen(fileDescriptor, "w");
-
-						if (file != nullptr)
-						{
-							int dup2Result = _dup2(_fileno(file), _fileno(stdout));
-
-							if (dup2Result == 0)
-							{
-								setvbuf(stdout, nullptr, _IONBF, 0);
-							}
-						}
-					}
-				}
-
-				stdHandle = GetConsoleHandle(EHandle::Error);
-
-				if (stdHandle != OS_InvalidHandle)
-				{
-					int fileDescriptor = _open_osfhandle((intptr_t)stdHandle, _O_TEXT);
-
-					if (fileDescriptor != -1)
-					{
-						FILE* file = _fdopen(fileDescriptor, "w");
-
-						if (file != nullptr)
-						{
-							int dup2Result = _dup2(_fileno(file), _fileno(stderr));
-
-							if (dup2Result == 0)
-							{
-								setvbuf(stderr, nullptr, _IONBF, 0);
-							}
-						}
-					}
-				}
-
-				std::wcin .clear();
-				std::cin  .clear();
+				// Clear the error state for each of the C++ standard streams.
 				std::wcout.clear();
-				std::cout .clear();
+				std::cout.clear();
 				std::wcerr.clear();
-				std::cerr .clear();
+				std::cerr.clear();
+				std::wcin.clear();
+				std::cin.clear();
+
+				return true;
 			}
 
 			static OS_Handle CreateBuffer()
@@ -159,12 +131,53 @@ namespace OSAL
 
 			static bool Create()
 			{
-				return AllocConsole();
+				static bool created = false;
+
+				if (!created)
+				{
+					created = AllocConsole();
+
+					created = Bind_IOBuffersTo_OSIO();
+
+					return created;
+				}
+				else
+				{
+					return false;
+				}
 			}
 
 			static bool Destroy()
 			{
-				return FreeConsole();
+				bool result = true;
+
+				FILE* dummyFile;
+
+				// Just to be safe, redirect standard IO to NUL before releasing.
+
+				// Redirect STDIN to NUL
+				if (freopen_s(&dummyFile, "NUL:", "r", stdin) != 0)
+					result = false;
+				else
+					setvbuf(stdin, NULL, _IONBF, 0);
+
+				// Redirect STDOUT to NUL
+				if (freopen_s(&dummyFile, "NUL:", "w", stdout) != 0)
+					result = false;
+				else
+					setvbuf(stdout, NULL, _IONBF, 0);
+
+				// Redirect STDERR to NUL
+				if (freopen_s(&dummyFile, "NUL:", "w", stderr) != 0)
+					result = false;
+				else
+					setvbuf(stderr, NULL, _IONBF, 0);
+
+				// Detach from console
+				if (!FreeConsole())
+					result = false;
+
+				return result;
 			}
 
 			static OS_Handle GetConsoleHandle(EHandle::NativeT _type)

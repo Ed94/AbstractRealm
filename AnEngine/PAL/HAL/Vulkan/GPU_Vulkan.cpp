@@ -19,9 +19,6 @@
 	{
 		namespace Vulkan
 		{
-			
-
-
 			// Static Data
 
 			// Command
@@ -228,7 +225,7 @@
 
 				StaticArray<ClearValue, 2> clearValues {}; 
 
-				clearValues[0].Color        = { 0.0f, 0.0f, 0.0f, 1.0f };
+				clearValues[0].Color        = { 0.0f, 0.0f, 0.0f, 0.1f };
 				clearValues[1].DepthStencil = { 1.0f, 0                };
 
 				renderPassInfo.ClearValueCount = SCast<uint32>(clearValues.size());
@@ -1694,6 +1691,11 @@
 
 			void Cease_GPUComms()
 			{
+				for (auto& device : LogicalGPUs)
+				{
+					device.Destroy();
+				}
+
 				AppGPU_Comms.Destroy();
 			}
 

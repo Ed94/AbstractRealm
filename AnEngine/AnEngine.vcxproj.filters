@@ -2,13 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="LAL\LAL.hpp" />
-    <ClInclude Include="LAL\Cpp_STL.hpp" />
-    <ClInclude Include="LAL\STL_Reflection.hpp" />
-    <ClInclude Include="LAL\Types\STL_FundamentalLimits.hpp" />
-    <ClInclude Include="LAL\Types\STL_FundamentalTypes.hpp" />
-    <ClInclude Include="LAL\Types\STL_BasicTypes.hpp" />
-    <ClInclude Include="LAL\Utilities\STL_SmartPtrs.hpp" />
-    <ClInclude Include="LAL\STL_Memory.hpp" />
     <ClInclude Include="Core\Execution\Executer.hpp" />
     <ClInclude Include="Core\Memory\MemTypes.hpp" />
     <ClInclude Include="Simulation\Math\Vector3D.hpp" />
@@ -19,30 +12,20 @@
     <ClInclude Include="PAL\HAL\Audio_HAL.hpp" />
     <ClInclude Include="PAL\SAL\GLFW_SAL.hpp" />
     <ClInclude Include="PAL\SAL\GLM_SAL.hpp" />
-    <ClInclude Include="LAL\Casting.hpp" />
-    <ClInclude Include="LAL\Types\Bitmask.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.hpp" />
-    <ClInclude Include="LAL\ConventionEnforcer.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Enums.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Types.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Debug.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Constants.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_PhysicalDevice.hpp" />
-    <ClInclude Include="LAL\Utilities\STL_Ambiguous.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_LogicalDevice.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Surface.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Platform.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_SwapChain.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Vaults.hpp" />
     <ClInclude Include="Renderer\Shader\RudimentaryCompiler.hpp" />
-    <ClInclude Include="LAL\Types\CharacterTypes.hpp" />
     <ClInclude Include="Core\IO\Basic_FileIO.hpp" />
-    <ClInclude Include="LAL\STL_IO.hpp" />
-    <ClInclude Include="LAL\STL_Containers.hpp" />
-    <ClInclude Include="LAL\STL_String.hpp" />
-    <ClInclude Include="LAL\Declarations.hpp" />
-    <ClInclude Include="LAL\STL_Exceptions.hpp" />
     <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.hpp" />
     <ClInclude Include="PAL\SAL\ImGui_SAL.hpp" />
     <ClInclude Include="Meta\AppInfo.hpp" />
@@ -50,7 +33,6 @@
     <ClInclude Include="Meta\Specification.hpp" />
     <ClInclude Include="Meta\Config\Overrides.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\Library.hpp" />
-    <ClInclude Include="LAL\Utilities\STL_Functions.hpp" />
     <ClInclude Include="PAL\PAL.hpp" />
     <ClInclude Include="PAL\HAL\HAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\Vulkan_API.hpp" />
@@ -77,9 +59,6 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Memory_Backend.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\_TutorialRelated.hpp" />
-    <ClInclude Include="LAL\STL_Chrono.hpp" />
-    <ClInclude Include="LAL\STL_Thread.hpp" />
-    <ClInclude Include="Core\Dev\DebugExec\Exec_GLFW_GLM_Test.hpp" />
     <ClInclude Include="Core\Dev\DebugExec\ImGui_StandaloneExample.hpp" />
     <ClInclude Include="Core\Dev\DebugExec\ImGui_TestingGrounds.hpp" />
     <ClInclude Include="Core\Dev\DebugExec\Vulkan_VKTutFull_Test.hpp" />
@@ -110,7 +89,27 @@
     <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\LockLessMultiReadPipe.h" />
     <ClInclude Include="PAL\SAL\EnkiTS_SAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Comms.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Surfaces.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Renderer.hpp" />
+    <ClInclude Include="LAL\LAL_ConventionEnforcer.hpp" />
+    <ClInclude Include="LAL\LAL_Declarations.hpp" />
+    <ClInclude Include="LAL\LAL_Chrono.hpp" />
+    <ClInclude Include="LAL\LAL_Containers.hpp" />
+    <ClInclude Include="LAL\LAL_Exceptions.hpp" />
+    <ClInclude Include="LAL\LAL_IO.hpp" />
+    <ClInclude Include="LAL\LAL_Memory.hpp" />
+    <ClInclude Include="LAL\LAL_Reflection.hpp" />
+    <ClInclude Include="LAL\LAL_String.hpp" />
+    <ClInclude Include="LAL\LAL_Thread.hpp" />
+    <ClInclude Include="LAL\Utilities\LAL_SmartPtrs.hpp" />
+    <ClInclude Include="LAL\Utilities\LAL_Ambiguous.hpp" />
+    <ClInclude Include="LAL\Utilities\LAL_Functions.hpp" />
+    <ClInclude Include="LAL\Types\LAL_FundamentalTypes.hpp" />
+    <ClInclude Include="LAL\Types\LAL_BasicTypes.hpp" />
+    <ClInclude Include="LAL\Types\LAL_CharacterTypes.hpp" />
+    <ClInclude Include="LAL\Types\LAL_Bitmask.hpp" />
+    <ClInclude Include="LAL\LAL_Casting.hpp" />
+    <ClInclude Include="LAL\LAL_Cpp_STL.hpp" />
+    <ClInclude Include="LAL\Types\LAL_FundamentalLimits.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -148,6 +147,7 @@
     <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
-    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Surfaces.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Renderer.cpp" />
+    <ClCompile Include="LAL\LAL_Memory.cpp" />
   </ItemGroup>
 </Project>

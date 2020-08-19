@@ -2,6 +2,7 @@
 
 
 
+// Engine
 #include "Cycler.hpp"
 
 
@@ -12,6 +13,8 @@ namespace Core::Concurrency
 
 	struct CyclerPool
 	{
+		static void ActivateUnit();
+
 		static const Cycler& GetCycler(uInt16 _unit);
 
 		static uInt16 GetNumUnits();
@@ -21,7 +24,5 @@ namespace Core::Concurrency
 		static bool IsShutdown();
 
 		static bool RequestShutdown();
-
-		static void ActivateUnit();
 	};
 }
