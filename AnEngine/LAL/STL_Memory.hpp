@@ -20,7 +20,11 @@ namespace LAL
 	#define Stack(...) \
 	__VA_ARGS__
 
-	// Macro Data Segment scope specifier
+	// Macro Static Variable scope specifier.
+	#define StaticData(...) \
+	__VA_ARGS__
+
+	// Macro Data Segment scope specifier.
 	#define Data(...) \
 	__VA_ARGS__
 

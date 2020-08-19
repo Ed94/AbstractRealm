@@ -341,6 +341,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Comms.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Backend.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_Command.hpp">
@@ -545,6 +549,7 @@
     <ClCompile Include="Meta\EngineInfo.cpp" />
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />

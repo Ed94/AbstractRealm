@@ -13,4 +13,20 @@ namespace HAL::GPU::Vulkan
 {
 	DynamicArray<Vertex> ModelVerticies;
 	DynamicArray<uint32> ModelIndicies ;
+
+	// TODO: Make the GPU hal agnostic to this.
+
+	Buffer VertexBuffer      ;
+	Memory VertexBufferMemory;
+
+	Buffer IndexBuffer      ;
+	Memory IndexBufferMemory;
+
+	DynamicArray<Buffer> UniformBuffers      ;
+	DynamicArray<Memory> UniformBuffersMemory;
+
+	Image     TextureImage      ;
+	Memory    TextureImageMemory;
+	ImageView TextureImageView  ;
+	Sampler   TextureSampler    ;
 }

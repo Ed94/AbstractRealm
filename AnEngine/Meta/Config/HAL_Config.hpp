@@ -59,8 +59,21 @@ namespace Meta
 	*/
 	eGlobal data< EGPUPlatformAPI> GPU_API;
 
-	/*
-	Determines if Vulkan will use validation layers.
-	*/
-	eGlobal data< bool> Vulkan_EnableValidationLayers;
+	namespace  Vulkan
+	{
+		/**
+		 * Determines if vulkan will use injectable layers.
+		 */
+		eGlobal data< bool> EnableLayers   ;
+
+		/**
+		 * Enables the wall of debug essentially for Vulkan.
+		 */
+		eGlobal data< bool> Enable_API_Dump;
+
+		/*
+		Determines if Vulkan will use validation layers.
+		*/
+		eGlobal data< bool> Enable_Validation;
+	}
 }

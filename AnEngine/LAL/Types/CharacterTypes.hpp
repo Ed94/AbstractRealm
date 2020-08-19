@@ -15,4 +15,7 @@ namespace LAL
 	using RoCStr = const char*;
 
 	using CStr16 = wchar_t*;
+
+
+	constexpr auto CStr_Compare = strcmp;
 }

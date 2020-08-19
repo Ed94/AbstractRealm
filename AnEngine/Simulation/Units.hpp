@@ -15,7 +15,7 @@ Last Modified: 5/18/2020
 #include "LAL/LAL.hpp"
 
 #include "Meta/Specification.hpp"
-#include "Meta/Config/Simulation.hpp"
+#include "Meta/Config/Simulation_Config.hpp"
 
 
 

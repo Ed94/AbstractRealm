@@ -10,6 +10,12 @@ namespace Meta
 {
 	data< EGPUPlatformAPI> GPU_API = Default_GPU_API;
 
-	// TODO: I needed to inverse the result of use debug. I have no idea why...
-	data< bool> Vulkan_EnableValidationLayers = !UseDebug;
+	namespace Vulkan
+	{
+		// TODO: I needed to inverse the result of use debug. I have no idea why...
+		data< bool> EnableLayers = !UseDebug;
+
+		data< bool> Enable_API_Dump   = false    ;
+		data< bool> Enable_Validation = !UseDebug;
+	}
 }

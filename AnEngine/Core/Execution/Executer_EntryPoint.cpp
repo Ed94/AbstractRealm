@@ -71,14 +71,14 @@ namespace Core::Execution
 
 			cout << "Initializing Dev Module" << endl;
 
-			Dev::LoadModule();
+			//Dev::LoadModule();
 		}
 
 		OSAL::Load();
 
 		HAL::GPU::Load();
 
-		HAL::GPU::Initialize_GPUComms("Abstract Realm: MVP 0.88.0", AppVer);
+		HAL::GPU::Initialize_GPUComms("Abstract Realm: MVP 0.87.0", AppVer);
 
 		// Window
 
@@ -87,10 +87,7 @@ namespace Core::Execution
 		windowSpec.WindowTitle = "Abstract Realm"               ;
 		windowSpec.WindowSize  = WindowSize                     ;
 		windowSpec.Windowed    = OSAL::WindowInfo ::WindowedMode;
-		windowSpec.ClientAPI   = GLFW::EClient_API::No_API      ;
-		windowSpec.Resizable   = GLFW::EBool      ::True        ;
-
-
+		windowSpec.Resizable   = OSAL::WinBool::True            ;
 
 		EngineWindow = OSAL::Create_Window(windowSpec);
 

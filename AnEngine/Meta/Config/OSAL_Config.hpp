@@ -17,7 +17,8 @@ namespace Meta
 
 	enum class EWindowingPlatform
 	{
-		GLFW
+		GLFW,
+		OSAL
 	};
 
 

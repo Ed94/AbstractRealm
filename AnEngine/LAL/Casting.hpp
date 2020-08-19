@@ -20,6 +20,15 @@ Type CVCast(const Type _obj)
 }
 
 /*
+Constant Cast
+*/
+template<typename Type>
+Type* CVCast(const Type* _obj)
+{
+	return const_cast<Type*>(_obj);
+}
+
+/*
 Dynamic Cast (Direct)
 */
 template<typename Derived, typename Base>
@@ -68,7 +77,7 @@ Derived SCast(const Base _obj)
 Static Cast (Pointer)
 */
 template<typename Derived, typename Base>
-Derived SCast(const Base* _ptr)
+Derived* SCast(const Base* _ptr)
 {
 	return static_cast< Derived* >(_ptr);
 }

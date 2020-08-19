@@ -197,7 +197,23 @@ namespace HAL::GPU
 		multiDefs const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
 		multiDefs const String VikingRoom_TexturePath = "Engine/Data/Models/VikingRoom/viking_room.png";
 
-		multiDefs const String EdsCryingCat_ModelPath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.obj"  ;
+		multiDefs const String EdsCryingCat_ModelPath   = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.obj";
 		multiDefs const String EdsCryingCat_TexturePath = "Engine/Data/Models/EdsCryingCat/EdsCryingCat.jpg";
+
+		// TODO: Make the GPU hal agnostic to this.
+
+		eGlobal Buffer VertexBuffer      ;
+		eGlobal Memory VertexBufferMemory;
+
+		eGlobal Buffer IndexBuffer      ;
+		eGlobal Memory IndexBufferMemory;
+
+		eGlobal DynamicArray<Buffer> UniformBuffers      ;
+		eGlobal DynamicArray<Memory> UniformBuffersMemory;
+
+		eGlobal Image     TextureImage      ;
+		eGlobal Memory    TextureImageMemory;
+		eGlobal ImageView TextureImageView  ;
+		eGlobal Sampler   TextureSampler    ;
 	}
 }

@@ -17,8 +17,8 @@ GPU Hardware Abstraction Layer
 #include "Meta/AppInfo.hpp"
 #include "Meta/Config/HAL_Config.hpp"
 #include "GPU_HAL_CoreDefs.hpp"
-#include "HAL/Vulkan/GPU_Vulkan.hpp"
 #include "OSAL/OSAL.hpp"
+#include "HAL/Vulkan/GPU_Vulkan.hpp"
 
 
 

@@ -7,6 +7,10 @@
 // This can be done by making the design of the GPU HAL agnostic to what the tutorial requires.
 #include "_TutorialRelated.hpp"
 
+// Proper stuff
+#include "GPUVK_Comms.hpp"
+
+
 #include "Dev/Console.hpp"
 
 #if VULCAN_INTERFACE == VAULTED_THERMALS_INTERFACE
@@ -15,63 +19,10 @@
 	{
 		namespace Vulkan
 		{
-			struct QueueFamilyIndices
-			{
-				std::optional<uint32> Graphics     ;
-				std::optional<uint32> Compute      ;
-				std::optional<uint32> Transfer     ;
-				std::optional<uint32> SparseBinding;
-
-				std::optional<uint32> PresentationSupported;
-
-				std::set<uint32> GetSet()
-				{
-					std::set<uint32> queueIndices =
-					{
-						Graphics.value(),
-						//Compute.value(),
-						//Transfer.value(),
-						//SparseBinding.value()
-						PresentationSupported.value()
-					};
-
-					return queueIndices;
-				}
-			};
+			
 
 
 			// Static Data
-
-			// Persistent
-
-			AppInstance AppGPU;
-
-			V4::PhysicalDevice PhysicalDevice;
-
-			// Debug
-
-			V4::DebugMessenger         DebugMessenger     ;
-			DebugMessenger::CreateInfo DebugMessenger_Info;
-
-			ExtensionIdentifierList DeviceExtensions =
-			{
-				Swapchain_ExtensionName
-			};
-
-			ValidationLayerList ValidationLayerIdentifiers =
-			{
-				ValidationLayer_Khronos
-			};
-
-			// Device Related
-
-			V4::LogicalDevice LogicalDevice;
-			QueueFamilyIndices QueueIndices;
-
-			LogicalDevice::Queue* GraphicsQueue    ;
-			LogicalDevice::Queue* PresentationQueue;
-
-			std::vector<LogicalDevice::Queue> DeviceQueues;
 
 			// Command
 
@@ -139,28 +90,6 @@
 
 			RawRenderContext RenderContext_Default;   // Should this still be used?
 
-
-		#pragma region VKTut_V1
-
-			// TODO: Make the GPU hal agnostic to this.
-
-			Buffer VertexBuffer      ;
-			Memory VertexBufferMemory;
-
-			Buffer IndexBuffer      ;
-			Memory IndexBufferMemory;
-
-			DynamicArray<Buffer> UniformBuffers      ;
-			DynamicArray<Memory> UniformBuffersMemory;
-
-			Image     TextureImage      ;
-			Memory    TextureImageMemory;
-			ImageView TextureImageView  ;
-			Sampler   TextureSampler    ;
-				
-		#pragma endregion VKTut_V1
-
-
 		#pragma region Staying
 
 			uint32 GetMinimumFramebufferCount()
@@ -180,12 +109,13 @@
 
 			void EndSingleTimeBuffer(CommandBuffer& _buffer)
 			{
-				SingleTimeCommandPool.EndSingleTimeCommands(_buffer, *GraphicsQueue);
+				//SingleTimeCommandPool.EndSingleTimeCommands(_buffer, *GraphicsQueue);
+				SingleTimeCommandPool.EndSingleTimeCommands(_buffer, GetEngagedDevice().GetGraphicsQueue());
 			}
 
 			EResult RequestDescriptorPool(V4::DescriptorPool& _pool, V4::DescriptorPool::CreateInfo _info)
 			{
-				EResult returnCode = _pool.Create(LogicalDevice, _info);
+				EResult returnCode = _pool.Create(GetEngagedDevice(), _info);
 
 				return returnCode;
 			}
@@ -204,36 +134,6 @@
 
 
 			// Functions
-
-			bool CheckValidationLayerSupport(ValidationLayerList& _validationLayersSpecified)
-			{
-				std::vector<ValidationLayers::LayerProperties> availableLayers;
-
-				ValidationLayers::GetAvailableLayers(availableLayers);
-
-				stack<bool> layerFound = false;
-
-				for (auto validationLayerName : _validationLayersSpecified)
-				{
-					for (const auto& layer : availableLayers)
-					{
-						if (strcmp(validationLayerName, layer.LayerName) == 0)
-						{
-							layerFound = true;
-
-							break;
-						}
-					}
-				}
-
-
-				if (!layerFound)
-				{
-					return false;
-				}
-
-				return true;
-			}
 
 			void CleanupSwapChain()
 			{
@@ -295,65 +195,8 @@
 
 				commandBuffer.CopyBufferToImage(_buffer, _image, VT::Corridors::EImageLayout::TransferDestination_Optimal, 1, &region);
 				
-				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
-			}
-
-			void CreateApplicationInstance
-			(
-				RoCStr      _appName, 
-				AppVersion& _version 
-			)
-			{
-				using Meta::EEngineVersion;
-
-				AppInstance::AppInfo    appSpec       {};
-				AppInstance::CreateInfo appCreateSpec {};
-
-				if (Vulkan_EnableValidationLayers)
-				{
-					if (!CheckValidationLayerSupport(ValidationLayerIdentifiers))
-						throw std::runtime_error("Validation layers requested, but are not available!");
-				}
-
-				appSpec.AppName       = _appName                                                   ;
-				appSpec.AppVersion    = MakeVersion(_version.Major, _version.Minor, _version.Patch);
-				appSpec.EngineName    = Meta::EngineName                                           ;
-				appSpec.EngineVersion = MakeVersion
-				(
-					EEngineVersion::Major, 
-					EEngineVersion::Minor, 
-					EEngineVersion::Patch
-				)                                         ;
-				appSpec.API_Version   = EAPI_Version::_1_0;
-
-				appCreateSpec.AppInfo = getAddress(appSpec);
-
-				ExtensionIdentifierList extensions = GetRequiredExtensions();
-
-				appCreateSpec.EnabledExtensionCount = SCast<uint32>(extensions.size());
-				appCreateSpec.EnabledExtensionNames = extensions.data()               ;
-
-				if (Vulkan_EnableValidationLayers)
-				{
-					appCreateSpec.EnabledLayerCount = SCast<uint32>(ValidationLayerIdentifiers.size());
-
-					appCreateSpec.EnabledLayerNames = ValidationLayerIdentifiers.data();
-
-					PopulateDebugMessengerCreateInfo(DebugMessenger_Info);
-
-					appCreateSpec.Next = ptr<DebugMessenger::CreateInfo>(&DebugMessenger_Info);
-				}
-				else
-				{
-					appCreateSpec.EnabledLayerCount = 0;
-
-					appCreateSpec.Next = nullptr;
-				}
-
-				EResult creationResult = AppGPU.Create(appSpec, appCreateSpec);  
-
-				if (creationResult != EResult::Success) 
-					throw std::runtime_error("Triangle Test: Failed to create Vulkan app instance.");
+				//SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
+				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, GetEngagedDevice().GetGraphicsQueue());
 			}
 
 			std::vector<RenderCallback> RenderCallbacks;
@@ -457,10 +300,11 @@
 			{
 				CommandPool::CreateInfo poolInfo {};
 
-				poolInfo.QueueFamilyIndex = QueueIndices.Graphics.value();
+				//poolInfo.QueueFamilyIndex = QueueIndices.Graphics.value();
+				poolInfo.QueueFamilyIndex = GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex();
 				poolInfo.Flags            = CommandPool::CreateFlgas()   ;             // Optional
 
-				SingleTimeCommandPool.Create(LogicalDevice, poolInfo);
+				SingleTimeCommandPool.Create(GetEngagedDevice().GetHandle(), poolInfo);
 
 				CommandPools.resize(SwapChain_Images.size());
 				CommandBuffers.resize(SwapChain_Images.size());
@@ -468,7 +312,7 @@
 
 				for (DeviceSize index = 0; index < SwapChain_Images.size(); index++)
 				{
-					if (CommandPools[index].Create(LogicalDevice, poolInfo) != EResult::Success)
+					if (CommandPools[index].Create(GetEngagedDevice().GetHandle(), poolInfo) != EResult::Success)
 					{
 						throw std::runtime_error("failed to create command pool!");
 					}
@@ -526,7 +370,7 @@
 
 				poolInfo.MaxSets = SCast<uint32>(SwapChain_Images.size());
 
-				if (DescriptorPool.Create(LogicalDevice, poolInfo, nullptr) != EResult::Success)
+				if (DescriptorPool.Create(GetEngagedDevice(), poolInfo, nullptr) != EResult::Success)
 					throw RuntimeError("Failed to create descriptor pool!");
 			}
 
@@ -617,7 +461,7 @@
 				layoutInfo.BindingCount = SCast<uint32>(bindings.size());
 				layoutInfo.Bindings = bindings.data();
 
-				DescriptorSetLayout.Assign(LogicalDevice, layoutInfo);
+				DescriptorSetLayout.Assign(GetEngagedDevice().GetHandle(), layoutInfo);
 
 				if (DescriptorSetLayout.Create() != EResult::Success)
 					throw RuntimeError("Failed to create descriptor set layout!");
@@ -645,7 +489,7 @@
 					framebufferInfo.Height          = SwapChain_Extent.Height          ;
 					framebufferInfo.Layers          = 1                                ;
 
-					if (SwapChain_Framebuffers[index].Create(LogicalDevice, framebufferInfo) != EResult::Success) 
+					if (SwapChain_Framebuffers[index].Create(GetEngagedDevice().GetHandle(), framebufferInfo) != EResult::Success) 
 					{
 						throw std::runtime_error("Failed to create framebuffer!");
 					}
@@ -809,7 +653,7 @@
 				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr                         ;
 
 				EResult piplineLayout_CreationResult = 
-					PipelineLayout.Create(LogicalDevice, pipelineLayout_CreationSpec);
+					PipelineLayout.Create(GetEngagedDevice().GetHandle(), pipelineLayout_CreationSpec);
 					//Pipeline::Layout::Create(LogicalDevice.GetHandle(), pipelineLayout_CreationSpec, nullptr, PipelineLayout);
 
 
@@ -841,7 +685,7 @@
 				pipelineInfo.BasePipelineHandle = VK_NULL_HANDLE;   // Optional
 				pipelineInfo.BasePipelineIndex  = -1            ;   // Optional
 
-				EResult returnCode = GraphicsPipeline.Create(LogicalDevice.GetHandle(), pipelineInfo);
+				EResult returnCode = GraphicsPipeline.Create(GetEngagedDevice().GetHandle(), pipelineInfo);
 
 				if (returnCode != EResult::Success) 
 					throw std::runtime_error("Failed to create graphics pipeline!");
@@ -878,15 +722,17 @@
 				imageInfo.Samples      = _numSamples            ;
 				imageInfo.Flags        = 0                      ;
 
-				if (_image.Create(LogicalDevice, imageInfo) != EResult::Success)
+				if (_image.Create(GetEngagedDevice().GetHandle(), imageInfo) != EResult::Success)
 					throw RuntimeError("Failed to create image!");
 
 				Memory::AllocateInfo allocationInfo {};
 
-				allocationInfo.AllocationSize = _image.GetMemoryRequirements().Size;
-				allocationInfo.MemoryTypeIndex = PhysicalDevice.FindMemoryType(_image.GetMemoryRequirements().MemoryTypeBits, _properties);
+				auto& gpu = GetEngagedDevice().GetPhysicalDevice();
 
-				if (_imageMemory.Allocate(LogicalDevice, allocationInfo) != EResult::Success)
+				allocationInfo.AllocationSize = _image.GetMemoryRequirements().Size;
+				allocationInfo.MemoryTypeIndex = gpu.FindMemoryType(_image.GetMemoryRequirements().MemoryTypeBits, _properties);
+
+				if (_imageMemory.Allocate(GetEngagedDevice().GetHandle(), allocationInfo) != EResult::Success)
 					throw RuntimeError("Failed to allocate image memory!");
 
 				_image.BindMemory(_imageMemory, 0);
@@ -913,7 +759,7 @@
 
 				ImageView result;
 
-				if (result.Create(LogicalDevice, viewInfo, Memory::DefaultAllocator) != EResult::Success )
+				if (result.Create(GetEngagedDevice().GetHandle(), viewInfo, Memory::DefaultAllocator) != EResult::Success )
 					throw RuntimeError("Failed to create texture image view!");
 
 				return result;
@@ -944,8 +790,7 @@
 
 				stagingBuffer.CreateAndBind
 				(
-					PhysicalDevice, 
-					LogicalDevice,
+					GetEngagedDevice(),
 					stagingBufferInfo, 
 					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
 					stagingBufferMemory
@@ -966,84 +811,18 @@
 
 				IndexBuffer.CreateAndBind
 				(
-					PhysicalDevice, 
-					LogicalDevice, 
+					GetEngagedDevice(), 
 					indexBufferInfo, 
 					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
-					IndexBufferMemory, 
-					Memory::DefaultAllocator
+					IndexBufferMemory
 				);
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				SingleTimeCommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, *GraphicsQueue);
+				SingleTimeCommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue());
 
 				stagingBuffer      .Destroy();
 				stagingBufferMemory.Free();
-			}
-
-			void CreateLogicalDevice()	
-			{
-				std::vector<LogicalDevice::Queue::CreateInfo> queueCreateInfos;
-
-				float32 queuePriority = 1.0f;
-
-				for (auto queueFamily : QueueIndices.GetSet())
-				{
-					LogicalDevice::Queue::CreateInfo createInfo{};
-
-					createInfo.QueueFamilyIndex = queueFamily;
-					createInfo.QueueCount       = 1;
-					createInfo.QueuePriorities  = &queuePriority;
-
-					if (GraphicsQueue->FamilySpecified() && GraphicsQueue->GetFamilyIndex() == queueFamily)
-					{
-						GraphicsQueue->Assign(LogicalDevice, createInfo);
-					}
-
-					if (PresentationQueue->FamilySpecified() && PresentationQueue->GetFamilyIndex() == queueFamily && PresentationQueue != GraphicsQueue)
-					{
-						PresentationQueue->Assign(LogicalDevice, createInfo);
-					}
-
-					queueCreateInfos.push_back(createInfo);
-				}
-
-				PhysicalDevice::Features physDeviceFeatures{};
-
-				physDeviceFeatures.SamplerAnisotropy = EBool::True;	
-
-				LogicalDevice::CreateInfo createInfo{};
-
-				createInfo.QueueCreateInfoCount  = queueCreateInfos.size()    ;
-				createInfo.QueueCreateInfos      = queueCreateInfos.data()    ;
-				createInfo.EnabledFeatures       = &physDeviceFeatures        ;
-				createInfo.EnabledExtensionNames = DeviceExtensions.data();
-				createInfo.EnabledExtensionCount = DeviceExtensions.size();
-
-				if (Vulkan_EnableValidationLayers)
-				{
-					createInfo.EnabledLayerCount = SCast<uint32>(ValidationLayerIdentifiers.size());
-					createInfo.EnabledLayerNames = ValidationLayerIdentifiers.data( )              ;
-				}
-				else
-				{
-					createInfo.EnabledLayerCount = 0;
-				}
-
-				EResult&& result = LogicalDevice.Create(PhysicalDevice, createInfo, nullptr);
-
-				if (result != EResult::Success)
-				{
-					throw std::runtime_error("Vulkan: Failed to create logical device!");
-				}
-
-				GraphicsQueue->Retrieve();
-
-				if (PresentationQueue->GetHandle() == NULL)
-				{
-					PresentationQueue->Retrieve();
-				}
 			}
 
 			void CreateRenderPass()
@@ -1141,7 +920,7 @@
 				renderPassInfo.DependencyCount = 1          ;
 				renderPassInfo.Dependencies    = &dependency;
 
-				if (RenderPass.Create(LogicalDevice, renderPassInfo) != EResult::Success)
+				if (RenderPass.Create(GetEngagedDevice().GetHandle(), renderPassInfo) != EResult::Success)
 				{
 					throw std::runtime_error("failed to create render pass!");
 				}
@@ -1154,15 +933,29 @@
 				createInfo.OSWinHandle = OSAL::GetOS_WindowHandle(_window); 
 				createInfo.OSAppHandle = Surface::GetOS_AppHandle()       ;
 
-				if (Surface.Create(AppGPU, createInfo) != EResult::Success) 
+				if (Surface.Create(AppGPU_Comms, createInfo) != EResult::Success) 
 				{
-					throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
+					throw std::runtime_error("Failed to create window surface");
+				}
+
+				Bool surfaceSupported = false;
+
+				Surface.CheckPhysicalDeviceSupport
+				(
+					GetEngagedPhysicalGPU().GetHandle(), 
+					GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex(), 
+					surfaceSupported
+				);
+
+				if (!surfaceSupported)
+				{
+					throw std::runtime_error("Surface not supported by current engaged device.");
 				}
 			}
 
 			void CreateSwapChain(OSAL::Window* _window)
 			{
-				SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(PhysicalDevice);
+				SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport();
 				Surface::Format         surfaceFormat    = Surface_SwapChain_ChooseFormat(swapChainSupport.Formats);
 				EPresentationMode       presentationMode = Surface_SwapChain_ChoosePresentationMode(swapChainSupport.PresentationModes);
 				Extent2D                extent           = Surface_SwapChain_ChooseExtent(swapChainSupport.Capabilities,_window);
@@ -1188,21 +981,25 @@
 
 				uint32 queueFamilyIndices[] = 
 				{
-					QueueIndices.Graphics.value()
+					GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex()
 				};
 
-				if (QueueIndices.Graphics != QueueIndices.PresentationSupported) 
+				/*if (GetEngadedDevice().GetGraphicsQueue().GetFamilyIndex() != QueueIndices.PresentationSupported)
 				{
 					creationSpec.ImageSharingMode      = ESharingMode::Concurrent;
 					creationSpec.QueueFamilyIndexCount = 2                       ;
 					creationSpec.QueueFamilyIndices    = queueFamilyIndices      ;
-				}
-				else 
-				{
-					creationSpec.ImageSharingMode      = ESharingMode::Exclusive;
-					creationSpec.QueueFamilyIndexCount = 0                     ; // Optional
-					creationSpec.QueueFamilyIndices    = nullptr               ; // Optional
-				}
+				}*/
+				//else 
+				//{
+				//	creationSpec.ImageSharingMode      = ESharingMode::Exclusive;
+				//	creationSpec.QueueFamilyIndexCount = 0                      ; // Optional
+				//	creationSpec.QueueFamilyIndices    = nullptr                ; // Optional
+				//}
+
+				creationSpec.ImageSharingMode      = ESharingMode::Exclusive;
+				creationSpec.QueueFamilyIndexCount = 0                      ; // Optional
+				creationSpec.QueueFamilyIndices    = nullptr                ; // Optional
 
 				creationSpec.PreTransform     = swapChainSupport.Capabilities.CurrentTransform;
 				creationSpec.CompositeAlpha   = ECompositeAlpha::Opaque                       ;
@@ -1210,7 +1007,7 @@
 				creationSpec.Clipped          = true                                          ;
 				creationSpec.OldSwapchain     = Null<SwapChain::Handle>                       ;
 
-				EResult creationResult = SwapChain.Create(LogicalDevice, creationSpec);
+				EResult creationResult = SwapChain.Create(GetEngagedDevice().GetHandle(), creationSpec);
 
 				if (creationResult != EResult::Success)
 				{
@@ -1243,9 +1040,9 @@
 				{
 					EResult
 					
-					result = ImageAvailable_Semaphores[index].Create(LogicalDevice, semaphore_CreationSpec);
-					result = RenderFinished_Semaphores[index].Create(LogicalDevice, semaphore_CreationSpec);
-					result = InFlightFences           [index].Create(LogicalDevice, fence_CreationSpec    );
+					result = ImageAvailable_Semaphores[index].Create(GetEngagedDevice().GetHandle(), semaphore_CreationSpec);
+					result = RenderFinished_Semaphores[index].Create(GetEngagedDevice().GetHandle(), semaphore_CreationSpec);
+					result = InFlightFences           [index].Create(GetEngagedDevice().GetHandle(), fence_CreationSpec    );
 
 					if (result != EResult::Success)
 						throw std::runtime_error("Failed to create synchronization objects for a frame!");
@@ -1282,8 +1079,7 @@
 
 				stagingBuffer.CreateAndBind
 				(
-					PhysicalDevice,
-					LogicalDevice,
+					GetEngagedDevice(),
 					stagingBufferInfo,
 					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
 					stagingBufferMemory
@@ -1350,7 +1146,7 @@
 				samplerInfo.MinimumLod = 0.0f                      ;
 				samplerInfo.MaxLod     = SCast<float32>(MipMapLevels);
 
-				if (TextureSampler.Create(LogicalDevice, samplerInfo, nullptr) != EResult::Success)
+				if (TextureSampler.Create(GetEngagedDevice().GetHandle(), samplerInfo, nullptr) != EResult::Success)
 					throw RuntimeError("Failed to create texture sampler!");
 			}
 
@@ -1372,9 +1168,9 @@
 				ShaderModule::CreateInfo vertInfo(triShader_VertCode.data(), triShader_VertCode.size());
 				ShaderModule::CreateInfo fragInfo(triShader_FragCode.data(), triShader_FragCode.size());
 
-				ShaderModule triShaderModule_Vert; triShaderModule_Vert.Create(LogicalDevice, vertInfo);
+				ShaderModule triShaderModule_Vert; triShaderModule_Vert.Create(GetEngagedDevice().GetHandle(), vertInfo);
 
-				ShaderModule triShaderModule_Frag; triShaderModule_Frag.Create(LogicalDevice, fragInfo);
+				ShaderModule triShaderModule_Frag; triShaderModule_Frag.Create(GetEngagedDevice().GetHandle(), fragInfo);
 
 				StaticArray<ShaderModule, 2> result = { triShaderModule_Vert, triShaderModule_Frag };
 
@@ -1398,8 +1194,7 @@
 				{
 					UniformBuffers[index].CreateAndBind
 					(
-						PhysicalDevice,
-						LogicalDevice,
+						GetEngagedDevice(),
 						uniformBufferInfo,
 						Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
 						UniformBuffersMemory[index],
@@ -1427,8 +1222,8 @@
 				ShaderModule vertShaderModule; ShaderModule::CreateInfo vertShaderInfo(vertCode.data(), vertCode.size());
 				ShaderModule fragShaderModule; ShaderModule::CreateInfo fragShaderInfo(fragCode.data(), fragCode.size());
 
-				vertShaderModule.Create(LogicalDevice, vertShaderInfo);
-				fragShaderModule.Create(LogicalDevice, fragShaderInfo);
+				vertShaderModule.Create(GetEngagedDevice().GetHandle(), vertShaderInfo);
+				fragShaderModule.Create(GetEngagedDevice().GetHandle(), fragShaderInfo);
 				
 				StaticArray<ShaderModule, 2> result = { vertShaderModule, fragShaderModule };
 
@@ -1452,8 +1247,7 @@
 
 				stagingBuffer.CreateAndBind
 				(
-					PhysicalDevice,
-					LogicalDevice,
+					GetEngagedDevice(),
 					stagingBufferInfo,
 					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
 					stagingBufferMemory
@@ -1475,8 +1269,7 @@
 
 				VertexBuffer.CreateAndBind
 				(
-					PhysicalDevice, 
-					LogicalDevice, 
+					GetEngagedDevice(), 
 					vertexBufferInfo, 
 					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
 					VertexBufferMemory
@@ -1484,7 +1277,7 @@
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				SingleTimeCommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, *GraphicsQueue);
+				SingleTimeCommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue());
 
 				stagingBuffer.Destroy(); stagingBufferMemory.Free();
 			}
@@ -1500,26 +1293,6 @@
 				return DebugCallback_Internal(_messageServerity, _messageType, _callbackData, _userData);
 			}
 
-			/*
-			I had to make this to resolve an issue with a decltype function resolve error on EnforceConvention.
-			*/
-			Bool DebugCallback_Internal
-			(
-					  MessageServerityFlags        _messageServerity, 
-					  MessageTypeFlags             _messageType     ,
-				const V1::DebugMessenger::CallbackData _callbackData    , 
-					  ptr<void>                    _userData
-			)
-			{
-				std::cerr << "Vulkan: Validation Layer: " << _callbackData.Message << std::endl;
-
-	
-
-				//Dev::CLog("Vulkan Validation Layer: " + String(_callbackData.Message));
-
-				return EBool::True;
-			}
-
 			EFormat FindDepthFormat()
 			{
 				return	FindSupportedFormat
@@ -1530,68 +1303,11 @@
 				);
 			}
 
-			QueueFamilyIndices FindQueueFamilies
-			(
-				V4::PhysicalDevice _physicalDevice,
-				V4::Surface _surfaceHandle
-			)
-			{
-				QueueFamilyIndices indices {};
-
-				auto queueFamilies = _physicalDevice.GetAvailableQueueFamilies();
-
-				int index = 0;
-
-				for (const auto& queueFamily : queueFamilies)
-				{
-					if (queueFamily.QueueFlags.Has(EQueueFlag::Graphics))
-					{
-						indices.Graphics = index;
-
-						DeviceQueues.push_back(LogicalDevice::Queue());
-
-						GraphicsQueue = &DeviceQueues.back();
-
-						GraphicsQueue->SpecifyFamily(index, LogicalDevice::Queue::EType::Graphics);	
-					}
-
-					if (queueFamily.QueueFlags.Has(EQueueFlag::Compute))
-					{
-						indices.Compute = index;
-					}
-
-					if (queueFamily.QueueFlags.Has(EQueueFlag::Transfer))
-					{
-						indices.Transfer = index;
-					}
-
-					if (queueFamily.QueueFlags.Has(EQueueFlag::SparseBinding))
-					{
-						indices.SparseBinding = index;
-					}
-
-					
-					if (indices.Graphics.has_value())
-					{
-						break;
-					}
-
-					index++;
-
-					if (index == queueFamilies.size())
-					{
-						break;
-					}
-				}
-
-				return indices;
-			}
-
 			V4::EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features)
 			{
 				for (EFormat format : _canidates)
 				{
-					FormatProperties properties = PhysicalDevice.GetFormatProperties(format);
+					FormatProperties properties = GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(format);
 
 					if (_tiling == EImageTiling::Linear && (properties.LinearTilingFeatures & _features) == _features)
 					{
@@ -1609,7 +1325,7 @@
 			void GenerateMipMaps(Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
 			{
 				// Check if image format supports linear blitting
-				FormatProperties formatProperties = PhysicalDevice.GetFormatProperties(_format);
+				FormatProperties formatProperties = GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(_format);
 
 				if (!(formatProperties.OptimalTilingFeatures.Has(EFormatFeatureFlag::SampledImageFilterLinear)))
 				{
@@ -1713,7 +1429,7 @@
 					1, &barrier
 				);
 
-				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
+				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, GetEngagedDevice().GetGraphicsQueue());
 			}
 
 			ExtensionIdentifierList GetRequiredExtensions()
@@ -1728,9 +1444,9 @@
 
 				stack<ExtensionIdentifierList> extensions(extensionsRequired, extensionsRequired + numExtensions);
 
-				if (Vulkan_EnableValidationLayers)
+				if (Meta::Vulkan::EnableLayers)
 				{
-					extensions.push_back(Extension_DebugUtility);
+					extensions.push_back(InstanceExt::DebugUtility);
 				}
 
 				return extensions;
@@ -1742,60 +1458,9 @@
 				return CStrArray(SAL::GLFW::GetRequiredVulkanAppExtensions(_numExtensions));
 			}
 
-			// TODO: Offload
-			bool CheckQueuesFor_SurfacePresentationSupport(V4::PhysicalDevice _physicalDevice)
-			{
-				for (auto& queue : DeviceQueues)
-				{
-					Bool result; Surface.CheckPhysicalDeviceSupport(_physicalDevice, queue.GetFamilyIndex(), result);
-
-					if (result)
-					{
-						QueueIndices.PresentationSupported = queue.GetFamilyIndex();
-
-						PresentationQueue = &queue;
-
-						return true;
-					}
-				}
-
-				return false;
-			}
-
 			bool HasStencilComponent(EFormat _format)
 			{
 				return _format == EFormat::D32_SFloat_S8_UInt || _format == EFormat::D24_UNormalized_S8_UInt;
-			}
-
-			bool IsDeviceSuitable(V4::PhysicalDevice& _physicalDevice, V4::Surface& _surface, ExtensionIdentifierList _extensionsSpecified)
-			{
-				auto& deviceProperties = _physicalDevice.GetProperties();
-				auto& deviceFeatures   = _physicalDevice.GetFeatures  ();
-
-				QueueIndices = FindQueueFamilies(_physicalDevice, _surface);
-
-				bool presentationSupport = CheckQueuesFor_SurfacePresentationSupport(_physicalDevice);
-
-				bool extensionsSupported = _physicalDevice.CheckExtensionSupport(_extensionsSpecified);
-
-				bool swapChainAdequate = false;
-
-				if (extensionsSupported)
-				{
-					SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(_physicalDevice);
-
-					swapChainAdequate = !swapChainSupport.Formats.empty() && !swapChainSupport.PresentationModes.empty();
-				}
-
-				bool result = 
-					bool(deviceFeatures.GeometryShader) &&
-					QueueIndices.Graphics.has_value() &&
-					presentationSupport &&
-					extensionsSupported                 &&
-					swapChainAdequate                   && 
-					deviceFeatures.SamplerAnisotropy      ;
-
-				return result;
 			}
 
 			void LoadModel(String _modelPath)
@@ -1838,61 +1503,11 @@
 				}
 			}
 
-			void PickPhysicalDevice()
-			{
-				std::vector<V4::PhysicalDevice> physicalDevices;
-					
-				AppGPU.GetAvailablePhysicalDevices(physicalDevices);
-
-				auto size = physicalDevices.size();
-
-				if (size == 0)
-					throw std::runtime_error("Physical device count 0. No GPUs found with Vulkan support.");
-
-				using PhysicalDeviceList = std::vector<PhysicalDevice::Handle>;
-
-				for (DeviceSize index = 0; index < size; index++)
-				{
-					if (IsDeviceSuitable(physicalDevices[index], Surface, DeviceExtensions))
-					{
-						PhysicalDevice = physicalDevices[index];
-
-						//MSAA_Samples = PhysicalDevice.GetMaxSampleCount_ColorAndDepth();
-
-						MSAA_Samples = ESampleCount::_1;
-
-						break;
-					}
-				}
-
-				if (PhysicalDevice.GetHandle() == Null<PhysicalDevice::Handle>)
-				{
-					throw std::runtime_error("Not able to find suitable Vulkan supported GPU.");
-				}
-			}
-			
-			void PopulateDebugMessengerCreateInfo(V4::DebugMessenger::CreateInfo& _msngrCreateInfo)
-			{
-				_msngrCreateInfo.SType = DebugMessenger::CreateInfo::STypeEnum;
-
-				using EMaskS = decltype(_msngrCreateInfo.Serverity)::Enum;
-
-				_msngrCreateInfo.Serverity.Set(EMaskS::Verbose, EMaskS::Warning, EMaskS::Error);
-
-				using EMaskT = decltype(_msngrCreateInfo.Type)::Enum;
-
-				_msngrCreateInfo.Type.Set(EMaskT::General, EMaskT::Validation, EMaskT::Performance);
-
-				_msngrCreateInfo.UserCallback = EnforceConvention(EnforcerID_Vulkan, DebugCallback_Internal);
-
-				_msngrCreateInfo.UserData = nullptr;
-			}
-
-			SwapChainSupportDetails QuerySwapChainSupport(V4::PhysicalDevice& _deviceHandle)
+			SwapChainSupportDetails QuerySwapChainSupport()
 			{
 				SwapChainSupportDetails details;
 
-				Surface.AssignPhysicalDevice(_deviceHandle);
+				Surface.AssignPhysicalDevice(GetEngagedPhysicalGPU().GetHandle());
 
 				Surface.GetPhysicalDeviceCapabilities(details.Capabilities);
 
@@ -1903,39 +1518,6 @@
 				Surface.GetSupportedPresentationModes(details.PresentationModes);
 
 				return details;
-			}
-
-			int RateDeviceSuitability(PhysicalDevice::Handle _deviceHandle)
-			{
-				auto& deviceProperties = PhysicalDevice.GetProperties();
-
-				auto& deviceFeatures = PhysicalDevice.GetFeatures();
-
-				int score = 0;
-
-				deviceProperties.Type == PhysicalDevice::EDeviceType::DiscreteGPU ? score += 1000 : NULL;
-
-				score += deviceProperties.LimitsSpec.MaxImageDimension2D;
-
-				if (!deviceFeatures.GeometryShader)
-				{
-					return 0;
-				}
-
-				return score;
-			}
-
-			void SetupDebugMessenger()
-			{
-				if (!Vulkan_EnableValidationLayers) return;
-
-				stack<DebugMessenger::CreateInfo> msngrCreateSpec{};
-
-				PopulateDebugMessengerCreateInfo(msngrCreateSpec);
-
-				EResult creationResult = DebugMessenger.Create(AppGPU, msngrCreateSpec);
-
-				if (creationResult != EResult::Success) throw std::runtime_error("Failed to setup debug messenger!");
 			}
 
 			Extent2D Surface_SwapChain_ChooseExtent(const Surface::Capabilities& _capabilities, const ptr<Window> _window)
@@ -2070,7 +1652,7 @@
 					1, &barrier
 				);
 				
-				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
+				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, GetEngagedDevice().GetGraphicsQueue());
 			}
 
 			void UpdateUniformBuffers(uint32 _currentImage)
@@ -2101,19 +1683,23 @@
 
 			void Initialize_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion)
 			{
-				CreateApplicationInstance(_applicationName, _applicationVersion);
+				AppGPU_Comms_Initialize(_applicationName, _applicationVersion);
 
-				SetupDebugMessenger();
+				AcquirePhysicalDevices();
+
+				GenerateLogicalDevices();
+
+				EngageMostSuitableDevice();
 			}
 
 			void Cease_GPUComms()
 			{
-				AppGPU.Destroy();
+				AppGPU_Comms.Destroy();
 			}
 
 			void WaitFor_GPUIdle()
 			{
-				LogicalDevice.WaitUntilIdle();
+				GetEngagedDevice().WaitUntilIdle();
 			}
 			
 			ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window)
@@ -2123,10 +1709,10 @@
 
 			void SetRenderContext()
 			{
-				RenderContext_Default.ApplicationInstance =  AppGPU                 ;
-				RenderContext_Default.PhysicalDevice      =  PhysicalDevice         ;
-				RenderContext_Default.LogicalDevice       =  LogicalDevice          ;
-				RenderContext_Default.Queue               = *GraphicsQueue          ;
+				RenderContext_Default.ApplicationInstance =  AppGPU_Comms                          ;
+				RenderContext_Default.PhysicalDevice      =  GetEngagedDevice().GetPhysicalDevice();
+				RenderContext_Default.LogicalDevice       =  GetEngagedDevice()          ;
+				RenderContext_Default.Queue               = GetEngagedDevice().GetGraphicsQueue();
 				RenderContext_Default.PipelineCache       = PipelineCache           ;
 				RenderContext_Default.ImageFormat         = SwapChain_ImageFormat   ;
 				RenderContext_Default.FrameSize           = SwapChain_Extent        ;
@@ -2140,10 +1726,6 @@
 			void Default_InitializeRenderer(ptr<Window> _window)
 			{
 				CreateSurface(_window);
-
-				PickPhysicalDevice();
-
-				CreateLogicalDevice();
 
 				CreateSwapChain(_window);
 
@@ -2210,7 +1792,7 @@
 					SAL::GLFW::WaitForEvents();
 				}
 
-				LogicalDevice.WaitUntilIdle();
+				GetEngagedDevice().GetGraphicsQueue().WaitUntilIdle();
 
 				CleanupSwapChain();
 
@@ -2312,7 +1894,7 @@
 
 				InFlightFences[CurrentFrame].Reset();
 
-				if (GraphicsQueue->SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
+				if (GetEngagedDevice().GetGraphicsQueue().SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
 					throw std::runtime_error("Failed to submit draw command buffer!");
 
 				CommandBuffersToSubmit.clear();
@@ -2333,7 +1915,7 @@
 
 				presentInfo.Results = nullptr; // Optional
 
-				result = PresentationQueue->QueuePresentation(*presentInfo);
+				result = GetEngagedDevice().GetGraphicsQueue().QueuePresentation(*presentInfo);
 
 				if (result == EResult::Error_OutOfDate_KHR || result == EResult::Suboptimal_KHR || FramebufferResized) 
 				{
@@ -2380,9 +1962,7 @@
 					pool.Destroy();
 				}
 
-				LogicalDevice.Destroy();
-
-				if (Vulkan_EnableValidationLayers) DebugMessenger.Destroy();
+				if (Meta::Vulkan::EnableLayers) DebugMessenger.Destroy();
 
 				Surface.Destroy();
 			}

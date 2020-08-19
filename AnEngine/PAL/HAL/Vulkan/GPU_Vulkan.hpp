@@ -48,7 +48,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			using FrameBufferList             = std::vector< Framebuffer::Handle>;   
 			using ImageList                   = std::vector< Image::Handle      >;
 			using ImageViewList               = std::vector< ImageView          >;
-			using PhysicalDeviceList          = std::vector< V4::PhysicalDevice >;
 			using SemaphoreList               = std::vector< Semaphore::Handle  >;   
 			using SurfaceFormatList           = std::vector< Surface::Format    >;
 			using SurfacePresentationModeList = std::vector< EPresentationMode  >;
@@ -111,7 +110,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			/*
 			Checks to see if the validation layers specified are supported.
 			*/
-			bool CheckValidationLayerSupport(ValidationLayerList& _validationLayersSpecified);
+			//bool CheckValidationLayerSupport(ValidationLayerList& _validationLayersSpecified);
 
 			void CleanupSwapChain();
 
@@ -176,7 +175,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			void PopulateDebugMessengerCreateInfo(V4::DebugMessenger::CreateInfo& _msngrCreateInfo);
 
-			SwapChainSupportDetails QuerySwapChainSupport(V4::PhysicalDevice& _deviceHandle);
+			SwapChainSupportDetails QuerySwapChainSupport();
 
 			int RateDeviceSuitability(PhysicalDevice::Handle _deviceHandle);
 

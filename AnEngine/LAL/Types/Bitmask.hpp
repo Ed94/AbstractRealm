@@ -64,7 +64,19 @@
 
 		bool Has(const Enum _bit) const
 		{
-			return mask & Representation(_bit);
+			return (mask & Representation(_bit)) == Representation(_bit);
+		}
+
+		template<typename... BitType>
+		bool HasOrEither(const BitType... _bits)
+		{
+			return (mask & (Representation(_bits) | ...)) != 0;
+		}
+
+		template<typename... BitType>
+		bool HasExactly(const BitType... _bits)
+		{
+			return (mask & (Representation(_bits) | ...)) == mask;
 		}
 
 		template<typename... BitType>

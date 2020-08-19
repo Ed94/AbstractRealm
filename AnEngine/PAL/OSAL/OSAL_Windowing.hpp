@@ -60,7 +60,6 @@ namespace OSAL
 
 			static constexpr auto WindowedMode = GLFW::WindowedMode;
 
-			EClient_API             ClientAPI        ;
 			EBool                   Resizable        ;
 			ptr<SAL::GLFW::Monitor> Windowed         ;
 			ptr<Window>             WindowToShareWith;
@@ -81,7 +80,7 @@ namespace OSAL
 			{
 				using namespace SAL::GLFW;
 
-				SetWindowCreationParameter(EWindowCreationParameter::ClientAPI, _windowCreationSpec.ClientAPI);
+				SetWindowCreationParameter(EWindowCreationParameter::ClientAPI, EClient_API::No_API          );
 				SetWindowCreationParameter(EWindowCreationParameter::Resizable, _windowCreationSpec.Resizable);
 
 				return MakeWindow
@@ -128,6 +127,7 @@ namespace OSAL
 	using WindowInfo   = PlatformBackend::WindowInfo_Maker<WindowingPlatform>;
 	using WindowingAPI = PlatformBackend::WindowingAPI    <WindowingPlatform>;
 
+	using WinBool             = WindowInfo  ::EBool              ; 
 	using Window              = WindowingAPI::Window             ;
 	using WindowSize_Callback = WindowingAPI::WindowSize_Callback;
 
