@@ -76,32 +76,39 @@ namespace Core::Execution
 
 		OSAL::Load();
 
-		HAL::GPU::Load();
+		try
+		{
+			HAL::GPU::Load();
 
-		HAL::GPU::Initialize_GPUComms("Abstract Realm: MVP 0.87.0", AppVer);
+			HAL::GPU::Initialize_GPUComms("Abstract Realm: MVP 0.87.0", AppVer);
 
-		// Window
+			// Window
 
-		WindowInfo windowSpec = {};
+			WindowInfo windowSpec = {};
 
-		windowSpec.WindowTitle = "Abstract Realm"               ;
-		windowSpec.WindowSize  = WindowSize                     ;
-		windowSpec.Windowed    = OSAL::WindowInfo ::WindowedMode;
-		windowSpec.Resizable   = OSAL::WinBool::True            ;
+			windowSpec.WindowTitle = "Abstract Realm"               ;
+			windowSpec.WindowSize  = WindowSize                     ;
+			windowSpec.Windowed    = OSAL::WindowInfo ::WindowedMode;
+			windowSpec.Resizable   = OSAL::WinBool::True            ;
 
-		EngineWindow = OSAL::Create_Window(windowSpec);
+			EngineWindow = OSAL::Create_Window(windowSpec);
 
+			OSAL::SetWindow_SizeChangeCallback(EngineWindow, WindowSizeChanged);
 
+			HAL::GPU::Default_InitializeRenderer(EngineWindow);
 
-		OSAL::SetWindow_SizeChangeCallback(EngineWindow, WindowSizeChanged);
+			Imgui::Initialize(EngineWindow);
 
-		HAL::GPU::Default_InitializeRenderer(EngineWindow);
+			Concurrency::CyclerPool::Initialize();
 
-		Imgui::Initialize(EngineWindow);
+			Concurrency::CyclerPool::ActivateUnit();
+		}
+		catch (std::exception* e)
+		{
+			Dev::CLog(e->what());
 
-		Concurrency::CyclerPool::Initialize();
-
-		Concurrency::CyclerPool::ActivateUnit();
+			Dev::Console_UpdateBuffer();
+		}
 
 		// Master execution
 

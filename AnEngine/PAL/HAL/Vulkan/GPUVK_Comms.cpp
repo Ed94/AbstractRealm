@@ -11,6 +11,28 @@
 
 namespace HAL::GPU::Vulkan
 {
+	// Forwards
+
+	void AquireSupportedValidationLayers();
+
+	bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified);
+
+	void DetermineRequiredExtensions();
+
+	Bool DebugCallback_Internal
+	(
+			  MessageServerityFlags             _messageServerity, 
+			  MessageTypeFlags                  _messageType     ,
+		const V1::DebugMessenger::CallbackData  _callbackData, 
+			  ptr<void>                         _userData
+	);
+
+	void SetupDebugMessenger();
+
+
+
+	// Class Implementation
+
 #pragma region PhysicalDevice
 
 	EResult PhysicalDevice::GetAvailableExtensions()
@@ -293,15 +315,7 @@ namespace HAL::GPU::Vulkan
 
 
 
-	Bool DebugCallback_Internal
-	(
-			  MessageServerityFlags             _messageServerity, 
-			  MessageTypeFlags                  _messageType     ,
-		const V1::DebugMessenger::CallbackData  _callbackData, 
-			  ptr<void>                         _userData
-	);
-	
-
+#pragma region Public
 
 	void AcquirePhysicalDevices()
 	{
@@ -336,10 +350,12 @@ namespace HAL::GPU::Vulkan
 				DesiredLayers.push_back(Layer::LunarG_API_Dump);
 
 			if (Meta::Vulkan::Enable_Validation)
-				DesiredLayers.push_back(Layer::ValidationLayer_Khronos);
-
+				AquireSupportedValidationLayers();
+				
 			if (!CheckLayerSupport(DesiredLayers))
+			{
 				throw std::runtime_error("Layers requested, but are not available!");
+			}
 		}
 
 		spec.AppName       = _appName                                                   ;
@@ -388,92 +404,6 @@ namespace HAL::GPU::Vulkan
 
 			if (creationResult != EResult::Success)
 				throw std::runtime_error("Failed to setup debug messenger!");
-		}
-	}
-
-	bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
-	{
-		stack<DataSize> layersFound = 0;
-
-		for (auto validationLayerName : _layersSpecified)
-		{
-			for (const auto& layerAndExtenions : AppLayersAndExtensions)
-			{
-				if (CStr_Compare(validationLayerName, layerAndExtenions.Layer.Name) == 0)
-				{
-					layersFound++;
-
-					break;
-				}
-			}
-		}
-
-		if (!layersFound == _layersSpecified.size())
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-
-	/*
-	I had to make this to resolve an issue with a decltype function resolve error on EnforceConvention.
-	*/
-	Bool DebugCallback_Internal
-	(
-		      MessageServerityFlags            _messageServerity, 
-		      MessageTypeFlags                 _messageType     ,
-		const V1::DebugMessenger::CallbackData _callbackData    , 
-		      ptr<void>                        _userData
-	)
-	{
-		std::cerr << "Vulkan: Validation Layer: " << _callbackData.Message << std::endl;
-
-		//Dev::CLog("Vulkan Validation Layer: " + String(_callbackData.Message));
-
-		return EBool::True;
-	}
-
-	void DetermineRequiredExtensions()
-	{
-		switch (OSAL::WindowingPlatform)
-		{
-			case Meta::EWindowingPlatform::GLFW:
-			{
-				stack<uint32> numExtensions;
-
-				stack<CStrArray> extensions = CStrArray(SAL::GLFW::GetRequiredVulkanAppExtensions(numExtensions));
-
-				for (uint32 index = 0; index < numExtensions; index++)
-				{
-					if (std::find(DesiredInstanceExts.begin(), DesiredInstanceExts.end(), extensions[index]) == DesiredInstanceExts.end())
-					{
-						DesiredInstanceExts.push_back(extensions[index]);
-					}
-				}
-
-				break;
-			}
-			case Meta::EWindowingPlatform::OSAL:
-			{
-				// A GPU must be available with ability to render to a surface.
-				DesiredInstanceExts.push_back(InstanceExt::Surface);
-
-				// Surface OS platform extension.
-				DesiredInstanceExts.push_back(Surface::OSSurface);
- 
-				break;
-			}
-		}
-
-		// Engine needs swap chains.
-		DesiredDeviceExts.push_back(DeviceExt::Swapchain);
-
-		if (Meta::Vulkan::EnableLayers)
-		{
-			DesiredInstanceExts.push_back(InstanceExt::DebugUtility);
 		}
 	}
 
@@ -566,6 +496,179 @@ namespace HAL::GPU::Vulkan
 		return DeviceEngaged->GetPhysicalDevice();
 	}
 
+#pragma endregion Public
+
+#pragma region Private
+
+	void AquireSupportedValidationLayers()
+	{
+		bool found = false;
+
+		// Ideal
+
+		for (const auto& layerAndExtenions : AppLayersAndExtensions)
+		{
+			if (CStr_Compare(Layer::Khronos_Validation, layerAndExtenions.Layer.Name) == 0)
+			{
+				DesiredLayers.push_back(Layer::Khronos_Validation);
+
+				found = true;
+
+				break;
+			}
+		}
+
+		// Fallback 1
+
+		if (!found)
+		{
+			for (const auto& layerAndExtenions : AppLayersAndExtensions)
+			{
+				if (CStr_Compare(Layer::LunarG_StandardValidation, layerAndExtenions.Layer.Name) == 0)
+				{
+					DesiredLayers.push_back(Layer::LunarG_StandardValidation);
+
+					found = true;
+
+					break;
+				}
+			}
+		}
+
+		// Fallback 2
+
+		if (!found)
+		{
+			StaticArray<RoCStr, 4> Fallback2Layers 
+			{
+				Layer::LunarG_ParameterValidation,
+				Layer::LunarG_ObjectTracker      ,
+				Layer::Google_Threading          ,
+				Layer::Google_UniqueObjedcts
+			};
+
+			DataSize layersFound = 0;
+
+			for (auto validationLayerName : Fallback2Layers)
+			{
+				for (const auto& layerAndExtenions : AppLayersAndExtensions)
+				{
+					if (CStr_Compare(validationLayerName, layerAndExtenions.Layer.Name) == 0)
+					{
+						layersFound++;
+
+						break;
+					}
+				}
+			}
+
+			if (layersFound == Fallback2Layers.size()) found = true;
+		}
+
+		// Fallback 3
+
+		if (!found)
+		{
+			for (const auto& layerAndExtenions : AppLayersAndExtensions)
+			{
+				if (CStr_Compare(Layer::LunarG_CoreValidation, layerAndExtenions.Layer.Name) == 0)
+				{
+					DesiredLayers.push_back(Layer::LunarG_CoreValidation);
+
+					found = true;
+
+					break;
+				}
+			}
+		}
+	}
+
+	bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
+	{
+		stack<DataSize> layersFound = 0;
+
+		for (auto validationLayerName : _layersSpecified)
+		{
+			for (const auto& layerAndExtenions : AppLayersAndExtensions)
+			{
+				if (CStr_Compare(validationLayerName, layerAndExtenions.Layer.Name) == 0)
+				{
+					layersFound++;
+
+					break;
+				}
+			}
+		}
+
+		if (!layersFound == _layersSpecified.size())
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
+	/*
+	I had to make this to resolve an issue with a decltype function resolve error on EnforceConvention.
+	*/
+	Bool DebugCallback_Internal
+	(
+		      MessageServerityFlags            _messageServerity, 
+		      MessageTypeFlags                 _messageType     ,
+		const V1::DebugMessenger::CallbackData _callbackData    , 
+		      ptr<void>                        _userData
+	)
+	{
+		std::cerr << "Vulkan: Validation Layer: " << _callbackData.Message << std::endl;
+
+		//Dev::CLog("Vulkan Validation Layer: " + String(_callbackData.Message));
+
+		return EBool::True;
+	}
+
+	void DetermineRequiredExtensions()
+	{
+		switch (OSAL::WindowingPlatform)
+		{
+			case Meta::EWindowingPlatform::GLFW:
+			{
+				stack<uint32> numExtensions;
+
+				stack<CStrArray> extensions = CStrArray(SAL::GLFW::GetRequiredVulkanAppExtensions(numExtensions));
+
+				for (uint32 index = 0; index < numExtensions; index++)
+				{
+					if (std::find(DesiredInstanceExts.begin(), DesiredInstanceExts.end(), extensions[index]) == DesiredInstanceExts.end())
+					{
+						DesiredInstanceExts.push_back(extensions[index]);
+					}
+				}
+
+				break;
+			}
+			case Meta::EWindowingPlatform::OSAL:
+			{
+				// A GPU must be available with ability to render to a surface.
+				DesiredInstanceExts.push_back(InstanceExt::Surface);
+
+				// Surface OS platform extension.
+				DesiredInstanceExts.push_back(Surface::OSSurface);
+
+				break;
+			}
+		}
+
+		// Engine needs swap chains.
+		DesiredDeviceExts.push_back(DeviceExt::Swapchain);
+
+		if (Meta::Vulkan::EnableLayers)
+		{
+			DesiredInstanceExts.push_back(InstanceExt::DebugUtility);
+		}
+	}
+
 	void SetupDebugMessenger()
 	{
 		stack<DebugMessenger::CreateInfo> info{};
@@ -585,3 +688,5 @@ namespace HAL::GPU::Vulkan
 		DebugMessenger.AssignInfo(info);
 	}
 }
+
+#pragma endregion Private

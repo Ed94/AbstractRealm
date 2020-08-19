@@ -194,13 +194,6 @@ namespace HAL::GPU::Vulkan
 
 	void AppGPU_Comms_Initialize(RoCStr _appName, Meta::AppVersion _version);
 
-	/*
-	Checks to see if the desired layers specified are supported.
-	*/
-	bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified);
-
-	void DetermineRequiredExtensions();
-
 	void EngageMostSuitableDevice();
 
 	void GenerateLogicalDevices();
@@ -208,6 +201,4 @@ namespace HAL::GPU::Vulkan
 	const LogicalDevice& GetEngagedDevice();
 
 	const PhysicalDevice& GetEngagedPhysicalGPU();
-
-	void SetupDebugMessenger();
 }

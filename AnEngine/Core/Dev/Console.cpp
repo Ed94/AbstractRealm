@@ -352,6 +352,8 @@ namespace Dev
 		Console_UpdateBuffer();
 
 		CLog("Dev: Console Submodules ready.");
+
+		Console_UpdateBuffer();
 	}
 
 	void SetConsole_IOHooks()
