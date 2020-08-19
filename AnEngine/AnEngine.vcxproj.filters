@@ -110,6 +110,7 @@
     <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\LockLessMultiReadPipe.h" />
     <ClInclude Include="PAL\SAL\EnkiTS_SAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Comms.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Surfaces.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -147,5 +148,6 @@
     <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Surfaces.cpp" />
   </ItemGroup>
 </Project>

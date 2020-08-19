@@ -114,13 +114,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			void CleanupSwapChain();
 
-			/*
-			Creates a GPU application instance. 
-
-			Note: If using optional debug features, both validation layers and the debug messenger must be provided, otherwise this will fail.
-			*/
-			void CreateApplicationInstance(RoCStr _appName, AppVersion& _version);
-
 			void CreateFrameObjects();
 
 			void CreateFrameBuffers();
@@ -140,8 +133,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			);
 
 			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
-
-			void CreateLogicalDevice();	
 
 			void CreateSwapChain(OSAL::Window* _window);
 
@@ -169,21 +160,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			Where<Meta::WindowingPlatform == Meta::EWindowingPlatform::GLFW,
 			CStrArray> GetRequiredVulkanAppExtensions(uint32& _numExtensions);
 
-			//bool IsDeviceSuitable(PhysicalDevice::Handle _deviceHandle, Surface::Handle _surface, ExtensionIdentifierList _extensionsSpecified);
-			
-			
-
-			void PopulateDebugMessengerCreateInfo(V4::DebugMessenger::CreateInfo& _msngrCreateInfo);
-
 			SwapChainSupportDetails QuerySwapChainSupport();
-
-			int RateDeviceSuitability(PhysicalDevice::Handle _deviceHandle);
-
-			/*void SetupDebugMessenger
-			(
-				AppInstance::Handle _applicationInstance,
-				DebugMessenger::Handle& _debugMessenger
-			);*/
 
 			Extent2D Surface_SwapChain_ChooseExtent(const Surface::Capabilities& _capabilities, const ptr<Window> _window);
 

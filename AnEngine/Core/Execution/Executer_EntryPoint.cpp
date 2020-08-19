@@ -71,7 +71,7 @@ namespace Core::Execution
 
 			cout << "Initializing Dev Module" << endl;
 
-			//Dev::LoadModule();
+			Dev::LoadModule();
 		}
 
 		OSAL::Load();

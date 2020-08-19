@@ -174,7 +174,7 @@ namespace HAL::GPU::Vulkan
 
 
 
-	BSS
+	StaticData
 	(
 		eGlobal AppInstance            AppGPU_Comms          ;
 		eGlobal LayerandExtensionsList AppLayersAndExtensions;
@@ -206,6 +206,7 @@ namespace HAL::GPU::Vulkan
 	void GenerateLogicalDevices();
 
 	const LogicalDevice& GetEngagedDevice();
+
 	const PhysicalDevice& GetEngagedPhysicalGPU();
 
 	void SetupDebugMessenger();

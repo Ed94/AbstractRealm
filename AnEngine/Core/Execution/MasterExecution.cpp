@@ -28,7 +28,7 @@ namespace Core::Execution
 
 		MasterCycler.BindExecuter(MasterExecuter);
 
-		MasterCycler.AssignInterval(Duration64(1.0 / 144.0));
+		//MasterCycler.AssignInterval(Duration64(1.0 / 2400.0));
 
 		MasterCycler.Initiate();
 	}
@@ -47,7 +47,7 @@ namespace Core::Execution
 
 		Imgui::Dirty_DoSurfaceStuff(EngineWindow);	
 
-		Dev::CLog_Status("Master    Delta: " + ToString(MasterCycler.GetDeltaTime().count()), 0, 0);
+		Dev::CLog_Status("Master    Delta: " + ToString(MasterCycler.GetAverageDelta().count()), 0, 0);
 
 		if (Concurrency::CyclerPool::GetNumUnits() > 0)
 		{
@@ -64,7 +64,7 @@ namespace Core::Execution
 			}
 		}
 		
-		//Dev::Console_UpdateBuffer();
+		Dev::Console_UpdateBuffer();
 
 		if (OSAL::CanClose(EngineWindow))
 		{

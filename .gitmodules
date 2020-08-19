@@ -1,78 +1,78 @@
-[submodule "AnEngine/PAL/SAL/glfw"]
+[submodule "GLFW"]
 	path = AnEngine/PAL/ThirdParty/Libraries/glfw
-	url = git@github.com:glfw/glfw
-[submodule "AnEngine/PAL/SAL/glm"]
+	url = https://github.com/glfw/glfw.git
+[submodule "GLM"]
 	path = AnEngine/PAL/ThirdParty/Libraries/glm
-	url = git@github.com:g-truc/glm
-[submodule "AnEngine/PAL/SAL/imgui"]
+	url = https://github.com/g-truc/glm.git
+[submodule "imgui"]
 	path = AnEngine/PAL/ThirdParty/Libraries/imgui
-	url = git@github.com:ocornut/imgui
-[submodule "AnEngine/PAL/ThirdParty/Libraries/SDL-mirror"]
+	url = https://github.com/ocornut/imgui.git
+[submodule "SDL-mirror"]
 	path = AnEngine/PAL/ThirdParty/Libraries/SDL-mirror
-	url = git@github.com:spurious/SDL-mirror
-[submodule "AnEngine/PAL/ThirdParty/Libraries/gainput"]
+	url = https://github.com/spurious/SDL-mirror.git
+[submodule "gainput"]
 	path = AnEngine/PAL/ThirdParty/Libraries/gainput
-	url = git@github.com:jkuhlmann/gainput
-[submodule "AnEngine/PAL/ThirdParty/Libraries/Cinder"]
+	url = https://github.com/jkuhlmann/gainput.git
+[submodule "Cinder"]
 	path = AnEngine/PAL/ThirdParty/Libraries/Cinder
-	url = git@github.com:cinder/Cinder
-[submodule "AnEngine/PAL/ThirdParty/Libraries/openal-soft"]
+	url = https://github.com/cinder/Cinder.git
+[submodule "openal-soft"]
 	path = AnEngine/PAL/ThirdParty/Libraries/openal-soft
-	url = git@github.com:kcat/openal-soft
-[submodule "AnEngine/PAL/ThirdParty/Libraries/ggpo"]
+	url = https://github.com/kcat/openal-soft.git
+[submodule "ggpo"]
 	path = AnEngine/PAL/ThirdParty/SDKs/ggpo
-	url = git@github.com:pond3r/ggpo
-[submodule "AnEngine/PAL/ThirdParty/Libraries/MemoryAllocator.KanameShiki"]
+	url = https://github.com/pond3r/ggpo.git
+[submodule "MemoryAllocator.KanameShiki"]
 	path = AnEngine/PAL/ThirdParty/Libraries/MemoryAllocator.KanameShiki
-	url = git@github.com:EmuraDaisuke/MemoryAllocator.KanameShiki
-[submodule "AnEngine/PAL/ThirdParty/Libraries/basis_universal"]
+	url = https://github.com/EmuraDaisuke/MemoryAllocator.KanameShiki.git
+[submodule "basis_universal"]
 	path = AnEngine/PAL/ThirdParty/Libraries/basis_universal
-	url = git@github.com:BinomialLLC/basis_universal
-[submodule "AnEngine/PAL/ThirdParty/Libraries/magic_enum"]
+	url = https://github.com/BinomialLLC/basis_universal.git
+[submodule "magic_enum"]
 	path = AnEngine/PAL/ThirdParty/Libraries/magic_enum
-	url = git@github.com:Neargye/magic_enum
-[submodule "AnEngine/PAL/ThirdParty/Libraries/libjobs"]
+	url = https://github.com/Neargye/magic_enum.git
+[submodule "libjobs"]
 	path = AnEngine/PAL/ThirdParty/Libraries/libjobs
-	url = git@github.com:TLeonardUK/libjobs
-[submodule "AnEngine/PAL/ThirdParty/Libraries/rbase"]
+	url = https://github.com/TLeonardUK/libjobs.git
+[submodule "rbase"]
 	path = AnEngine/PAL/ThirdParty/Libraries/rbase
-	url = git@github.com:milostosic/rbase
-[submodule "AnEngine/PAL/ThirdParty/Libraries/bgfx"]
+	url = https://github.com/milostosic/rbase.git
+[submodule "bgfx"]
 	path = AnEngine/PAL/ThirdParty/Libraries/bgfx
-	url = git@github.com:bkaradzic/bgfx
-[submodule "AnEngine/PAL/ThirdParty/Libraries/rpclib"]
+	url = https://github.com/bkaradzic/bgfx.git
+[submodule "rpclib"]
 	path = AnEngine/PAL/ThirdParty/Libraries/rpclib
-	url = git@github.com:rpclib/rpclib
-[submodule "AnEngine/PAL/ThirdParty/Libraries/rttr"]
+	url = https://github.com/rpclib/rpclib.git
+[submodule "rttr"]
 	path = AnEngine/PAL/ThirdParty/Libraries/rttr
-	url = git@github.com:rttrorg/rttr
-[submodule "AnEngine/PAL/ThirdParty/Libraries/vivid"]
+	url = https://github.com/rttrorg/rttr.git
+[submodule "vivid"]
 	path = AnEngine/PAL/ThirdParty/Libraries/vivid
-	url = git@github.com:gurki/vivid
-[submodule "AnEngine/PAL/ThirdParty/Libraries/ctti"]
+	url = https://github.com/gurki/vivid.git
+[submodule "ctti"]
 	path = AnEngine/PAL/ThirdParty/Libraries/ctti
-	url = git@github.com:Manu343726/ctti
-[submodule "AnEngine/PAL/HAL/Vulkan/VaultedThermals"]
+	url = https://github.com/Manu343726/ctti.git
+[submodule "VaultedThermals"]
 	path = AnEngine/PAL/HAL/Vulkan/VaultedThermals
-	url = git@github.com:Ed94/VaultedThermals
-[submodule "AnEngine/PAL/ThirdParty/Libraries/assimp"]
+	url = https://github.com/Ed94/VaultedThermals.git
+[submodule "assimp"]
 	path = AnEngine/PAL/ThirdParty/Libraries/assimp
-	url = git@github.com:assimp/assimp
-[submodule "AnEngine/PAL/ThirdParty/Libraries/VulkanMemoryAllocator"]
+	url = https://github.com/assimp/assimp.git
+[submodule "VulkanMemoryAllocator"]
 	path = AnEngine/PAL/ThirdParty/Libraries/VulkanMemoryAllocator
-	url = git@github.com:GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
-[submodule "AnEngine/PAL/ThirdParty/Libraries/stb"]
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+[submodule "stb"]
 	path = AnEngine/PAL/ThirdParty/Libraries/stb
-	url = git@github.com:nothings/stb
-[submodule "AnEngine/PAL/ThirdParty/Libraries/tinyobjloader"]
+	url = https://github.com/nothings/stb.git
+[submodule "tinyobjloader"]
 	path = AnEngine/PAL/ThirdParty/Libraries/tinyobjloader
-	url = git@github.com:tinyobjloader/tinyobjloader
-[submodule "AnEngine/PAL/ThirdParty/Libraries/PDCurses"]
+	url = https://github.com/tinyobjloader/tinyobjloader.git
+[submodule "PDCurses"]
 	path = AnEngine/PAL/ThirdParty/Libraries/PDCurses
-	url = git@github.com:wmcbrine/PDCurses
-[submodule "AnEngine/PAL/ThirdParty/Libraries/hpx"]
+	url = https://github.com/wmcbrine/PDCurses.git
+[submodule "hpx"]
 	path = AnEngine/PAL/ThirdParty/Libraries/hpx
-	url = git@github.com:STEllAR-GROUP/hpx
-[submodule "AnEngine/PAL/ThirdParty/Libraries/enkiTS"]
+	url = https://github.com/STEllAR-GROUP/hpx.git
+[submodule "enkiTS"]
 	path = AnEngine/PAL/ThirdParty/Libraries/enkiTS
-	url = git@github.com:dougbinks/enkiTS
+	url = https://github.com/dougbinks/enkiTS.git

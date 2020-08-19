@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{ED3769FF-5743-440A-A97B-282D9F019C8A}</ProjectGuid>
     <RootNamespace>AnEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <ProjectName>AnEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -114,9 +114,9 @@
       <EntryPointSymbol>
       </EntryPointSymbol>
       <HeapReserveSize>3145728 </HeapReserveSize>
-      <StackReserveSize>
-      </StackReserveSize>
-      <StackCommitSize>3145728 </StackCommitSize>
+      <StackReserveSize>3145728 </StackReserveSize>
+      <StackCommitSize>
+      </StackCommitSize>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -157,10 +157,12 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Release\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <EntryPointSymbol>WinMain</EntryPointSymbol>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <HeapReserveSize>3145728 </HeapReserveSize>
+      <StackReserveSize>3145728 </StackReserveSize>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -334,6 +336,10 @@
     </ClInclude>
     <ClInclude Include="PAL\HAL\HAL.hpp" />
     <ClInclude Include="PAL\HAL\HAL_Backend.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Surfaces.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -550,6 +556,7 @@
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Surfaces.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />
