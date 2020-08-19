@@ -24,7 +24,9 @@ namespace Core::Concurrency
 
 	void CyclerPool::ActivateUnit()
 	{
-		OSAL::RequestThread(&Cycler::Initiate, &Pool[ActiveUnits++].Cycler);
+		Pool[ActiveUnits].Thread = OSAL::RequestThread(&Cycler::Initiate, &Pool[ActiveUnits].Cycler);
+
+		ActiveUnits++;
 	}
 
 	const Cycler& CyclerPool::GetCycler(uInt16 _unit)
@@ -57,6 +59,11 @@ namespace Core::Concurrency
 		for (uInt16 unitIndex = 0; unitIndex < ActiveUnits; unitIndex++)
 		{
 			Pool[unitIndex].Cycler.Lapse();
+
+			while(Pool[unitIndex].Cycler.Lapsed())
+			{}
+
+			OSAL::DecommissionThread(Pool[unitIndex].Thread);
 		}
 
 		ActiveUnits = 0;

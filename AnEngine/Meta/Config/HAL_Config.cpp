@@ -16,6 +16,7 @@ namespace Meta
 		data< bool> EnableLayers = !UseDebug;
 
 		data< bool> Enable_API_Dump   = false    ;
+		data< bool> Enable_FPSMonitor = true     ;
 		data< bool> Enable_Validation = !UseDebug;
 	}
 }

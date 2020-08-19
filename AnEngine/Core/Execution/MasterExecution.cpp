@@ -28,7 +28,11 @@ namespace Core::Execution
 
 		MasterCycler.BindExecuter(MasterExecuter);
 
-		//MasterCycler.AssignInterval(Duration64(1.0 / 2400.0));
+		MasterCycler.AssignInterval(Duration64(1.0 / 1036.0));
+
+		std::chrono::seconds sec(1);
+
+		Dev::CLog(String("Interval: ") + ToString(std::chrono::duration<float64, std::ratio<1>>(1.0 / 1036.0).count()));
 
 		MasterCycler.Initiate();
 	}

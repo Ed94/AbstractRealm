@@ -349,6 +349,9 @@ namespace HAL::GPU::Vulkan
 			if (Meta::Vulkan::Enable_API_Dump)
 				DesiredLayers.push_back(Layer::LunarG_API_Dump);
 
+			if (Meta::Vulkan::Enable_FPSMonitor)
+				DesiredLayers.push_back(Layer::LunarG_Monitor);
+
 			if (Meta::Vulkan::Enable_Validation)
 				AquireSupportedValidationLayers();
 				

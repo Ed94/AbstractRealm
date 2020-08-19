@@ -71,6 +71,11 @@ namespace Meta
 		 */
 		eGlobal data< bool> Enable_API_Dump;
 
+		/**
+		 * Enables the fps monitor of the surface on the window title bar.
+		 */
+		eGlobal data< bool> Enable_FPSMonitor;
+
 		/*
 		Determines if Vulkan will use validation layers.
 		*/

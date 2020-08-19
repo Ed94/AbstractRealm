@@ -42,7 +42,10 @@ namespace OSAL
 
 	DataSize GetNumOfActiveThreads() { return Backend::ThreadPool.GetNumOfActiveThreads(); }
 
-	void DecommissionThread(DataSize _handle) { Backend::ThreadPool.DecommissionThread(_handle); }
+	void DecommissionThread(DataSize _handle) 
+	{
+		Backend::ThreadPool.DecommissionThread(_handle); 
+	}
 
 	void QueryThreadInfo()
 	{

@@ -32,6 +32,7 @@ namespace Core::Execution
 	{
 	public:
 		Cycler();
+		~Cycler();
 
 		implem void        Initiate          ();
 		implem EReturnCode Initiate_withRCode();

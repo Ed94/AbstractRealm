@@ -21,6 +21,8 @@ namespace Core::Execution
 		pause        (false)
 	{}
 
+	Cycler::~Cycler() {};
+
 	void Cycler::AssignInterval(Duration64 _interval)
 	{
 		interval = _interval;
@@ -72,7 +74,7 @@ namespace Core::Execution
 
 				deltaInterval += deltaTime;
 
-				std::this_thread::yield(); 
+				//std::this_thread::yield(); 
 			}
 		}
 

@@ -67,8 +67,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (!CreateWindow(wc.lpszClassName, L"Abstract Realm: Closing Win", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 400, 30, 0, 0, hInstance, NULL))
 		return 2;
 
-	Sleep(2000);
-
 	PostQuitMessage(0);
 
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
