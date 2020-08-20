@@ -17,7 +17,7 @@ namespace IO
 
 		if (! fileStream.is_open())
 		{
-			throw RuntimeError("BufferFile: Failed to open file at: " + _fileToBuffer);
+			throw RuntimeError("BufferFile: Failed to open file at: " + _fileToBuffer.generic_string());
 		}
 
 		// TellG: Get position in input sequence 
@@ -35,5 +35,15 @@ namespace IO
 		Heap(fileStream.close());
 
 		return bufferToReturn;
+	}
+
+	bool OpenFile(File_OutputStream& _fileStream, OpenFlags _flags, const Path& _file)
+	{
+		Heap(_fileStream.open(_file), _flags);
+
+		if (! _fileStream.is_open()) 
+			return false;
+		else
+			return true;
 	}
 }

@@ -40,6 +40,7 @@ namespace OSAL
 	HiighResTimeInfo HighResTimeStatus;
 
 	SysTimePoint EntryPoint_StartExecution;	
+	CalendarDate EntryPoint_StartDate;
 
 	CalendarDate TimeLocal_Buffer;
 	CalendarDate TimeUTC_Buffer  ;
@@ -54,6 +55,16 @@ namespace OSAL
 		OS_CLog("System Time Accuracy         : " + ToString(SysTimeStatus    .Precison) + " milliseconds");
 		OS_CLog("Steady Time Accuracy         : " + ToString(SteadyTimeStatus .Precison) + " milliseconds");
 		OS_CLog("High Resolution Time Accuracy: " + ToString(HighResTimeStatus.Precison) + " milliseconds");
+	}
+
+	const SysTimePoint& GetExecutionStart()
+	{
+		return EntryPoint_StartExecution;
+	}
+
+	const CalendarDate& GetExecutionStartDate()
+	{
+		return EntryPoint_StartDate;
 	}
 
 	CalendarDate& GetTime_Local()
@@ -79,8 +90,12 @@ namespace OSAL
 		GetClock_Accuracies();
 	}
 
-	void Record_EntryPoint_StartExecution()
+	void Record_EntryPoint_StartExecution() noexcept
 	{
 		EntryPoint_StartExecution = SystemClock::now();
+
+		const Time timeSnap = SystemClock::to_time_t(EntryPoint_StartExecution);
+
+		TimeLocal(&EntryPoint_StartDate, &timeSnap);
 	}
 }

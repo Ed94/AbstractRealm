@@ -80,7 +80,7 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -220,11 +220,15 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Utilities\LAL_Functions.hpp">
+    <ClInclude Include="LAL\LAL_Functions.hpp">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="Meta\AppInfo.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Meta\Config\CoreDev_Config.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -264,15 +268,15 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Types\LAL_Bitmask.hpp">
+    <ClInclude Include="LAL\LAL_Bitmask.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Types\LAL_CharacterTypes.hpp">
+    <ClInclude Include="LAL\LAL_CharacterTypes.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Utilities\LAL_Ambiguous.hpp">
+    <ClInclude Include="LAL\LAL_Ambiguous.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -288,12 +292,12 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Types\LAL_BasicTypes.hpp">
+    <ClInclude Include="LAL\LAL_BasicTypes.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Types\LAL_FundamentalLimits.hpp" />
-    <ClInclude Include="LAL\Types\LAL_FundamentalTypes.hpp">
+    <ClInclude Include="LAL\LAL_FundamentalLimits.hpp" />
+    <ClInclude Include="LAL\LAL_FundamentalTypes.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -305,7 +309,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\Utilities\LAL_SmartPtrs.hpp">
+    <ClInclude Include="LAL\LAL_SmartPtrs.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -547,6 +551,7 @@
     <ClCompile Include="Core\Execution\MasterExecution.cpp" />
     <ClCompile Include="Core\Execution\PrimitiveExecuter_Implem.hpp" />
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
+    <ClCompile Include="LAL\LAL_IO.cpp" />
     <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />

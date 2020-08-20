@@ -99,16 +99,17 @@
     <ClInclude Include="LAL\LAL_Reflection.hpp" />
     <ClInclude Include="LAL\LAL_String.hpp" />
     <ClInclude Include="LAL\LAL_Thread.hpp" />
-    <ClInclude Include="LAL\Utilities\LAL_SmartPtrs.hpp" />
-    <ClInclude Include="LAL\Utilities\LAL_Ambiguous.hpp" />
-    <ClInclude Include="LAL\Utilities\LAL_Functions.hpp" />
-    <ClInclude Include="LAL\Types\LAL_FundamentalTypes.hpp" />
-    <ClInclude Include="LAL\Types\LAL_BasicTypes.hpp" />
-    <ClInclude Include="LAL\Types\LAL_CharacterTypes.hpp" />
-    <ClInclude Include="LAL\Types\LAL_Bitmask.hpp" />
     <ClInclude Include="LAL\LAL_Casting.hpp" />
     <ClInclude Include="LAL\LAL_Cpp_STL.hpp" />
-    <ClInclude Include="LAL\Types\LAL_FundamentalLimits.hpp" />
+    <ClInclude Include="LAL\LAL_BasicTypes.hpp" />
+    <ClInclude Include="LAL\LAL_Bitmask.hpp" />
+    <ClInclude Include="LAL\LAL_CharacterTypes.hpp" />
+    <ClInclude Include="LAL\LAL_FundamentalLimits.hpp" />
+    <ClInclude Include="LAL\LAL_FundamentalTypes.hpp" />
+    <ClInclude Include="LAL\LAL_Ambiguous.hpp" />
+    <ClInclude Include="LAL\LAL_Functions.hpp" />
+    <ClInclude Include="LAL\LAL_SmartPtrs.hpp" />
+    <ClInclude Include="Meta\Config\CoreDev_Config.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -148,5 +149,6 @@
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Renderer.cpp" />
     <ClCompile Include="LAL\LAL_Memory.cpp" />
+    <ClCompile Include="LAL\LAL_IO.cpp" />
   </ItemGroup>
 </Project>

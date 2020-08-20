@@ -23,7 +23,7 @@ namespace IO
 	using namespace LAL;
 
 	using FileBuffer = DynamicArray<char>;
-	using Path       = String            ;
+	//using Path       = String            ;
 
 
 
@@ -58,4 +58,6 @@ namespace IO
 	Buffers the file to a FileBuffer type.
 	*/
 	FileBuffer BufferFile(const Path& _fileToBuffer);
+
+	bool OpenFile(File_OutputStream& _fileStream, OpenFlags _flags, const Path& _file);
 }

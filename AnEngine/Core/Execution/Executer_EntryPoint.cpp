@@ -60,36 +60,36 @@ namespace Core::Execution
 
 	OSAL::ExitValT EntryPoint()
 	{
-		if (UseDebug)
-		{
-			using namespace LAL;
-
-			if (!OSAL::CreateConsole()) return 0;
-
-			cout << "Console IO Buffers hooked to OS IO" << endl;
-
-			cout << "EntryPoint: Starting the Core Execution Module" << endl;
-
-			cout << "Core:Execution: Initiate Execution" << endl;
-
-			cout << setfill('-') << setw(60); cout << " " << endl;
-
-			cout << "Abstract Realm: MVP Build - "
-			<< EEngineVersion::Major << "."
-			<< EEngineVersion::Minor << "."
-			<< EEngineVersion::Patch << endl;
-
-			cout << setfill('-') << setw(60); cout << " " << endl << endl;
-
-			cout << "Initializing Dev Module" << endl;
-
-			Dev::LoadModule();
-		}
-
-		OSAL::Load();
-
 		try
 		{
+			if (UseDebug)
+			{
+				using namespace LAL;
+
+				if (!OSAL::CreateConsole()) return 0;
+
+				cout << "Console IO Buffers hooked to OS IO" << endl;
+
+				cout << "EntryPoint: Starting the Core Execution Module" << endl;
+
+				cout << "Core:Execution: Initiate Execution" << endl;
+
+				cout << setfill('-') << setw(60); cout << " " << endl;
+
+				cout << "Abstract Realm: MVP Build - "
+					<< EEngineVersion::Major << "."
+					<< EEngineVersion::Minor << "."
+					<< EEngineVersion::Patch << endl;
+
+				cout << setfill('-') << setw(60); cout << " " << endl << endl;
+
+				cout << "Initializing Dev Module" << endl;
+
+				Dev::LoadModule();
+			}
+
+			OSAL::Load();
+
 			HAL::GPU::Load();
 
 			HAL::GPU::Initialize_GPUComms("Abstract Realm: MVP 0.87.0", AppVer);
@@ -114,39 +114,40 @@ namespace Core::Execution
 			Concurrency::CyclerPool::Initialize();
 
 			Concurrency::CyclerPool::ActivateUnit();
+
+			// Master execution
+
+			Initialize_MasterCycler();
+
+			// App closing
+
+			Imgui::Deinitialize();
+
+			HAL::GPU::Default_DeinitializeRenderer(EngineWindow);
+
+			OSAL::Destroy_Window(EngineWindow);
+
+			HAL::GPU::Cease_GPUComms();
+
+			OSAL::Unload();
+
+			if (UseDebug)
+			{
+				OSAL::DestroyConsole();
+			}
+
+			/*if (Heap_AllocationsLeft() > 0)
+			{
+			throw RuntimeError("Heap has not been cleaned up properly.");
+			}*/
+
 		}
-		catch (std::exception* e)
+		catch (std::exception e)
 		{
-			Dev::CLog(e->what());
+			Dev::CLog(e.what());
 
 			Dev::Console_UpdateBuffer();
 		}
-
-		// Master execution
-
-		Initialize_MasterCycler();
-		
-		// App closing
-
-		Imgui::Deinitialize();
-
-		HAL::GPU::Default_DeinitializeRenderer(EngineWindow);
-
-		OSAL::Destroy_Window(EngineWindow);
-
-		HAL::GPU::Cease_GPUComms();
-
-		OSAL::Unload();
-
-		if (UseDebug)
-		{
-			OSAL::DestroyConsole();
-		}
-
-		/*if (Heap_AllocationsLeft() > 0)
-		{
-			throw RuntimeError("Heap has not been cleaned up properly.");
-		}*/
 
 		return OSAL::ExitValT(EExitCode::Success);
 	}

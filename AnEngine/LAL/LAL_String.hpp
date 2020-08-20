@@ -10,7 +10,7 @@ namespace LAL
 {
 	using String       = std::string      ;
 	using String16     = std::wstring     ;
-	using Stringstream = std::stringstream;
+	using StringStream = std::stringstream;
 	
 	inline String ToString(int                _val) { return std::to_string(_val); };
 	inline String ToString(long               _val) { return std::to_string(_val); };

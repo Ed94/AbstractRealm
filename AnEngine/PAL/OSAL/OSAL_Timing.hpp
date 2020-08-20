@@ -25,7 +25,11 @@ namespace OSAL
 
 	constexpr auto TimeLocal = TimingAPI::TimeLocal;
 
-	void Record_EntryPoint_StartExecution();
+	void Record_EntryPoint_StartExecution() noexcept;
+
+	const SysTimePoint& GetExecutionStart();
+
+	const CalendarDate& GetExecutionStartDate();
 
 	void Load_Timing();
 

@@ -32,6 +32,8 @@ namespace LAL
 
 	using Time = std::time_t;
 
+	constexpr auto ToTime = SystemClock::to_time_t;
+
 	constexpr auto TimeUTC = std::gmtime;
 
 	// Time Local is defined in OSAL.

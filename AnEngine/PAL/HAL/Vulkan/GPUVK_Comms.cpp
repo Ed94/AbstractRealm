@@ -6,6 +6,7 @@
 #include "OSAL_Platform.hpp"
 #include "OSAL_Windowing.hpp"
 #include <map>
+#include <Dev.hpp>
 
 
 
@@ -622,15 +623,15 @@ namespace HAL::GPU::Vulkan
 	{
 		using ESeverity = EDebugUtilities_MessageSeverity;
 
+		Dev::CLog_Error("Vulkan Validation Layer: " + String(_callbackData.Message));
 
-		if (_messageServerity.HasOrEither(ESeverity::Info, ESeverity::Verbose, ESeverity::Warning))
+		/*if (_messageServerity.HasOrEither(ESeverity::Info, ESeverity::Verbose, ESeverity::Warning))
 		{
-			//Dev::CLog("Vulkan Validation Layer: " + String(_callbackData.Message));
 		}
 		else if (_messageServerity == uint32(EDebugUtilities_MessageSeverity::Error))
 		{
 			std::cerr << "Vulkan: Validation Layer: " << _callbackData.Message << std::endl;
-		}
+		}*/
 
 		return EBool::True;
 	}
