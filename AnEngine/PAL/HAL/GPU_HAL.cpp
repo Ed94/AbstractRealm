@@ -18,7 +18,7 @@ Note: For now this is going to be a big copy and paste to an extent from the tri
 #include "Meta/EngineInfo.hpp"
 #include "Meta/Config/OSAL_Config.hpp"
 #include "OSAL/OSAL_Platform.hpp"
-#include "Dev/Dev.hpp"
+#include "HAL_Backend.hpp"
 
 
 
@@ -92,10 +92,15 @@ namespace HAL
 						Default_DrawFrame_Bind = Vulkan::Default_DrawFrame;
 
 						Default_ReinitializeRenderer_Bind = Vulkan::Default_ReinitializeRenderer;
+
+						CLog("Loaded platform bindings: Vulkan");
+
+						break;
 					}
 				}
 			}
 		}
+
 
 
 		// Public

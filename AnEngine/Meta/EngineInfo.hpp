@@ -37,7 +37,7 @@ namespace Meta
 		enum
 		{
 			Major = 0 ,
-			Minor = 97,
+			Minor = 99,
 			Patch = 0
 		};
 	};
@@ -119,5 +119,12 @@ namespace Meta
 		eGlobal data< bool> UseEditor   ;
 		eGlobal data< bool> UseDebug    ;
 		eGlobal data< bool> UseProfiling;
+
+		/**
+		 * Determines whether the engine should use the core's concurrency module (multi-threading at the CPU).
+		 * 
+		 * Concurrency still occurs on other hardware such as the GPU. (Just not from the Host CPU)
+		 */
+		eGlobal data< bool> UseConcurrency;
 	)
 }

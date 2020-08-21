@@ -60,4 +60,5 @@ namespace IO
 	FileBuffer BufferFile(const Path& _fileToBuffer);
 
 	bool OpenFile(File_OutputStream& _fileStream, OpenFlags _flags, const Path& _file);
+	bool OpenFile(File_InputStream&  _fileStream, OpenFlags _flags, const Path& _file);
 }

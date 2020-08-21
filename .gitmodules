@@ -76,3 +76,6 @@
 [submodule "vld"]
 	path = AnEngine/PAL/ThirdParty/Libraries/vld
 	url = https://github.com/razor950/vld.git
+[submodule "infoware"]
+	path = AnEngine/PAL/ThirdParty/Libraries/infoware
+	url = https://github.com/ThePhD/infoware.git

@@ -6,6 +6,7 @@
 // Engine
 #include "Cycler.hpp"
 #include "Meta/AppInfo.hpp"
+#include "HAL.hpp"
 #include "HAL/GPU_HAL.hpp"
 #include "MasterExecution.hpp"
 #include "Concurrency/CyclerPool.hpp"
@@ -54,6 +55,20 @@ namespace Core::Execution
 		}
 	)
 
+
+
+	// Private
+
+	void CLog(String _info)
+	{
+		Dev::CLog("Core-Execution: " + _info);
+	}
+
+	void CLog_Error(String _info)
+	{
+		Dev::CLog_Error("Core-Execution: " + _info);
+	}
+
 	
 
 	// Public
@@ -68,31 +83,25 @@ namespace Core::Execution
 
 				if (!OSAL::CreateConsole()) return 0;
 
-				cout << "Console IO Buffers hooked to OS IO" << endl;
-
-				cout << "EntryPoint: Starting the Core Execution Module" << endl;
-
-				cout << "Core:Execution: Initiate Execution" << endl;
-
-				cout << setfill('-') << setw(60); cout << " " << endl;
-
-				cout << "Abstract Realm: MVP Build - "
-					<< EEngineVersion::Major << "."
-					<< EEngineVersion::Minor << "."
-					<< EEngineVersion::Patch << endl;
-
-				cout << setfill('-') << setw(60); cout << " " << endl << endl;
-
-				cout << "Initializing Dev Module" << endl;
+				Dev::CLog("Initializing Dev Module");
 
 				Dev::LoadModule();
 			}
 
+			Dev::CLog("Core-Execution: Initiating");
+
 			OSAL::Load();
 
-			HAL::GPU::Load();
+			HAL::LoadModule();
 
-			HAL::GPU::Initialize_GPUComms("Abstract Realm: MVP 0.87.0", AppVer);
+			HAL::GPU::Initialize_GPUComms
+			(
+				String("Abstract Realm: MVP " + 
+				ToString(EEngineVersion::Major) + "." +
+				ToString(EEngineVersion::Minor) + "." +
+				ToString(EEngineVersion::Patch)).c_str(),
+				AppVer
+			);
 
 			// Window
 
@@ -110,10 +119,6 @@ namespace Core::Execution
 			HAL::GPU::Default_InitializeRenderer(EngineWindow);
 
 			Imgui::Initialize(EngineWindow);
-
-			Concurrency::CyclerPool::Initialize();
-
-			Concurrency::CyclerPool::ActivateUnit();
 
 			// Master execution
 
@@ -144,7 +149,7 @@ namespace Core::Execution
 		}
 		catch (std::exception e)
 		{
-			Dev::CLog(e.what());
+			CLog_Error(e.what());
 
 			Dev::Console_UpdateBuffer();
 		}

@@ -9,7 +9,7 @@
 
 namespace OSAL
 {
-	void OS_CLog(String _lineLog)
+	void CLog(String _lineLog)
 	{
 		Dev::CLog("OSAL: " + _lineLog);
 

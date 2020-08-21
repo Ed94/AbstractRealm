@@ -16,7 +16,7 @@ namespace OSAL
 
 	void Load()
 	{
-		OS_CLog("Loading Module...");
+		CLog("Loading Module...");
 
 		Load_Timing();	
 
@@ -30,7 +30,7 @@ namespace OSAL
 			{
 				SAL::GLFW::Initalize();
 
-				OS_CLog("Initialized windowing Platform: GLFW");
+				CLog("Initialized windowing platform: GLFW");
 				
 				break;
 			}
@@ -44,6 +44,8 @@ namespace OSAL
 			case EWindowingPlatform::GLFW:
 			{
 				SAL::GLFW::Terminate();
+
+				CLog("Terminated windowing platform: GLFW");
 			}
 		}
 	}

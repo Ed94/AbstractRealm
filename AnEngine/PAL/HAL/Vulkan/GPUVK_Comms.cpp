@@ -5,8 +5,7 @@
 // Engine
 #include "OSAL_Platform.hpp"
 #include "OSAL_Windowing.hpp"
-#include <map>
-#include <Dev.hpp>
+#include "HAL_Backend.hpp"
 
 
 
@@ -340,21 +339,40 @@ namespace HAL::GPU::Vulkan
 
 		if (Meta::Vulkan::EnableLayers)
 		{
+			CLog("EnableLayers specified");
+
+			CLog("Available layers: ");
+
+			for (auto& layerAndExtensions : AppLayersAndExtensions)
+			{
+				CLog(layerAndExtensions.Layer.Name);
+			}
+
 			// In order to process receive layer messages, need the debugger.
 			DesiredInstanceExts.push_back(InstanceExt::DebugUtility);
 
 			if (Meta::Vulkan::Enable_API_Dump)
+			{
 				DesiredLayers.push_back(Layer::LunarG_API_Dump);
 
+				CLog("Layer Selected: LunarG API Dump");
+			}
+
 			if (Meta::Vulkan::Enable_FPSMonitor)
+			{
 				DesiredLayers.push_back(Layer::LunarG_Monitor);
 
+				CLog("Layer Selected: LunarG Monitor (FPS on window");
+			}
+
 			if (Meta::Vulkan::Enable_Validation)
+			{
 				AquireSupportedValidationLayers();
+			}
 				
 			if (!CheckLayerSupport(DesiredLayers))
 			{
-				throw std::runtime_error("Layers requested, but are not available!");
+				RuntimeError("Layers requested, but are not available!");
 			}
 		}
 
@@ -396,14 +414,18 @@ namespace HAL::GPU::Vulkan
 		stack<EResult> creationResult = Heap(AppGPU_Comms.Create(spec, createSpec));  
 
 		if (creationResult != EResult::Success) 
-			throw std::runtime_error("Triangle Test: Failed to create Vulkan app instance.");
+			throw RuntimeError("Failed to create Vulkan app instance.");
+
+		CLog("Application handshake complete.");
 
 		if (Meta::Vulkan::EnableLayers)
 		{
 			creationResult = Heap(GPU_Messenger.Create(AppGPU_Comms));
 
 			if (creationResult != EResult::Success)
-				throw std::runtime_error("Failed to setup debug messenger!");
+				throw RuntimeError("Failed to setup debug messenger.");
+
+			CLog("Debug messenger created");
 		}
 	}
 
@@ -429,7 +451,7 @@ namespace HAL::GPU::Vulkan
 
 		if (Heap(testSurface.Create(AppGPU_Comms, createInfo) != EResult::Success))
 		{
-			throw std::runtime_error("Vulkan, TriangleTest: Failed to create window surface!");
+			throw RuntimeError("Failed to create window surface!");
 		}
 
 		for (auto& device : LogicalGPUs)
@@ -512,6 +534,8 @@ namespace HAL::GPU::Vulkan
 			{
 				DesiredLayers.push_back(Layer::Khronos_Validation);
 
+				CLog("Validation Layer Enabled: Khronos");
+
 				found = true;
 
 				break;
@@ -527,6 +551,8 @@ namespace HAL::GPU::Vulkan
 				if (CStr_Compare(Layer::LunarG_StandardValidation, layerAndExtenions.Layer.Name) == 0)
 				{
 					DesiredLayers.push_back(Layer::LunarG_StandardValidation);
+
+					CLog("Validation Layer Enabled: LunarG Standard");
 
 					found = true;
 
@@ -562,7 +588,17 @@ namespace HAL::GPU::Vulkan
 				}
 			}
 
-			if (layersFound == Fallback2Layers.size()) found = true;
+			if (layersFound == Fallback2Layers.size()) 
+			{
+				for (auto validationLayerName : Fallback2Layers)
+				{
+					DesiredLayers.push_back(validationLayerName);
+
+					CLog("Validation Layer Enabled: " + String(validationLayerName));
+				}
+
+				found = true;
+			}
 		}
 
 		// Fallback 3
@@ -574,6 +610,8 @@ namespace HAL::GPU::Vulkan
 				if (CStr_Compare(Layer::LunarG_CoreValidation, layerAndExtenions.Layer.Name) == 0)
 				{
 					DesiredLayers.push_back(Layer::LunarG_CoreValidation);
+
+					CLog("Validation Layer Enabled: LunarG Core");
 
 					found = true;
 
@@ -623,15 +661,7 @@ namespace HAL::GPU::Vulkan
 	{
 		using ESeverity = EDebugUtilities_MessageSeverity;
 
-		Dev::CLog_Error("Vulkan Validation Layer: " + String(_callbackData.Message));
-
-		/*if (_messageServerity.HasOrEither(ESeverity::Info, ESeverity::Verbose, ESeverity::Warning))
-		{
-		}
-		else if (_messageServerity == uint32(EDebugUtilities_MessageSeverity::Error))
-		{
-			std::cerr << "Vulkan: Validation Layer: " << _callbackData.Message << std::endl;
-		}*/
+		Dev::CLog_Error(String(_callbackData.Message));
 
 		return EBool::True;
 	}

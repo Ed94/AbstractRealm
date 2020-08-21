@@ -13,7 +13,7 @@ into a binding interface instead (Or at least most likely refactor how I do the 
 #include "Meta/Config/OSAL_Config.hpp"
 #include "OSAL_Platform.hpp"
 #include "SAL/GLFW_SAL.hpp"
-
+#include "OSAL_Backend.hpp"
 
 
 namespace OSAL
@@ -83,8 +83,8 @@ namespace OSAL
 				SetWindowCreationParameter(EWindowCreationParameter::ClientAPI, EClient_API::No_API          );
 				SetWindowCreationParameter(EWindowCreationParameter::Resizable, _windowCreationSpec.Resizable);
 
-				return 
-				
+				ptr<Window> window = 
+
 					MakeWindow
 					(
 						_windowCreationSpec.WindowSize.Width,
@@ -93,6 +93,10 @@ namespace OSAL
 						_windowCreationSpec.Windowed,
 						_windowCreationSpec.WindowToShareWith
 					);
+
+				CLog("Window created with handle: " + ToString(DataSize(window)));
+
+				return window;
 			}
 
 			static bool CanClose(const ptr<Window> _window)
@@ -103,6 +107,8 @@ namespace OSAL
 			static void Destroy_Window(const ptr<Window> _window)
 			{
 				SAL::GLFW::DestroyWindow(_window);
+
+				CLog("Window: " + ToString(DataSize(_window)) + " destroyed");
 			}
 
 			static void SetWindow_SizeChangeCallback(const ptr<Window> _window, WindowSize_Callback _callback)

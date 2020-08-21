@@ -8,6 +8,7 @@
 #include "_TutorialRelated.hpp"
 
 // Proper stuff
+#include "HAL_Backend.hpp"
 #include "GPUVK_Comms.hpp"
 
 
@@ -1713,6 +1714,8 @@
 
 			void Initialize_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion)
 			{
+				CLog("Initializing GPU Communication");
+
 				AppGPU_Comms_Initialize(_applicationName, _applicationVersion);
 
 				AcquirePhysicalDevices();

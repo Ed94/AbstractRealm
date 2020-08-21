@@ -51,7 +51,7 @@ namespace Core::Execution
 
 		Imgui::Dirty_DoSurfaceStuff(EngineWindow);	
 
-		Dev::CLog_Status("Master    Delta: " + ToString(MasterCycler.GetAverageDelta().count()), 0, 0);
+		Dev::CLog_Status("Master    Delta: " + ToString(MasterCycler.GetDeltaTime().count()), 0, 0);
 
 		if (Concurrency::CyclerPool::GetNumUnits() > 0)
 		{
@@ -67,20 +67,46 @@ namespace Core::Execution
 				if (col == 4) break;
 			}
 		}
+
+		static Duration64 consoleUpdateDelta(0), consoleUpdateInterval(1.0 / 24.0);
 		
-		Dev::Console_UpdateBuffer();
+		if (consoleUpdateDelta >= consoleUpdateInterval)
+		{
+			Dev::Console_UpdateInput();
+
+			Dev::Console_UpdateBuffer();
+
+			Dev::CLog_Status("Interval Delta: " + ToString(consoleUpdateDelta.count()), 1, 0);
+
+			consoleUpdateDelta = Duration64(0);
+		}
+		else
+		{
+			consoleUpdateDelta += MasterCycler.GetDeltaTime();
+		}
 
 		if (OSAL::CanClose(EngineWindow))
 		{
 			HAL::GPU::WaitFor_GPUIdle();
 
-			Concurrency::CyclerPool::RequestShutdown();
+			if (Meta::UseConcurrency)
+			{
+				Concurrency::CyclerPool::RequestShutdown();
+			}
+			else
+			{
+				MasterCycler.Lapse();
+			}
+			
 		}
 
-		// Query module states to see if its safe for the master cycler to shutdown.
-		if (Concurrency::CyclerPool::IsShutdown())
+		if (Meta::UseConcurrency)
 		{
-			MasterCycler.Lapse();
+			// Query module states to see if its safe for the master cycler to shutdown.
+			if (Concurrency::CyclerPool::IsShutdown())
+			{
+				MasterCycler.Lapse();
+			}
 		}
 	}
 }

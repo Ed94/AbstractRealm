@@ -46,4 +46,14 @@ namespace IO
 		else
 			return true;
 	}
+
+	bool OpenFile(File_InputStream& _fileStream, OpenFlags _flags, const Path& _file)
+	{
+		Heap(_fileStream.open(_file), _flags);
+
+		if (!_fileStream.is_open())
+			return false;
+		else
+			return true;
+	}
 }

@@ -557,6 +557,7 @@
     <ClCompile Include="Meta\EngineInfo.cpp" />
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
+    <ClCompile Include="PAL\HAL\HAL_Backend.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Renderer.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />

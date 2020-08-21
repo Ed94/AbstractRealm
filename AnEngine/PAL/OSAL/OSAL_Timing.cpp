@@ -52,9 +52,9 @@ namespace OSAL
 		SteadyTimeStatus .Precison = float64(SteadyTimeStatus .Period.num) / float64(SteadyTimeStatus .Period.den);
 		HighResTimeStatus.Precison = float64(HighResTimeStatus.Period.num) / float64(HighResTimeStatus.Period.den);
 
-		OS_CLog("System Time Accuracy         : " + ToString(SysTimeStatus    .Precison) + " milliseconds");
-		OS_CLog("Steady Time Accuracy         : " + ToString(SteadyTimeStatus .Precison) + " milliseconds");
-		OS_CLog("High Resolution Time Accuracy: " + ToString(HighResTimeStatus.Precison) + " milliseconds");
+		CLog("System Time Accuracy         : " + ToString(SysTimeStatus    .Precison) + " milliseconds");
+		CLog("Steady Time Accuracy         : " + ToString(SteadyTimeStatus .Precison) + " milliseconds");
+		CLog("High Resolution Time Accuracy: " + ToString(HighResTimeStatus.Precison) + " milliseconds");
 	}
 
 	const SysTimePoint& GetExecutionStart()

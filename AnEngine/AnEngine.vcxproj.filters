@@ -150,5 +150,6 @@
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Renderer.cpp" />
     <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="LAL\LAL_IO.cpp" />
+    <ClCompile Include="PAL\HAL\HAL_Backend.cpp" />
   </ItemGroup>
 </Project>

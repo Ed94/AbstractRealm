@@ -24,5 +24,7 @@ namespace Dev
 		cout << "Dev: Load Module" << endl;
 
 		Load_DevConsole();
+
+		CLog("Dev: Module loaded");
 	}
 }

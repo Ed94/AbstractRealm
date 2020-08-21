@@ -49,8 +49,6 @@ namespace OSAL
 
 	void QueryThreadInfo()
 	{
-		OS_CLog("Querying thread info");
-
 		/*
 		STL way of getting number of logical cores.
 
@@ -58,7 +56,7 @@ namespace OSAL
 		*/
 		NumberOfLogicalCores = Thread::hardware_concurrency(); 
 
-		OS_CLog(String("Number of Logical Cores: " + std::to_string(NumberOfLogicalCores)));
+		CLog(String("Number of Logical Cores: " + std::to_string(NumberOfLogicalCores)));
 	}
 
 	uint32 GetNumberOfLogicalCores()
