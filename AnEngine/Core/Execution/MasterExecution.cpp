@@ -72,11 +72,11 @@ namespace Core::Execution
 		
 		if (consoleUpdateDelta >= consoleUpdateInterval)
 		{
-			Dev::Console_UpdateInput();
+			//Dev::Console_UpdateInput();
 
 			Dev::Console_UpdateBuffer();
 
-			Dev::CLog_Status("Interval Delta: " + ToString(consoleUpdateDelta.count()), 1, 0);
+			Dev::CLog_Status("Console   Delta: " + ToString(consoleUpdateDelta.count()), 1, 0);
 
 			consoleUpdateDelta = Duration64(0);
 		}

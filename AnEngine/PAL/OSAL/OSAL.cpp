@@ -4,6 +4,7 @@
 
 
 #include "OSAL_Backend.hpp"
+#include "OSAL_Hardware.hpp"
 
 
 
@@ -17,6 +18,10 @@ namespace OSAL
 	void Load()
 	{
 		CLog("Loading Module...");
+
+		Load_Hardware();
+
+		Load_Platform();
 
 		Load_Timing();	
 
@@ -48,6 +53,8 @@ namespace OSAL
 				CLog("Terminated windowing platform: GLFW");
 			}
 		}
+
+		CLog("Unloaded module");
 	}
 
 	void PollEvents()

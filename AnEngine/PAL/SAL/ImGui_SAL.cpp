@@ -4,11 +4,17 @@
 
 
 #include "GPU_HAL.hpp"
+#include "Console.hpp"
 
 
 
 namespace SAL::Imgui
 {
+	void CLog(String _info)
+	{
+		Dev::CLog("Imgui: " + _info);
+	}
+
 	namespace PlatformBackend
 	{
 		// Static Data
@@ -102,6 +108,8 @@ namespace SAL::Imgui
 			{
 				ImGui_ImplGlfw_InitForVulkan(_window, PlatformBackend::GLFW_InstallCallbacks);
 
+				CLog("GLFW callbacks setup");
+
 				break;
 			}
 		}
@@ -138,6 +146,8 @@ namespace SAL::Imgui
 
 				ImGui_ImplVulkan_Init(&initSpec, RenderContext->RenderPass);
 
+				CLog("Hooked onto Vulkan backend");
+
 				//ImGui_ImplVulkan_SetMinImageCount(HAL::GPU::Vulkan::GetMinimumFramebufferCount());
 
 				break;
@@ -150,10 +160,14 @@ namespace SAL::Imgui
 		ImGui_ImplVulkan_Shutdown();
 
 		PlatformBackend::DescriptorPool.Destroy();
+
+		CLog("Deinitialized");
 	}
 
 	void Initialize(ptr<OSAL::Window> _window)
 	{
+		CLog("Initializing...");
+
 		using namespace SAL;
 
 		Imgui::VerifyVersion();
@@ -172,7 +186,7 @@ namespace SAL::Imgui
 		if (IO_Config->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			style.WindowRounding = 0.0f;
-			style.Colors[ImGuiCol_WindowBg].w = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 0.1f;
 		}
 
 		Imgui::BindToPlatformAndRenderer(_window);

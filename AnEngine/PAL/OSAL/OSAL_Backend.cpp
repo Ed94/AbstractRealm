@@ -13,6 +13,6 @@ namespace OSAL
 	{
 		Dev::CLog("OSAL: " + _lineLog);
 
-		Dev::Console_UpdateBuffer();
+		//Dev::Console_UpdateBuffer();
 	}
 }

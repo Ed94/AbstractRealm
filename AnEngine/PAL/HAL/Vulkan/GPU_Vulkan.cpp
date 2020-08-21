@@ -1727,12 +1727,7 @@
 
 			void Cease_GPUComms()
 			{
-				for (auto& device : LogicalGPUs)
-				{
-					Heap(device.Destroy());
-				}
-
-				Heap(AppGPU_Comms.Destroy());
+				AppGPU_Comms_Cease();	
 			}
 
 			void WaitFor_GPUIdle()
@@ -1763,6 +1758,8 @@
 
 			void Default_InitializeRenderer(ptr<Window> _window)
 			{
+				CLog("Doing dirty renderer initalization, clean this up!");
+
 				CreateSurface(_window);
 
 				CreateSwapChain(_window);
@@ -1971,6 +1968,8 @@
 
 			void Default_DeinitializeRenderer(ptr<OSAL::Window> /* _window */)
 			{
+				CLog("Deinitializing the dirty renderer");
+
 				CleanupSwapChain();
 
 				Heap

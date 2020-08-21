@@ -12,6 +12,11 @@
 #include "Core/Execution/Executer.hpp"
 
 
+// VLD
+//#include <vld/out/build/x64-Debug (default)/include/vld.h>
+
+
+
 
 namespace OSAL
 {

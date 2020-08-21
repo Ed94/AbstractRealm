@@ -3,6 +3,9 @@
 
 
 
+// VLD
+
+
 // Engine
 #include "Cycler.hpp"
 #include "Meta/AppInfo.hpp"
@@ -138,6 +141,8 @@ namespace Core::Execution
 
 			if (UseDebug)
 			{
+				Dev::UnloadModule();
+
 				OSAL::DestroyConsole();
 			}
 
@@ -145,7 +150,6 @@ namespace Core::Execution
 			{
 			throw RuntimeError("Heap has not been cleaned up properly.");
 			}*/
-
 		}
 		catch (std::exception e)
 		{

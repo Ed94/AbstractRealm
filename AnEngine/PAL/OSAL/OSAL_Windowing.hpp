@@ -94,7 +94,9 @@ namespace OSAL
 						_windowCreationSpec.WindowToShareWith
 					);
 
-				CLog("Window created with handle: " + ToString(DataSize(window)));
+				StringStream ptrString; ptrString << window;
+
+				CLog("Window created with handle: " + ptrString.str() + "  Title: " + _windowCreationSpec.WindowTitle);
 
 				return window;
 			}
@@ -108,7 +110,9 @@ namespace OSAL
 			{
 				SAL::GLFW::DestroyWindow(_window);
 
-				CLog("Window: " + ToString(DataSize(_window)) + " destroyed");
+				StringStream ptrString; ptrString << _window;
+
+				CLog("Window: " + ptrString.str() + " destroyed");
 			}
 
 			static void SetWindow_SizeChangeCallback(const ptr<Window> _window, WindowSize_Callback _callback)

@@ -73,140 +73,22 @@ namespace OSAL
 			// https://stackoverflow.com/questions/311955/redirecting-cout-to-a-console-in-windows   
 			// Chris's answer. (He did it right)
 		    // https://stackoverflow.com/questions/191842/how-do-i-get-console-output-in-c-with-a-windows-program
-			static bool Bind_IOBuffersTo_OSIO()
-			{				 
-				bool result = false;
+			static bool Bind_IOBuffersTo_OSIO  ();
+			static bool Unbind_IOBuffersTo_OSIO();
+			
+			static OS_Handle CreateBuffer();
 
-				FILE* dummyFile = nullptr;
+			static bool Create();
+			
+			static bool Destroy();
+			
+			static OS_Handle GetConsoleHandle(EHandle::NativeT _type);
 
-				freopen_s(&dummyFile, "CONIN$" , "r", stdin );
-				freopen_s(&dummyFile, "CONOUT$", "w", stdout);
-				freopen_s(&dummyFile, "CONOUT$", "w", stderr);
+			static bool SetBufferSize(OS_Handle _handle, ConsoleTypes::Extent _extent);
 
-				Heap
-				(
-					// Redirect STDIN if the console has an input handle
-					if (GetStdHandle(STD_INPUT_HANDLE) != INVALID_HANDLE_VALUE)
-						if (freopen_s(&dummyFile, "CONIN$", "r", stdin) != 0)
-							result = false;
-						else
-							setvbuf(stdin, NULL, _IONBF, 0);
-	
-					// Redirect STDOUT if the console has an output handle
-					if (GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
-						if (freopen_s(&dummyFile, "CONOUT$", "w", stdout) != 0)
-							result = false;
-						else
-							setvbuf(stdout, NULL, _IONBF, 0);
-	
-					// Redirect STDERR if the console has an error handle
-					if (GetStdHandle(STD_ERROR_HANDLE) != INVALID_HANDLE_VALUE)
-						if (freopen_s(&dummyFile, "CONOUT$", "w", stderr) != 0)
-							result = false;
-						else
-							setvbuf(stderr, NULL, _IONBF, 0);
-				);
+			static bool SetSize(OS_Handle _handle, ConsoleTypes::Rect& _rect);
 
-				// Make C++ standard streams point to console as well.
-				std::ios::sync_with_stdio(true);
-
-				// Clear the error state for each of the C++ standard streams.
-				std::wcout.clear();
-				std::cout .clear();
-				std::wcerr.clear();
-				std::cerr .clear();
-				std::wcin .clear();
-				std::cin  .clear();
-
-				return true;
-			}
-
-			static bool Unbind_IOBuffersTo_OSIO()
-			{
-				bool result = true;
-
-				FILE* dummyFile;
-
-				// Just to be safe, redirect standard IO to NUL before releasing.
-
-				Heap
-				(
-					// Redirect STDIN to NUL
-					if (freopen_s(&dummyFile, "NUL:", "r", stdin) != 0)
-						result = false;
-					else
-						setvbuf(stdin, NULL, _IONBF, 0);
-	
-					// Redirect STDOUT to NUL
-					if (freopen_s(&dummyFile, "NUL:", "w", stdout) != 0)
-						result = false;
-					else
-						setvbuf(stdout, NULL, _IONBF, 0);
-	
-					// Redirect STDERR to NUL
-					if (freopen_s(&dummyFile, "NUL:", "w", stderr) != 0)
-						result = false;
-					else
-						setvbuf(stderr, NULL, _IONBF, 0);
-				);
-
-				return result;
-			}
-
-			static OS_Handle CreateBuffer()
-			{
-				return CreateConsoleScreenBuffer(GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-			}
-
-			static bool Create()
-			{
-				static bool created = false;
-
-				if (!created)
-				{
-					created = Heap(AllocConsole());
-
-					created = Bind_IOBuffersTo_OSIO();
-
-					return created;
-				}
-				else
-				{
-					return false;
-				}
-			}
-
-			static bool Destroy()
-			{
-				bool result = Unbind_IOBuffersTo_OSIO();
-
-				if (!result) return result;
-
-				// Detach from console
-				result = Heap(FreeConsole());
-
-				return result;
-			}
-
-			static OS_Handle GetConsoleHandle(EHandle::NativeT _type)
-			{
-				return GetStdHandle(_type);
-			}
-
-			static bool SetBufferSize(OS_Handle _handle, ConsoleTypes::Extent _extent)
-			{
-				return SetConsoleScreenBufferSize(_handle, _extent);
-			}
-
-			static bool SetSize(OS_Handle _handle, ConsoleTypes::Rect& _rect)
-			{
-				return SetConsoleWindowInfo(_handle, TRUE, &_rect);
-			}
-
-			static bool SetTitle(OS_RoCStr _title)
-			{
-				return SetConsoleTitle(_title);
-			}
+			static bool SetTitle(OS_RoCStr _title);
 
 			static bool WriteToConsole
 			(
@@ -215,10 +97,7 @@ namespace OSAL
 				Extent    _bufferSize ,
 				Extent    _bufferCoord,
 				Rect      _readRegion
-			)
-			{
-				return WriteConsoleOutput(_handle, _buffer, _bufferSize, _bufferCoord, _readRegion);
-			}
+			);
 		};
 
 		using ConsoleAPI = ConsoleAPI_Maker<OSAL::OS>;

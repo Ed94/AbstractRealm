@@ -25,7 +25,7 @@ namespace Dev
 	//StaticData
 	//(
 		uInt16 ConsoleWidth  = 160;//140;
-		uInt16 ConsoleHeight = 60;//50 ;
+		uInt16 ConsoleHeight = 118;//50 ;
 
 		using CharBuffer = CharU[1024][1024];
 
@@ -108,7 +108,7 @@ namespace Dev
 	{
 		if (!Meta::UseDebug) return;
 
-		static uInt16 linePos = 4;
+		static uInt16 linePos = 3;
 
 		if (linePos == StatusStart + 1 )
 		{
@@ -177,14 +177,12 @@ namespace Dev
 					_info.erase(0, ConsoleWidth);
 				}
 
-				pos += ConsoleWidth + 1;
+				pos    += ConsoleWidth + 1;
 				endPos += ConsoleWidth;	
 			}
 		}
 		else
 		{
-			linePos ++;
-
 			DevLogStream
 				<< dateSig.str()
 				<< _info
@@ -508,15 +506,8 @@ namespace Dev
 
 		OSAL::Console_SetTitle(ConsoleTitle);
 
-		//SMALL_RECT screen = { 0, 0, 1, 1 };
-		//SetConsoleWindowInfo(ConsoleOutput, true, &screen );
-
 		OSAL::Console_SetBufferSize(ConsoleOutput, ConsoleBufferSize);
-
-		//SetConsoleWindowInfo(ConsoleOutput, true, &ConsoleSize);
-
 		OSAL::Console_SetSize      (ConsoleOutput, ConsoleSize      );
-		//OSAL::Console_SetBufferSize(ConsoleOutput, ConsoleBufferSize);
 
 		ConsoleCharBuffer.resize(ConsoleHeight * ConsoleWidth);
 
@@ -528,6 +519,8 @@ namespace Dev
 
 		WriteToConsole(ConsoleOutput, &ConsoleCharBuffer[0], ConsoleCharBufferSize, ConsoleCharPos, &ConsoleSize);
 
+		auto error = GetLastError();
+
 		SetConsoleCursorPosition (ConsoleOutput, {0, ConsoleBufferSize.Y + 1});
 		
 		Console_UpdateBuffer();
@@ -535,6 +528,14 @@ namespace Dev
 		CLog("Dev: Console / Logging ready");
 
 		Console_UpdateBuffer();
+	}
+
+	void Unload_DevConsole()
+	{
+		CLog("Unloading dev console (there will be no logs after this)");
+
+		DevLogFileOut.close();
+		DevLogFileIn .close();
 	}
 
 

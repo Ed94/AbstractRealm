@@ -90,6 +90,8 @@ namespace HAL::GPU::Vulkan
 
 		const Queue& GetGraphicsQueue() const;
 
+		const String GetSig() const;
+
 		operator Handle()
 		{
 			return handle;
@@ -171,6 +173,8 @@ namespace HAL::GPU::Vulkan
 
 
 	void AcquirePhysicalDevices();
+
+	void AppGPU_Comms_Cease();
 
 	void AppGPU_Comms_Initialize(RoCStr _appName, Meta::AppVersion _version);
 

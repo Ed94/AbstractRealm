@@ -27,4 +27,11 @@ namespace Dev
 
 		CLog("Dev: Module loaded");
 	}
+
+	void UnloadModule()
+	{
+		CLog("Dev: Unloading module...");
+
+		Unload_DevConsole();
+	}
 }

@@ -110,6 +110,7 @@
     <ClInclude Include="LAL\LAL_Functions.hpp" />
     <ClInclude Include="LAL\LAL_SmartPtrs.hpp" />
     <ClInclude Include="Meta\Config\CoreDev_Config.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_Hardware.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -151,5 +152,7 @@
     <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="LAL\LAL_IO.cpp" />
     <ClCompile Include="PAL\HAL\HAL_Backend.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Hardware.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Platform.cpp" />
   </ItemGroup>
 </Project>

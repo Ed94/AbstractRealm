@@ -74,7 +74,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include;$(ProjectDir)PAL\ThirdParty\Librareis\glm\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -101,14 +101,14 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FloatingPointModel>Fast</FloatingPointModel>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;F:\Projects\AnEngine\AnEngine\PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\vld\out\build\x64-Debug %28default%29\include;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated</AdditionalIncludeDirectories>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Debug\src;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Debug\src;$(ProjectDir)PAL\ThirdParty\Libraries\vld\out\build\x64-Debug %28default%29\lib;$(ProjectDir)PAL\ThirdParty\Libraries\vld\out\build\x64-Debug %28default%29\bin;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>version.lib;wbemuuid.lib;vulkan-1.lib;glfw3.lib;shaderc_combined.lib;infowared.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <HeapReserveSize>3145728 </HeapReserveSize>
@@ -454,6 +454,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\OSAL\OSAL_Hardware.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PAL\OSAL\OSAL_Platform.hpp">
       <SubType>
       </SubType>
@@ -567,6 +571,8 @@
     <ClCompile Include="PAL\OSAL\OSAL_Backend.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Console.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_EntryPoint.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Hardware.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Platform.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Threading.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Timing.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Windowing.cpp" />

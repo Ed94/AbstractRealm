@@ -169,6 +169,13 @@ namespace HAL::GPU::Vulkan
 		return graphicsQueue;
 	}
 
+	const String LogicalDevice::GetSig() const
+	{
+		StringStream handleStr; handleStr << handle;
+
+		return physicalDevice->GetProperties().Name + String(" Handle: ") + handleStr.str();
+	}
+
 	// Protected
 
 	void LogicalDevice::PrepareQueues()
@@ -320,11 +327,37 @@ namespace HAL::GPU::Vulkan
 		if (result != EResult::Success)
 			throw RuntimeError("Failed to get the physical GPUs.");
 
+		CLog("Physical GPUs acquired:");
+
+		StringStream gpuHandle;
+
 		for (auto& gpu : PhysicalGPUs)
 		{
 			gpu.GetAvailableExtensions   ();
 			gpu.GetAvailableQueueFamilies();
+
+			gpuHandle.str(String());
+
+			gpuHandle << gpu.GetHandle();
+
+			CLog(gpu.GetProperties().Name + String(" Handle: ") + gpuHandle.str());
 		}
+	}
+
+	void AppGPU_Comms_Cease()
+	{
+		DeviceEngaged = nullptr;
+
+		for (auto& device : LogicalGPUs)
+		{
+			Heap(device.Destroy());
+		}
+
+		CLog("Device disengaged and logical devices destroyed");
+
+		Heap(AppGPU_Comms.Destroy());
+
+		CLog("GPU communications ceased");
 	}
 
 	void AppGPU_Comms_Initialize(RoCStr _appName, Meta::AppVersion _version)
@@ -431,6 +464,10 @@ namespace HAL::GPU::Vulkan
 
 	void EngageMostSuitableDevice()
 	{
+		CLog("Determining most suitable device to engage.");
+
+		CLog("Setting up a dummy test window and surface to evaulate devices...");
+
 		ptr<OSAL::Window> testWindow;
 
 		OSAL::WindowInfo windowSpec = {};
@@ -470,6 +507,8 @@ namespace HAL::GPU::Vulkan
 			if (HasExtensions && PresentationSupport) 
 			{
 				DeviceEngaged = getAddress(device);
+
+				CLog("Device engaged: " + DeviceEngaged->GetSig());
 			}
 		}
 
@@ -506,6 +545,8 @@ namespace HAL::GPU::Vulkan
 				throw RuntimeError("Failed to create logical device!");
 			}
 		}
+
+		CLog("Logical devices generated");
 	}
 
 	const LogicalDevice& GetEngagedDevice()
@@ -681,6 +722,8 @@ namespace HAL::GPU::Vulkan
 					if (std::find(DesiredInstanceExts.begin(), DesiredInstanceExts.end(), extensions[index]) == DesiredInstanceExts.end())
 					{
 						DesiredInstanceExts.push_back(extensions[index]);
+
+						CLog("Added GLFW desired instance extension: " + String(extensions[index]));
 					}
 				}
 
@@ -691,8 +734,12 @@ namespace HAL::GPU::Vulkan
 				// A GPU must be available with ability to render to a surface.
 				DesiredInstanceExts.push_back(InstanceExt::Surface);
 
+				CLog("Added desired instance extension: " + String(InstanceExt::Surface));
+
 				// Surface OS platform extension.
 				DesiredInstanceExts.push_back(Surface::OSSurface);
+
+				CLog("Added desired instance extension: " + String(Surface::OSSurface));
 
 				break;
 			}
@@ -701,9 +748,13 @@ namespace HAL::GPU::Vulkan
 		// Engine needs swap chains.
 		DesiredDeviceExts.push_back(DeviceExt::Swapchain);
 
+		CLog("Added desired device extension: " + String(DeviceExt::Swapchain));
+
 		if (Meta::Vulkan::EnableLayers)
 		{
 			DesiredInstanceExts.push_back(InstanceExt::DebugUtility);
+
+		CLog("Added desired instance extension: " + String(InstanceExt::DebugUtility));
 		}
 	}
 

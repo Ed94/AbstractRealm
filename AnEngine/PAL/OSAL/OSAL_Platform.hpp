@@ -89,4 +89,8 @@ namespace OSAL
 	using ExitValT        = PlatformTypes::ExitValT       ;
 
 	constexpr auto OS_InvalidHandle = PlatformTypes::InvalidHandle;
+
+
+
+	void Load_Platform();
 }

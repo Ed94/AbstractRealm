@@ -33,4 +33,5 @@ namespace Dev
 	void Console_UpdateBuffer();
 
 	void Load_DevConsole();
+	void Unload_DevConsole();
 }
