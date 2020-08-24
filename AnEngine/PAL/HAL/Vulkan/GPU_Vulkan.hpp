@@ -60,13 +60,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			// Structs
 
-			struct SwapChainSupportDetails
-			{
-				Surface::Capabilities       Capabilities;
-				SurfaceFormatList           Formats;
-				SurfacePresentationModeList PresentationModes;
-			};
-
 			struct RawRenderContext : ARenderContext
 			{
 				AppInstance                  ApplicationInstance;
@@ -88,6 +81,14 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			
 			// Functions
+
+		#pragma region Temp
+
+			void Initalize_PayloadDeck();
+
+			void Initalize_ClearColorDemo(ptr<OSAL::Window> _window);
+
+		#pragma endregion Temp
 
 
 		#pragma region Staying
@@ -118,24 +119,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			void CreateFrameBuffers();
 
-			void CreateImage
-			(
-				uint32                _width,
-				uint32                _height,
-				uint32                _mipLevels,
-				ESampleCount          _numSamples,
-				EFormat               _format,
-				EImageTiling          _tiling,
-				Image::UsageFlags     _usage,
-				Memory::PropertyFlags _properties,
-				Image& _image,
-				Memory& _imageMemory
-			);
-
-			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 _miplevels);
-
-			void CreateSwapChain(OSAL::Window* _window);
-
+		
 			void CreateSyncObjects();
 
 			// Exposed but really should not be used directly unless for another implementation I guess.
@@ -149,26 +133,9 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EFormat FindDepthFormat();
 
-			//QueueFamilyIndices FindQueueFamilies(Vault_5::PhysicalDevice _physicalDevice, Surface::Handle _surfaceHandle);
-
 			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features);
 
 			void GenerateMipMaps(Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels);
-
-			ExtensionIdentifierList GetRequiredExtensions();
-
-			Where<Meta::WindowingPlatform == Meta::EWindowingPlatform::GLFW,
-			CStrArray> GetRequiredVulkanAppExtensions(uint32& _numExtensions);
-
-			SwapChainSupportDetails QuerySwapChainSupport();
-
-			Extent2D Surface_SwapChain_ChooseExtent(const Surface::Capabilities& _capabilities, const ptr<Window> _window);
-
-			Surface::Format Surface_SwapChain_ChooseFormat(const SurfaceFormatList& _availableFormats);
-
-			EPresentationMode Surface_SwapChain_ChoosePresentationMode(const SurfacePresentationModeList& _surfacePresentationModes);
-
-			void TransitionImageLayout(Image& _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout, uint32 _mipMapLevels);
 
 			void Initialize_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
 

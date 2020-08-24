@@ -186,7 +186,7 @@ namespace SAL::Imgui
 		if (IO_Config->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			style.WindowRounding = 0.0f;
-			style.Colors[ImGuiCol_WindowBg].w = 0.1f;
+			style.Colors[ImGuiCol_WindowBg].w = 0.0f;
 		}
 
 		Imgui::BindToPlatformAndRenderer(_window);

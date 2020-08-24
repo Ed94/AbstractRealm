@@ -10,6 +10,8 @@
 // Proper stuff
 #include "HAL_Backend.hpp"
 #include "GPUVK_Comms.hpp"
+#include "GPUVK_PayloadDeck.hpp"
+#include "GPUVK_Renderer.hpp"
 
 
 #include "Dev/Console.hpp"
@@ -25,8 +27,8 @@
 			// Command
 
 			CommandPool                        SingleTimeCommandPool;
-			std::vector<CommandPool          > CommandPools         ;   
-			std::vector<CommandBuffer        > CommandBuffers       ;
+			std::vector<CommandPool          > CommandPools_Old     ;   
+			std::vector<CommandBuffer        > CommandBuffers_Old   ;
 			std::vector<CommandBuffer::Handle> CommandBufferHandles ;
 
 			// Model V1 Rendering Pipeline
@@ -58,11 +60,11 @@
 
 			// Surface Context
 
-			V4::Surface Surface;
+			V4::Surface Surface_Old;
 
 			// SwapChain for surface
 
-			V4::SwapChain SwapChain            ;
+			V4::SwapChain SwapChain_Old        ;
 			Extent2D      SwapChain_Extent     ;
 			V4::EFormat   SwapChain_ImageFormat;
 
@@ -87,6 +89,45 @@
 			ImageView ColorImageView  ;
 
 			RawRenderContext RenderContext_Default;   // Should this still be used?
+
+
+
+			void CreateImage
+			(
+				uint32                _width,
+				uint32                _height,
+				uint32                _mipLevels,
+				ESampleCount          _numSamples,
+				EFormat               _format,
+				EImageTiling          _tiling,
+				Image::UsageFlags     _usage,
+				Memory::PropertyFlags _properties,
+				Image& _image,
+				Memory& _imageMemory
+			);
+
+			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 /*_miplevels*/);
+
+
+
+			void Initalize_PayloadDeck()
+			{
+				PrepareDecks();
+			}
+
+			void Initalize_ClearColorDemo(ptr<OSAL::Window> _window)
+			{
+				auto surface = CreateSurface(_window);
+
+				Surface::Format format;
+
+				format.Format = EFormat::B8_G8_R8_A8_UNormalized;
+				format.ColorSpace = EColorSpace::SRGB_NonLinear;
+
+				auto swapChain = CreateSwapChain(surface, format);
+
+				auto renderContext = CreateRenderContext(surface, swapChain);
+			}
 
 		#pragma region Staying
 
@@ -135,8 +176,8 @@
 
 			void CleanupSwapChain()
 			{
-				Heap
-				(
+				//Heap
+				//(
 					ColorImageView  .Destroy();
 					ColorImage      .Destroy();
 					ColorImageMemory.Free();
@@ -159,7 +200,7 @@
 						SwapChain_ImageViews[index].Destroy();
 					}
 
-					SwapChain.Destroy();
+					SwapChain_Old.Destroy();
 
 					for (DataSize index = 0; index < SwapChain_ImageViews.size(); index++)
 					{
@@ -168,7 +209,7 @@
 					}
 					
 					DescriptorPool.Destroy();
-				);
+				//);
 			}
 
 			void CopyBufferToImage(Buffer _buffer, Image _image, uint32 _width, uint32 _height)
@@ -214,7 +255,7 @@
 				beginInfo.Flags           = 0                  ;   // Optional
 				beginInfo.InheritanceInfo = nullptr            ;   // Optional
 
-				if (CommandBuffers[index].BeginRecord(beginInfo) != EResult::Success) 
+				if (CommandBuffers_Old[index].BeginRecord(beginInfo) != EResult::Success) 
 					throw std::runtime_error("Failed to begin recording command buffer!");
 
 				RenderPass::BeginInfo renderPassInfo{};
@@ -235,19 +276,19 @@
 				renderPassInfo.ClearValueCount = SCast<uint32>(clearValues.size());
 				renderPassInfo.ClearValues     = clearValues.data()               ;
 
-				CommandBuffers[index].BeginRenderPass(renderPassInfo, ESubpassContents::Inline);
+				CommandBuffers_Old[index].BeginRenderPass(renderPassInfo, ESubpassContents::Inline);
 
-				CommandBuffers[index].BindPipeline(EPipelineBindPoint::Graphics, GraphicsPipeline);
+				CommandBuffers_Old[index].BindPipeline(EPipelineBindPoint::Graphics, GraphicsPipeline);
 
 				Buffer::Handle vertexBuffers = VertexBuffer.GetHandle();
 
 				DeviceSize offsets = 0;
 
-				CommandBuffers[index].BindVertexBuffers(0, 1, &vertexBuffers, &offsets);
+				CommandBuffers_Old[index].BindVertexBuffers(0, 1, &vertexBuffers, &offsets);
 
-				CommandBuffers[index].BindIndexBuffer(IndexBuffer, 0, EIndexType::uInt32);
+				CommandBuffers_Old[index].BindIndexBuffer(IndexBuffer, 0, EIndexType::uInt32);
 
-				CommandBuffers[index].BindDescriptorSets
+				CommandBuffers_Old[index].BindDescriptorSets
 				(
 					EPipelineBindPoint::Graphics,
 					PipelineLayout,
@@ -256,7 +297,7 @@
 					&DescriptorSets[index].GetHandle()
 				);
 
-				CommandBuffers[index].DrawIndexed
+				CommandBuffers_Old[index].DrawIndexed
 				(
 					SCast<uint32>(ModelIndicies.size()),
 					1,
@@ -267,12 +308,12 @@
 
 				for (auto renderCallback : RenderCallbacks)
 				{
-					renderCallback(CommandBuffers[index], index);
+					renderCallback(CommandBuffers_Old[index], index);
 				}
 				
-				CommandBuffers[index].EndRenderPass();
+				CommandBuffers_Old[index].EndRenderPass();
 
-				if (CommandBuffers[index].EndRecord() != EResult::Success) 
+				if (CommandBuffers_Old[index].EndRecord() != EResult::Success) 
 					throw std::runtime_error("Failed to record command buffer!");
 			}
 
@@ -307,13 +348,13 @@
 
 				Heap(SingleTimeCommandPool.Create(GetEngagedDevice().GetHandle(), poolInfo));
 
-				CommandPools        .resize(SwapChain_Images.size());
-				CommandBuffers      .resize(SwapChain_Images.size());
+				CommandPools_Old        .resize(SwapChain_Images.size());
+				CommandBuffers_Old      .resize(SwapChain_Images.size());
 				CommandBufferHandles.resize(SwapChain_Images.size());
 
 				for (DeviceSize index = 0; index < SwapChain_Images.size(); index++)
 				{
-					if (Heap(CommandPools[index].Create(GetEngagedDevice().GetHandle(), poolInfo)) != EResult::Success)
+					if (Heap(CommandPools_Old[index].Create(GetEngagedDevice().GetHandle(), poolInfo)) != EResult::Success)
 					{
 						throw std::runtime_error("failed to create command pool!");
 					}
@@ -321,13 +362,13 @@
 					CommandPool::AllocateInfo info;
 
 					info.BufferCount = 1;
-					info.Pool        = CommandPools[index];
+					info.Pool        = CommandPools_Old[index];
 					info.Level       = ECommandBufferLevel::Primary;
 
-					if (Heap(CommandPools[index].Allocate(info,  CommandBuffers[index])) != EResult::Success)
+					if (Heap(CommandPools_Old[index].Allocate(info,  CommandBuffers_Old[index])) != EResult::Success)
 						throw std::runtime_error("failed to allocate command buffers!");
 
-					CommandBufferHandles[index] = CommandBuffers[index].GetHandle();
+					CommandBufferHandles[index] = CommandBuffers_Old[index].GetHandle();
 				}
 			}
 
@@ -351,7 +392,9 @@
 
 				DepthImageView = CreateImageView(DepthImage, depthFormat, Image::AspectFlags(EImageAspect::Depth), 1);
 
-				TransitionImageLayout(DepthImage, depthFormat, EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal, 1);
+				DepthImage.TransitionLayout(EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal);
+
+				//TransitionImageLayout(DepthImage, depthFormat, EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal, 1);
 			}
 
 			void CreateDescriptorPool()
@@ -733,7 +776,7 @@
 				allocationInfo.AllocationSize = _image.GetMemoryRequirements().Size;
 				allocationInfo.MemoryTypeIndex = gpu.FindMemoryType(_image.GetMemoryRequirements().MemoryTypeBits, _properties);
 
-				if (Heap(_imageMemory.Allocate(GetEngagedDevice().GetHandle(), allocationInfo)) != EResult::Success)
+				if (Heap(_imageMemory.Allocate(_image.GetMemoryRequirements(), _properties)) != EResult::Success)
 					throw RuntimeError("Failed to allocate image memory!");
 
 				_image.BindMemory(_imageMemory, 0);
@@ -934,102 +977,6 @@
 				}
 			}
 
-			void CreateSurface(Window* _window)
-			{
-				Surface::CreateInfo createInfo{};
-
-				createInfo.OSWinHandle = OSAL::GetOS_WindowHandle(_window); 
-				createInfo.OSAppHandle = Surface::GetOS_AppHandle()       ;
-
-				if (Heap(Surface.Create(AppGPU_Comms, createInfo) != EResult::Success)) 
-				{
-					throw std::runtime_error("Failed to create window surface");
-				}
-
-				Bool surfaceSupported = false;
-
-				Surface.CheckPhysicalDeviceSupport
-				(
-					GetEngagedPhysicalGPU().GetHandle(), 
-					GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex(), 
-					surfaceSupported
-				);
-
-				if (!surfaceSupported)
-				{
-					throw std::runtime_error("Surface not supported by current engaged device.");
-				}
-			}
-
-			void CreateSwapChain(OSAL::Window* _window)
-			{
-				SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport();
-				Surface::Format         surfaceFormat    = Surface_SwapChain_ChooseFormat(swapChainSupport.Formats);
-				EPresentationMode       presentationMode = Surface_SwapChain_ChoosePresentationMode(swapChainSupport.PresentationModes);
-				Extent2D                extent           = Surface_SwapChain_ChooseExtent(swapChainSupport.Capabilities,_window);
-				uint32                  numImagesDesired = swapChainSupport.Capabilities.MinImageCount;
-
-				numImagesDesired += 1;
-
-				if (swapChainSupport.Capabilities.MaxImageCount > 0 && numImagesDesired > swapChainSupport.Capabilities.MaxImageCount)
-				{
-					numImagesDesired = swapChainSupport.Capabilities.MaxImageCount;
-				}
-
-				SwapChain::CreateInfo creationSpec;
-
-				creationSpec.Surface          = Surface.GetHandle();
-				creationSpec.MinImageCount    = numImagesDesired        ;
-				creationSpec.ImageFormat      = surfaceFormat.Format    ;
-				creationSpec.ImageColorSpace  = surfaceFormat.ColorSpace;
-				creationSpec.ImageExtent      = extent                  ;
-				creationSpec.ImageArrayLayers = 1                       ;
-
-				creationSpec.ImageUsage.Set(EImageUsage::Color_Attachment);
-
-				/*uint32 queueFamilyIndices[] = 
-				{
-					GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex()
-				};*/
-
-				/*if (GetEngadedDevice().GetGraphicsQueue().GetFamilyIndex() != QueueIndices.PresentationSupported)
-				{
-					creationSpec.ImageSharingMode      = ESharingMode::Concurrent;
-					creationSpec.QueueFamilyIndexCount = 2                       ;
-					creationSpec.QueueFamilyIndices    = queueFamilyIndices      ;
-				}*/
-				//else 
-				//{
-				//	creationSpec.ImageSharingMode      = ESharingMode::Exclusive;
-				//	creationSpec.QueueFamilyIndexCount = 0                      ; // Optional
-				//	creationSpec.QueueFamilyIndices    = nullptr                ; // Optional
-				//}
-
-				creationSpec.ImageSharingMode      = ESharingMode::Exclusive;
-				creationSpec.QueueFamilyIndexCount = 0                      ; // Optional
-				creationSpec.QueueFamilyIndices    = nullptr                ; // Optional
-
-				creationSpec.PreTransform     = swapChainSupport.Capabilities.CurrentTransform;
-				creationSpec.CompositeAlpha   = ECompositeAlpha::Opaque                       ;
-				creationSpec.PresentationMode = presentationMode                              ;
-				creationSpec.Clipped          = true                                          ;
-				creationSpec.OldSwapchain     = Null<SwapChain::Handle>                       ;
-
-				EResult creationResult = Heap(SwapChain.Create(GetEngagedDevice().GetHandle(), creationSpec));
-
-				if (creationResult != EResult::Success)
-				{
-					throw std::runtime_error("Failed to create the swap chain!");
-				}
-
-				//Temp_GetImages(LogicalDevice, SwapChain, SwapChain_Images);
-
-				SwapChain.GetImages(SwapChain_Images);
-
-				SwapChain_ImageFormat = surfaceFormat.Format;
-				SwapChain_Extent      = extent              ;
-			}
-
 			void CreateSyncObjects()
 			{
 				ImageAvailable_Semaphores.resize(MaxFramesInFlight);
@@ -1113,7 +1060,8 @@
 					textureHeight,  
 					MipMapLevels,
 					ESampleCount::_1,   // TODO: Change me.
-					EFormat::R8_G8_B8_A8_SRGB, 
+					//EFormat::R8_G8_B8_A8_SRGB, 
+					EFormat::R8_G8_B8_A8_UNormalized, 
 					EImageTiling::Optimal, 
 					Image::UsageFlags(EImageUsage::TransferDestination, EImageUsage::Sampled, EImageUsage::TransferSource), 
 					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal),
@@ -1121,11 +1069,13 @@
 					TextureImageMemory
 				);
 
-				TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_SRGB, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal, MipMapLevels);
+				//TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_UNormalized, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal, MipMapLevels);
+
+				TextureImage.TransitionLayout(EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal);
 
 				CopyBufferToImage(stagingBuffer, TextureImage, SCast<uint32>(textureWidth), SCast<uint32>(textureHeight));
 
-				GenerateMipMaps(TextureImage, EFormat::R8_G8_B8_A8_SRGB, textureWidth, textureHeight, MipMapLevels);
+				GenerateMipMaps(TextureImage, EFormat::R8_G8_B8_A8_UNormalized, textureWidth, textureHeight, MipMapLevels);
 
 				Heap
 				(
@@ -1136,7 +1086,7 @@
 
 			void CreateTextureImageView()
 			{
-				TextureImageView = CreateImageView(TextureImage, EFormat::R8_G8_B8_A8_SRGB, Image::AspectFlags(EImageAspect::Color), MipMapLevels);
+				TextureImageView = CreateImageView(TextureImage, EFormat::R8_G8_B8_A8_UNormalized, Image::AspectFlags(EImageAspect::Color), MipMapLevels);
 			}
 
 			void CreateTextureSampler()
@@ -1252,7 +1202,7 @@
 				return result;
 			}
 
-			void CreateVertexBuffers(Buffer& _vertexBuffer, Memory&_vertexBufferMemory)
+			void CreateVertexBuffers(Buffer& _vertexBuffer, V4::Memory&_vertexBufferMemory)
 			{
 				DeviceSize bufferSize = sizeof(ModelVerticies[0]) * ModelVerticies.size();
 
@@ -1355,7 +1305,7 @@
 				throw RuntimeError("Failed to find supported format!");
 			}
 
-			void GenerateMipMaps(Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
+			void GenerateMipMaps(V4::Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
 			{
 				// Check if image format supports linear blitting
 				FormatProperties formatProperties = GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(_format);
@@ -1467,225 +1417,6 @@
 				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, GetEngagedDevice().GetGraphicsQueue());
 			}
 
-			ExtensionIdentifierList GetRequiredExtensions()
-			{
-				Stack
-				(
-					uint32    numExtensions      = 0; 
-					CStrArray extensionsRequired    ;
-				);
-
-				extensionsRequired = GetRequiredVulkanAppExtensions(numExtensions);
-
-				stack<ExtensionIdentifierList> extensions(extensionsRequired, extensionsRequired + numExtensions);
-
-				if (Meta::Vulkan::EnableLayers)
-				{
-					extensions.push_back(InstanceExt::DebugUtility);
-				}
-
-				return extensions;
-			}
-
-			Where<Meta::WindowingPlatform == Meta::EWindowingPlatform::GLFW,
-			CStrArray> GetRequiredVulkanAppExtensions(uint32& _numExtensions)
-			{
-				return CStrArray(SAL::GLFW::GetRequiredVulkanAppExtensions(_numExtensions));
-			}
-
-			bool HasStencilComponent(EFormat _format)
-			{
-				return _format == EFormat::D32_SFloat_S8_UInt || _format == EFormat::D24_UNormalized_S8_UInt;
-			}
-
-			void LoadModel(String _modelPath)
-			{
-				tinyobj::attrib_t attrib;
-
-				DynamicArray<tinyobj::shape_t> shapes;
-
-				DynamicArray<tinyobj::material_t> materials;
-
-				String warning, error;
-
-				if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warning, &error, _modelPath.c_str()))
-					throw RuntimeError(warning + error);
-
-				for (const auto& shape : shapes)
-				{
-					for (const auto& index : shape.mesh.indices)
-					{
-						Vertex vertex {};
-
-						vertex.Position = 
-						{
-							attrib.vertices[3 * index.vertex_index + 0],
-							attrib.vertices[3 * index.vertex_index + 1],
-							attrib.vertices[3 * index.vertex_index + 2]
-						};
-
-						vertex.TextureCoordinates = 
-						{
-							attrib.texcoords[2 * index.texcoord_index + 0],
-							1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
-						};
-
-						vertex.Color = { 1.0f, 1.0f, 1.0f };
-
-						ModelVerticies.push_back(vertex);
-						ModelIndicies.push_back(SCast<uint32>(ModelIndicies.size()));
-					}
-				}
-			}
-
-			SwapChainSupportDetails QuerySwapChainSupport()
-			{
-				SwapChainSupportDetails details;
-
-				Surface.AssignPhysicalDevice(GetEngagedPhysicalGPU().GetHandle());
-
-				Surface.GetPhysicalDeviceCapabilities(details.Capabilities);
-
-				Surface.GetAvailableFormats(details.Formats);
-
-				Surface.GetSupportedPresentationModes(details.PresentationModes);
-
-				return details;
-			}
-
-			Extent2D Surface_SwapChain_ChooseExtent(const Surface::Capabilities& _capabilities, const ptr<Window> _window)
-			{
-				if (_capabilities.CurrentExtent.Width != UInt32Max)
-				{
-					return _capabilities.CurrentExtent;
-				}
-				else
-				{
-					OSAL::FrameBufferDimensions frameBufferSize = OSAL::GetFramebufferDimensions(_window);
-
-					Extent2D actualExtent;
-
-					actualExtent.Width  = SCast<uint32>(frameBufferSize.Width );
-					actualExtent.Height = SCast<uint32>(frameBufferSize.Height);
-
-					actualExtent.Width  = std::clamp(actualExtent.Width , _capabilities.MinImageExtent.Width , _capabilities.MaxImageExtent.Width );
-					actualExtent.Height = std::clamp(actualExtent.Height, _capabilities.MinImageExtent.Height, _capabilities.MaxImageExtent.Height);
-
-					return actualExtent;
-				}
-			}
-
-			Surface::Format Surface_SwapChain_ChooseFormat(const SurfaceFormatList& _availableFormats)
-			{
-				for (const auto& availableFormat : _availableFormats)
-				{
-					if 
-					(
-						//availableFormat.Format     == EFormat    ::B8_G8_R8_A8_SRGB   &&
-						availableFormat.Format     == EFormat    ::B8_G8_R8_A8_UNormalized   &&
-						availableFormat.ColorSpace == EColorSpace::KHR_SRGB_NonLinear         
-					)
-					{
-						return availableFormat;
-					}
-				}
-
-				// Just pick the first format...
-				return _availableFormats[0];
-			}
-
-			EPresentationMode Surface_SwapChain_ChoosePresentationMode(const SurfacePresentationModeList& _surfacePresentationModes)
-			{
-				for (const auto& availablePresentationMode : _surfacePresentationModes)
-				{
-					if (availablePresentationMode == EPresentationMode::Mailbox)
-					{
-						return availablePresentationMode;
-					}
-				}
-
-				return EPresentationMode::FIFO;
-			}
-
-			void TransitionImageLayout(Image& _image, EFormat _format, EImageLayout _oldLayout, EImageLayout _newLayout, uint32 _mipMapLevels)
-			{
-				CommandBuffer commandBuffer = Heap(SingleTimeCommandPool.BeginSingleTimeCommands());   
-
-				Image::Memory_Barrier barrier {};
-
-				barrier.OldLayout = _oldLayout;
-				barrier.NewLayout = _newLayout;
-
-				barrier.SrcQueueFamilyIndex = QueueFamily_Ignored;
-				barrier.DstQueueFamilyIndex = QueueFamily_Ignored;
-
-				barrier.Image = _image.GetHandle();
-
-				barrier.SubresourceRange.AspectMask.Set(EImageAspect::Color);
-
-				if (_newLayout == EImageLayout::DepthStencil_AttachmentOptimal)
-				{
-					barrier.SubresourceRange.AspectMask.Set(EImageAspect::Depth);
-
-					if (HasStencilComponent(_format))
-					{
-						barrier.SubresourceRange.AspectMask.Add(EImageAspect::Stencil);
-					}
-				}
-				else
-				{
-					barrier.SubresourceRange.AspectMask.Set(EImageAspect::Color);
-				}
-
-				barrier.SubresourceRange.BaseMipLevel   = 0            ;
-				barrier.SubresourceRange.LevelCount     = _mipMapLevels;
-				barrier.SubresourceRange.BaseArrayLayer = 0            ;
-				barrier.SubresourceRange.LayerCount     = 1            ;
-
-				Pipeline::StageFlags sourceStage     ;
-				Pipeline::StageFlags destinationStage;
-
-				if (_oldLayout == EImageLayout::Undefined && _newLayout == EImageLayout::TransferDestination_Optimal)
-				{
-					barrier.SrcAccessMask = 0;
-
-					barrier.DstAccessMask.Set(EAccessFlag::TransferWrite);
-
-					sourceStage     .Set(EPipelineStageFlag::TopOfPipe);
-					destinationStage.Set(EPipelineStageFlag::Transfer );
-				}
-				else if (_oldLayout == EImageLayout::TransferDestination_Optimal && _newLayout == EImageLayout::Shader_ReadonlyOptimal)
-				{
-					barrier.SrcAccessMask.Set(EAccessFlag::TransferWrite);
-					barrier.DstAccessMask.Set(EAccessFlag::ShaderRead   );
-
-					sourceStage     .Set(EPipelineStageFlag::Transfer       );
-					destinationStage.Set(EPipelineStageFlag::FragementShader);
-				}
-				else if (_oldLayout == EImageLayout::Undefined && _newLayout == EImageLayout::DepthStencil_AttachmentOptimal)
-				{
-					barrier.SrcAccessMask = 0;
-
-					barrier.DstAccessMask.Set(EAccessFlag::DepthStencilAttachmentRead, EAccessFlag::DepthStencilAttachmentWrite);
-
-					sourceStage     .Set(EPipelineStageFlag::TopOfPipe         );
-					destinationStage.Set(EPipelineStageFlag::EarlyFragmentTests);
-				}
-				else
-				{
-					throw std::invalid_argument("unsupported layout transition!");
-				}
-
-				commandBuffer.SubmitPipelineBarrier
-				(
-					sourceStage, destinationStage,   // TODO
-					0, 
-					1, &barrier
-				);
-				
-				Heap(SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, GetEngagedDevice().GetGraphicsQueue()));
-			}
-
 			void UpdateUniformBuffers(uint32 _currentImage)
 			{
 				static auto startTime = std::chrono::high_resolution_clock::now();
@@ -1751,20 +1482,31 @@
 				RenderContext_Default.FrameSize           = SwapChain_Extent        ;
 				RenderContext_Default.Allocator           = Memory::DefaultAllocator;
 				RenderContext_Default.RenderPass          = RenderPass              ;
-				RenderContext_Default.MinimumFrameBuffers = SwapChain.GetMinimumImageCount();
+				RenderContext_Default.MinimumFrameBuffers = SwapChain_Old.GetMinimumImageCount();
 				RenderContext_Default.FrameBufferCount    = SCast<uint32>(SwapChain_Images.size());
 				RenderContext_Default.MSAA_Samples        = MSAA_Samples            ;
 			}
 
 			void Default_InitializeRenderer(ptr<Window> _window)
 			{
-				CLog("Doing dirty renderer initalization, clean this up!");
+				CLog("Doing dirty renderer initialization, clean this up!");
 
-				CreateSurface(_window);
+				auto surface = CreateSurface(_window);
 
-				CreateSwapChain(_window);
+				Surface_Old = surface;
 
-				CreateSwapChain_ImageViews();
+				Surface::Format format;
+
+				format.Format     = EFormat::B8_G8_R8_A8_UNormalized;
+				format.ColorSpace = EColorSpace::SRGB_NonLinear;
+
+				auto swapchain =CreateSwapChain(surface, format); 
+
+				SwapChain_Old = swapchain;
+				SwapChain_Extent = swapchain.GetExtent();
+				SwapChain_ImageFormat = swapchain.GetFormat();
+				SwapChain_Images = swapchain.GetImages();
+				SwapChain_ImageViews = swapchain.GetImageViews();
 
 				CreateRenderPass();
 
@@ -1831,7 +1573,18 @@
 
 				CleanupSwapChain();
 
-				CreateSwapChain(_window);
+				Surface::Format format;
+
+				format.Format = EFormat::B8_G8_R8_A8_UNormalized;
+				format.ColorSpace = EColorSpace::SRGB_NonLinear;
+
+				auto swapchain = CreateSwapChain(Surfaces[0], format);
+
+				SwapChain_Old = swapchain;
+				SwapChain_Extent = swapchain.GetExtent();
+				SwapChain_ImageFormat = swapchain.GetFormat();
+				SwapChain_Images = swapchain.GetImages();
+				SwapChain_ImageViews = swapchain.GetImageViews();
 
 				CreateSwapChain_ImageViews();
 
@@ -1869,7 +1622,7 @@
 				uint32 imageIndex;
 
 				EResult result = 
-					SwapChain.AcquireNextImage
+					SwapChain_Old.AcquireNextImage
 					(
 						UInt64Max                              , 
 						ImageAvailable_Semaphores[CurrentFrame].GetHandle(), 
@@ -1896,7 +1649,7 @@
 
 				// Updating
 
-				CommandPools[imageIndex].Reset(0);
+				CommandPools_Old[imageIndex].Reset(0);
 
 				RecordToBuffers(imageIndex);
 
@@ -1912,14 +1665,14 @@
 
 				waitStages[0].Set(EPipelineStageFlag::ColorAttachmentOutput);
 
-				CommandBuffersToSubmit.push_back(CommandBuffers[CurrentFrame].GetHandle());
+				CommandBuffersToSubmit.push_back(CommandBuffers_Old[CurrentFrame].GetHandle());
 
 				submitInfo.WaitSemaphoreCount = 1             ;
 				submitInfo.WaitSemaphores     = waitSemaphores;
 				submitInfo.WaitDstStageMask   = waitStages    ;
 
 				submitInfo.CommandBufferCount = 1;
-				submitInfo.CommandBuffers     = &CommandBuffers[imageIndex].GetHandle();// CommandBuffersToSubmit.data();
+				submitInfo.CommandBuffers     = &CommandBuffers_Old[imageIndex].GetHandle();// CommandBuffersToSubmit.data();
 
 
 				Semaphore::Handle signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame].GetHandle() };
@@ -1942,7 +1695,7 @@
 				presentInfo.WaitSemaphores     = signalSemaphores     ;
 
 
-				SwapChain::Handle swapChains[] = { SwapChain.GetHandle() };
+				SwapChain::Handle swapChains[] = { SwapChain_Old.GetHandle() };
 
 				presentInfo.SwapchainCount = 1          ;
 				presentInfo.Swapchains     = swapChains ;
@@ -1972,8 +1725,8 @@
 
 				CleanupSwapChain();
 
-				Heap
-				(
+				//Heap
+				//(
 					TextureSampler    .Destroy();
 					TextureImageView  .Destroy();
 					TextureImage      .Destroy();
@@ -1996,15 +1749,15 @@
 
 					SingleTimeCommandPool.Destroy();   
 
-					for (auto pool : CommandPools)
+					for (auto pool : CommandPools_Old)
 					{
 						pool.Destroy();
 					}
 
 					if (Meta::Vulkan::EnableLayers) GPU_Messenger.Destroy();
 
-					Surface.Destroy();
-				);
+					Surface_Old.Destroy();
+				//);
 			}
 		}
 	}

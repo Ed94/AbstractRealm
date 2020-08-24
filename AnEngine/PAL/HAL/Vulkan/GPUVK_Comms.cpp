@@ -56,6 +56,21 @@ namespace HAL::GPU::Vulkan
 		queueFamilies = Parent::GetAvailableQueueFamilies();
 	}
 
+	const LayerandExtensionsList& PhysicalDevice::GetLayersAndExtensions() const
+	{
+		return layersAndExtensions;
+	}
+
+	PhysicalDevice::operator Parent&()
+	{
+		return *static_cast<Parent*>(this);
+	}
+
+	PhysicalDevice::operator const Parent& () const
+	{
+		return *static_cast<const Parent*>(this);
+	}
+
 #pragma endregion PhysicalDevice
 
 #pragma region AppInstance
@@ -169,11 +184,41 @@ namespace HAL::GPU::Vulkan
 		return graphicsQueue;
 	}
 
+	const LogicalDevice::Queue& LogicalDevice::GetComputeQueue() const
+	{
+		return computeQueue;
+	}
+
+	const LogicalDevice::Queue& LogicalDevice::GetTransferQueue() const
+	{
+		return transferQueue;
+	}
+
 	const String LogicalDevice::GetSig() const
 	{
 		StringStream handleStr; handleStr << handle;
 
 		return physicalDevice->GetProperties().Name + String(" Handle: ") + handleStr.str();
+	}
+
+	LogicalDevice::operator Handle()
+	{
+		return handle;
+	}
+
+	LogicalDevice::operator const Handle& () const
+	{
+		return handle;
+	}
+
+	LogicalDevice::operator Parent& ()
+	{
+		return *reinterpret_cast<Parent*>(this);
+	}
+
+	LogicalDevice::operator const Parent& () const
+	{
+		return *reinterpret_cast<const Parent*>(this);
 	}
 
 	// Protected
@@ -312,6 +357,10 @@ namespace HAL::GPU::Vulkan
 
 		PhysicalDeviceList PhysicalGPUs;
 		LogicalDeviceList  LogicalGPUs ;
+
+
+		// Currently the design of the vulkan backend is monolithic.
+		// Only one device of those available is engaged at a time
 
 		ptr<LogicalDevice> DeviceEngaged = nullptr;
 	)
@@ -466,7 +515,7 @@ namespace HAL::GPU::Vulkan
 	{
 		CLog("Determining most suitable device to engage.");
 
-		CLog("Setting up a dummy test window and surface to evaulate devices...");
+		CLog("Setting up a dummy test window and surface to evaluate devices...");
 
 		ptr<OSAL::Window> testWindow;
 
@@ -481,12 +530,7 @@ namespace HAL::GPU::Vulkan
 
 		Surface testSurface;
 
-		Surface::CreateInfo createInfo{};
-
-		createInfo.OSWinHandle = OSAL::GetOS_WindowHandle(testWindow);
-		createInfo.OSAppHandle = Surface::GetOS_AppHandle();
-
-		if (Heap(testSurface.Create(AppGPU_Comms, createInfo) != EResult::Success))
+		if (Heap(testSurface.Create(AppGPU_Comms, OSAL::GetOS_WindowHandle(testWindow)) != EResult::Success))
 		{
 			throw RuntimeError("Failed to create window surface!");
 		}
@@ -497,9 +541,12 @@ namespace HAL::GPU::Vulkan
 
 			Bool PresentationSupport; 
 
+			testSurface.AssignPhysicalDevice(device.GetPhysicalDevice().GetHandle());
+
+			// Currently the graphis queue created must be the same one able to present.
+			// This will most likely be changed later...
 			testSurface.CheckPhysicalDeviceSupport
 			(
-				device.GetPhysicalDevice().GetHandle(),
 				device.GetQueue(EQueueFlag::Graphics).GetFamilyIndex(),
 				PresentationSupport
 			);
@@ -557,6 +604,21 @@ namespace HAL::GPU::Vulkan
 	const PhysicalDevice& GetEngagedPhysicalGPU()
 	{
 		return DeviceEngaged->GetPhysicalDevice();
+	}
+
+	const LogicalDevice::Queue& GetGraphicsQueue()
+	{
+		return DeviceEngaged->GetGraphicsQueue();
+	}
+
+	const LogicalDevice::Queue& GetComputeQueue()
+	{
+		return DeviceEngaged->GetComputeQueue();
+	}
+
+	const LogicalDevice::Queue& GetTransferQueue()
+	{
+		return DeviceEngaged->GetTransferQueue();
 	}
 
 #pragma endregion Public

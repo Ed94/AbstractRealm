@@ -24,7 +24,7 @@ namespace HAL::GPU::Vulkan
 
 
 
-	// Structs
+	// Classes
 
 	class PhysicalDevice : public V4::PhysicalDevice
 	{
@@ -36,18 +36,11 @@ namespace HAL::GPU::Vulkan
 
 		void GetAvailableQueueFamilies();
 
-		const LayerandExtensionsList& GetLayersAndExtensions() const
-		{ return layersAndExtensions; }
+		const LayerandExtensionsList& GetLayersAndExtensions() const;
 
-		operator V4::PhysicalDevice& ()
-		{
-			return *static_cast<V4::PhysicalDevice*>(this);
-		}
+		operator Parent&();
 
-		operator const Parent&() const
-		{
-			return *static_cast<const Parent*>(this);	
-		}
+		operator const Parent& () const;
 
 	protected:
 
@@ -89,42 +82,21 @@ namespace HAL::GPU::Vulkan
 		const Queue& GetQueue(EQueueFlag _type) const;
 
 		const Queue& GetGraphicsQueue() const;
+		const Queue& GetComputeQueue () const;
+		const Queue& GetTransferQueue() const;
 
 		const String GetSig() const;
 
-		operator Handle()
-		{
-			return handle;
-		}
-
-		operator Handle() const
-		{
-			return handle;
-		}
-
-		operator const Handle& () const
-		{
-			return handle;
-		}
-
-		operator V4::LogicalDevice& ()
-		{
-			return *reinterpret_cast<V4::LogicalDevice*>(this);
-		}
-
-		operator const V4::LogicalDevice&() const
-		{
-			return *reinterpret_cast<const V4::LogicalDevice*>(this);
-
-		}		
+		operator       Handle ();
+		operator const Handle&() const;
+		operator       Parent&();
+		operator const Parent&() const;
 
 	protected:
 
-		void PrepareQueues();
-
+		void PrepareQueues          ();
 		void ProcessExtensionSupport();
-
-		void ProcessLayerSupport();
+		void ProcessLayerSupport    ();
 
 		// An object used to organize
 		struct QueueFamily
@@ -138,12 +110,14 @@ namespace HAL::GPU::Vulkan
 			EQueueFlag Assignment;
 		};
 
+		//DynamicArray<CommandPool> commandPools;   // CommandPools are assigned per device. (There as many as there are working cpu threads for the gpu).
+
 		// Used by the logical device creation parameter to allocate the queues.
 		DynamicArray<Queue::CreateInfo> queueFamilyInfos;
 
 		DynamicArray<QueueFamily> queueFamilies;   // Queue families and thier queues* (later addition).
 
-		// Currently the engine only assigns itself one queue from each family.
+		// Currently the device only assigns itself one queue from each family.
 		// For now graphics is only used.
 		Queue graphicsQueue;
 		Queue computeQueue ;
@@ -185,4 +159,10 @@ namespace HAL::GPU::Vulkan
 	const LogicalDevice& GetEngagedDevice();
 
 	const PhysicalDevice& GetEngagedPhysicalGPU();
+
+	// Engaged queues. (Since only one device is engaged in design, these are easy references to its queues).
+
+	const LogicalDevice::Queue& GetGraphicsQueue();   // Provides a reference to the engaged device's graphics queue.
+	const LogicalDevice::Queue& GetComputeQueue ();   // Provides a reference to the engaged device's compute queue.
+	const LogicalDevice::Queue& GetTransferQueue();   // Provides a reference to the engaged device's transfer queue.
 }

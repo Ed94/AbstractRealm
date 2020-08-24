@@ -111,6 +111,9 @@
     <ClInclude Include="LAL\LAL_SmartPtrs.hpp" />
     <ClInclude Include="Meta\Config\CoreDev_Config.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_Hardware.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Memory.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PayloadDeck.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Resources.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -154,5 +157,8 @@
     <ClCompile Include="PAL\HAL\HAL_Backend.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Hardware.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Platform.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PayloadDeck.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Memory.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Resources.cpp" />
   </ItemGroup>
 </Project>

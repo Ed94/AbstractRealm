@@ -19,6 +19,9 @@
 #include "stb/stb_image.h"
 
 
+#include "GPUVK_Resources.hpp"
+
+
 
 namespace HAL::GPU
 {
@@ -122,8 +125,8 @@ namespace HAL::GPU
 
 
 
-		StaticData
-		(
+		//StaticData
+		//(
 			multiDefs const DynamicArray<Vertex> TriangleVerticies = 
 			{
 				{
@@ -215,6 +218,10 @@ namespace HAL::GPU
 			eGlobal Memory    TextureImageMemory;
 			eGlobal ImageView TextureImageView  ;
 			eGlobal Sampler   TextureSampler    ;
-		)
+		//)
+
+
+			void LoadModel(String _modelPath);
+			
 	}
 }

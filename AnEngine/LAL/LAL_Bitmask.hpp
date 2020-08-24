@@ -97,7 +97,7 @@
 
 		_ThisType& operator = (const BitmaskRepresentation _mask) { mask = _mask; return *this; }
 
-		operator Representation()
+		operator Representation() const
 		{
 			return mask;
 		}

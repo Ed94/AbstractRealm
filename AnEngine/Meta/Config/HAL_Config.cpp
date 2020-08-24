@@ -15,7 +15,7 @@ namespace Meta
 		// TODO: I needed to inverse the result of use debug. I have no idea why...
 		data< bool> EnableLayers = true;
 
-		data< bool> Enable_API_Dump   = true;
+		data< bool> Enable_API_Dump   = false;
 		data< bool> Enable_FPSMonitor = true;
 		data< bool> Enable_Validation = true;
 	}
