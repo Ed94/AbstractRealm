@@ -79,3 +79,72 @@
 [submodule "infoware"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/infoware
 	url = https://github.com/ThePhD/infoware.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/glfw"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/glm"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/imgui"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/SDL-mirror"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/SDL-mirror
+	url = https://github.com/spurious/SDL-mirror.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/gainput"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/gainput
+	url = https://github.com/jkuhlmann/gainput.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/openal-soft"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/openal-soft
+	url = https://github.com/kcat/openal-soft.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/MemoryAllocator.KanameShiki"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/MemoryAllocator.KanameShiki
+	url = https://github.com/EmuraDaisuke/MemoryAllocator.KanameShiki.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/basis_universal"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/basis_universal
+	url = https://github.com/BinomialLLC/basis_universal.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/magic_enum"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/magic_enum
+	url = https://github.com/Neargye/magic_enum.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/rbase"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/rbase
+	url = https://github.com/milostosic/rbase.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/rpclib"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/rpclib
+	url = https://github.com/rpclib/rpclib.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/vivid"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/vivid
+	url = https://github.com/gurki/vivid.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/assimp"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/assimp
+	url = https://github.com/assimp/assimp.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/VulkanMemoryAllocator"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/VulkanMemoryAllocator
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/stb"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/stb
+	url = https://github.com/nothings/stb.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/tinyobjloader"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/tinyobjloader
+	url = https://github.com/tinyobjloader/tinyobjloader.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/enkiTS"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/enkiTS
+	url = https://github.com/dougbinks/enkiTS.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/vld"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/vld
+	url = https://github.com/razor950/vld.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/infoware"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/infoware
+	url = https://github.com/ThePhD/infoware.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/rttr"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/rttr
+	url = https://github.com/rttrorg/rttr.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/ctti"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/ctti
+	url = https://github.com/Manu343726/ctti.git
+[submodule "AbstractRealm/PAL/ThirdParty/SDKs/ggpo"]
+	path = AbstractRealm/PAL/ThirdParty/SDKs/ggpo
+	url = https://github.com/pond3r/ggpo.git
+[submodule "AbstractRealm/PAL/HAL/Vulkan/VaultedThermals"]
+	path = AbstractRealm/PAL/HAL/Vulkan/VaultedThermals
+	url = https://github.com/Ed94/VaultedThermals.git
