@@ -1,0 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 567609b1234a9b8806c5a05da6c866e480aa148d..a79c2d860b4b596ede440965cc6f7c479ba27b69 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1 +1,8 @@
+ build/
++.vs/enkiTS/v16/.suo
++.vs/VSWorkspaceState.json
++.vs/enkiTS/v16/Browse.VC.db
++.vs/CMake Overview
++.vs/cmake.db
++.vs/ProjectSettings.json
++.vs/slnx.sqlite

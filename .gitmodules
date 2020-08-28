@@ -1,7 +1,7 @@
-[submodule "GLFW"]
+[submodule "glfw"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "GLM"]
+[submodule "glm"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/glm
 	url = https://github.com/g-truc/glm.git
 [submodule "imgui"]
@@ -13,15 +13,9 @@
 [submodule "gainput"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/gainput
 	url = https://github.com/jkuhlmann/gainput.git
-[submodule "Cinder"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/Cinder
-	url = https://github.com/cinder/Cinder.git
 [submodule "openal-soft"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/openal-soft
 	url = https://github.com/kcat/openal-soft.git
-[submodule "ggpo"]
-	path = AbstractRealm/PAL/ThirdParty/SDKs/ggpo
-	url = https://github.com/pond3r/ggpo.git
 [submodule "MemoryAllocator.KanameShiki"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/MemoryAllocator.KanameShiki
 	url = https://github.com/EmuraDaisuke/MemoryAllocator.KanameShiki.git
@@ -31,30 +25,15 @@
 [submodule "magic_enum"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/magic_enum
 	url = https://github.com/Neargye/magic_enum.git
-[submodule "libjobs"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/libjobs
-	url = https://github.com/TLeonardUK/libjobs.git
 [submodule "rbase"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/rbase
 	url = https://github.com/milostosic/rbase.git
-[submodule "bgfx"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/bgfx
-	url = https://github.com/bkaradzic/bgfx.git
 [submodule "rpclib"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/rpclib
 	url = https://github.com/rpclib/rpclib.git
-[submodule "rttr"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/rttr
-	url = https://github.com/rttrorg/rttr.git
 [submodule "vivid"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/vivid
 	url = https://github.com/gurki/vivid.git
-[submodule "ctti"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/ctti
-	url = https://github.com/Manu343726/ctti.git
-[submodule "VaultedThermals"]
-	path = AbstractRealm/PAL/HAL/Vulkan/VaultedThermals
-	url = https://github.com/Ed94/VaultedThermals.git
 [submodule "assimp"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/assimp
 	url = https://github.com/assimp/assimp.git
@@ -67,9 +46,6 @@
 [submodule "tinyobjloader"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/tinyobjloader
 	url = https://github.com/tinyobjloader/tinyobjloader.git
-[submodule "PDCurses"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/PDCurses
-	url = https://github.com/wmcbrine/PDCurses.git
 [submodule "enkiTS"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/enkiTS
 	url = https://github.com/dougbinks/enkiTS.git
@@ -79,3 +55,15 @@
 [submodule "infoware"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/infoware
 	url = https://github.com/ThePhD/infoware.git
+[submodule "rttr"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/rttr
+	url = https://github.com/rttrorg/rttr.git
+[submodule "ctti"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/ctti
+	url = https://github.com/Manu343726/ctti.git
+[submodule "ggpo"]
+	path = AbstractRealm/PAL/ThirdParty/SDKs/ggpo
+	url = https://github.com/pond3r/ggpo.git
+[submodule "VaultedThermals"]
+	path = AbstractRealm/PAL/HAL/Vulkan/VaultedThermals
+	url = https://github.com/Ed94/VaultedThermals.git
