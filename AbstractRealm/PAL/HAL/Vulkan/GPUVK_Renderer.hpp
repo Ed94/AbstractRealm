@@ -32,13 +32,13 @@ namespace HAL::GPU::Vulkan
 
 		const Capabilities& GetCapabilities() const;
 
-		const DynamicArray<EPresentationMode>& GetPresentationModes() const;
-
 		Format GetPreferredFormat() const;
+
+		const DynamicArray<EPresentationMode>& GetPresentationModes() const;
 
 		ptr<OSAL::Window> GetWindow() const;
 
-		void RequeryCapabilities();
+		bool RequeryCapabilities();
 
 	protected:
 
@@ -57,11 +57,13 @@ namespace HAL::GPU::Vulkan
 
 		using Parent = V4::SwapChain;
 
-		EResult Create(const Surface& _surface, const Surface::Format _format);
+		EResult Create(Surface& _surface, Surface::Format _format);
 
 		Extent2D GetExtent() const;
 
 		EFormat GetFormat() const;
+
+		bool QuerySurfaceChanges();
 
 		const DynamicArray<Image>& GetImages() const;
 
@@ -69,22 +71,39 @@ namespace HAL::GPU::Vulkan
 
 	protected:
 
+		void Regenerate();
+
 		EResult GenerateViews();
 
 		EResult RetrieveImages();
 
-		ptr<const Surface> surface;
+		ptr<Surface> surface;
 
 		uint32 SupportedImageCount;
 
 		DynamicArray<Image    > images    ;
 		DynamicArray<ImageView> imageViews;
-		
+	};
+
+	class ARenderable
+	{
+	public:
+		~ARenderable();
+
+		virtual void RecordRender(const CommandBuffer& _commandBuffer);
+	};
+
+	struct RenderGroup
+	{
+		DynamicArray< ptr<ARenderable>> Renderables;
+
+		ptr<GraphicsPipeline> Pipeline;
 	};
 
 	class RenderPass_WIP : V4::RenderPass
 	{
 	public:
+
 		struct Attachment 
 		{
 			AttachmentDescription Description;
@@ -97,40 +116,92 @@ namespace HAL::GPU::Vulkan
 			SubpassDependency  Dependency ;
 		};
 
-
+		EResult Create();
 
 
 	protected:
+
 		DynamicArray<Attachment > attachments;
 		DynamicArray<SubpassInfo> subpasses;
+
+		ImagePackage depthBuffer;
+
+		BeginInfo beginInfo;
+
+		ESampleCount samples = ESampleCount::_1;
+
+		bool shouldClear = true, bufferDepth = true;
 	};
 
-	class ARenderable
+
+	// Upgrade the frame buffer?
+	class FrameRenderer
 	{
 	public:
-		~ARenderable();
 
-		virtual void RecordRender();
-	};
+		EResult Prepare
+		(
+		/*	Framebuffer& frameBuffer,
+			DynamicArray<RenderPass_WIP> _renderPasses*/
+		);
 
-	struct RenderableFamily
-	{
-		DynamicArray< ptr<ARenderable>> Renderables;
+		void WaitFor_RenderQueued();
 
-		ptr<GraphicsPipeline> Pipeline;
+		//void Reset_RenderQueuedFence();
+
+		Fence& GetFence_RenderQueued();
+
+		//void WaitFor_FrameInFlight();
+
+		Semaphore& GetSemaphore_SwapImageAcquired();
+
+		const CommandBuffer& Request_PrimaryCmdBuffer();
+
+		//const CommandBuffer& Request_SecondaryCmdBuffer();
+
+		void ResetCommandPool();
+
+		//void Record();
+
+		//void Submit();
+
+	private:
+
+		ptr<Framebuffer> frameBuffer;
+
+		DynamicArray<ptr<CommandPool>> commandPools;   // 1 Per working thread for the frame.
+
+		ptr<const CommandBuffer> Primary_CmdBuffer;
+
+		DynamicArray<ptr<CommandBuffer>> Secondary_CmdBuffers;
+
+		// Fence Pool
+		//DynamicArray<Fence> fences;
+
+		Fence renderQueued, frameInFlight;
+
+		Semaphore swapImageAcquired;
+
+		// Semaphore Pool
+		//DynamicArray<Semaphore> semaphores;
+
+		ptr<DynamicArray<RenderPass_WIP>> renderPasses;
+
+		// Thread Count
+		DataSize threadsAssigned;
 	};
 
 	class RenderContext
 	{
 	public:
 
-		EResult Create(const SwapChain& _swapChain);
+		EResult Create(SwapChain& _swapChain);
 
-		void Destroy();
 
-		void Record();
 
-		void Submit();
+		void ProcessNextFrame();
+
+		void SubmitFrameToPresentation();
 
 	protected:
 
@@ -140,27 +211,46 @@ namespace HAL::GPU::Vulkan
 
 		EResult CreateRenderPass();
 
-		ptr<const SwapChain> swapchain;
+		void CheckContext();
 
-		bool shouldClear = true, bufferDepth = true;
+		ptr<SwapChain> swapchain;
 
-		DynamicArray<ClearValue> clearValues;
+		bool processingFrame = false;
 
-		ESampleCount samples = ESampleCount::_1;
+		uint32 currentFrame = 0, previousFrame,
+			currentSwapImage;
+
+		DynamicArray<RenderGroup> renderGroups;
+
+		//DynamicArray<ptr<CommandBuffer>> commandBuffers;
+
+		DynamicArray<Framebuffer> frameBuffers;
+
+		DynamicArray<FrameRenderer> frameRenders;
+
+		Semaphore frameSubmitedToPresentation;
+
+		DynamicArray<Fence> swapImagesInFlight;
+
+
+		// Render pass object (To be used later)
 
 		RenderPass renderPass;
 
 		RenderPass::BeginInfo beginInfo;
 
-		DataSize currentFrame = 0;
-
-		DynamicArray<RenderableFamily> renderableFamilies;
-
-		DynamicArray<ptr<CommandBuffer>> commandBuffers;
-
-		DynamicArray<Framebuffer> frameBuffers;
-
 		ImagePackage depthBuffer;
+
+		ESampleCount samples = ESampleCount::_1;
+
+		DynamicArray<ClearValue> clearValues;
+
+		bool shouldClear = true, bufferDepth = true;
+
+
+		// Proper render pass array...
+
+		DynamicArray<RenderPass_WIP> RenderPasses;
 	};
 
 	class PrimitiveRenderable : public ARenderable
@@ -175,21 +265,21 @@ namespace HAL::GPU::Vulkan
 
 
 
-	eGlobal DynamicArray<Surface      > Surfaces      ;
-	eGlobal DynamicArray<SwapChain    > SwapChains    ;
-	eGlobal DynamicArray<RenderContext> RenderContexts;
+	eGlobal Deque<Surface      > Surfaces      ;
+	eGlobal Deque<SwapChain    > SwapChains    ;
+	eGlobal Deque<RenderContext> RenderContexts;
 
 
 
-	const Surface& CreateSurface(ptr<OSAL::Window> _window);
+	Surface& CreateSurface(ptr<OSAL::Window> _window);
 
-	const SwapChain& CreateSwapChain(const Surface& _surface, const Surface::Format _formatDesired);
+	SwapChain& CreateSwapChain(Surface& _surface, Surface::Format _formatDesired);
 
-	const RenderContext& CreateRenderContext(const SwapChain& _swapchain);
+	const RenderContext& CreateRenderContext(SwapChain& _swapchain);
 
 	void DeinitalizeRenderer();
 
 	void InitalizeRenderer();
 
-	void Renderer_Draw();
+	void Renderer_Update();
 }

@@ -49,6 +49,8 @@ namespace Core::Execution
 
 		HAL::GPU::Default_DrawFrame(EngineWindow);
 
+		HAL::GPU::Vulkan::Update();
+
 		Imgui::Dirty_DoSurfaceStuff(EngineWindow);	
 
 		Dev::CLog_Status("Master    Delta: " + ToString(MasterCycler.GetDeltaTime().count()), 0, 0);

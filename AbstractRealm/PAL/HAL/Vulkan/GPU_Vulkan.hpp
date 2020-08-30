@@ -88,6 +88,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			void Initalize_ClearColorDemo(ptr<OSAL::Window> _window);
 
+			void Update();
+
 		#pragma endregion Temp
 
 

@@ -120,17 +120,17 @@ namespace Core::Execution
 
 			OSAL::SetWindow_SizeChangeCallback(EngineWindow, WindowSizeChanged);
 
-			//windowSpec.WindowTitle = "Clear Color Demo";
+			windowSpec.WindowTitle = "Clear Color Demo";
 
-			//DemoWindow = OSAL::Create_Window(windowSpec);
+			DemoWindow = OSAL::Create_Window(windowSpec);
 
-			//OSAL::SetWindow_SizeChangeCallback(DemoWindow, WindowSizeChanged);
+			OSAL::SetWindow_SizeChangeCallback(DemoWindow, WindowSizeChanged);
 
 			HAL::GPU::Vulkan::Initalize_PayloadDeck();
 
 			HAL::GPU::Default_InitializeRenderer(EngineWindow);
 
-			//HAL::GPU::Vulkan::Initalize_ClearColorDemo(DemoWindow);
+			HAL::GPU::Vulkan::Initalize_ClearColorDemo(DemoWindow);
 
 			Imgui::Initialize(EngineWindow);
 

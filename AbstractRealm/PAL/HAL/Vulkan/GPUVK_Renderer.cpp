@@ -50,6 +50,11 @@ namespace HAL::GPU::Vulkan
 		return capabilities;
 	}
 
+	Surface::Format Surface::GetPreferredFormat() const
+	{
+		return formats[0];
+	}
+
 	const DynamicArray<EPresentationMode>& Surface::GetPresentationModes() const
 	{
 		return presentationModes;
@@ -60,9 +65,22 @@ namespace HAL::GPU::Vulkan
 		return window;
 	}
 
-	void Surface::RequeryCapabilities()
+	bool Surface::RequeryCapabilities() 
 	{
-		GetPhysicalDeviceCapabilities(capabilities);
+		Capabilities queryResult;
+
+		GetPhysicalDeviceCapabilities(queryResult);
+
+		if (queryResult != capabilities)
+		{
+			capabilities = queryResult;
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 #pragma endregion Surface
@@ -71,8 +89,10 @@ namespace HAL::GPU::Vulkan
 
 	// Public	
 
-	EResult SwapChain::Create(const Surface& _surface, const Surface::Format _format)
+	EResult SwapChain::Create(Surface& _surface, Surface::Format _format)
 	{
+		surface = &_surface;
+
 		info.Surface = _surface.GetHandle();
 
 		const auto& presentationModes = _surface.GetPresentationModes();
@@ -179,6 +199,22 @@ namespace HAL::GPU::Vulkan
 		return info.ImageFormat;
 	}
 
+	bool SwapChain::QuerySurfaceChanges()
+	{
+		if (surface->RequeryCapabilities())
+		{
+			GetEngagedDevice().GetGraphicsQueue().WaitUntilIdle();	
+
+			Regenerate();
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	const DynamicArray<Image>& SwapChain::GetImages() const
 	{
 		return images;
@@ -191,6 +227,78 @@ namespace HAL::GPU::Vulkan
 
 
 	// Protected
+
+	void SwapChain::Regenerate()
+	{
+		for (auto& imageView : imageViews)
+		{
+			imageView.Destroy();
+		}
+
+		Destroy();
+
+		const auto& presentationModes = surface->GetPresentationModes();
+
+		if (std::find(presentationModes.begin(), presentationModes.end(), EPresentationMode::Mailbox) != presentationModes.end())
+		{
+			info.PresentationMode = EPresentationMode::Mailbox;
+		}
+		else
+		{
+			info.PresentationMode = EPresentationMode::FIFO;
+		}
+
+		info.MinImageCount = surface->GetCapabilities().MinImageCount;
+		info.MinImageCount += 1;   // Want one more image than minimum...
+
+		if (surface->GetCapabilities().MaxImageCount > 0 && info.MinImageCount > surface->GetCapabilities().MaxImageCount)
+		{
+			info.MinImageCount = surface->GetCapabilities().MaxImageCount;
+		}
+
+		if (surface->GetCapabilities().CurrentExtent.Width != UInt32Max)
+			info.ImageExtent = surface->GetCapabilities().CurrentExtent;
+		else
+		{
+			OSAL::FrameBufferDimensions frameBufferSize = OSAL::GetFramebufferDimensions(surface->GetWindow());
+
+			Extent2D actualExtent;
+
+			actualExtent.Width  = SCast<uint32>(frameBufferSize.Width );
+			actualExtent.Height = SCast<uint32>(frameBufferSize.Height);
+
+			actualExtent.Width  = std::clamp(actualExtent.Width , surface->GetCapabilities().MinImageExtent.Width , surface->GetCapabilities().MaxImageExtent.Width );
+			actualExtent.Height = std::clamp(actualExtent.Height, surface->GetCapabilities().MinImageExtent.Height, surface->GetCapabilities().MaxImageExtent.Height);
+
+			info.ImageExtent = actualExtent;
+		}
+
+		// Change to transfer destination if not rendering directly...
+		info.ImageUsage.Set(EImageUsage::Color_Attachment);
+
+		info.ImageArrayLayers = 1;   // If your supporting 3d rendering change this.
+
+		info.ImageSharingMode      = ESharingMode::Exclusive;
+		info.QueueFamilyIndexCount = 0                      ; // Optional
+		info.QueueFamilyIndices    = nullptr                ; // Optional
+
+		info.PreTransform     = surface->GetCapabilities().CurrentTransform;
+		info.CompositeAlpha   = ECompositeAlpha::Opaque                    ;   // Swapchain hard coded to only support opaque surfaces.
+		info.Clipped          = true                                       ;
+		info.OldSwapchain     = Null<SwapChain::Handle>                    ;
+
+		EResult result = Heap(Parent::Create(GetEngagedDevice().GetHandle(), info));
+
+		if (result != EResult::Success) throw RuntimeError("Unable to regenerate swapchain.");
+
+		result = RetrieveImages();
+
+		if (result != EResult::Success) throw RuntimeError("Unable to retrieve swapchain images after regeneration.");
+
+		result = GenerateViews();
+
+		if (result != EResult::Success) throw RuntimeError("Unable to generate new image views after regenerating swapchain.");
+	}
 
 	EResult SwapChain::GenerateViews()
 	{
@@ -207,6 +315,8 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
 		EResult result;
+
+		imageViews.clear();
 
 		for (auto& image : images)
 		{
@@ -233,7 +343,12 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
-		images.resize(numImages);	std::vector<Image::Handle> handles(numImages);
+		if (images.size() != numImages)
+		{
+			images.resize(numImages);	
+		}
+		
+		std::vector<Image::Handle> handles(numImages);
 
 		result = Parent::QueryImages(numImages, handles.data());
 
@@ -247,23 +362,154 @@ namespace HAL::GPU::Vulkan
 
 #pragma endregion SwapChain
 
+#pragma region FrameRenderer
+
+	Fence& FrameRenderer::GetFence_RenderQueued()
+	{
+		return renderQueued;
+	}
+
+	Semaphore& FrameRenderer::GetSemaphore_SwapImageAcquired()
+	{
+		return swapImageAcquired;
+	}
+
+	EResult FrameRenderer::Prepare()
+	{
+		//frameBuffer = _frameBuffer;
+
+		// Query threads assigned.
+
+		// Allocate command pools for each thread / fences /semaphores...
+
+		// For now I'm just assigning the GeneralPool.
+
+		if (!Meta::UseConcurrency)
+		{
+			threadsAssigned = 0;
+
+			Fence::CreateInfo fenceInfo;
+
+			fenceInfo.Flags.Set(EFenceCreateFlag::Signaled);
+
+			renderQueued.Create(GetEngagedDevice(), fenceInfo);
+			
+			
+			Semaphore::CreateInfo semaphoreInfo;
+
+			swapImageAcquired.Create(GetEngagedDevice(), semaphoreInfo);
+
+			ptr<CommandPool> pools = RequestCommandPools(1);
+
+			commandPools.push_back(pools);
+
+			Primary_CmdBuffer = &commandPools[0]->RequestBuffer();
+		}
+
+		return EResult::Success;
+	}
+
+	/*void FrameRenderer::Record()
+	{
+		if (!Meta::UseConcurrency)
+		{
+			commandPools[0].get().Reset(0);
+		}
+	}*/
+
+	const CommandBuffer& FrameRenderer::Request_PrimaryCmdBuffer()
+	{
+		return *Primary_CmdBuffer;
+	}
+
+	void FrameRenderer::ResetCommandPool()
+	{
+		commandPools[0]->Reset(0);
+	}
+
+	/*void FrameRenderer::Submit()
+	{
+
+	}*/
+
+	void FrameRenderer::WaitFor_RenderQueued()
+	{
+		renderQueued.WaitFor(UInt64Max);
+	}
+
+#pragma endregion FrameRenderer
+
 #pragma region RenderContext
 
 	// Public
 
-	EResult RenderContext::Create(const SwapChain& _swapChain)
+	EResult RenderContext::Create(SwapChain& _swapChain)
 	{
 		swapchain = &_swapChain;
 
 		EResult result = CreateDepthBuffer();	
 
+		if (result != EResult::Success) return result;
+
 		result = CreateRenderPass();
+
+		if (result != EResult::Success) return result;
+
+		result = CreateFramebuffer();
+
+		if (result != EResult::Success) return result;
+
+		frameRenders.resize(frameBuffers.size());
+
+		for (DataSize index = 0; index < frameRenders.size(); index++)
+		{
+			frameRenders[index].Prepare();
+		}
+
+		Semaphore::CreateInfo semaphoreInfo;
+
+		frameSubmitedToPresentation.Create(GetEngagedDevice(), semaphoreInfo);
+
+		swapImagesInFlight.resize(frameRenders.size());	
+
+		Fence::CreateInfo fenceInfo; fenceInfo.Flags.Set(EFenceCreateFlag::Signaled);
+
+		for (auto& fence : swapImagesInFlight)
+		{
+			fence.Create(GetEngagedDevice(), fenceInfo);
+		}
 
 		return result;
 	}
 
-	void RenderContext::Record()
+	void RenderContext::ProcessNextFrame()
 	{
+		// Not sure if necessary: Make sure next frame to process has been processed by the GPU.
+		frameRenders[currentFrame].WaitFor_RenderQueued();
+
+ 		CheckContext();
+
+		// Get the next available image from the swapchain to render to.
+		EResult result = swapchain->AcquireNextImage
+		(
+			UInt64Max,
+			frameRenders[currentFrame].GetSemaphore_SwapImageAcquired(),
+			Null<Fence::Handle>                                        ,
+			currentSwapImage
+		);
+
+		// Make sure that the swapchain is still ok to render to.
+		if (result == EResult::Suboptimal_KHR || result == EResult::Error_OutOfDate_KHR)
+			CheckContext();
+
+		// Make sure that the acquired image has been processed by the presentation queue.
+		if (swapImagesInFlight[currentSwapImage].GetHandle() == Null<Fence::Handle>)
+			swapImagesInFlight[currentSwapImage].WaitFor(UInt64Max);
+
+		// Set the current swap image fence to that of the frame queue fence.
+		swapImagesInFlight[currentSwapImage] = frameRenders[currentFrame].GetFence_RenderQueued();
+
+		// Prep the ClearValue for the render pass...
 		switch (currentFrame)    
 		{ 
 			case 0: 
@@ -274,7 +520,7 @@ namespace HAL::GPU::Vulkan
 			}
 			case 1: 
 			{
-				clearValues[0].Color = { 0.0f,1.0f,0.0f,1.0f };
+				clearValues[0].Color = { 0.0f, 1.0f,0.0f,1.0f };
 
 				break;
 			}
@@ -286,7 +532,7 @@ namespace HAL::GPU::Vulkan
 			}
 			default:
 			{
-				clearValues[0].Color = { 0.0f,0.0f,0.0f,1.0f };
+				clearValues[0].Color = { 1.0f,0.0f,0.0f, 1.0f };
 
 				break;    
 			}
@@ -300,11 +546,149 @@ namespace HAL::GPU::Vulkan
 
 		beginInfo.Framebuffer = frameBuffers[currentFrame];
 
+		if (!Meta::UseConcurrency)
+		{
+			frameRenders[currentFrame].ResetCommandPool();
 
+			auto& primaryBuffer = frameRenders[currentFrame].Request_PrimaryCmdBuffer();
+
+			CommandBuffer::BeginInfo cmdBeginInfo;
+
+			cmdBeginInfo.InheritanceInfo = nullptr;
+
+			// Begin Recording
+
+			primaryBuffer.BeginRecord(cmdBeginInfo);
+
+			// Begin the render pass
+
+			primaryBuffer.BeginRenderPass(beginInfo, ESubpassContents::Inline);
+
+
+			// right now no render groups are setup properly... (or renderables for that matter...)
+
+			//for (auto& renderGroup : renderGroups)
+			//{
+			//	// Using secondary buffers ?
+
+			//	primaryBuffer.BindPipeline(EPipelineBindPoint::Graphics, *renderGroup.Pipeline);	
+
+			//	for (auto& renderable : renderGroup.Renderables)
+			//	{
+			//		renderable->RecordRender(primaryBuffer);
+			//	}
+			//}
+
+			primaryBuffer.EndRenderPass();
+
+			// End the render pass
+
+			// rest of render passes + its pipeline related objs
+
+			// End Recording...
+
+			primaryBuffer.EndRecord();
+
+			CommandBuffer::SubmitInfo submitInfo;
+
+			Pipeline::StageFlags waitStage(EPipelineStageFlag::ColorAttachmentOutput);
+
+			submitInfo.WaitSemaphoreCount = 1;
+			submitInfo.WaitSemaphores     = &frameRenders[currentFrame].GetSemaphore_SwapImageAcquired().GetHandle();
+			submitInfo.WaitDstStageMask   = &waitStage;
+
+			submitInfo.CommandBufferCount = 1;
+			submitInfo.CommandBuffers     = &frameRenders[currentFrame].Request_PrimaryCmdBuffer().GetHandle();
+
+			submitInfo.SignalSemaphoreCount = 1;
+			submitInfo.SignalSemaphores  = &frameSubmitedToPresentation.GetHandle();
+
+			frameRenders[currentFrame].GetFence_RenderQueued().Reset();
+
+			result = GetGraphicsQueue().SubmitToQueue(1, submitInfo, frameRenders[currentFrame].GetFence_RenderQueued());
+
+			if (result != EResult::Success)
+			{
+				throw RuntimeError("Unable to submit frame to graphics queue");
+			}
+
+			//frameRenders[currentFrame].Record();
+		
+			//frameRenders[currentFrame].Submit();
+		}
+		else
+		{
+			// For each thread
+
+			// Reset designated command pool
+
+			// Begin recording on the primary command buffer
+
+			// For each render pass (primary command buffer)
+
+			// For each renderGroup 
+
+			// Give the thread a job
+		}
+	}
+
+	void RenderContext::SubmitFrameToPresentation()
+	{
+		SwapChain::PresentationInfo presentInfo;
+
+		presentInfo.WaitSemaphoreCount = 1;
+		presentInfo.WaitSemaphores = &frameSubmitedToPresentation.GetHandle();
+		//presentInfo.WaitSemaphoreCount = 0;
+		//presentInfo.WaitSemaphores = nullptr;
+
+		presentInfo.SwapchainCount = 1;
+		presentInfo.Swapchains     = &swapchain->GetHandle();
+		presentInfo.ImageIndices   = &currentSwapImage;
+
+		presentInfo.Results = nullptr;
+
+		EResult result = GetGraphicsQueue().QueuePresentation(dref(presentInfo.operator const VkPresentInfoKHR*()));
+
+		if (result == EResult::Error_OutOfDate_KHR || result == EResult::Suboptimal_KHR)
+			CheckContext();
+		/*else if (result != EResult::Success)
+		{
+			throw RuntimeError("Not able to render frame and was not due to outofdate or suboptimal...");
+		}*/
+
+		previousFrame = currentFrame;
+
+		currentFrame = (currentFrame + 1) % SCast<uint32>(frameRenders.size());
 	}
 
 
 	// Protected
+
+	void RenderContext::CheckContext()
+	{
+		// Make sure swapchain is ok first...
+		if (swapchain->QuerySurfaceChanges())
+		{
+			for (auto& framebuffer : frameBuffers)
+			{
+				framebuffer.Destroy();
+			}
+
+			renderPass.Destroy();
+
+			EResult result = CreateDepthBuffer();
+
+			if (result != EResult::Success) throw RuntimeError("Failed to recreate depth buffer in context.");
+
+			result = CreateRenderPass();
+
+			if (result != EResult::Success) throw RuntimeError("Failed to recreate render pass in context.");
+
+			result = CreateFramebuffer();
+
+			if (result != EResult::Success) throw RuntimeError("Failed to recreate frame renderer in context.");
+		}
+	}
 
 	EResult RenderContext::CreateDepthBuffer()
 	{
@@ -389,6 +773,8 @@ namespace HAL::GPU::Vulkan
 			viewHandles[1] = depthBuffer.view;
 		}
 
+		frameBuffers.clear();
+
 		for (auto& swapViews : swapchain->GetImageViews())
 		{
 			viewHandles[0] = swapViews;
@@ -397,10 +783,11 @@ namespace HAL::GPU::Vulkan
 
 			result = framebuffer.Create(GetEngagedDevice().GetHandle(), info);
 
+			frameBuffers.push_back(framebuffer);
+
 			if (result != EResult::Success) return result;
 		}
 
-		
 
 		return result;
 	}
@@ -423,8 +810,10 @@ namespace HAL::GPU::Vulkan
 		colorAttachment.StencilLoadOp  = EAttachmentLoadOperation::DontCare;
 		colorAttachment.StencilStoreOp = EAttachmentStoreOperation::DontCare;
 
-		colorAttachment.InitialLayout = EImageLayout::Color_AttachmentOptimal;
-		colorAttachment.FinalLayout   = EImageLayout::Color_AttachmentOptimal;
+		//colorAttachment.InitialLayout = EImageLayout::Color_AttachmentOptimal;
+		//colorAttachment.FinalLayout   = EImageLayout::Color_AttachmentOptimal;
+		colorAttachment.InitialLayout = EImageLayout::Undefined;
+		colorAttachment.FinalLayout   = EImageLayout::PresentSource_KHR;
 
 		attachments.push_back(colorAttachment);
 
@@ -466,8 +855,7 @@ namespace HAL::GPU::Vulkan
 
 		subpass.DepthStencilAttachment = bufferDepth ? &depthReference : nullptr;
 
-		RenderPass::CreateInfo info;
-
+		info.AttachmentCount = SCast<uint32>(attachments.size());
 		info.Attachments = attachments.data();
 
 		info.SubpassCount = 1;
@@ -480,26 +868,34 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
-		clearValues.resize(renderPass.GetAttachmentCount());
-
-		
 		beginInfo.RenderPass = renderPass;
+
+		beginInfo.RenderArea.Offset.X = 0;
+		beginInfo.RenderArea.Offset.Y = 0;
+
 		beginInfo.RenderArea.Extent = swapchain->GetExtent();
+
+		if (shouldClear)
+		{
+			clearValues.resize(renderPass.GetAttachmentCount());
+
+			beginInfo.ClearValues = clearValues.data();
+		}
+
 		beginInfo.ClearValueCount = SCast<uint32>(clearValues.size());
-		beginInfo.ClearValues = clearValues.data();
+
+		return result;
 	}
 
 #pragma endregion RenderContext
 
 
 
-	DynamicArray<Surface> Surfaces;
+	Deque<Surface> Surfaces;
 
-	DynamicArray<SwapChain> SwapChains;
+	Deque<SwapChain> SwapChains;
 
-	DynamicArray<RenderContext> RenderContexts;
-
-
+	Deque<RenderContext> RenderContexts;
 
 	void DeinitalizeRenderer()
 	{
@@ -512,9 +908,14 @@ namespace HAL::GPU::Vulkan
 		{
 			Heap(surface.Destroy());
 		}
+
+		for (auto& renderContext : RenderContexts)
+		{
+
+		}
 	}
 
-	const Surface& CreateSurface(ptr<OSAL::Window> _window)
+	Surface& CreateSurface(ptr<OSAL::Window> _window)
 	{
 		Surface surface;
 
@@ -530,7 +931,7 @@ namespace HAL::GPU::Vulkan
 		return Surfaces.back();
 	}
 
-	const SwapChain& CreateSwapChain(const Surface& _surface, const Surface::Format _formatDesired)
+	SwapChain& CreateSwapChain(Surface& _surface, Surface::Format _formatDesired)
 	{
 		SwapChain swapchain;
 
@@ -548,7 +949,7 @@ namespace HAL::GPU::Vulkan
 		return SwapChains.back();
 	}
 
-	const RenderContext& CreateRenderContext(const SwapChain& _swapchain)
+	const RenderContext& CreateRenderContext(SwapChain& _swapchain)
 	{
 		RenderContext context;
 
@@ -556,7 +957,7 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) throw RuntimeError("Failed to create render context");	
 
-		RenderContexts.push_back(context);
+		RenderContexts.push_back(move(context));
 
 		return RenderContexts.back();
 	}
@@ -565,15 +966,13 @@ namespace HAL::GPU::Vulkan
 	{
 	}
 
-	void Renderer_Draw()
+	void Renderer_Update()
 	{
 		for (auto& renderContext : RenderContexts)
 		{
-			// Make sure to sync before recording...
+			renderContext.ProcessNextFrame();
 
-			//renderContext.Record();
-
-			//renderContext.Submit();
+			renderContext.SubmitFrameToPresentation();
 		}
 	}
 }

@@ -117,17 +117,24 @@
 
 			void Initalize_ClearColorDemo(ptr<OSAL::Window> _window)
 			{
-				auto surface = CreateSurface(_window);
+				auto& surface = CreateSurface(_window);
 
 				Surface::Format format;
 
 				format.Format = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				auto swapChain = CreateSwapChain(surface, format);
+				auto& swapChain = CreateSwapChain(surface, format);
 
-				auto renderContext = CreateRenderContext(swapChain);
+				auto& renderContext = CreateRenderContext(swapChain);
 			}
+
+			void Update()
+			{
+				Renderer_Update();
+			}
+
+
 
 		#pragma region Staying
 
@@ -350,7 +357,7 @@
 				poolInfo.QueueFamilyIndex = GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex();
 				poolInfo.Flags            = CommandPool::CreateFlgas()                            ;   // Optional
 
-				Heap(SingleTimeCommandPool.Create(GetEngagedDevice().GetHandle(), poolInfo));
+				Heap(SingleTimeCommandPool.Create(GetEngagedDevice(), poolInfo));
 
 				CommandPools_Old    .resize(SwapChain_Images.size());
 				CommandBuffers_Old  .resize(SwapChain_Images.size());
@@ -358,7 +365,7 @@
 
 				for (DeviceSize index = 0; index < SwapChain_Images.size(); index++)
 				{
-					if (Heap(CommandPools_Old[index].Create(GetEngagedDevice().GetHandle(), poolInfo)) != EResult::Success)
+					if (Heap(CommandPools_Old[index].Create(GetEngagedDevice(), poolInfo)) != EResult::Success)
 					{
 						throw std::runtime_error("failed to create command pool!");
 					}
@@ -1694,7 +1701,7 @@
 
 				InFlightFences[CurrentFrame].Reset();
 
-				if (GetEngagedDevice().GetGraphicsQueue().SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
+				if (GetGraphicsQueue().SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
 					throw std::runtime_error("Failed to submit draw command buffer!");
 
 				CommandBuffersToSubmit.clear();

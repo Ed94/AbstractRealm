@@ -7,7 +7,23 @@ namespace HAL::GPU::Vulkan
 {
 	const CommandBuffer& CommandPool::RequestBuffer()
 	{
-		//commandBuffers
+		AllocateInfo info;
+
+		info.BufferCount = 1;
+		info.Pool = handle;
+		info.Level = ECommandBufferLevel::Primary;
+
+		CommandBuffer commandBuffer;
+
+		CommandBuffer::Handle handle;
+		
+		Allocate(info, &handle);
+
+		commandBuffer.Assign(GetEngagedDevice(), info, handle);
+
+		commandBuffers.push_back(commandBuffer);
+
+		return commandBuffers.back();
 	}
 
 	const CommandBuffer& CommandPool::RecordSingleTime()
@@ -41,9 +57,9 @@ namespace HAL::GPU::Vulkan
 
 	StaticData
 	(
-		DynamicArray<CommandPool> CommandPools;
+		Deque<CommandPool> CommandPools;
 
-		ptr<CommandPool> GraphicsPool ;
+		ptr<CommandPool> GeneralPool ;
 		ptr<CommandPool> TransientPool;
 	)
 
@@ -57,21 +73,21 @@ namespace HAL::GPU::Vulkan
 
 
 		// Only one set of pools for now since its single threaded
-		
-		CommandPool generalPool;
 
-		Heap(generalPool.Create(GetEngagedDevice().GetHandle(), info));
+		CommandPool generalPool;
+		
+		Heap(generalPool.Create(GetEngagedDevice(), info));
 
 		CommandPools.push_back(generalPool);
 
-		GraphicsPool = &CommandPools.back();
+		GeneralPool = &CommandPools.back();
 
 
 		CommandPool transientPool;
 
 		info.Flags.Set(ECommandPoolCreateFlag::Transient);
 
-		Heap(transientPool.Create(GetEngagedDevice().GetHandle(), info));
+		Heap(transientPool.Create(GetEngagedDevice(), info));
 
 		CommandPools.push_back(transientPool);
 
@@ -80,12 +96,32 @@ namespace HAL::GPU::Vulkan
 
 	const CommandBuffer& RecordOnGraphics()
 	{
-		return GraphicsPool->RequestBuffer();
+		return GeneralPool->RequestBuffer();
 	}
 
 	const CommandBuffer& RecordOnTransient()
 	{
 		return TransientPool->RecordSingleTime(); 
+	}
+
+	const ptr<CommandPool> RequestCommandPools(DataSize _numDesired)
+	{
+		DataSize firstOfNewPools = CommandPools.size();
+
+		CommandPools.resize(firstOfNewPools + _numDesired);
+
+		CommandPool::CreateInfo info;
+
+		info.QueueFamilyIndex =  GetGraphicsQueue().GetFamilyIndex();
+
+		EResult result = CommandPools.back().Create(GetEngagedDevice(), info);
+
+		if (result != EResult::Success)
+		{
+			throw RuntimeError("Failed to create requested command pool.");
+		}
+
+		return &CommandPools[firstOfNewPools];
 	}
 
 	void EndRecordOnTransient(const CommandBuffer& _buffer)

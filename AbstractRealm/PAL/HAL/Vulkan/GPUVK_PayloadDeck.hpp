@@ -30,10 +30,12 @@ namespace HAL::GPU::Vulkan
 
 	StaticData
 	(
-		eGlobal DynamicArray<CommandPool> CommandPools;
+		eGlobal Deque<CommandPool> CommandPools;
 
-		eGlobal ptr<CommandPool> GraphicsPool ;
 
+		// Singled threaded stuff...
+
+		eGlobal ptr<CommandPool> GeneralPool;
 
 		eGlobal ptr<CommandPool> TransientPool;
 	)
@@ -43,6 +45,8 @@ namespace HAL::GPU::Vulkan
 	void WipeDeck();
 
 	void PrepareDecks();	
+
+	const ptr<CommandPool> RequestCommandPools(DataSize _numDesired);
 
 	const CommandBuffer& RecordOnTransient();
 

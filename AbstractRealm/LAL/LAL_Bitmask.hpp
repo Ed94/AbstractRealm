@@ -102,6 +102,16 @@
 			return mask;
 		}
 
+		bool operator== (const Representation _other)
+		{
+			return mask == _other;
+		}
+
+		bool operator== (const _ThisType& _other)
+		{
+			return mask == _other.mask;
+		}
+
 	private:
 		Representation mask;
 	};

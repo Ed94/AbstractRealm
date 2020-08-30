@@ -139,6 +139,8 @@ namespace LAL
 		return NULL;
 	}
 
+	using std::move;
+
 	template<typename TypeS, typename TypeR>
 	DataSize OffsetOf(TypeS _subject, TypeR _reference)
 	{

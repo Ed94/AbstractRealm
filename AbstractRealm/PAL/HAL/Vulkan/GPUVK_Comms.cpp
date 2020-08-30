@@ -157,7 +157,7 @@ namespace HAL::GPU::Vulkan
 
 	const PhysicalDevice& LogicalDevice::GetPhysicalDevice() const
 	{
-		PhysicalDevice* intermed = SCast<PhysicalDevice*>(physicalDevice);
+		const PhysicalDevice* intermed = SCast<const PhysicalDevice>(physicalDevice);
 
 		return *intermed;
 	}
