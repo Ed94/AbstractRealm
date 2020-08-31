@@ -27,18 +27,18 @@ namespace SAL::Imgui
 
 		HAL::GPU::Vulkan::RawRenderContext* RenderContext;
 
-		VT::V4::GraphicsPipeline GraphicsPipeline;
+		VT::V3::GraphicsPipeline GraphicsPipeline;
 
-		VT::V4::DescriptorPool DescriptorPool;
+		VT::V3::DescriptorPool DescriptorPool;
 
-		DynamicArray<VT::V4::Framebuffer> SwapChain_Framebuffers;
+		DynamicArray<VT::V3::Framebuffer> SwapChain_Framebuffers;
 
 
 		// Functions
 
 		void Vulkan_CreateDescriptorObjects()
 		{
-			using namespace VT::V4;
+			using namespace VT::V3;
 
 			DescriptorPool::Size pool_sizes[11];
 
@@ -73,7 +73,7 @@ namespace SAL::Imgui
 			}
 		}
 
-		void Vulkan_GPU_DrawRender(VT::V4::CommandBuffer& _buffer, int /* _index */)
+		void Vulkan_GPU_DrawRender(VT::V3::CommandBuffer& _buffer, int /* _index */)
 		{
 			ImDrawData* draw_data = ImGui::GetDrawData();
 
@@ -218,7 +218,7 @@ namespace SAL::Imgui
 			{
 				using namespace HAL::GPU::Vulkan;
 
-				VT::V4::CommandBuffer cmdBuffer = RequestSingleTimeBuffer();
+				VT::V3::CommandBuffer cmdBuffer = RequestSingleTimeBuffer();
 
 				ImGui_ImplVulkan_CreateFontsTexture(cmdBuffer);
 

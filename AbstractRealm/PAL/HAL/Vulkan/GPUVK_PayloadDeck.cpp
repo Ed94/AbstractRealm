@@ -129,7 +129,7 @@ namespace HAL::GPU::Vulkan
 		TransientPool->EndSingleTimeRecord(_buffer);
 	}
 
-	void WipeDeck()
+	void WipeDecks()
 	{
 		for (auto& pool : CommandPools)
 		{

@@ -11,7 +11,7 @@ namespace HAL::GPU::Vulkan
 	{
 		AssignPhysicalDevice(GetEngagedPhysicalGPU());
 
-		EResult result = Parent::Create(AppGPU_Comms, OSAL::GetOS_WindowHandle(_window));
+		EResult result = Parent::Create(GetAppInstance_Handle(), OSAL::GetOS_WindowHandle(_window));
 
 		if (result != EResult::Success) return result;
 
@@ -85,11 +85,11 @@ namespace HAL::GPU::Vulkan
 
 #pragma endregion Surface
 
-#pragma region SwapChain
+#pragma region Swapchain
 
 	// Public	
 
-	EResult SwapChain::Create(Surface& _surface, Surface::Format _format)
+	EResult Swapchain::Create(Surface& _surface, Surface::Format _format)
 	{
 		surface = &_surface;
 
@@ -97,17 +97,51 @@ namespace HAL::GPU::Vulkan
 
 		const auto& presentationModes = _surface.GetPresentationModes();
 
-		if (std::find(presentationModes.begin(), presentationModes.end(), EPresentationMode::Mailbox) != presentationModes.end())
+		EPresentationMode desiredPresentationMode = EPresentationMode::Mailbox;
+
+		switch (presentationMode)
 		{
-			info.PresentationMode = EPresentationMode::Mailbox;
+			case Meta::EGPU_PresentMode::Immediate   : desiredPresentationMode = EPresentationMode::Immediate   ; break;
+			case Meta::EGPU_PresentMode::FIFO        : desiredPresentationMode = EPresentationMode::FIFO        ; break;
+			case Meta::EGPU_PresentMode::FIFO_Relaxed: desiredPresentationMode = EPresentationMode::FIFO_Relaxed; break;
+			case Meta::EGPU_PresentMode::MailBox     : desiredPresentationMode = EPresentationMode::Mailbox     ; break;
 		}
-		else
+
+		switch (desiredPresentationMode)
 		{
-			info.PresentationMode = EPresentationMode::FIFO;
+			case EPresentationMode::Immediate:
+			{
+				if (find(presentationModes.begin(), presentationModes.end(), EPresentationMode::Immediate) != presentationModes.end())
+					info.PresentationMode = EPresentationMode::Immediate;
+
+				break;
+			}
+			case EPresentationMode::FIFO_Relaxed:
+			{
+				if (find(presentationModes.begin(), presentationModes.end(), EPresentationMode::FIFO_Relaxed) != presentationModes.end())
+					info.PresentationMode = EPresentationMode::FIFO_Relaxed;
+
+				break;
+			}
+			case EPresentationMode::Mailbox:
+			{
+				if (find(presentationModes.begin(), presentationModes.end(), EPresentationMode::Mailbox) != presentationModes.end())
+					info.PresentationMode = EPresentationMode::Mailbox;
+
+				break;
+			}
+			default:
+			{
+				info.PresentationMode = EPresentationMode::FIFO;
+			}
 		}
 
 		info.MinImageCount = _surface.GetCapabilities().MinImageCount;
-		info.MinImageCount += 1;   // Want one more image than minimum...
+
+		if (frameBuffering == Meta::EGPU_FrameBuffering::Triple)
+		{
+			info.MinImageCount += 1;   // Want one more image than minimum... (Triple buffering)
+		}
 
 		if (_surface.GetCapabilities().MaxImageCount > 0 && info.MinImageCount > _surface.GetCapabilities().MaxImageCount)
 		{
@@ -146,27 +180,6 @@ namespace HAL::GPU::Vulkan
 
 		info.ImageArrayLayers = 1;   // If your supporting 3d rendering change this.
 
-		// TODO: Add this back if logical device supports separate presentation queue.
-		/*
-		uint32 queueFamilyIndices[] = 
-		{
-			GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex()
-		};
-
-		if (GetEngadedDevice().GetGraphicsQueue().GetFamilyIndex() != QueueIndices.PresentationSupported)
-		{
-			creationSpec.ImageSharingMode      = ESharingMode::Concurrent;
-			creationSpec.QueueFamilyIndexCount = 2                       ;
-			creationSpec.QueueFamilyIndices    = queueFamilyIndices      ;
-		}
-		else 
-		{
-			creationSpec.ImageSharingMode      = ESharingMode::Exclusive;
-			creationSpec.QueueFamilyIndexCount = 0                      ; // Optional
-			creationSpec.QueueFamilyIndices    = nullptr                ; // Optional
-		}
-		*/
-
 		info.ImageSharingMode      = ESharingMode::Exclusive;
 		info.QueueFamilyIndexCount = 0                      ; // Optional
 		info.QueueFamilyIndices    = nullptr                ; // Optional
@@ -174,7 +187,7 @@ namespace HAL::GPU::Vulkan
 		info.PreTransform     = _surface.GetCapabilities().CurrentTransform;
 		info.CompositeAlpha   = ECompositeAlpha::Opaque                    ;   // Swapchain hard coded to only support opaque surfaces.
 		info.Clipped          = true                                       ;
-		info.OldSwapchain     = Null<SwapChain::Handle>                    ;
+		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
 		EResult result = Heap(Parent::Create(GetEngagedDevice().GetHandle(), info));
 
@@ -189,17 +202,17 @@ namespace HAL::GPU::Vulkan
 		return result;
 	}
 
-	Extent2D SwapChain::GetExtent() const
+	Extent2D Swapchain::GetExtent() const
 	{
 		return info.ImageExtent;
 	}
 
-	EFormat SwapChain::GetFormat() const
+	EFormat Swapchain::GetFormat() const
 	{
 		return info.ImageFormat;
 	}
 
-	bool SwapChain::QuerySurfaceChanges()
+	bool Swapchain::QuerySurfaceChanges()
 	{
 		if (surface->RequeryCapabilities())
 		{
@@ -215,12 +228,12 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	const DynamicArray<Image>& SwapChain::GetImages() const
+	const DynamicArray<Image>& Swapchain::GetImages() const
 	{
 		return images;
 	}
 
-	const DynamicArray<ImageView>& SwapChain::GetImageViews() const
+	const DynamicArray<ImageView>& Swapchain::GetImageViews() const
 	{
 		return imageViews;
 	}
@@ -228,7 +241,7 @@ namespace HAL::GPU::Vulkan
 
 	// Protected
 
-	void SwapChain::Regenerate()
+	void Swapchain::Regenerate()
 	{
 		for (auto& imageView : imageViews)
 		{
@@ -239,17 +252,51 @@ namespace HAL::GPU::Vulkan
 
 		const auto& presentationModes = surface->GetPresentationModes();
 
-		if (std::find(presentationModes.begin(), presentationModes.end(), EPresentationMode::Mailbox) != presentationModes.end())
+		EPresentationMode desiredPresentationMode = EPresentationMode::Mailbox;
+
+		switch (presentationMode)
 		{
-			info.PresentationMode = EPresentationMode::Mailbox;
+			case Meta::EGPU_PresentMode::Immediate   : desiredPresentationMode = EPresentationMode::Immediate   ; break;
+			case Meta::EGPU_PresentMode::FIFO        : desiredPresentationMode = EPresentationMode::FIFO        ; break;
+			case Meta::EGPU_PresentMode::FIFO_Relaxed: desiredPresentationMode = EPresentationMode::FIFO_Relaxed; break;
+			case Meta::EGPU_PresentMode::MailBox     : desiredPresentationMode = EPresentationMode::Mailbox     ; break;
 		}
-		else
+
+		switch (desiredPresentationMode)
 		{
-			info.PresentationMode = EPresentationMode::FIFO;
+			case EPresentationMode::Immediate:
+			{
+				if (find(presentationModes.begin(), presentationModes.end(), EPresentationMode::Immediate) != presentationModes.end())
+					info.PresentationMode = EPresentationMode::Immediate;
+
+				break;
+			}
+			case EPresentationMode::FIFO_Relaxed:
+			{
+				if (find(presentationModes.begin(), presentationModes.end(), EPresentationMode::FIFO_Relaxed) != presentationModes.end())
+					info.PresentationMode = EPresentationMode::FIFO_Relaxed;
+
+				break;
+			}
+			case EPresentationMode::Mailbox:
+			{
+				if (find(presentationModes.begin(), presentationModes.end(), EPresentationMode::Mailbox) != presentationModes.end())
+					info.PresentationMode = EPresentationMode::Mailbox;
+
+				break;
+			}
+			default:
+			{
+				info.PresentationMode = EPresentationMode::FIFO;
+			}
 		}
 
 		info.MinImageCount = surface->GetCapabilities().MinImageCount;
-		info.MinImageCount += 1;   // Want one more image than minimum...
+
+		if (frameBuffering == Meta::EGPU_FrameBuffering::Triple)
+		{
+			info.MinImageCount += 1;   // Want one more image than minimum... (Triple buffering)
+		}
 
 		if (surface->GetCapabilities().MaxImageCount > 0 && info.MinImageCount > surface->GetCapabilities().MaxImageCount)
 		{
@@ -285,7 +332,7 @@ namespace HAL::GPU::Vulkan
 		info.PreTransform     = surface->GetCapabilities().CurrentTransform;
 		info.CompositeAlpha   = ECompositeAlpha::Opaque                    ;   // Swapchain hard coded to only support opaque surfaces.
 		info.Clipped          = true                                       ;
-		info.OldSwapchain     = Null<SwapChain::Handle>                    ;
+		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
 		EResult result = Heap(Parent::Create(GetEngagedDevice().GetHandle(), info));
 
@@ -300,7 +347,7 @@ namespace HAL::GPU::Vulkan
 		if (result != EResult::Success) throw RuntimeError("Unable to generate new image views after regenerating swapchain.");
 	}
 
-	EResult SwapChain::GenerateViews()
+	EResult Swapchain::GenerateViews()
 	{
 		ImageView::CreateInfo viewInfo {};
 
@@ -335,7 +382,7 @@ namespace HAL::GPU::Vulkan
 		return result;
 	}
 
-	EResult SwapChain::RetrieveImages()
+	EResult Swapchain::RetrieveImages()
 	{
 		uint32 numImages;
 
@@ -348,7 +395,7 @@ namespace HAL::GPU::Vulkan
 			images.resize(numImages);	
 		}
 		
-		std::vector<Image::Handle> handles(numImages);
+		DynamicArray<Image::Handle> handles(numImages);
 
 		result = Parent::QueryImages(numImages, handles.data());
 
@@ -360,21 +407,21 @@ namespace HAL::GPU::Vulkan
 		return result;
 	}
 
-#pragma endregion SwapChain
+#pragma endregion Swapchain
 
-#pragma region FrameRenderer
+#pragma region FrameReference
 
-	Fence& FrameRenderer::GetFence_RenderQueued()
+	Fence& FrameReference::RenderingInFlight()
 	{
-		return renderQueued;
+		return flightToRender;
 	}
 
-	Semaphore& FrameRenderer::GetSemaphore_SwapImageAcquired()
+	Semaphore& FrameReference::SwapAcquisionStatus()
 	{
-		return swapImageAcquired;
+		return swapAcquisitionStatus;
 	}
 
-	EResult FrameRenderer::Prepare()
+	EResult FrameReference::Prepare()
 	{
 		//frameBuffer = _frameBuffer;
 
@@ -392,12 +439,15 @@ namespace HAL::GPU::Vulkan
 
 			fenceInfo.Flags.Set(EFenceCreateFlag::Signaled);
 
-			renderQueued.Create(GetEngagedDevice(), fenceInfo);
-			
+			flightToRender.Create(GetEngagedDevice(), fenceInfo);
+
 			
 			Semaphore::CreateInfo semaphoreInfo;
 
-			swapImageAcquired.Create(GetEngagedDevice(), semaphoreInfo);
+			swapAcquisitionStatus.Create(GetEngagedDevice(), semaphoreInfo);
+
+			presentSubmitStatus.Create(GetEngagedDevice(), semaphoreInfo);
+
 
 			ptr<CommandPool> pools = RequestCommandPools(1);
 
@@ -409,41 +459,33 @@ namespace HAL::GPU::Vulkan
 		return EResult::Success;
 	}
 
-	/*void FrameRenderer::Record()
-	{
-		if (!Meta::UseConcurrency)
-		{
-			commandPools[0].get().Reset(0);
-		}
-	}*/
-
-	const CommandBuffer& FrameRenderer::Request_PrimaryCmdBuffer()
+	const CommandBuffer& FrameReference::Request_PrimaryCmdBuffer()
 	{
 		return *Primary_CmdBuffer;
 	}
 
-	void FrameRenderer::ResetCommandPool()
+	Semaphore& FrameReference::PresentSubmitStatus()
+	{
+		return presentSubmitStatus;
+	}
+
+	void FrameReference::ResetCommandPool()
 	{
 		commandPools[0]->Reset(0);
 	}
 
-	/*void FrameRenderer::Submit()
+	void FrameReference::WaitFor_RenderingInFlight()
 	{
-
-	}*/
-
-	void FrameRenderer::WaitFor_RenderQueued()
-	{
-		renderQueued.WaitFor(UInt64Max);
+		flightToRender.WaitFor(UInt64Max);
 	}
 
-#pragma endregion FrameRenderer
+#pragma endregion FrameReference
 
 #pragma region RenderContext
 
 	// Public
 
-	EResult RenderContext::Create(SwapChain& _swapChain)
+	EResult RenderContext::Create(Swapchain& _swapChain)
 	{
 		swapchain = &_swapChain;
 
@@ -455,81 +497,87 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
-		result = CreateFramebuffer();
+		result = CreateFramebuffers();
 
 		if (result != EResult::Success) return result;
 
-		frameRenders.resize(frameBuffers.size());
+		maxFramesInFlight = SCast<uint32>(frameBuffers.size() - 1);
 
-		for (DataSize index = 0; index < frameRenders.size(); index++)
+		frameRefs.resize(maxFramesInFlight);
+
+		for (DataSize index = 0; index < frameRefs.size(); index++)
 		{
-			frameRenders[index].Prepare();
+			frameRefs[index].Prepare();
 		}
 
 		Semaphore::CreateInfo semaphoreInfo;
 
-		frameSubmitedToPresentation.Create(GetEngagedDevice(), semaphoreInfo);
+		presentSubmitStatus.Create(GetEngagedDevice(), semaphoreInfo);
 
-		swapImagesInFlight.resize(frameRenders.size());	
+		swapsInFlight.resize(frameBuffers.size());	
 
 		Fence::CreateInfo fenceInfo; fenceInfo.Flags.Set(EFenceCreateFlag::Signaled);
-
-		for (auto& fence : swapImagesInFlight)
-		{
-			fence.Create(GetEngagedDevice(), fenceInfo);
-		}
 
 		return result;
 	}
 
+	void RenderContext::Destroy()
+	{
+		for (auto& frameBuffer : frameBuffers)
+		{
+			frameBuffer.Destroy();
+		}
+
+		renderPass.Destroy();
+
+		depthBuffer.image.Destroy();
+
+		depthBuffer.memory.Free();
+
+		depthBuffer.view.Destroy();
+	}
+
 	void RenderContext::ProcessNextFrame()
 	{
-		// Not sure if necessary: Make sure next frame to process has been processed by the GPU.
-		frameRenders[currentFrame].WaitFor_RenderQueued();
+		auto& frameRef = frameRefs[currentFrame];
 
- 		CheckContext();
+		// Make sure next frame to process has been processed by the GPU.
+		frameRef.RenderingInFlight().WaitFor(UInt64Max);
 
 		// Get the next available image from the swapchain to render to.
 		EResult result = swapchain->AcquireNextImage
 		(
 			UInt64Max,
-			frameRenders[currentFrame].GetSemaphore_SwapImageAcquired(),
-			Null<Fence::Handle>                                        ,
-			currentSwapImage
+			frameRef.SwapAcquisionStatus(),
+			Null<Fence::Handle>           ,
+			currentSwap
 		);
 
 		// Make sure that the swapchain is still ok to render to.
-		if (result == EResult::Suboptimal_KHR || result == EResult::Error_OutOfDate_KHR)
+		if (result == EResult::Error_OutOfDate_KHR)
+		{
 			CheckContext();
 
+			return;
+		}
+		else if (result != EResult::Success && result != EResult::Suboptimal_KHR)
+		{
+			throw std::runtime_error("Failed to acquire swap chain image!");
+		}
+
 		// Make sure that the acquired image has been processed by the presentation queue.
-		if (swapImagesInFlight[currentSwapImage].GetHandle() == Null<Fence::Handle>)
-			swapImagesInFlight[currentSwapImage].WaitFor(UInt64Max);
+		if (swapsInFlight[currentSwap].GetHandle() != Null<Fence::Handle>)
+			swapsInFlight[currentSwap].WaitFor(UInt64Max);
 
 		// Set the current swap image fence to that of the frame queue fence.
-		swapImagesInFlight[currentSwapImage] = frameRenders[currentFrame].GetFence_RenderQueued();
+		swapsInFlight[currentSwap] = frameRef.RenderingInFlight();
 
 		// Prep the ClearValue for the render pass...
-		switch (currentFrame)    
+		switch (currentFrame)
 		{ 
-			case 0: 
-			{
-				clearValues[0].Color = { 1.0f,0.0f,0.0f,1.0f };
-
-				break;
-			}
-			case 1: 
-			{
-				clearValues[0].Color = { 0.0f, 1.0f,0.0f,1.0f };
-
-				break;
-			}
-			case 2: 
-			{
-				clearValues[0].Color = { 0.0f,0.0f,1.0f,1.0f };
-			 
-				break;
-			}
+			case 0: clearValues[0].Color = { 1.0f, 0.0f, 0.0f, 1.0f }; break;
+			case 1: clearValues[0].Color = { 0.0f, 1.0f, 0.0f, 1.0f }; break;
+			case 2: clearValues[0].Color = { 0.0f, 0.0f, 1.0f, 1.0f }; break;
 			default:
 			{
 				clearValues[0].Color = { 1.0f,0.0f,0.0f, 1.0f };
@@ -541,51 +589,26 @@ namespace HAL::GPU::Vulkan
 		if (bufferDepth) 
 		{
 			clearValues[1].DepthStencil.Depth   = 1.0f;
-			clearValues[1].DepthStencil.Stencil = 0;
+			clearValues[1].DepthStencil.Stencil = 0   ;
 		}
 
-		beginInfo.Framebuffer = frameBuffers[currentFrame];
+		beginInfo.Framebuffer = frameBuffers[currentSwap];
 
 		if (!Meta::UseConcurrency)
 		{
-			frameRenders[currentFrame].ResetCommandPool();
+			frameRefs[currentFrame].ResetCommandPool();
 
-			auto& primaryBuffer = frameRenders[currentFrame].Request_PrimaryCmdBuffer();
+			auto& primaryBuffer = frameRef.Request_PrimaryCmdBuffer();
 
 			CommandBuffer::BeginInfo cmdBeginInfo;
 
 			cmdBeginInfo.InheritanceInfo = nullptr;
 
-			// Begin Recording
-
 			primaryBuffer.BeginRecord(cmdBeginInfo);
-
-			// Begin the render pass
 
 			primaryBuffer.BeginRenderPass(beginInfo, ESubpassContents::Inline);
 
-
-			// right now no render groups are setup properly... (or renderables for that matter...)
-
-			//for (auto& renderGroup : renderGroups)
-			//{
-			//	// Using secondary buffers ?
-
-			//	primaryBuffer.BindPipeline(EPipelineBindPoint::Graphics, *renderGroup.Pipeline);	
-
-			//	for (auto& renderable : renderGroup.Renderables)
-			//	{
-			//		renderable->RecordRender(primaryBuffer);
-			//	}
-			//}
-
 			primaryBuffer.EndRenderPass();
-
-			// End the render pass
-
-			// rest of render passes + its pipeline related objs
-
-			// End Recording...
 
 			primaryBuffer.EndRecord();
 
@@ -593,28 +616,26 @@ namespace HAL::GPU::Vulkan
 
 			Pipeline::StageFlags waitStage(EPipelineStageFlag::ColorAttachmentOutput);
 
-			submitInfo.WaitSemaphoreCount = 1;
-			submitInfo.WaitSemaphores     = &frameRenders[currentFrame].GetSemaphore_SwapImageAcquired().GetHandle();
-			submitInfo.WaitDstStageMask   = &waitStage;
+			// Need to wait for swap image to be acquired before submitting render commands to queue.
+			submitInfo.WaitSemaphoreCount = 1                             ;
+			submitInfo.WaitSemaphores     = frameRef.SwapAcquisionStatus();
+			submitInfo.WaitDstStageMask   = &waitStage                    ;
 
-			submitInfo.CommandBufferCount = 1;
-			submitInfo.CommandBuffers     = &frameRenders[currentFrame].Request_PrimaryCmdBuffer().GetHandle();
+			submitInfo.CommandBufferCount = 1                                  ;
+			submitInfo.CommandBuffers     = frameRef.Request_PrimaryCmdBuffer();
 
+			// Let the presentation queue know that it can submit itself when render commands are finished in the queue.
 			submitInfo.SignalSemaphoreCount = 1;
-			submitInfo.SignalSemaphores  = &frameSubmitedToPresentation.GetHandle();
+			submitInfo.SignalSemaphores     =  frameRef.PresentSubmitStatus();  // &frameSubmitedToPresentation.GetHandle();
 
-			frameRenders[currentFrame].GetFence_RenderQueued().Reset();
+			frameRef.RenderingInFlight().Reset();
 
-			result = GetGraphicsQueue().SubmitToQueue(1, submitInfo, frameRenders[currentFrame].GetFence_RenderQueued());
+			result = GetGraphicsQueue().SubmitToQueue(1, submitInfo, frameRef.RenderingInFlight());
 
 			if (result != EResult::Success)
 			{
 				throw RuntimeError("Unable to submit frame to graphics queue");
 			}
-
-			//frameRenders[currentFrame].Record();
-		
-			//frameRenders[currentFrame].Submit();
 		}
 		else
 		{
@@ -628,37 +649,47 @@ namespace HAL::GPU::Vulkan
 
 			// For each renderGroup 
 
-			// Give the thread a job
+			// Give the thread a job (Request a secondary command buffer...)
 		}
 	}
 
 	void RenderContext::SubmitFrameToPresentation()
 	{
-		SwapChain::PresentationInfo presentInfo;
+		auto& frameRef = frameRefs[currentFrame];
 
-		presentInfo.WaitSemaphoreCount = 1;
-		presentInfo.WaitSemaphores = &frameSubmitedToPresentation.GetHandle();
-		//presentInfo.WaitSemaphoreCount = 0;
-		//presentInfo.WaitSemaphores = nullptr;
+		Swapchain::PresentationInfo presentInfo;
+
+		// Wait to make sure that the frame to put into the swap for presentation has finished being processed.
+		presentInfo.WaitSemaphoreCount = 1                             ;
+		presentInfo.WaitSemaphores     = frameRef.PresentSubmitStatus();
 
 		presentInfo.SwapchainCount = 1;
 		presentInfo.Swapchains     = &swapchain->GetHandle();
-		presentInfo.ImageIndices   = &currentSwapImage;
+		presentInfo.ImageIndices   = &currentSwap;
 
 		presentInfo.Results = nullptr;
 
-		EResult result = GetGraphicsQueue().QueuePresentation(dref(presentInfo.operator const VkPresentInfoKHR*()));
+		EResult result = GetGraphicsQueue().QueuePresentation(presentInfo);
 
 		if (result == EResult::Error_OutOfDate_KHR || result == EResult::Suboptimal_KHR)
-			CheckContext();
-		/*else if (result != EResult::Success)
 		{
-			throw RuntimeError("Not able to render frame and was not due to outofdate or suboptimal...");
-		}*/
+			CheckContext();
+		}
+
+		else if (result != EResult::Success)
+		{
+			throw RuntimeError("Not able to render frame and was not due to out-of-date or suboptimal...");
+		}
 
 		previousFrame = currentFrame;
 
-		currentFrame = (currentFrame + 1) % SCast<uint32>(frameRenders.size());
+		// Frames are numbers 0 to the number of frames buffered - 1 (to offset for initial index being 0)
+		currentFrame = (currentFrame + 1) % maxFramesInFlight;
+	}
+
+	bool RenderContext::operator== (const RenderContext& _other)
+	{
+		return this == &_other;
 	}
 
 
@@ -669,12 +700,7 @@ namespace HAL::GPU::Vulkan
 		// Make sure swapchain is ok first...
 		if (swapchain->QuerySurfaceChanges())
 		{
-			for (auto& framebuffer : frameBuffers)
-			{
-				framebuffer.Destroy();
-			}
-
-			renderPass.Destroy();
+			Destroy();
 
 			EResult result = CreateDepthBuffer();
 
@@ -684,7 +710,7 @@ namespace HAL::GPU::Vulkan
 
 			if (result != EResult::Success) throw RuntimeError("Failed to recreate render pass in context.");
 
-			result = CreateFramebuffer();
+			result = CreateFramebuffers();
 
 			if (result != EResult::Success) throw RuntimeError("Failed to recreate frame renderer in context.");
 		}
@@ -751,7 +777,7 @@ namespace HAL::GPU::Vulkan
 		return result;
 	}
 
-	EResult RenderContext::CreateFramebuffer()
+	EResult RenderContext::CreateFramebuffers()
 	{
 		EResult result = EResult::Incomplete;
 
@@ -812,7 +838,7 @@ namespace HAL::GPU::Vulkan
 
 		//colorAttachment.InitialLayout = EImageLayout::Color_AttachmentOptimal;
 		//colorAttachment.FinalLayout   = EImageLayout::Color_AttachmentOptimal;
-		colorAttachment.InitialLayout = EImageLayout::Undefined;
+		colorAttachment.InitialLayout = EImageLayout::Undefined        ;
 		colorAttachment.FinalLayout   = EImageLayout::PresentSource_KHR;
 
 		attachments.push_back(colorAttachment);
@@ -829,7 +855,7 @@ namespace HAL::GPU::Vulkan
 			depthAttachment.StencilStoreOp = EAttachmentStoreOperation::Store;
 
 			depthAttachment.InitialLayout = EImageLayout::DepthStencil_AttachmentOptimal;
-			depthAttachment.FinalLayout = EImageLayout::DepthStencil_AttachmentOptimal;
+			depthAttachment.FinalLayout   = EImageLayout::DepthStencil_AttachmentOptimal;
 
 			attachments.push_back(depthAttachment);
 		}
@@ -890,16 +916,24 @@ namespace HAL::GPU::Vulkan
 #pragma endregion RenderContext
 
 
+	ESubmissionType SubmissionMode = ESubmissionType::Individual;
 
 	Deque<Surface> Surfaces;
 
-	Deque<SwapChain> SwapChains;
+	Deque<Swapchain> Swapchains;
 
 	Deque<RenderContext> RenderContexts;
 
-	void DeinitalizeRenderer()
+
+
+	void Renderer_SetSubmissionMode(ESubmissionType _submissionBehaviorDesired)
 	{
-		for (auto& swapchain : SwapChains)
+		SubmissionMode = _submissionBehaviorDesired;
+	}
+
+	void Shutdown_Renderer()
+	{
+		for (auto& swapchain : Swapchains)
 		{
 			Heap(swapchain.Destroy());
 		}
@@ -911,11 +945,11 @@ namespace HAL::GPU::Vulkan
 
 		for (auto& renderContext : RenderContexts)
 		{
-
+			renderContext.Destroy();
 		}
 	}
 
-	Surface& CreateSurface(ptr<OSAL::Window> _window)
+	Surface& Request_Surface(ptr<OSAL::Window> _window)
 	{
 		Surface surface;
 
@@ -931,11 +965,18 @@ namespace HAL::GPU::Vulkan
 		return Surfaces.back();
 	}
 
-	SwapChain& CreateSwapChain(Surface& _surface, Surface::Format _formatDesired)
+	void Retire_Surface(ptr<Surface> _surface)
 	{
-		SwapChain swapchain;
+		_surface->Destroy();
 
-		SwapChain::CreateInfo info{};
+		Surfaces.erase(find(Surfaces.begin(), Surfaces.end(), *_surface));
+	}
+
+	Swapchain& Request_SwapChain(Surface& _surface, Surface::Format _formatDesired)
+	{
+		Swapchain swapchain;
+
+		Swapchain::CreateInfo info{};
 
 		EResult result = swapchain.Create(_surface, _formatDesired);
 
@@ -944,12 +985,19 @@ namespace HAL::GPU::Vulkan
 			throw std::runtime_error("Failed to create the swap chain!");
 		}
 
-		SwapChains.push_back(swapchain);
+		Swapchains.push_back(swapchain);
 
-		return SwapChains.back();
+		return Swapchains.back();
 	}
 
-	const RenderContext& CreateRenderContext(SwapChain& _swapchain)
+	void Retire_Swapchain(ptr<Swapchain> _swapchain)
+	{
+		_swapchain->Destroy();
+
+		Swapchains.erase(find(Swapchains.begin(), Swapchains.end(), *_swapchain));
+	}
+
+	RenderContext& Request_RenderContext(Swapchain& _swapchain)
 	{
 		RenderContext context;
 
@@ -962,6 +1010,13 @@ namespace HAL::GPU::Vulkan
 		return RenderContexts.back();
 	}
 
+	void Retire_RenderContext(ptr<RenderContext> _renderContext)
+	{
+		_renderContext->Destroy();
+
+		RenderContexts.erase(find(RenderContexts.begin(), RenderContexts.end(), *_renderContext));
+	}
+
 	void InitalizeRenderer()
 	{
 	}
@@ -972,6 +1027,14 @@ namespace HAL::GPU::Vulkan
 		{
 			renderContext.ProcessNextFrame();
 
+			//renderContext.SubmitFrameToPresentation();
+		}
+	}
+
+	void Renderer_Present()
+	{
+		for (auto& renderContext : RenderContexts)
+		{
 			renderContext.SubmitFrameToPresentation();
 		}
 	}

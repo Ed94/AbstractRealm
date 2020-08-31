@@ -27,31 +27,33 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 
 
-#if VULCAN_INTERFACE == VAULTED_THERMALS_INTERFACE
+#if VulkanAPI_Interface == VaultedThermals_Interface
 
 	namespace HAL::GPU
 	{
 		namespace Vulkan
 		{
 			using namespace VT        ;
-			using namespace VT::V4    ;
+			using namespace VT::V3    ;
 			using namespace VT::SPIR_V;
 
 			using namespace LAL ;
 			using namespace Meta;
 
+			using LAL::DynamicArray;
+
 
 			//using 
 
-			using ExtensionIdentifierList     = std::vector< RoCStr             >;
-			using FenceList                   = std::vector< Fence::Handle      >;
-			using FrameBufferList             = std::vector< Framebuffer::Handle>;   
-			using ImageList                   = std::vector< Image::Handle      >;
-			using ImageViewList               = std::vector< ImageView          >;
-			using SemaphoreList               = std::vector< Semaphore::Handle  >;   
-			using SurfaceFormatList           = std::vector< Surface::Format    >;
-			using SurfacePresentationModeList = std::vector< EPresentationMode  >;
-			using ValidationLayerList         = std::vector< RoCStr             >;
+			using ExtensionIdentifierList     = DynamicArray< RoCStr             >;
+			using FenceList                   = DynamicArray< Fence::Handle      >;
+			using FrameBufferList             = DynamicArray< Framebuffer::Handle>;   
+			using ImageList                   = DynamicArray< Image::Handle      >;
+			using ImageViewList               = DynamicArray< ImageView          >;
+			using SemaphoreList               = DynamicArray< Semaphore::Handle  >;   
+			using SurfaceFormatList           = DynamicArray< Surface::Format    >;
+			using SurfacePresentationModeList = DynamicArray< EPresentationMode  >;
+			using ValidationLayerList         = DynamicArray< RoCStr             >;
 
 			// OS
 
@@ -62,14 +64,14 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			struct RawRenderContext : ARenderContext
 			{
-				AppInstance                  ApplicationInstance;
-				V4::PhysicalDevice           PhysicalDevice     ;
-				V4::LogicalDevice            LogicalDevice      ;
+				AppInstance::Handle          ApplicationInstance;
+				V3::PhysicalDevice           PhysicalDevice     ;
+				V3::LogicalDevice            LogicalDevice      ;
 				uint32                       QueueFamilyIndex   ;
 				LogicalDevice::Queue         Queue              ;
 				Pipeline::Cache              PipelineCache      ;
 				EFormat                      ImageFormat        ;
-				V4::RenderPass               RenderPass         ;
+				V3::RenderPass               RenderPass         ;
 				Memory::AllocationCallbacks* Allocator          ;
 				uint32                       MinimumFrameBuffers;
 				uint32                       FrameBufferCount   ;
@@ -84,11 +86,13 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 		#pragma region Temp
 
-			void Initalize_PayloadDeck();
+			void Start_ClearColorDemo(ptr<OSAL::Window> _window);
 
-			void Initalize_ClearColorDemo(ptr<OSAL::Window> _window);
+			void Render();
 
-			void Update();
+			void Stop_ClearColorDemo();
+
+			void Present();
 
 		#pragma endregion Temp
 
@@ -97,7 +101,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			// Descriptor Pool
 
-			EResult RequestDescriptorPool(V4::DescriptorPool& _pool, V4::DescriptorPool::CreateInfo _info);
+			EResult RequestDescriptorPool(V3::DescriptorPool& _pool, V3::DescriptorPool::CreateInfo _info);
 			
 			// Command Buffer Related
 
@@ -139,7 +143,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			void GenerateMipMaps(Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels);
 
-			void Initialize_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
+			void Start_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
 
 			void Cease_GPUComms();
 

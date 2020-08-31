@@ -47,11 +47,6 @@ namespace LAL
 	using float32 = float ;
 	using float64 = double;
 
-	// Data
-
-	using DataSize = std::size_t;
-	using sIntPtr  = std::intptr_t;
-	using uIntPtr  = std::uintptr_t;
 
 
 	// Functions

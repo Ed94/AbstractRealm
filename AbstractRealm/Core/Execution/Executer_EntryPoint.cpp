@@ -126,11 +126,9 @@ namespace Core::Execution
 
 			OSAL::SetWindow_SizeChangeCallback(DemoWindow, WindowSizeChanged);
 
-			HAL::GPU::Vulkan::Initalize_PayloadDeck();
-
 			HAL::GPU::Default_InitializeRenderer(EngineWindow);
 
-			HAL::GPU::Vulkan::Initalize_ClearColorDemo(DemoWindow);
+			HAL::GPU::Vulkan::Start_ClearColorDemo(DemoWindow);
 
 			Imgui::Initialize(EngineWindow);
 
@@ -141,6 +139,8 @@ namespace Core::Execution
 			// App closing
 
 			Imgui::Deinitialize();
+
+			HAL::GPU::Vulkan::Stop_ClearColorDemo();
 
 			HAL::GPU::Default_DeinitializeRenderer(EngineWindow);
 

@@ -18,8 +18,8 @@ standard c++.
 
 
 #include "LAL_Cpp_STL.hpp"
+#include "LAL_Algorithms.hpp"
 #include "LAL_Ambiguous.hpp"
-#include "LAL_BasicTypes.hpp"
 #include "LAL_Bitmask.hpp"
 #include "LAL_Casting.hpp"
 #include "LAL_CharacterTypes.hpp"
@@ -37,3 +37,4 @@ standard c++.
 #include "LAL_Functions.hpp"
 #include "LAL_Chrono.hpp"
 #include "LAL_Thread.hpp"
+#include "LAL_Types.hpp"

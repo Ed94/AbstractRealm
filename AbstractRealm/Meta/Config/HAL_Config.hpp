@@ -22,14 +22,14 @@ Currently has GPU HAL related configuration
 
 // Macros
 
-#define KHRONOS_VULCAN_HPP         0   // Khronos's vulkan wrapper.
-#define VAULTED_THERMALS_INTERFACE 1   // Vaulted thermals interface.
+#define Khronos_Vulkan_HPP        0   // Khronos's vulkan wrapper.
+#define VaultedThermals_Interface 1   // Vaulted thermals interface.
 
 /*
 Determines which Vulkan library will be used to interface with the Vulkan API.
 */
-#define VULCAN_INTERFACE \
-VAULTED_THERMALS_INTERFACE
+#define VulkanAPI_Interface \
+VaultedThermals_Interface
 
 
 
@@ -46,6 +46,28 @@ namespace Meta
 		Vulkan,
 	};
 
+	enum class EGPU_PresentMode
+	{
+		// No V-Sync (Vertical Synchronization) Frames are presented immediately on submission. (Least amount of input lag)
+		Immediate   ,   		
+
+		// First-In, First-Out	(V-Sync) Frames only replace during vertical blanking periods. 
+		// The frame displayed was the buffer in the "front of the line" of the queue (is not the most recently rendered).
+		FIFO        ,   		
+
+		// Same as FIFO, but if running below framerate, just submit as soon as possible (Tearing if below refresh rate).
+		FIFO_Relaxed,   
+
+		// Lowest input lag (other than immediate), present the more recently rendered frame.
+		MailBox         	
+	};
+
+	enum class EGPU_FrameBuffering
+	{
+		Double,   // Have one frame in flight for presentation to display, the other one is processed for rendering.
+		Triple 	  // Have one frame in flight for presentation to display, the other two are available for rendering.
+	};
+
 
 	// Compile-time
 
@@ -58,6 +80,9 @@ namespace Meta
 	Note: Changing the GPU_API will require the GPU_HAL to reinitialize.
 	*/
 	eGlobal data< EGPUPlatformAPI> GPU_API;
+
+	eGlobal data< EGPU_PresentMode   > GPU_PresentationPref  ;
+	eGlobal data< EGPU_FrameBuffering> GPU_FrameBufferingPref;
 
 	namespace  Vulkan
 	{

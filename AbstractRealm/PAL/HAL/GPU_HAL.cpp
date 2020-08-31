@@ -75,7 +75,7 @@ namespace HAL
 				{
 					case EGPUPlatformAPI::Vulkan:
 					{
-						Initialize_GPUComms_Bind = Vulkan::Initialize_GPUComms;
+						Initialize_GPUComms_Bind = Vulkan::Start_GPUComms;
 
 						Cease_GPUComms_Bind = Vulkan::Cease_GPUComms;
 							

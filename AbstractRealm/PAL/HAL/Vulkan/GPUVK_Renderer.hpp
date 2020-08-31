@@ -16,15 +16,17 @@ namespace HAL::GPU::Vulkan
 {
 	using namespace LAL;
 
+	
+
 
 
 	// Classes
 
-	class Surface : public V4::Surface
+	class Surface : public V3::Surface
 	{
 	public:
 
-		using Parent = V4::Surface;
+		using Parent = V3::Surface;
 
 		EResult Create(ptr<OSAL::Window> _window);
 
@@ -51,11 +53,11 @@ namespace HAL::GPU::Vulkan
 		ptr<OSAL::Window> window;
 	};
 
-	class SwapChain : public V4::SwapChain
+	class Swapchain : public V3::Swapchain
 	{
 	public:
 
-		using Parent = V4::SwapChain;
+		using Parent = V3::Swapchain;
 
 		EResult Create(Surface& _surface, Surface::Format _format);
 
@@ -81,6 +83,10 @@ namespace HAL::GPU::Vulkan
 
 		uint32 SupportedImageCount;
 
+		Meta::EGPU_PresentMode presentationMode = Meta::GPU_PresentationPref;
+
+		Meta::EGPU_FrameBuffering frameBuffering = Meta::GPU_FrameBufferingPref;
+
 		DynamicArray<Image    > images    ;
 		DynamicArray<ImageView> imageViews;
 	};
@@ -100,7 +106,7 @@ namespace HAL::GPU::Vulkan
 		ptr<GraphicsPipeline> Pipeline;
 	};
 
-	class RenderPass_WIP : V4::RenderPass
+	class RenderPass_WIP : V3::RenderPass
 	{
 	public:
 
@@ -135,25 +141,29 @@ namespace HAL::GPU::Vulkan
 
 
 	// Upgrade the frame buffer?
-	class FrameRenderer
+
+	/**
+	 * This is a way to keep track of the current frame
+	 * the render context is working on when rendering or submitting
+	 * to presentation.
+	 */
+	class FrameReference
 	{
 	public:
 
-		EResult Prepare
-		(
-		/*	Framebuffer& frameBuffer,
-			DynamicArray<RenderPass_WIP> _renderPasses*/
-		);
+		EResult Prepare();
 
-		void WaitFor_RenderQueued();
+		void Destroy();
 
 		//void Reset_RenderQueuedFence();
 
-		Fence& GetFence_RenderQueued();
+		Fence& RenderingInFlight();
 
-		//void WaitFor_FrameInFlight();
+		Fence& PresentInFlight();
 
-		Semaphore& GetSemaphore_SwapImageAcquired();
+		Semaphore& SwapAcquisionStatus();
+
+		Semaphore& PresentSubmitStatus();
 
 		const CommandBuffer& Request_PrimaryCmdBuffer();
 
@@ -161,16 +171,12 @@ namespace HAL::GPU::Vulkan
 
 		void ResetCommandPool();
 
-		//void Record();
-
-		//void Submit();
+		void WaitFor_RenderingInFlight();
 
 	private:
 
-		ptr<Framebuffer> frameBuffer;
-
 		DynamicArray<ptr<CommandPool>> commandPools;   // 1 Per working thread for the frame.
-
+ 
 		ptr<const CommandBuffer> Primary_CmdBuffer;
 
 		DynamicArray<ptr<CommandBuffer>> Secondary_CmdBuffers;
@@ -178,14 +184,14 @@ namespace HAL::GPU::Vulkan
 		// Fence Pool
 		//DynamicArray<Fence> fences;
 
-		Fence renderQueued, frameInFlight;
+		Fence flightToRender;
 
-		Semaphore swapImageAcquired;
+		Semaphore swapAcquisitionStatus, presentSubmitStatus;
 
 		// Semaphore Pool
 		//DynamicArray<Semaphore> semaphores;
 
-		ptr<DynamicArray<RenderPass_WIP>> renderPasses;
+		ptr<Deque<RenderPass_WIP>> renderPasses;
 
 		// Thread Count
 		DataSize threadsAssigned;
@@ -195,42 +201,44 @@ namespace HAL::GPU::Vulkan
 	{
 	public:
 
-		EResult Create(SwapChain& _swapChain);
+		EResult Create(Swapchain& _swapChain);
 
-
+		void Destroy();
 
 		void ProcessNextFrame();
 
 		void SubmitFrameToPresentation();
 
+		bool operator== (const RenderContext& _other);
+
 	protected:
 
 		EResult CreateDepthBuffer();
 
-		EResult CreateFramebuffer();
+		EResult CreateFramebuffers();
 
 		EResult CreateRenderPass();
 
 		void CheckContext();
 
-		ptr<SwapChain> swapchain;
+		ptr<Swapchain> swapchain;
 
 		bool processingFrame = false;
 
-		uint32 currentFrame = 0, previousFrame,
-			currentSwapImage;
+		uint32 currentFrame = 0 ,    // Current frame to process
+			   previousFrame    ,    // Previously processed frame
+			   currentSwap      ,    // Currently rendered frame to present.
+			   maxFramesInFlight ;   // Maximum number of frames to process at the same time.
 
 		DynamicArray<RenderGroup> renderGroups;
 
-		//DynamicArray<ptr<CommandBuffer>> commandBuffers;
+		DynamicArray<Framebuffer> frameBuffers;   // TODO: use frame reference?
 
-		DynamicArray<Framebuffer> frameBuffers;
+		DynamicArray<FrameReference> frameRefs;
 
-		DynamicArray<FrameRenderer> frameRenders;
+		Semaphore presentSubmitStatus;
 
-		Semaphore frameSubmitedToPresentation;
-
-		DynamicArray<Fence> swapImagesInFlight;
+		DynamicArray<Fence> swapsInFlight;
 
 
 		// Render pass object (To be used later)
@@ -265,21 +273,39 @@ namespace HAL::GPU::Vulkan
 
 
 
-	eGlobal Deque<Surface      > Surfaces      ;
-	eGlobal Deque<SwapChain    > SwapChains    ;
-	eGlobal Deque<RenderContext> RenderContexts;
+	//eGlobal Deque<Surface      > Surfaces      ;
+	//eGlobal Deque<Swapchain    > SwapChains    ;
+	//eGlobal Deque<RenderContext> RenderContexts;
+
+	enum class ESubmissionType
+	{
+		Individual,   // Individual render and presentation context submissions.
+		Combined  ,   // Combined render and presentation context submissions.
+		IR_CP     ,   // Individual render and combined presentation context submissions.
+		CR_IP         // Combined render and individual presentation context submissions.
+	};
 
 
 
-	Surface& CreateSurface(ptr<OSAL::Window> _window);
+	Surface& Request_Surface(ptr<OSAL::Window> _window);
 
-	SwapChain& CreateSwapChain(Surface& _surface, Surface::Format _formatDesired);
+	void Retire_Surface(ptr<Surface> _surface);
 
-	const RenderContext& CreateRenderContext(SwapChain& _swapchain);
+	Swapchain& Request_SwapChain(Surface& _surface, Surface::Format _formatDesired);
 
-	void DeinitalizeRenderer();
+	void Retire_Swapchain(ptr<Swapchain> _swapchain);
+
+	RenderContext& Request_RenderContext(Swapchain& _swapchain);
+
+	void Retire_RenderContext(const ptr<RenderContext> _renderContext);
+
+	void Renderer_SetSubmissionMode(ESubmissionType _submissionBehaviorDesired);
+
+	void Shutdown_Renderer();
 
 	void InitalizeRenderer();
 
 	void Renderer_Update();
+
+	void Renderer_Present();
 }

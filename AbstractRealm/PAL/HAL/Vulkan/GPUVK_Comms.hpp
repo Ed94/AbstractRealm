@@ -16,9 +16,12 @@ namespace HAL::GPU::Vulkan
 
 	using namespace VT;
 	using namespace VT::Corridors;
-	using namespace VT::V4;
+	using namespace VT::V3;
 
 	using namespace LAL;
+
+	using LAL::DynamicArray;
+	using LAL::Deque;
 
 	using LayerandExtensionsList = DynamicArray<LayerAndExtensionProperties>;
 
@@ -26,11 +29,11 @@ namespace HAL::GPU::Vulkan
 
 	// Classes
 
-	class PhysicalDevice : public V4::PhysicalDevice
+	class PhysicalDevice : public V3::PhysicalDevice
 	{
 	public:
 
-		using Parent = V4::PhysicalDevice;
+		using Parent = V3::PhysicalDevice;
 
 		EResult GetAvailableExtensions();
 
@@ -51,11 +54,11 @@ namespace HAL::GPU::Vulkan
 
 	using PhysicalDeviceList = DynamicArray<PhysicalDevice>;
 
-	class AppInstance : public V4::AppInstance
+	class AppInstance : public V3::AppInstance
 	{
 	public:
 
-		using Parent = V4::AppInstance;
+		using Parent = V3::AppInstance;
 
 		/** 
 		@brief Provides the handles of all available physical devices.
@@ -65,11 +68,11 @@ namespace HAL::GPU::Vulkan
 		EResult GetAvailablePhysicalDevices(DynamicArray<PhysicalDevice>& _deviceListing) const;
 	};
 
-	class LogicalDevice : public V4::LogicalDevice
+	class LogicalDevice : public V3::LogicalDevice
 	{
 	public:
 
-		using Parent = V4::LogicalDevice;
+		using Parent = V3::LogicalDevice;
 
 		void AssignPhysicalDevice(PhysicalDevice& _physicalDevice);
 
@@ -130,21 +133,22 @@ namespace HAL::GPU::Vulkan
 
 
 
-	StaticData
-	(
-		eGlobal AppInstance            AppGPU_Comms          ;
+	//StaticData
+	//(
+		/*eGlobal AppInstance            AppGPU_Comms          ;
 		eGlobal LayerandExtensionsList AppLayersAndExtensions;
 		eGlobal DynamicArray<RoCStr>   DesiredLayers         ;
-		eGlobal DynamicArray<RoCStr>   DesiredInstanceExts   ;  
+		eGlobal DynamicArray<RoCStr>   DesiredInstanceExts   ;
 		eGlobal DynamicArray<RoCStr>   DesiredDeviceExts     ;
 
-		eGlobal V4::DebugMessenger GPU_Messenger;
+		eGlobal V3::DebugMessenger GPU_Messenger;
 
 		eGlobal PhysicalDeviceList PhysicalGPUs;
-		eGlobal LogicalDeviceList  LogicalGPUs ;
-	)
+		eGlobal LogicalDeviceList  LogicalGPUs ;*/
+	//)
 	
 
+	AppInstance::Handle GetAppInstance_Handle();
 
 	void AcquirePhysicalDevices();
 

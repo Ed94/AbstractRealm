@@ -10,11 +10,11 @@ namespace HAL::GPU::Vulkan
 {
 	// Classes
 
-	class Image : public V4::Image
+	class Image : public V3::Image
 	{
 	public:
 
-		using Parent = V4::Image;
+		using Parent = V3::Image;
 
 		EFormat GetFormat() const ;
 

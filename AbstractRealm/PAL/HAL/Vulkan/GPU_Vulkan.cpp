@@ -16,7 +16,7 @@
 
 #include "Dev/Console.hpp"
 
-#if VULCAN_INTERFACE == VAULTED_THERMALS_INTERFACE
+#if VulkanAPI_Interface == VaultedThermals_Interface
 
 	namespace HAL::GPU
 	{
@@ -27,22 +27,22 @@
 			// Command
 
 			CommandPool                        SingleTimeCommandPool;
-			std::vector<CommandPool          > CommandPools_Old     ;   
-			std::vector<CommandBuffer        > CommandBuffers_Old   ;
-			std::vector<CommandBuffer::Handle> CommandBufferHandles ;
+			DynamicArray<CommandPool          > CommandPools_Old     ;   
+			DynamicArray<CommandBuffer        > CommandBuffers_Old   ;
+			DynamicArray<CommandBuffer::Handle> CommandBufferHandles ;
 
 			// Model V1 Rendering Pipeline
 
-			V4::GraphicsPipeline GraphicsPipeline_Old;
+			V3::GraphicsPipeline GraphicsPipeline_Old;
 
-			V4::RenderPass RenderPass_Old;   
+			V3::RenderPass RenderPass_Old;   
 
 			Pipeline::Cache PipelineCache;   // Implement.
 
 			Pipeline::Layout::DescriptorSet DescriptorSetLayout;
 			Pipeline::Layout                PipelineLayout;
 
-			V4::DescriptorPool DescriptorPool;
+			V3::DescriptorPool DescriptorPool;
 
 			DynamicArray<DescriptorSet        > DescriptorSets      ;
 			DynamicArray<DescriptorSet::Handle> DescriptorSetHandles;
@@ -60,13 +60,13 @@
 
 			// Surface Context
 
-			V4::Surface Surface_Old;
+			ptr<Surface> Surface_Old;
 
-			// SwapChain for surface
+			// Swapchain for surface
 
-			V4::SwapChain SwapChain_Old        ;
+			V3::Swapchain SwapChain_Old        ;
 			Extent2D      SwapChain_Extent     ;
-			V4::EFormat   SwapChain_ImageFormat;
+			V3::EFormat   SwapChain_ImageFormat;
 
 			DynamicArray<Image>       SwapChain_Images      ;
 			DynamicArray<ImageView>   SwapChain_ImageViews  ;
@@ -108,33 +108,40 @@
 
 			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 /*_miplevels*/);
 
+			ptr<Surface> ClearColor_Surface;
+			ptr<Swapchain> ClearColor_Swap;
+			ptr<RenderContext> ClearColor_Context;
 
-
-			void Initalize_PayloadDeck()
+			void Start_ClearColorDemo(ptr<OSAL::Window> _window)
 			{
-				PrepareDecks();
-			}
-
-			void Initalize_ClearColorDemo(ptr<OSAL::Window> _window)
-			{
-				auto& surface = CreateSurface(_window);
+				ClearColor_Surface = &Request_Surface(_window);
 
 				Surface::Format format;
 
 				format.Format = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				auto& swapChain = CreateSwapChain(surface, format);
+				ClearColor_Swap = &Request_SwapChain(*ClearColor_Surface, format);
 
-				auto& renderContext = CreateRenderContext(swapChain);
+				ClearColor_Context = &Request_RenderContext(*ClearColor_Swap);
 			}
 
-			void Update()
+			void Render()
 			{
 				Renderer_Update();
 			}
 
+			void Present()
+			{
+				Renderer_Present();
+			}
 
+			void Stop_ClearColorDemo()
+			{
+				Retire_RenderContext(ClearColor_Context);
+				Retire_Swapchain    (ClearColor_Swap   );
+				Retire_Surface      (ClearColor_Surface);
+			}
 
 		#pragma region Staying
 
@@ -161,7 +168,7 @@
 				Heap(SingleTimeCommandPool.EndSingleTimeCommands(_buffer, GetEngagedDevice().GetGraphicsQueue()));
 			}
 
-			EResult RequestDescriptorPool(V4::DescriptorPool& _pool, V4::DescriptorPool::CreateInfo _info)
+			EResult RequestDescriptorPool(V3::DescriptorPool& _pool, V3::DescriptorPool::CreateInfo _info)
 			{
 				EResult returnCode = Heap(_pool.Create(GetEngagedDevice(), _info));
 
@@ -252,7 +259,7 @@
 				Heap(SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, GetEngagedDevice().GetGraphicsQueue()));
 			}
 
-			std::vector<RenderCallback> RenderCallbacks;
+			DynamicArray<RenderCallback> RenderCallbacks;
 
 			void AddRenderCallback(RenderCallback _renderCallback)
 			{
@@ -482,7 +489,7 @@
 					descriptorWrites[1].ImageInfo       = &imageInfo; // Optional
 					descriptorWrites[1].TexelBufferView = nullptr   ; // Optional
 
-					DescriptorSets[0].Update(SCast<uint32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
+					DescriptorSets[0].Render(SCast<uint32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
 				}
 			}
 
@@ -1213,7 +1220,7 @@
 				return result;
 			}
 
-			void CreateVertexBuffers(Buffer& _vertexBuffer, V4::Memory&_vertexBufferMemory)
+			void CreateVertexBuffers(Buffer& _vertexBuffer, V3::Memory&_vertexBufferMemory)
 			{
 				DeviceSize bufferSize = sizeof(ModelVerticies[0]) * ModelVerticies.size();
 
@@ -1316,7 +1323,7 @@
 				throw RuntimeError("Failed to find supported format!");
 			}
 
-			void GenerateMipMaps(V4::Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
+			void GenerateMipMaps(V3::Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
 			{
 				EResult result = EResult::Incomplete;
 
@@ -1460,7 +1467,7 @@
 
 			// GPU_HAL
 
-			void Initialize_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion)
+			void Start_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion)
 			{
 				CLog("Initializing GPU Communication");
 
@@ -1471,10 +1478,14 @@
 				GenerateLogicalDevices();
 
 				EngageMostSuitableDevice();
+
+				PrepareDecks();
 			}
 
 			void Cease_GPUComms()
 			{
+				WipeDecks();
+
 				AppGPU_Comms_Cease();	
 			}
 
@@ -1490,7 +1501,7 @@
 
 			void SetRenderContext()
 			{
-				RenderContext_Default.ApplicationInstance =  AppGPU_Comms                          ;
+				RenderContext_Default.ApplicationInstance =  GetAppInstance_Handle();
 				RenderContext_Default.PhysicalDevice      =  GetEngagedDevice().GetPhysicalDevice();
 				RenderContext_Default.LogicalDevice       =  GetEngagedDevice()          ;
 				RenderContext_Default.Queue               = GetEngagedDevice().GetGraphicsQueue();
@@ -1508,16 +1519,14 @@
 			{
 				CLog("Doing dirty renderer initialization, clean this up!");
 
-				auto surface = CreateSurface(_window);
-
-				Surface_Old = surface;
+				Surface_Old = &Request_Surface(_window);
 
 				Surface::Format format;
 
 				format.Format     = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				auto swapchain =CreateSwapChain(surface, format); 
+				auto swapchain =Request_SwapChain(*Surface_Old, format); 
 
 				SwapChain_Old = swapchain;
 				SwapChain_Extent = swapchain.GetExtent();
@@ -1590,14 +1599,14 @@
 
 				CleanupSwapChain();
 
-				Surfaces[0].RequeryCapabilities();
+				Surface_Old->RequeryCapabilities();
 
 				Surface::Format format;
 
 				format.Format = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				auto swapchain = CreateSwapChain(Surfaces[0], format);
+				auto swapchain = Request_SwapChain(*Surface_Old, format);
 
 				SwapChain_Old = swapchain;
 				SwapChain_Extent = swapchain.GetExtent();
@@ -1631,7 +1640,7 @@
 				CreateDescriptorSets();
 			}
 
-			std::vector<CommandBuffer::Handle> CommandBuffersToSubmit;
+			DynamicArray<CommandBuffer::Handle> CommandBuffersToSubmit;
 
 			void Default_DrawFrame(ptr<Window> _window)
 			{
@@ -1708,13 +1717,13 @@
 
 				// Submit to presentation
 
-				SwapChain::PresentationInfo presentInfo{};
+				Swapchain::PresentationInfo presentInfo{};
 
 				presentInfo.WaitSemaphoreCount = 1                    ;
 				presentInfo.WaitSemaphores     = signalSemaphores     ;
 
 
-				SwapChain::Handle swapChains[] = { SwapChain_Old.GetHandle() };
+				Swapchain::Handle swapChains[] = { SwapChain_Old.GetHandle() };
 
 				presentInfo.SwapchainCount = 1          ;
 				presentInfo.Swapchains     = swapChains ;
@@ -1722,7 +1731,7 @@
 
 				presentInfo.Results = nullptr; // Optional
 
-				result = GetEngagedDevice().GetGraphicsQueue().QueuePresentation(*presentInfo);
+				result = GetEngagedDevice().GetGraphicsQueue().QueuePresentation(presentInfo);
 
 				if (result == EResult::Error_OutOfDate_KHR || result == EResult::Suboptimal_KHR || FramebufferResized) 
 				{
@@ -1773,9 +1782,9 @@
 						pool.Destroy();
 					}
 
-					if (Meta::Vulkan::EnableLayers) GPU_Messenger.Destroy();
+					//if (Meta::Vulkan::EnableLayers) GPU_Messenger.Destroy();
 
-					Surface_Old.Destroy();
+					Retire_Surface(Surface_Old);
 				//);
 			}
 		}

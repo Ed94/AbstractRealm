@@ -11,6 +11,27 @@
 
 namespace HAL::GPU::Vulkan
 {
+	StaticData
+	(
+		AppInstance            AppGPU_Comms          ;
+		LayerandExtensionsList AppLayersAndExtensions;
+		DynamicArray<RoCStr>   DesiredLayers         ;
+		DynamicArray<RoCStr>   DesiredInstanceExts   ;
+		DynamicArray<RoCStr>   DesiredDeviceExts     ;
+
+		V3::DebugMessenger GPU_Messenger;
+
+		PhysicalDeviceList PhysicalGPUs;
+		LogicalDeviceList  LogicalGPUs ;
+
+
+		// Currently the design of the vulkan backend is monolithic.
+		// Only one device of those available is engaged at a time
+
+		ptr<LogicalDevice> DeviceEngaged = nullptr;
+	)
+
+
 	// Forwards
 
 	void AquireSupportedValidationLayers();
@@ -77,7 +98,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult AppInstance::GetAvailablePhysicalDevices(DynamicArray<PhysicalDevice>& _deviceListing) const
 	{
-		uint32 count; std::vector<PhysicalDevice::Handle> handleList;
+		uint32 count; DynamicArray<PhysicalDevice::Handle> handleList;
 
 		EResult returnCode = QueryPhysicalDeviceListing(&count, nullptr);
 
@@ -345,29 +366,16 @@ namespace HAL::GPU::Vulkan
 
 
 
-	StaticData
-	(
-		AppInstance            AppGPU_Comms          ;
-		LayerandExtensionsList AppLayersAndExtensions;
-		DynamicArray<RoCStr>   DesiredLayers         ;
-		DynamicArray<RoCStr>   DesiredInstanceExts   ;
-		DynamicArray<RoCStr>   DesiredDeviceExts     ;
-
-		V4::DebugMessenger GPU_Messenger;
-
-		PhysicalDeviceList PhysicalGPUs;
-		LogicalDeviceList  LogicalGPUs ;
-
-
-		// Currently the design of the vulkan backend is monolithic.
-		// Only one device of those available is engaged at a time
-
-		ptr<LogicalDevice> DeviceEngaged = nullptr;
-	)
+	
 
 
 
 #pragma region Public
+
+	AppInstance::Handle GetAppInstance_Handle()
+	{
+		return AppGPU_Comms.GetHandle();
+	}
 
 	void AcquirePhysicalDevices()
 	{

@@ -212,6 +212,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="LAL\LAL_Algorithms.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="LAL\LAL_Chrono.hpp">
       <SubType>
       </SubType>
@@ -296,7 +300,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\LAL_BasicTypes.hpp">
+    <ClInclude Include="LAL\LAL_Types.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -374,6 +378,14 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_CPP_STL.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_GPU.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_GPU_Comms.hpp">
       <SubType>
       </SubType>
     </ClInclude>

@@ -101,7 +101,6 @@
     <ClInclude Include="LAL\LAL_Thread.hpp" />
     <ClInclude Include="LAL\LAL_Casting.hpp" />
     <ClInclude Include="LAL\LAL_Cpp_STL.hpp" />
-    <ClInclude Include="LAL\LAL_BasicTypes.hpp" />
     <ClInclude Include="LAL\LAL_Bitmask.hpp" />
     <ClInclude Include="LAL\LAL_CharacterTypes.hpp" />
     <ClInclude Include="LAL\LAL_FundamentalLimits.hpp" />
@@ -117,6 +116,10 @@
     <ClInclude Include="Resource\Mesh\Mesh_Primitives.hpp" />
     <ClInclude Include="Renderer\Renderer.hpp" />
     <ClInclude Include="Meta\Config\Resource_Config.hpp" />
+    <ClInclude Include="LAL\LAL_Algorithms.hpp" />
+    <ClInclude Include="LAL\LAL_Types.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_GPU_Comms.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\VaultedThermals\VT_GPU.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

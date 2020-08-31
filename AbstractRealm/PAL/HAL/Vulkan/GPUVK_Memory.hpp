@@ -9,11 +9,11 @@
 
 namespace HAL::GPU::Vulkan
 {
-	class Memory : public V4::Memory
+	class Memory : public V3::Memory
 	{
 	public:
 
-		using Parent = V4::Memory;
+		using Parent = V3::Memory;
 
 		EResult Allocate(const Requirements& _requirements, PropertyFlags _propertyFlags);
 	};

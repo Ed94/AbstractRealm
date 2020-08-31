@@ -8,10 +8,10 @@
 
 namespace HAL::GPU::Vulkan
 {
-	class CommandPool : public V4::CommandPool
+	class CommandPool : public V3::CommandPool
 	{
 	public:
-		using Parent = V4::CommandPool;
+		using Parent = V3::CommandPool;
 
 		const CommandBuffer& RequestBuffer();
 
@@ -30,19 +30,19 @@ namespace HAL::GPU::Vulkan
 
 	StaticData
 	(
-		eGlobal Deque<CommandPool> CommandPools;
+		//eGlobal Deque<CommandPool> CommandPools;
 
 
-		// Singled threaded stuff...
+		//// Singled threaded stuff...
 
-		eGlobal ptr<CommandPool> GeneralPool;
+		//eGlobal ptr<CommandPool> GeneralPool;
 
-		eGlobal ptr<CommandPool> TransientPool;
+		//eGlobal ptr<CommandPool> TransientPool;
 	)
 
 
 
-	void WipeDeck();
+	void WipeDecks();
 
 	void PrepareDecks();	
 
