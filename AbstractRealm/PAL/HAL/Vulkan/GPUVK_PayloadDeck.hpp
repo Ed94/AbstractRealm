@@ -28,20 +28,6 @@ namespace HAL::GPU::Vulkan
 
 
 
-	StaticData
-	(
-		//eGlobal Deque<CommandPool> CommandPools;
-
-
-		//// Singled threaded stuff...
-
-		//eGlobal ptr<CommandPool> GeneralPool;
-
-		//eGlobal ptr<CommandPool> TransientPool;
-	)
-
-
-
 	void WipeDecks();
 
 	void PrepareDecks();	

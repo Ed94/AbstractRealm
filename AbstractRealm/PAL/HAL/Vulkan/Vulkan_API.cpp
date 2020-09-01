@@ -5,8 +5,9 @@
 
 #if VulkanAPI_Interface == VaultedThermals_Interface
 
-	// All object required definitions are done here for VT.
+	// All object required definitions are done here for 
+
 	#define VT_V4_Setup_Implementation
-	#include "VaultedThermals/VaultedThermals.hpp"
+	#include "VaultedThermals/Library/VaultedThermals.hpp"
 
 #endif

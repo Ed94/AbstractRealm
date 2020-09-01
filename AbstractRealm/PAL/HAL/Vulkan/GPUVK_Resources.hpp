@@ -22,8 +22,6 @@ namespace HAL::GPU::Vulkan
 
 		EResult TransitionLayout(EImageLayout _old, EImageLayout _new);
 
-	
-
 		operator Parent&();
 
 	protected:
@@ -61,7 +59,4 @@ namespace HAL::GPU::Vulkan
 
 		VertexInputState state;
 	};
-
-
-	
 }

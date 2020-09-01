@@ -931,7 +931,7 @@ namespace HAL::GPU::Vulkan
 		SubmissionMode = _submissionBehaviorDesired;
 	}
 
-	void Shutdown_Renderer()
+	void Renderer_Shutdown()
 	{
 		for (auto& swapchain : Swapchains)
 		{
@@ -1017,7 +1017,7 @@ namespace HAL::GPU::Vulkan
 		RenderContexts.erase(find(RenderContexts.begin(), RenderContexts.end(), *_renderContext));
 	}
 
-	void InitalizeRenderer()
+	void Renderer_Initalize()
 	{
 	}
 

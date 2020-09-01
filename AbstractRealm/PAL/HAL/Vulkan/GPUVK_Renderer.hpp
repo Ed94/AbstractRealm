@@ -16,8 +16,6 @@ namespace HAL::GPU::Vulkan
 {
 	using namespace LAL;
 
-	
-
 
 
 	// Classes
@@ -273,10 +271,6 @@ namespace HAL::GPU::Vulkan
 
 
 
-	//eGlobal Deque<Surface      > Surfaces      ;
-	//eGlobal Deque<Swapchain    > SwapChains    ;
-	//eGlobal Deque<RenderContext> RenderContexts;
-
 	enum class ESubmissionType
 	{
 		Individual,   // Individual render and presentation context submissions.
@@ -301,9 +295,9 @@ namespace HAL::GPU::Vulkan
 
 	void Renderer_SetSubmissionMode(ESubmissionType _submissionBehaviorDesired);
 
-	void Shutdown_Renderer();
+	void Renderer_Shutdown();
 
-	void InitalizeRenderer();
+	void Renderer_Initalize();
 
 	void Renderer_Update();
 

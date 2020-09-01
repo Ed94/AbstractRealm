@@ -24,10 +24,8 @@ namespace HAL::GPU::Vulkan
 		PhysicalDeviceList PhysicalGPUs;
 		LogicalDeviceList  LogicalGPUs ;
 
-
-		// Currently the design of the vulkan backend is monolithic.
-		// Only one device of those available is engaged at a time
-
+		/*  Currently the design of the vulkan backend is monolithic.
+			Only one device of those available is engaged at a time */
 		ptr<LogicalDevice> DeviceEngaged = nullptr;
 	)
 

@@ -26,7 +26,7 @@ namespace HAL::GPU::Vulkan
 	using LayerandExtensionsList = DynamicArray<LayerAndExtensionProperties>;
 
 
-
+	
 	// Classes
 
 	class PhysicalDevice : public V3::PhysicalDevice
@@ -51,8 +51,6 @@ namespace HAL::GPU::Vulkan
 
 		LayerandExtensionsList layersAndExtensions;
 	};
-
-	using PhysicalDeviceList = DynamicArray<PhysicalDevice>;
 
 	class AppInstance : public V3::AppInstance
 	{
@@ -129,23 +127,11 @@ namespace HAL::GPU::Vulkan
 		DynamicArray<RoCStr> extensionsEnabled;
 	};
 
+
+	
+	using PhysicalDeviceList = DynamicArray<PhysicalDevice>;
 	using LogicalDeviceList = DynamicArray<LogicalDevice>;
 
-
-
-	//StaticData
-	//(
-		/*eGlobal AppInstance            AppGPU_Comms          ;
-		eGlobal LayerandExtensionsList AppLayersAndExtensions;
-		eGlobal DynamicArray<RoCStr>   DesiredLayers         ;
-		eGlobal DynamicArray<RoCStr>   DesiredInstanceExts   ;
-		eGlobal DynamicArray<RoCStr>   DesiredDeviceExts     ;
-
-		eGlobal V3::DebugMessenger GPU_Messenger;
-
-		eGlobal PhysicalDeviceList PhysicalGPUs;
-		eGlobal LogicalDeviceList  LogicalGPUs ;*/
-	//)
 	
 
 	AppInstance::Handle GetAppInstance_Handle();
