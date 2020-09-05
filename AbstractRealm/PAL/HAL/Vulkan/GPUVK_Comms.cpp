@@ -19,7 +19,7 @@ namespace HAL::GPU::Vulkan
 		DynamicArray<RoCStr>   DesiredInstanceExts   ;
 		DynamicArray<RoCStr>   DesiredDeviceExts     ;
 
-		V3::DebugMessenger GPU_Messenger;
+		V3::DebugUtils::Messenger GPU_Messenger;
 
 		PhysicalDeviceList PhysicalGPUs;
 		LogicalDeviceList  LogicalGPUs ;
@@ -37,14 +37,6 @@ namespace HAL::GPU::Vulkan
 	bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified);
 
 	void DetermineRequiredExtensions();
-
-	Bool DebugCallback_Internal
-	(
-			  MessageServerityFlags             _messageServerity, 
-			  MessageTypeFlags                  _messageType     ,
-		const V1::DebugMessenger::CallbackData  _callbackData, 
-			  ptr<void>                         _userData
-	);
 
 	void SetupDebugMessenger();
 
@@ -364,15 +356,11 @@ namespace HAL::GPU::Vulkan
 
 
 
-	
-
-
-
 #pragma region Public
 
-	AppInstance::Handle GetAppInstance_Handle()
+	const AppInstance& GetAppInstance()
 	{
-		return AppGPU_Comms.GetHandle();
+		return AppGPU_Comms;
 	}
 
 	void AcquirePhysicalDevices()
@@ -547,9 +535,9 @@ namespace HAL::GPU::Vulkan
 
 			Bool PresentationSupport; 
 
-			testSurface.AssignPhysicalDevice(device.GetPhysicalDevice().GetHandle());
+			testSurface.AssignPhysicalDevice(device.GetPhysicalDevice());
 
-			// Currently the graphis queue created must be the same one able to present.
+			// Currently the graphics queue created must be the same one able to present.
 			// This will most likely be changed later...
 			testSurface.CheckPhysicalDeviceSupport
 			(
@@ -757,18 +745,15 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	/*
-	I had to make this to resolve an issue with a decltype function resolve error on EnforceConvention.
-	*/
-	Bool DebugCallback_Internal
+	Bool DebugCallback
 	(
-		      MessageServerityFlags            _messageServerity, 
-		      MessageTypeFlags                 ,//_messageType     ,
-		const V1::DebugMessenger::CallbackData _callbackData    , 
-		      ptr<void>                        //_userData
+		      DebugUtils::MessageServerityFlags   _messageServerity, 
+		      DebugUtils::MessageTypeFlags        /*_messageType*/ ,
+		const DebugUtils::Messenger::CallbackData _callbackData    , 
+		      ptr<void>                           /*_userData*/
 	)
 	{
-		using ESeverity = EDebugUtilities_MessageSeverity;
+		using ESeverity = EDebugUtils_MessageSeverity;
 
 		Dev::CLog_Error(String(_callbackData.Message));
 
@@ -828,7 +813,7 @@ namespace HAL::GPU::Vulkan
 
 	void SetupDebugMessenger()
 	{
-		stack<DebugMessenger::CreateInfo> info{};
+		stack<DebugUtils::Messenger::CreateInfo> info{};
 
 		using EMaskS = decltype(info.Serverity)::Enum;
 
@@ -838,7 +823,7 @@ namespace HAL::GPU::Vulkan
 
 		info.Type.Set(EMaskT::General, EMaskT::Validation, EMaskT::Performance);
 
-		info.UserCallback = EnforceConvention(EnforcerID_Vulkan, DebugCallback_Internal);
+		info.UserCallback = EnforceVulkanCallingConvention(DebugCallback);
 
 		info.UserData = nullptr;
 

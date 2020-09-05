@@ -8,6 +8,6 @@
 	// All object required definitions are done here for 
 
 	#define VT_V4_Setup_Implementation
-	#include "VaultedThermals/Library/VaultedThermals.hpp"
+	#include "VaultedThermals/include/VaultedThermals.hpp"
 
 #endif

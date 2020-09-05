@@ -12,39 +12,7 @@
 
 namespace OSAL
 {
-	struct CPU_InstructionSupportInfo
-	{
-
-	};
-
-
-	struct DisplayConfig
-	{
-		uint32 Width, Height;
-
-		DynamicArray<float64> RefreshRates;
-	};
-
-	struct DisplayInfo
-	{
-		DataSize ID;
-
-		uint32 Width, Height;
-
-		uint32 DPI, ColorDepth;
-
-		float64 RefreshRate;
-		
-		DynamicArray<DisplayConfig> Configurations;
-	};
-
-	struct MemoryInfo
-	{
-		uInt64 PhysicalTotal;
-		uInt64 PhysicalAvail;
-		uInt64 VirtualTotal ;
-		uInt64 VirtualAvail ;
-	};
+	
 
 
 
@@ -57,9 +25,15 @@ namespace OSAL
 		MemoryInfo Memory;
 
 		DynamicArray<DisplayInfo> Displays;
+
+		DisplayInfo* MainDisplay;
 	)
 
 
+	const DisplayInfo& GetMainDisplay()
+	{
+		return dref(MainDisplay);
+	}
 
 	void Load_Hardware()
 	{
@@ -107,6 +81,8 @@ namespace OSAL
 
 			displayIndex++;
 		}
+
+		MainDisplay = getAddress(Displays[0]);
 
 		CLog("CPU Information:"); 
 		CLog(String("Vendor: ") + CPU_Vendor);

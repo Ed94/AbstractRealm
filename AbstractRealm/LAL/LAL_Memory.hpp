@@ -86,11 +86,19 @@ namespace LAL
 	Template version of the C-Assist Stack macro.
 	*/
 	template<typename Type> using stack = Type;
+
+	/**
+	Static Data Scope Type Specifier
+
+	Specifies that the object will be allocated within a static segment of memory.
+	(Explicit indication. Does not do anything)
+	*/
+	template<typename Type> using staticData = Type;
 	
 	/*
 	Data Segment Scope Type Specifier
 
-	Specifies to allocate the object within the Data segment or initialization specified.
+	Specifies that object will be allocated the Data segment or initialization specified.
 	(Explicit indication. Does not do anything)
 	*/
 	template<typename Type> using data = Type;
@@ -98,7 +106,7 @@ namespace LAL
 	/*
 	BSS Template Scope Type Specifier
 
-	Specifies to allocate the object within the BSS segment or uninitialized data.
+	Specifies that the object will be allocated the BSS segment or uninitialized data.
 	(Explicit indication. Does not do anything)
 	*/
 	template<typename Type> using bss = Type;

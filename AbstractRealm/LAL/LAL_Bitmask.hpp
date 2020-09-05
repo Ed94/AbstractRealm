@@ -1,5 +1,8 @@
 /*
+Bitmask
 
+A wrapper for bitmasks with support for specifying enum classes as bitmaskable types, and 
+ease of use functionality for manipulating the mask.
 */
 
 
@@ -18,16 +21,22 @@
 	template<typename Enum>
 	struct Bitmaskable
 	{
-		static const bool specified = false;
+		static constexpr bool specified = false;
 	};
 
-	#define SpecifyBitmaskable(__ENUM)      \
-	template<>                              \
-	struct Bitmaskable<__ENUM>              \
-	{							            \
-		static const bool specified = true; \
-	};	
+	#define SpecifyBitmaskable(__ENUM)          \
+	template<>                                  \
+	struct Bitmaskable<__ENUM>                  \
+	{                                           \
+		static constexpr bool specified = true; \
+	};
 
+#endif
+
+
+
+namespace LAL
+{
 	template
 	<
 		typename EnumType,
@@ -48,7 +57,7 @@
 		Bitmask() : mask(0) {}
 
 		template<typename... BitTypes>
-		Bitmask(BitTypes... _bits) : mask(0)
+		Bitmask(const BitTypes... _bits) : mask(0)
 		{
 			mask = (Representation(_bits) | ...);
 		}
@@ -70,13 +79,13 @@
 		}
 
 		template<typename... BitType>
-		bool HasOrEither(const BitType... _bits)
+		bool HasOrEither(const BitType... _bits) const
 		{
 			return (mask & (Representation(_bits) | ...)) != 0;
 		}
 
 		template<typename... BitType>
-		bool HasExactly(const BitType... _bits)
+		bool HasExactly(const BitType... _bits) const
 		{
 			return (mask & (Representation(_bits) | ...)) == mask;
 		}
@@ -95,19 +104,19 @@
 			mask = (Representation(_bits) | ...);
 		}
 
-		_ThisType& operator = (const BitmaskRepresentation _mask) { mask = _mask; return *this; }
+		_ThisType& operator= (const BitmaskRepresentation _mask) { mask = _mask; return *this; }
 
 		operator Representation() const
 		{
 			return mask;
 		}
 
-		bool operator== (const Representation _other)
+		bool operator== (const Representation _other) const
 		{
 			return mask == _other;
 		}
 
-		bool operator== (const _ThisType& _other)
+		bool operator== (const _ThisType& _other) const
 		{
 			return mask == _other.mask;
 		}
@@ -115,5 +124,4 @@
 	private:
 		Representation mask;
 	};
-
-#endif
+}

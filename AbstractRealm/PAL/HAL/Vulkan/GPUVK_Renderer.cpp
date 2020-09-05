@@ -11,7 +11,7 @@ namespace HAL::GPU::Vulkan
 	{
 		AssignPhysicalDevice(GetEngagedPhysicalGPU());
 
-		EResult result = Parent::Create(GetAppInstance_Handle(), OSAL::GetOS_WindowHandle(_window));
+		EResult result = Parent::Create(GetAppInstance(), OSAL::GetOS_WindowHandle(_window));
 
 		if (result != EResult::Success) return result;
 
@@ -189,7 +189,7 @@ namespace HAL::GPU::Vulkan
 		info.Clipped          = true                                       ;
 		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
-		EResult result = Heap(Parent::Create(GetEngagedDevice().GetHandle(), info));
+		EResult result = Heap(Parent::Create(GetEngagedDevice(), info));
 
 		if (result != EResult::Success) return result;
 
@@ -334,7 +334,7 @@ namespace HAL::GPU::Vulkan
 		info.Clipped          = true                                       ;
 		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
-		EResult result = Heap(Parent::Create(GetEngagedDevice().GetHandle(), info));
+		EResult result = Heap(Parent::Create(GetEngagedDevice(), info));
 
 		if (result != EResult::Success) throw RuntimeError("Unable to regenerate swapchain.");
 
@@ -371,7 +371,7 @@ namespace HAL::GPU::Vulkan
 
 			ImageView view;
 
-			result = Heap(view.Create(GetEngagedDevice().GetHandle(), viewInfo));	
+			result = Heap(view.Create(GetEngagedDevice(), viewInfo));	
 
 			if (result != EResult::Success)
 				return result;
@@ -401,7 +401,7 @@ namespace HAL::GPU::Vulkan
 
 		for (DeviceSize index = 0; index < numImages; index++)
 		{
-			images[index].Assign(device, handles[index]);
+			images[index].Assign(*device, handles[index]);
 		}
 
 		return result;
@@ -539,7 +539,7 @@ namespace HAL::GPU::Vulkan
 
 	void RenderContext::ProcessNextFrame()
 	{
-		auto& frameRef = frameRefs[currentFrame];
+		auto& frameRef = frameRefs[currentFrameBuffer];
 
 		// Make sure next frame to process has been processed by the GPU.
 		frameRef.RenderingInFlight().WaitFor(UInt64Max);
@@ -573,7 +573,7 @@ namespace HAL::GPU::Vulkan
 		swapsInFlight[currentSwap] = frameRef.RenderingInFlight();
 
 		// Prep the ClearValue for the render pass...
-		switch (currentFrame)
+		switch (currentFrameBuffer)
 		{ 
 			case 0: clearValues[0].Color = { 1.0f, 0.0f, 0.0f, 1.0f }; break;
 			case 1: clearValues[0].Color = { 0.0f, 1.0f, 0.0f, 1.0f }; break;
@@ -596,7 +596,7 @@ namespace HAL::GPU::Vulkan
 
 		if (!Meta::UseConcurrency)
 		{
-			frameRefs[currentFrame].ResetCommandPool();
+			frameRefs[currentFrameBuffer].ResetCommandPool();
 
 			auto& primaryBuffer = frameRef.Request_PrimaryCmdBuffer();
 
@@ -655,7 +655,7 @@ namespace HAL::GPU::Vulkan
 
 	void RenderContext::SubmitFrameToPresentation()
 	{
-		auto& frameRef = frameRefs[currentFrame];
+		auto& frameRef = frameRefs[currentFrameBuffer];
 
 		Swapchain::PresentationInfo presentInfo;
 
@@ -681,10 +681,10 @@ namespace HAL::GPU::Vulkan
 			throw RuntimeError("Not able to render frame and was not due to out-of-date or suboptimal...");
 		}
 
-		previousFrame = currentFrame;
+		previousFrame = currentFrameBuffer;
 
 		// Frames are numbers 0 to the number of frames buffered - 1 (to offset for initial index being 0)
-		currentFrame = (currentFrame + 1) % maxFramesInFlight;
+		currentFrameBuffer = (currentFrameBuffer + 1) % maxFramesInFlight;
 	}
 
 	bool RenderContext::operator== (const RenderContext& _other)
@@ -772,7 +772,7 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.BaseArrayLayer = 0;
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
-		result = Heap(depthBuffer.view.Create(GetEngagedDevice().GetHandle(), viewInfo));
+		result = Heap(depthBuffer.view.Create(GetEngagedDevice(), viewInfo));
 
 		return result;
 	}
@@ -807,7 +807,7 @@ namespace HAL::GPU::Vulkan
 
 			Framebuffer framebuffer;
 
-			result = framebuffer.Create(GetEngagedDevice().GetHandle(), info);
+			result = framebuffer.Create(GetEngagedDevice(), info);
 
 			frameBuffers.push_back(framebuffer);
 
@@ -890,7 +890,7 @@ namespace HAL::GPU::Vulkan
 		info.DependencyCount = 0;
 		info.Dependencies = nullptr;
 
-		EResult result = renderPass.Create(GetEngagedDevice().GetHandle(), info);
+		EResult result = renderPass.Create(GetEngagedDevice(), info);
 
 		if (result != EResult::Success) return result;
 

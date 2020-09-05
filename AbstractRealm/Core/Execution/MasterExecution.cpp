@@ -4,6 +4,7 @@
 
 #include "Cycler.hpp"
 #include "Concurrency/CyclerPool.hpp"
+#include "Meta/EngineInfo.hpp"
 
 // When you have a proper UI module setup, setup it to bind to imgui instead.
 #include "ImGui_SAL.hpp"
@@ -13,6 +14,7 @@
 namespace Core::Execution
 {
 	using namespace Concurrency;
+	//using namespace Meta;
 
 	PrimitiveExecuter<void()> MasterExecuter;
 
@@ -45,7 +47,7 @@ namespace Core::Execution
 
 		static Duration64 consoleUpdateDelta(0), consoleUpdateInterval(1.0 / 30.0);
 
-		static Duration64 renderPresentDelta(0), renderPresentInterval(1.0 / 60.0);
+		static Duration64 renderPresentDelta(0), renderPresentInterval = Meta::FixRenderRateToRefreshRate ? Duration64(1.0 / OSAL::GetMainDisplay().RefreshRate) : Duration64(0.0);
 
 		if (consoleUpdateDelta >= consoleUpdateInterval)
 		{

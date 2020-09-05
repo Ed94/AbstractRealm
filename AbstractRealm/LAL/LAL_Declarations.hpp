@@ -38,6 +38,9 @@ virtual
 #define multiDefs \
 inline
 
+// Alias for a constexpr intended to be used as an inline expansion.
+#define constInline 
+
 
 // Namespaces
 

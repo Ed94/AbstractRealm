@@ -177,17 +177,6 @@
 
 		#pragma endregion Staying
 
-			// Forwards
-
-			Bool DebugCallback_Internal
-			(
-				      MessageServerityFlags            _messageServerity, 
-				      MessageTypeFlags                 _messageType     ,
-				const V1::DebugMessenger::CallbackData _callbackData    , 
-				      ptr<void>                        _userData
-			);
-
-
 			// Functions
 
 			void CleanupSwapChain()
@@ -551,7 +540,7 @@
 					framebufferInfo.Height          = SwapChain_Extent.Height          ;
 					framebufferInfo.Layers          = 1                                ;
 
-					if (Heap(SwapChain_Framebuffers[index].Create(GetEngagedDevice().GetHandle(), framebufferInfo)) != EResult::Success) 
+					if (Heap(SwapChain_Framebuffers[index].Create(GetEngagedDevice(), framebufferInfo)) != EResult::Success) 
 					{
 						throw std::runtime_error("Failed to create framebuffer!");
 					}
@@ -570,11 +559,11 @@
 				Pipeline::ShaderStage::CreateInfo fragShaderStage_CreationSpec{};
 
 				vertexShaderStage_CreeationSpec.Stage = EShaderStageFlag::Vertex;
-				vertexShaderStage_CreeationSpec.Module = _shaders[0].GetHandle();
+				vertexShaderStage_CreeationSpec.Module = _shaders[0]            ;
 				vertexShaderStage_CreeationSpec.Name   = "main"     ;
 
 				fragShaderStage_CreationSpec.Stage = EShaderStageFlag::Fragment;
-				fragShaderStage_CreationSpec.Module = _shaders[1].GetHandle();
+				fragShaderStage_CreationSpec.Module = _shaders[1];
 				fragShaderStage_CreationSpec.Name   = "main"     ;
 
 				Pipeline::ShaderStage::CreateInfo shaderStages[] = { vertexShaderStage_CreeationSpec, fragShaderStage_CreationSpec };
@@ -747,7 +736,7 @@
 				pipelineInfo.BasePipelineHandle = VK_NULL_HANDLE;   // Optional
 				pipelineInfo.BasePipelineIndex  = -1            ;   // Optional
 
-				EResult returnCode = Heap(GraphicsPipeline_Old.Create(GetEngagedDevice().GetHandle(), pipelineInfo));
+				EResult returnCode = Heap(GraphicsPipeline_Old.Create(GetEngagedDevice(), pipelineInfo));
 
 				if (returnCode != EResult::Success) 
 					throw std::runtime_error("Failed to create graphics pipeline!");
@@ -784,7 +773,7 @@
 				imageInfo.Samples      = _numSamples            ;
 				imageInfo.Flags        = 0                      ;
 
-				if (Heap(_image.Create(GetEngagedDevice().GetHandle(), imageInfo)) != EResult::Success)
+				if (Heap(_image.Create(GetEngagedDevice(), imageInfo)) != EResult::Success)
 					throw RuntimeError("Failed to create image!");
 
 				Memory::AllocateInfo allocationInfo {};
@@ -821,7 +810,7 @@
 
 				ImageView result;
 
-				if (Heap(result.Create(GetEngagedDevice().GetHandle(), viewInfo, Memory::DefaultAllocator)) != EResult::Success )
+				if (Heap(result.Create(GetEngagedDevice(), viewInfo, Memory::DefaultAllocator)) != EResult::Success )
 					throw RuntimeError("Failed to create texture image view!");
 
 				return result;
@@ -989,7 +978,7 @@
 				renderPassInfo.DependencyCount = 1          ;
 				renderPassInfo.Dependencies    = &dependency;
 
-				if (Heap(RenderPass_Old.Create(GetEngagedDevice().GetHandle(), renderPassInfo) != EResult::Success))
+				if (Heap(RenderPass_Old.Create(GetEngagedDevice(), renderPassInfo) != EResult::Success))
 				{
 					throw std::runtime_error("failed to create render pass!");
 				}
@@ -1015,9 +1004,9 @@
 				
 					Heap
 					(
-						result = ImageAvailable_Semaphores[index].Create(GetEngagedDevice().GetHandle(), semaphore_CreationSpec);
-						result = RenderFinished_Semaphores[index].Create(GetEngagedDevice().GetHandle(), semaphore_CreationSpec);
-						result = InFlightFences           [index].Create(GetEngagedDevice().GetHandle(), fence_CreationSpec    );
+						result = ImageAvailable_Semaphores[index].Create(GetEngagedDevice(), semaphore_CreationSpec);
+						result = RenderFinished_Semaphores[index].Create(GetEngagedDevice(), semaphore_CreationSpec);
+						result = InFlightFences           [index].Create(GetEngagedDevice(), fence_CreationSpec    );
 					);
 
 					if (result != EResult::Success)
@@ -1132,7 +1121,7 @@
 				samplerInfo.MinimumLod = 0.0f                      ;
 				samplerInfo.MaxLod     = SCast<float32>(MipMapLevels);
 
-				if (Heap(TextureSampler.Create(GetEngagedDevice().GetHandle(), samplerInfo, nullptr)) != EResult::Success)
+				if (Heap(TextureSampler.Create(GetEngagedDevice(), samplerInfo, nullptr)) != EResult::Success)
 					throw RuntimeError("Failed to create texture sampler!");
 			}
 
@@ -1154,9 +1143,9 @@
 				ShaderModule::CreateInfo vertInfo(triShader_VertCode.data(), triShader_VertCode.size());
 				ShaderModule::CreateInfo fragInfo(triShader_FragCode.data(), triShader_FragCode.size());
 
-				ShaderModule triShaderModule_Vert; triShaderModule_Vert.Create(GetEngagedDevice().GetHandle(), vertInfo);
+				ShaderModule triShaderModule_Vert; triShaderModule_Vert.Create(GetEngagedDevice(), vertInfo);
 
-				ShaderModule triShaderModule_Frag; triShaderModule_Frag.Create(GetEngagedDevice().GetHandle(), fragInfo);
+				ShaderModule triShaderModule_Frag; triShaderModule_Frag.Create(GetEngagedDevice(), fragInfo);
 
 				StaticArray<ShaderModule, 2> result = { triShaderModule_Vert, triShaderModule_Frag };
 
@@ -1212,8 +1201,8 @@
 				ShaderModule vertShaderModule; ShaderModule::CreateInfo vertShaderInfo(vertCode.data(), vertCode.size());
 				ShaderModule fragShaderModule; ShaderModule::CreateInfo fragShaderInfo(fragCode.data(), fragCode.size());
 
-				vertShaderModule.Create(GetEngagedDevice().GetHandle(), vertShaderInfo);
-				fragShaderModule.Create(GetEngagedDevice().GetHandle(), fragShaderInfo);
+				vertShaderModule.Create(GetEngagedDevice(), vertShaderInfo);
+				fragShaderModule.Create(GetEngagedDevice(), fragShaderInfo);
 				
 				StaticArray<ShaderModule, 2> result = { vertShaderModule, fragShaderModule };
 
@@ -1281,17 +1270,6 @@
 					stagingBuffer.Destroy();
 					stagingBufferMemory.Free();
 				);
-			}
-
-			Bool DebugCallback
-			(
-					  MessageServerityFlags        _messageServerity, 
-					  MessageTypeFlags             _messageType     ,
-				const DebugMessenger::CallbackData _callbackData    , 
-					  ptr<void>                    _userData
-			)
-			{
-				return DebugCallback_Internal(_messageServerity, _messageType, _callbackData, _userData);
 			}
 
 			EFormat FindDepthFormat()
@@ -1501,7 +1479,7 @@
 
 			void SetRenderContext()
 			{
-				RenderContext_Default.ApplicationInstance =  GetAppInstance_Handle();
+				RenderContext_Default.ApplicationInstance =  GetAppInstance();
 				RenderContext_Default.PhysicalDevice      =  GetEngagedDevice().GetPhysicalDevice();
 				RenderContext_Default.LogicalDevice       =  GetEngagedDevice()          ;
 				RenderContext_Default.Queue               = GetEngagedDevice().GetGraphicsQueue();

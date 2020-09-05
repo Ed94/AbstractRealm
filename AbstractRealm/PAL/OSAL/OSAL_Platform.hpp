@@ -40,15 +40,14 @@ namespace OSAL
 
 	#ifdef _WIN32
 		constexpr EOS OS = EOS::Windows;
-
 	#endif
 
 	#ifdef __MACH__
-
+		constexpr EOS OS = EOS::Mac;
 	#endif
 
 	#ifdef __linux__
-
+		constexpr EOS OS = EOS::Linux;
 	#endif 
 
 	constexpr bool IsWindows = OS == EOS::Windows;

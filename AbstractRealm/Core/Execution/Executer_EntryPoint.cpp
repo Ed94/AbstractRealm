@@ -92,6 +92,8 @@ namespace Core::Execution
 				Dev::LoadModule();
 			}
 
+			std::cout.precision(10);
+
 			Dev::CLog("Core-Execution: Initiating");
 
 			OSAL::Load();

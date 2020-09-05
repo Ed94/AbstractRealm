@@ -223,7 +223,7 @@ namespace HAL::GPU::Vulkan
 
 		bool processingFrame = false;
 
-		uint32 currentFrame = 0 ,    // Current frame to process
+		uint32 currentFrameBuffer = 0 ,    // Current frame to process
 			   previousFrame    ,    // Previously processed frame
 			   currentSwap      ,    // Currently rendered frame to present.
 			   maxFramesInFlight ;   // Maximum number of frames to process at the same time.

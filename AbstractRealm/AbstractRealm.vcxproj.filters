@@ -64,7 +64,6 @@
     <ClInclude Include="PAL\SAL\EnkiTS_SAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Comms.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Renderer.hpp" />
-    <ClInclude Include="LAL\LAL_ConventionEnforcer.hpp" />
     <ClInclude Include="LAL\LAL_Declarations.hpp" />
     <ClInclude Include="LAL\LAL_Chrono.hpp" />
     <ClInclude Include="LAL\LAL_Containers.hpp" />
@@ -118,6 +117,54 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\Library\VaultedThermals\VT_Types.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\Library\VaultedThermals\VT_Vaults.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\Library\VaultedThermals.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Backend.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Command.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Constants.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_CPP_STL.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Debug.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Enums.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_GPU.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_GPU_Comms.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Initialization.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_LogicalDevice.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Memory.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Memory_Backend.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_PhysicalDevice.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Pipelines.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Platform.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_RenderPass.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Resource.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Sampler.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Shaders.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Surface.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_SwapChain.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_SyncAndCacheControl.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Types.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Vaults.hpp" />
+    <ClInclude Include="LAL\LAL_CallEnforcer.hpp" />
+    <ClInclude Include="Resource\Texture\Texture.hpp" />
+    <ClInclude Include="Resource\Model\Model.hpp" />
+    <ClInclude Include="Resource\Sprite\Sprite.hpp" />
+    <ClInclude Include="Renderer\RenderTarget.hpp" />
+    <ClInclude Include="Renderer\Window.hpp" />
+    <ClInclude Include="Renderer\Display.hpp" />
+    <ClInclude Include="Renderer\Camera.hpp" />
+    <ClInclude Include="Simulation\Observer.hpp" />
+    <ClInclude Include="Simulation\Space.hpp" />
+    <ClInclude Include="Core\Events\EventMngr.hpp" />
+    <ClInclude Include="Core\Objects\ObjectMngr.hpp" />
+    <ClInclude Include="Core\Objects\Object.hpp" />
+    <ClInclude Include="Editor\Assets\Asset.hpp" />
+    <ClInclude Include="Editor\Assets\AssetMngr.hpp" />
+    <ClInclude Include="Editor\DevUI\DevUI.hpp" />
+    <ClInclude Include="Editor\Profiling\DevProfiler.hpp" />
+    <ClInclude Include="Networking\Networking.hpp" />
+    <ClInclude Include="Manifest\Cosmos.hpp" />
+    <ClInclude Include="Manifest\ECS\ECS.hpp" />
+    <ClInclude Include="Manifest\Zone.hpp" />
+    <ClInclude Include="Manifest\States\BasicState.hpp" />
+    <ClInclude Include="Manifest\World.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -166,6 +213,7 @@
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Resources.cpp" />
     <ClCompile Include="Resource\Mesh\Mesh_Primitives.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Resource\Texture\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="PAL\HAL\Vulkan\VaultedThermals\CMakeLists.txt" />

@@ -114,17 +114,20 @@ namespace Meta
 
 		Note: Changing the operational mode will require many modules to reinitialize themselves.
 		*/
-		eGlobal data< EOperationMode> OperationalMode;
+		eGlobal EOperationMode OperationalMode;
 
-		eGlobal data< bool> UseEditor   ;
-		eGlobal data< bool> UseDebug    ;
-		eGlobal data< bool> UseProfiling;
+		eGlobal bool UseEditor   ;
+		eGlobal bool UseDebug    ;
+		eGlobal bool UseProfiling;
 
 		/**
 		 * Determines whether the engine should use the core's concurrency module (multi-threading at the CPU).
 		 * 
 		 * Concurrency still occurs on other hardware such as the GPU. (Just not from the Host CPU)
 		 */
-		eGlobal data< bool> UseConcurrency;
+		eGlobal bool UseConcurrency;
+
+		// #TODO: Put in a Execution config
+		eGlobal bool FixRenderRateToRefreshRate;
 	)
 }

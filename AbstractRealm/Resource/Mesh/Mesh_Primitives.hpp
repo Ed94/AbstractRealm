@@ -50,13 +50,6 @@ namespace Resource::Mesh
 
 		struct Square
 		{
-			//Square() : 
-			//	V1( -1.0f,  1.0f ),
-			//	V2(  1.0f,  1.0f ),
-			//	V3( -1.0f, -1.0f ),
-			//	V4(  1.0f, -1.0f )
-			//{}
-
 			Square(DefaultValue _x, DefaultValue _y) :
 				V1(-_x,  _y),
 				V2( _x,  _y),

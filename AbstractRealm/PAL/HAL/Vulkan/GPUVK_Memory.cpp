@@ -18,6 +18,6 @@ namespace HAL::GPU::Vulkan
 			_propertyFlags
 		);
 
-		return Parent::Allocate(GetEngagedDevice().GetHandle(), allocInfo);
+		return Parent::Allocate(GetEngagedDevice(), allocInfo);
 	}
 }

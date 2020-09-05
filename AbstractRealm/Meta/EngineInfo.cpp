@@ -7,12 +7,14 @@ namespace Meta
 {
 	StaticData
 	(
-		data< EOperationMode> OperationalMode = Default_OperationalMode();
+		EOperationMode OperationalMode = Default_OperationalMode();
 
-		data< bool> UseEditor    = OperationalMode == EOperationMode::Development;
-		data< bool> UseDebug     = OperationalMode <  EOperationMode::Profiling  ;
-		data< bool> UseProfiling = OperationalMode <  EOperationMode::User       ;
+		bool UseEditor    = OperationalMode == EOperationMode::Development;
+		bool UseDebug     = OperationalMode <  EOperationMode::Profiling  ;
+		bool UseProfiling = OperationalMode <  EOperationMode::User       ;
 
-		data< bool> UseConcurrency = false;
+		bool UseConcurrency = false;
+
+		bool FixRenderRateToRefreshRate = true;
 	)
 }

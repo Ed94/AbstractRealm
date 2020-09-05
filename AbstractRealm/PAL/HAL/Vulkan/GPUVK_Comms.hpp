@@ -134,7 +134,7 @@ namespace HAL::GPU::Vulkan
 
 	
 
-	AppInstance::Handle GetAppInstance_Handle();
+	const AppInstance& GetAppInstance();
 
 	void AcquirePhysicalDevices();
 

@@ -23,7 +23,7 @@ standard c++.
 #include "LAL_Bitmask.hpp"
 #include "LAL_Casting.hpp"
 #include "LAL_CharacterTypes.hpp"
-#include "LAL_ConventionEnforcer.hpp"
+#include "LAL_CallEnforcer.hpp"
 #include "LAL_Declarations.hpp"
 #include "LAL_FundamentalTypes.hpp"
 #include "LAL_FundamentalLimits.hpp"
