@@ -31,6 +31,4 @@ A bunch of Youtube... (I'll note what I used in the wiki)
 
 And more likely more cause this isn't the smallest engine at the same time...
 
-## C++17 Used with MSVC. 
-
-(As it stands I'm making the design abstract away from platform implementation but will not be adding support beyond what gets this working on Windows 10)
+## C++17 Used with MSVC and Clang-CL. 

@@ -156,7 +156,7 @@ namespace OSAL
 		bool ConsoleAPI_Maker<EOS::Windows>::WriteToConsole
 		(
 			OS_Handle _handle     ,
-			CharU*    _buffer     ,
+			Char*    _buffer     ,
 			Extent    _bufferSize ,
 			Extent    _bufferCoord,
 			Rect      _readRegion

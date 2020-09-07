@@ -63,7 +63,7 @@ namespace HAL::GPU::Vulkan
 		return info.Format == EFormat::D32_SFloat_S8_UInt ||  info.Format  == EFormat::D24_UNormalized_S8_UInt;
 	}
 
-	EResult Image::TransitionLayout(EImageLayout _old, EImageLayout _new)
+	void Image::TransitionLayout(EImageLayout _old, EImageLayout _new)
 	{
 		auto commandBuffer = RecordOnTransient();
 

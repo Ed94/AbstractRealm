@@ -71,7 +71,7 @@ namespace HAL::GPU::Vulkan
 
 		GetPhysicalDeviceCapabilities(queryResult);
 
-		if (queryResult != capabilities)
+		if (capabilities.operator !=(queryResult))
 		{
 			capabilities = queryResult;
 
@@ -530,7 +530,7 @@ namespace HAL::GPU::Vulkan
 
 		frameRefs.resize(maxFramesInFlight);
 
-		for (DataSize index = 0; index < frameRefs.size(); index++)
+		for (WordSize index = 0; index < frameRefs.size(); index++)
 		{
 			frameRefs[index].Prepare();
 		}
@@ -690,7 +690,7 @@ namespace HAL::GPU::Vulkan
 		presentInfo.WaitSemaphoreCount = 1                             ;
 		presentInfo.WaitSemaphores     = frameRef.PresentSubmitStatus();
 		
-		swapchainsToSubmit.push_back(*swapchain);
+		swapchainsToSubmit.push_back(swapchain->operator const Swapchain::Handle&());
 
 		presentInfo.SwapchainCount = 1;
 		presentInfo.Swapchains     = *swapchain;

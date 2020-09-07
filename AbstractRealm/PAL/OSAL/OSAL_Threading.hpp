@@ -23,16 +23,16 @@ namespace OSAL
 
 			void GenerateThreads();
 
-			DataSize GetNumOfActiveThreads();
+			WordSize GetNumOfActiveThreads();
 
 			uint32 GetNumberOfLogicalCores();
 
 			void QueryThreadInfo();
 
 			template<class FN_Type, class... Arguments>
-			DataSize RequestThread(Function<FN_Type>&& _threadRoutine, Arguments&&... _args);
+			WordSize RequestThread(Function<FN_Type>&& _threadRoutine, Arguments&&... _args);
 
-			void DecommissionThread(DataSize _handle);
+			void DecommissionThread(WordSize _handle);
 
 
 			// TODO: Move to tpp
@@ -45,11 +45,11 @@ namespace OSAL
 			* \return 
 			*/
 			template<class FN_Type, class... Arguments>
-			DataSize RequestThread(FN_Type&& _threadRoutine, Arguments&&... _args)
+			WordSize RequestThread(FN_Type&& _threadRoutine, Arguments&&... _args)
 			{
-				DataSize index = 0;
+				WordSize index = 0;
 
-				for (DataSize num = 0; num < threads.size(); num++)
+				for (WordSize num = 0; num < threads.size(); num++)
 				{
 					if (!threads[index].joinable())
 					{
@@ -72,18 +72,18 @@ namespace OSAL
 		eGlobal ThreadManager ThreadPool;
 	}
 
-	void DecommissionThread(DataSize _handle);
+	void DecommissionThread(WordSize _handle);
 
 	uint32 GetNumberOfLogicalCores();
 
 	void GenerateThreads();
 
-	DataSize GetNumOfActiveThreads();
+	WordSize GetNumOfActiveThreads();
 
 	void QueryThreadInfo();
 
 	template<class FN_Type, class... Arguments>
-	DataSize RequestThread(FN_Type&& _threadRoutine, Arguments&&... _args)
+	WordSize RequestThread(FN_Type&& _threadRoutine, Arguments&&... _args)
 	{
 		return Backend::ThreadPool.RequestThread(_threadRoutine, _args...);
 	}

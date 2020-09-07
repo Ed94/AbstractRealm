@@ -55,21 +55,21 @@ namespace HAL::GPU
 			using VertexAttributes = StaticArray<AttributeDescription, 3>;
 
 
-			struct
+			struct PositionT
 			{
 				float32 X, Y, Z;
 			} 
 			
 			Position;
 
-			struct
+			struct ColorT
 			{
 				float32 R,G,B;
 			}
 			
 			Color;
 
-			struct 
+			struct CoordT
 			{
 				float32 X, Y;
 			}
@@ -88,7 +88,9 @@ namespace HAL::GPU
 				posAttrib.Binding  = 0;
 				posAttrib.Location = 0;
 				posAttrib.Format   = EFormat::R32_G32_B32_SFloat;
-				posAttrib.Offset   = offsetof(Vertex, Vertex::Position);
+				//posAttrib.Offset   = offsetof(Vertex, Vertex::Position);
+
+				posAttrib.Offset = OffsetOf(Vertex::Position);
 
 				// Color Attributes
 
@@ -97,7 +99,7 @@ namespace HAL::GPU
 				colorAttrib.Binding  = 0;
 				colorAttrib.Location = 1;
 				colorAttrib.Format   = EFormat::R32_G32_B32_SFloat;
-				colorAttrib.Offset   = offsetof(Vertex, Vertex::Color);
+				colorAttrib.Offset   = OffsetOf(Vertex::Color);
 
 				// Texture Coordinate Attributes
 
@@ -106,7 +108,7 @@ namespace HAL::GPU
 				texCoordAttrib.Binding  = 0;
 				texCoordAttrib.Location = 2;
 				texCoordAttrib.Format   = EFormat::R32_G32_SFloat;
-				texCoordAttrib.Offset   = offsetof(Vertex, Vertex::TextureCoordinates);
+				texCoordAttrib.Offset   = OffsetOf(Vertex::TextureCoordinates);
 
 				return result;
 			}

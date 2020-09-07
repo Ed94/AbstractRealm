@@ -3,9 +3,6 @@
 
 
 
-// VLD
-
-
 // Engine
 #include "Cycler.hpp"
 #include "Meta/AppInfo.hpp"

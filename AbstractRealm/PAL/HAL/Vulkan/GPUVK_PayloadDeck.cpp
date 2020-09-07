@@ -104,9 +104,9 @@ namespace HAL::GPU::Vulkan
 		return TransientPool->RecordSingleTime(); 
 	}
 
-	const ptr<CommandPool> RequestCommandPools(DataSize _numDesired)
+	const ptr<CommandPool> RequestCommandPools(WordSize _numDesired)
 	{
-		DataSize firstOfNewPools = CommandPools.size();
+		WordSize firstOfNewPools = CommandPools.size();
 
 		CommandPools.resize(firstOfNewPools + _numDesired);
 

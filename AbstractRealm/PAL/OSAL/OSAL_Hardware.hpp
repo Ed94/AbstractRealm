@@ -29,7 +29,7 @@ namespace OSAL
 
 	struct DisplayInfo
 	{
-		DataSize ID;
+		WordSize ID;
 
 		uint32 Width, Height;
 

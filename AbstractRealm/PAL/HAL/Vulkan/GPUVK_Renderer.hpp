@@ -219,7 +219,7 @@ namespace HAL::GPU::Vulkan
 		Deque<RenderPass> renderPasses;
 
 		// Thread Count
-		DataSize threadsAssigned;
+		WordSize threadsAssigned;
 	};
 
 	class RenderContext

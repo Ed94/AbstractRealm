@@ -50,7 +50,7 @@ namespace OSAL
 		auto displays = iware::system::displays();
 		auto configs = iware::system::available_display_configurations();
 
-		DataSize displayIndex = 0;
+		WordSize displayIndex = 0;
 
 		for (auto& display : displays)
 		{

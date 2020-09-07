@@ -57,7 +57,7 @@ C++17
 
 		FunctionType& _functionRef
 	>
-	auto Enforced_Call()
+	auto GetEnforcedCall()
 	{
 		return &(CallEnforcementSet<ID>::template CallEnforcer_CallMaker<FunctionType, &_functionRef>::Call);
 	};
@@ -65,8 +65,8 @@ C++17
 	/*
 	Ease of use macro to call the Enforcer_Caller for the defined API convention.
 	*/
-	#define EnforceCallingConvention(__API_NAME, __FUNCTION)      \
-	Enforced_Call<__API_NAME, decltype(__FUNCTION), __FUNCTION>()
+	#define EnforceCallingConvention(__API_NAME, __FUNCTION)       \
+	GetEnforcedCall<__API_NAME, decltype(__FUNCTION), __FUNCTION>()
 
 #endif
 

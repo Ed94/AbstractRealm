@@ -41,7 +41,7 @@ namespace HAL::GPU::Vulkan
 
 		bool HasStencilComponent() const;
 
-		EResult TransitionLayout(EImageLayout _old, EImageLayout _new);
+		void TransitionLayout(EImageLayout _old, EImageLayout _new);
 
 		operator Parent&();
 

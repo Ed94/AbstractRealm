@@ -23,9 +23,10 @@ namespace LAL
 
 	// Flexible
 
+	using uin16  = unsigned int;
+	using sint16 = signed   int;
 	using uint32 = unsigned int;
 	using sint32 = signed   int;
-
 
 	// Strict
 
@@ -70,5 +71,18 @@ namespace LAL
 	constexpr bool IsFloat()
 	{
 		return IsSameType<Type, float32>() || IsSameType<Type, float64>();
+	}
+
+
+	// Literals
+
+	constexpr uInt16 operator"" _uI16 (unsigned long long _uI16)
+	{
+		return uInt16(_uI16);
+	}
+
+	constexpr short operator"" _s (unsigned long long _s)
+	{
+		return short(_s);
 	}
 }

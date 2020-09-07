@@ -165,22 +165,24 @@ namespace HAL::GPU::Vulkan
 
 	bool LogicalDevice::ExtensionsEnabled(DynamicArray<RoCStr> _extensions)
 	{
+		WordSize extensionsLeft = _extensions.size();
+
 		for (auto& enabledExtension : _extensions)
 		{
-			DataSize index = 0;
+			WordSize index = 0;
 
 			for (auto& extension : _extensions)
 			{
 				if (CStr_Compare(enabledExtension, extension) == 0)
 				{
-					_extensions.erase(_extensions.begin() + index);
+					extensionsLeft--;
 				}
 
 				index++;
 			}
 		}
 
-		if (_extensions.size() > 0)
+		if (extensionsLeft > 0)
 		{
 			return false;
 		}
@@ -310,7 +312,7 @@ namespace HAL::GPU::Vulkan
 			familyIndex++;
 		}
 
-		for (DataSize index = 0; index < queueFamilyInfos.size(); index++)
+		for (WordSize index = 0; index < queueFamilyInfos.size(); index++)
 		{
 			queueFamilyInfos[index].QueuePriorities = getAddress(queueFamilies[index].Priority);	
 
@@ -694,7 +696,7 @@ namespace HAL::GPU::Vulkan
 				Layer::Google_UniqueObjedcts
 			};
 
-			DataSize layersFound = 0;
+			WordSize layersFound = 0;
 
 			for (auto validationLayerName : Fallback2Layers)
 			{
@@ -744,7 +746,7 @@ namespace HAL::GPU::Vulkan
 
 	bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
 	{
-		stack<DataSize> layersFound = 0;
+		stack<WordSize> layersFound = 0;
 
 		for (auto validationLayerName : _layersSpecified)
 		{

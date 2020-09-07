@@ -18,16 +18,17 @@ namespace Dev
 	using namespace LAL ;
 	using namespace OSAL;
 
-	using OSAL::CharU;
+	using OSAL::ConsoleChar;
 
 
 
 	//StaticData
 	//(
-		uInt16 ConsoleWidth  = 160;//140;
-		uInt16 ConsoleHeight = 118;//50 ;
+		// Windows uses short instead of unsigned short for rect...
+		sInt16 ConsoleWidth  = 160;   //140;
+		sInt16 ConsoleHeight = 118;   //50 ;
 
-		using CharBuffer = CharU[1024][1024];
+		using CharBuffer = ConsoleChar[1024][1024];
 
 		OS_Handle ConsoleOutput;
 		OS_Handle ConsoleInput ;
@@ -35,8 +36,8 @@ namespace Dev
 		ConsoleRect ConsoleSize =
 		{
 			0, 0,
-			ConsoleWidth  - 1,   // Width
-			ConsoleHeight - 1    // Height	
+			sInt16(ConsoleWidth  - 1),   // Width
+			sInt16(ConsoleHeight - 1)    // Height	
 		};
 
 		ConsoleExtent ConsoleBufferSize = { ConsoleWidth, ConsoleHeight };
@@ -45,7 +46,7 @@ namespace Dev
 
 		StaticArray<OS_Handle, 2> ConsoleBuffers;
 
-		DynamicArray<CharU> ConsoleCharBuffer(uInt32(ConsoleHeight) * uInt32(ConsoleWidth));
+		DynamicArray<ConsoleChar> ConsoleCharBuffer(uInt32(ConsoleHeight) * uInt32(ConsoleWidth));
 
 		ConsoleExtent ConsoleCharBufferSize = { ConsoleWidth, ConsoleHeight };
 		ConsoleExtent ConsoleCharPos        = { 0           , 0             };
@@ -54,8 +55,8 @@ namespace Dev
 		ConsoleRect ConsoleWriteArea =
 		{
 			0, 0,
-			ConsoleWidth  - 1,   // Width
-			ConsoleHeight - 1    // Height	
+			sInt16(ConsoleWidth  - 1),   // Width
+			sInt16(ConsoleHeight - 1)    // Height	
 		};
 
 		OS_Handle FrontBuffer = ConsoleBuffers[0],
@@ -121,7 +122,7 @@ namespace Dev
 
 		StringStream dateSig; dateSig << "[" << put_time(&dateSnapshot, "%F %I:%M:%S %p") << "] ";
 
-		DataSize lineLength = dateSig.str().size() + _info.size();
+		WordSize lineLength = dateSig.str().size() + _info.size();
 
 		if (lineLength > ConsoleWidth)
 		{
@@ -140,7 +141,7 @@ namespace Dev
 
 			DevLogStream.str(String());
 
-			DataSize pos = 0, endPos = ConsoleWidth;
+			WordSize pos = 0, endPos = ConsoleWidth;
 
 			while (!_info.empty())
 			{
@@ -224,7 +225,7 @@ namespace Dev
 
 		StringStream dateSig; dateSig << "[" << put_time(&dateSnapshot, "%F %I:%M:%S %p") << "] Error:  ";
 
-		DataSize lineLength = dateSig.str().size() + _info.size();
+		WordSize lineLength = dateSig.str().size() + _info.size();
 
 		if (lineLength > ConsoleWidth)
 		{
@@ -243,7 +244,7 @@ namespace Dev
 
 			DevLogStream.str(String());
 
-			DataSize pos = 0, endPos = ConsoleWidth;
+			WordSize pos = 0, endPos = ConsoleWidth;
 
 			while (!_info.empty())
 			{
@@ -521,7 +522,7 @@ namespace Dev
 
 		auto error = GetLastError();
 
-		SetConsoleCursorPosition (ConsoleOutput, {0, ConsoleBufferSize.Y + 1});
+		SetConsoleCursorPosition (ConsoleOutput, {0, sInt16(ConsoleBufferSize.Y + 1)});
 		
 		Console_UpdateBuffer();
 

@@ -15,7 +15,7 @@ namespace Core::Concurrency
 		{}
 
 		CyclerT  Cycler;
-		DataSize Thread;
+		WordSize Thread;
 	};
 
 

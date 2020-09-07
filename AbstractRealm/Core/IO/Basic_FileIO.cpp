@@ -24,7 +24,7 @@ namespace IO
 		// Returns the position of the current character in the input stream.
 
 		// The advantage of starting to read at the end of the file is that we can use the read position to determine the size of the file and allocate a buffer:
-		DataSize streamSize = DataSize(fileStream.tellg());
+		WordSize streamSize = WordSize(fileStream.tellg());
 
 		FileBuffer bufferToReturn(streamSize);
 

@@ -15,14 +15,14 @@ namespace OSAL
 			threads.resize(NumberOfLogicalCores - 1);
 		}
 
-		void ThreadManager::DecommissionThread(DataSize _handle)
+		void ThreadManager::DecommissionThread(WordSize _handle)
 		{
 			threads.at(_handle - 1).join();
 		}
 
-		DataSize ThreadManager::GetNumOfActiveThreads()
+		WordSize ThreadManager::GetNumOfActiveThreads()
 		{
-			DataSize num = 0;
+			WordSize num = 0;
 
 			for (; num < threads.size(); num++)
 			{
@@ -40,9 +40,9 @@ namespace OSAL
 
 	void GenerateThreads() { Backend::ThreadPool.GenerateThreads(); }
 
-	DataSize GetNumOfActiveThreads() { return Backend::ThreadPool.GetNumOfActiveThreads(); }
+	WordSize GetNumOfActiveThreads() { return Backend::ThreadPool.GetNumOfActiveThreads(); }
 
-	void DecommissionThread(DataSize _handle) 
+	void DecommissionThread(WordSize _handle) 
 	{
 		Backend::ThreadPool.DecommissionThread(_handle); 
 	}

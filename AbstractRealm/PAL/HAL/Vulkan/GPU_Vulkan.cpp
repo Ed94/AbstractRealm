@@ -77,7 +77,7 @@
 			// Related to Rendering State Tracking
 
 			bool     FramebufferResized = false;
-			DataSize CurrentFrame       = 0;
+			WordSize CurrentFrame       = 0;
 			sint32   MaxFramesInFlight  = 2;
 			
 			// Not Sure
@@ -193,7 +193,7 @@
 					DepthImage      .Destroy();
 					DepthImageMemory.Free   ();
 
-					for (DataSize index = 0; index < SwapChain_Framebuffers.size(); index++)
+					for (WordSize index = 0; index < SwapChain_Framebuffers.size(); index++)
 					{
 						SwapChain_Framebuffers[index].Destroy();
 					}
@@ -202,14 +202,14 @@
 					PipelineLayout  .Destroy();
 					RenderPass_Old      .Destroy();
 
-					for (DataSize index = 0; index < SwapChain_ImageViews.size(); index++)
+					for (WordSize index = 0; index < SwapChain_ImageViews.size(); index++)
 					{
 						SwapChain_ImageViews[index].Destroy();
 					}
 
 					SwapChain_Old.Destroy();
 
-					for (DataSize index = 0; index < SwapChain_ImageViews.size(); index++)
+					for (WordSize index = 0; index < SwapChain_ImageViews.size(); index++)
 					{
 						UniformBuffers      [index].Destroy();
 						UniformBuffersMemory[index].Free();
@@ -440,7 +440,7 @@
 				if (Heap(DescriptorPool.Allocate(allocInfo, DescriptorSets, DescriptorSetHandles)) != EResult::Success)
 					throw std::runtime_error("failed to allocate descriptor sets!");
 
-				for (DataSize index = 0; index < SwapChain_Images.size(); index++)
+				for (WordSize index = 0; index < SwapChain_Images.size(); index++)
 				{
 					DescriptorSet::BufferInfo bufferInfo{};
 
@@ -524,7 +524,7 @@
 			{
 				SwapChain_Framebuffers.resize(SwapChain_ImageViews.size());
 
-				for (DataSize index = 0; index < SwapChain_ImageViews.size(); index++) 
+				for (WordSize index = 0; index < SwapChain_ImageViews.size(); index++) 
 				{
 					StaticArray<ImageView::Handle, 2> attachments = 
 					{
@@ -822,7 +822,7 @@
 			{
 				SwapChain_ImageViews.resize(SwapChain_Images.size());
 
-				for (DataSize index = 0; index < SwapChain_Images.size(); index++)
+				for (WordSize index = 0; index < SwapChain_Images.size(); index++)
 				{
 					SwapChain_ImageViews[index] = CreateImageView(SwapChain_Images[index], SwapChain_ImageFormat, Image::AspectFlags(EImageAspect::Color), MipMapLevels);
 				}
@@ -1000,7 +1000,7 @@
 
 				fence_CreationSpec.Flags.Set(EFenceCreateFlag::Signaled);
 
-				for (DataSize index = 0; index < MaxFramesInFlight; index++)
+				for (WordSize index = 0; index < MaxFramesInFlight; index++)
 				{
 					EResult
 				
@@ -1169,7 +1169,7 @@
 
 				uniformBufferInfo.SharingMode = ESharingMode::Exclusive;
 
-				for (DataSize index = 0; index < SwapChain_Images.size(); index++)
+				for (WordSize index = 0; index < SwapChain_Images.size(); index++)
 				{
 					Heap
 					(
@@ -1673,7 +1673,7 @@
 
 				waitStages[0].Set(EPipelineStageFlag::ColorAttachmentOutput);
 
-				CommandBuffersToSubmit.push_back(CommandBuffers_Old[CurrentFrame]);
+				CommandBuffersToSubmit.push_back(CommandBuffers_Old[CurrentFrame].operator CommandBuffer::Handle());
 
 				submitInfo.WaitSemaphoreCount = 1             ;
 				submitInfo.WaitSemaphores     = waitSemaphores;
@@ -1748,7 +1748,7 @@
 					VertexBuffer_Old      .Destroy();
 					VertexBufferMemory.Free   ();
 
-					for (DataSize index = 0; index < MaxFramesInFlight; index++) 
+					for (WordSize index = 0; index < MaxFramesInFlight; index++) 
 					{
 						RenderFinished_Semaphores[index].Destroy();
 						ImageAvailable_Semaphores[index].Destroy();

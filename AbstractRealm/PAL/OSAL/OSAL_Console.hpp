@@ -20,6 +20,8 @@ namespace OSAL
 
 	namespace PlatformBackend
 	{
+		//Bitmaskable_ScopeBase();
+
 		template<OSAL::EOS>
 		struct ConsoleTypes_Maker;
 
@@ -51,10 +53,10 @@ namespace OSAL
 
 			using Rect   = SMALL_RECT;
 			using Extent = COORD     ;
-			using CharU  = CHAR_INFO ;
+			using Char   = CHAR_INFO ;
 		};
 
-		SpecifyBitmaskable(ConsoleTypes_Maker<EOS::Windows>::EAttributeFlag);
+		
 
 		using ConsoleTypes = ConsoleTypes_Maker<OSAL::OS>;
 
@@ -67,7 +69,7 @@ namespace OSAL
 			using EHandle = ConsoleTypes::EHandle;
 			using Extent  = ConsoleTypes::Extent ;
 			using Rect    = PSMALL_RECT          ;
-			using CharU   = ConsoleTypes::CharU  ;
+			using Char   = ConsoleTypes::Char  ;
 
 			// CAUSED MEMORY LEAK. (Sigh)
 			// https://stackoverflow.com/questions/311955/redirecting-cout-to-a-console-in-windows   
@@ -93,7 +95,7 @@ namespace OSAL
 			static bool WriteToConsole
 			(
 				OS_Handle _handle     ,
-				CharU*    _buffer     ,
+				Char*    _buffer     ,
 				Extent    _bufferSize ,
 				Extent    _bufferCoord,
 				Rect      _readRegion
@@ -101,6 +103,18 @@ namespace OSAL
 		};
 
 		using ConsoleAPI = ConsoleAPI_Maker<OSAL::OS>;
+
+
+		// The console black boxed properly...
+
+		template<EOS> struct Console;
+		
+		template<> class Console<EOS::Windows>
+		{
+
+		protected:
+			SHORT ConsoleWidth, ConsoleHeight;
+		};
 	}
 
 	using PlatformBackend::ConsoleTypes;
@@ -108,7 +122,7 @@ namespace OSAL
 
 	using ConslAttribFlags = ConsoleTypes::AttributeFlags;
 	using EConslAttribFlag = ConsoleTypes::EAttributeFlag;
-	using CharU            = ConsoleTypes::CharU         ;
+	using ConsoleChar      = ConsoleTypes::Char         ;
 	using ConsoleExtent    = ConsoleTypes::Extent        ;
 	using ConsoleRect      = ConsoleTypes::Rect          ;
 	using EConsoleHandle   = ConsoleTypes::EHandle       ;
@@ -123,3 +137,5 @@ namespace OSAL
 	constexpr auto Console_SetTitle              = ConsoleAPI::SetTitle             ;
 	constexpr auto WriteToConsole                = ConsoleAPI::WriteToConsole       ;
 }
+
+SpecifyBitmaskable(OSAL::PlatformBackend::ConsoleTypes_Maker<OSAL::EOS::Windows>::EAttributeFlag);

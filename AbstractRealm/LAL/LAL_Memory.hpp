@@ -129,16 +129,13 @@ namespace LAL
 		return *_ptr;
 	}
 
-	#define M_ADDRESS(_obj) \
-	&(_obj)
-
 	/*
 	Address operator
 	*/
 	template<typename Type>
 	auto getAddress(Type& _obj)
 	{
-		return M_ADDRESS(_obj);
+		return &_obj;
 	}
 
 	template<typename FunctionType>
@@ -149,12 +146,15 @@ namespace LAL
 
 	using std::move;
 
-	template<typename TypeS, typename TypeR>
-	DataSize OffsetOf(TypeS _subject, TypeR _reference)
-	{
-		return offsetof(_subject, _reference);
-	}
-
 	template<typename ReturnType, typename... ParameterTypes>
 	using FPtr = ReturnType(*)(ParameterTypes...);
+
+	// Clang-CL does not like window's offsetof macro.
+	template <typename StructType, typename StructMemberType>
+	constexpr WordSize TOffsetOf(StructMemberType StructType::* _member)
+	{
+		return reinterpret_cast<WordSize>(getAddress((ptr<StructType>(0)->*_member)));
+	}
+
+	#define OffsetOf(_MEMBEER) TOffsetOf(&_MEMBEER);
 }

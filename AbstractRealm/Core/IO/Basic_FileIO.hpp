@@ -18,6 +18,8 @@
 
 namespace IO
 {
+	//Bitmaskable_ScopeBase();
+
 	// Usings
 
 	using namespace LAL;
@@ -39,7 +41,7 @@ namespace IO
 		SeekToEOF             = std::ios::ate
 	};
 
-	SpecifyBitmaskable(EOpenFlag);
+	
 
 	using OpenFlags = 
 		Bitmask<EOpenFlag, std::ios::openmode>;
@@ -62,3 +64,5 @@ namespace IO
 	bool OpenFile(File_OutputStream& _fileStream, OpenFlags _flags, const Path& _file);
 	bool OpenFile(File_InputStream&  _fileStream, OpenFlags _flags, const Path& _file);
 }
+
+SpecifyBitmaskable(IO::EOpenFlag);
