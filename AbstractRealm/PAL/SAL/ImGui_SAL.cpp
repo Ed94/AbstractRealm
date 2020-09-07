@@ -67,7 +67,7 @@ namespace SAL::Imgui
 
 		void Vulkan_DebugCallback(VkResult _returnCode)
 		{
-			if (_returnCode != VkResult(VT::V4::EResult::Success))
+			if (_returnCode != VkResult(VT::V3::EResult::Success))
 			{
 				std::cerr << "Imgui Callback Error Code: " << int(_returnCode) << std::endl;
 			}
@@ -78,7 +78,7 @@ namespace SAL::Imgui
 			ImDrawData* draw_data = ImGui::GetDrawData();
 
 			// Record dear Imgui primitives into command buffer
-			ImGui_ImplVulkan_RenderDrawData(draw_data, _buffer.GetHandle());
+			ImGui_ImplVulkan_RenderDrawData(draw_data, _buffer);
 		}
 	}
 
@@ -142,7 +142,7 @@ namespace SAL::Imgui
 
 				SetupGPU_Interface();
 
-				initSpec.DescriptorPool = DescriptorPool.GetHandle();
+				initSpec.DescriptorPool = DescriptorPool;
 
 				ImGui_ImplVulkan_Init(&initSpec, RenderContext->RenderPass);
 

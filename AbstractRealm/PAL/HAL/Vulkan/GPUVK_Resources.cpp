@@ -12,6 +12,47 @@ namespace HAL::GPU::Vulkan
 {
 #pragma region Image
 
+	EResult Image::Create(const LogicalDevice& _device, const CreateInfo& _info)
+	{
+		info = _info;
+
+		return Parent::Create(_device, info);
+	}
+
+	EResult Image::Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks* _allocator)
+	{
+		info = _info;
+
+		return Parent::Create(_device, _info);
+	}
+
+	EResult Image::CreateAndBind
+	(
+		const LogicalDevice&        _device     ,  
+		const CreateInfo&           _info       ,  
+			  Memory::PropertyFlags _memoryFlags,
+			  Memory&               _memory
+	)
+	{
+		info = _info;
+
+		return Parent::CreateAndBind(_device, _info, _memoryFlags, _memory);
+	}
+
+	EResult Image::CreateAndBind
+	(
+		const LogicalDevice&               _device        ,  
+		const CreateInfo&                  _info          , 
+			  Memory::PropertyFlags        _memoryFlags   ,
+			  Memory&                      _memory        ,
+		const Memory::AllocationCallbacks* _allocator
+	)
+	{
+		info = _info;
+
+		return Parent::CreateAndBind(_device, _info, _memoryFlags, _memory, _allocator);
+	}
+
 	EFormat Image::GetFormat() const
 	{
 		return info.Format;
@@ -108,6 +149,26 @@ namespace HAL::GPU::Vulkan
 	}
 
 #pragma endregion Image
+
+#pragma region ImageView
+
+	EResult ImageView::Create(const LogicalDevice& _device, const CreateInfo& _info)
+	{
+		info = _info;
+
+		return Parent::Create(_device, _info);
+	}
+
+	EResult ImageView::Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks* _allocator)
+	{
+		info = _info;
+
+		return Parent::Create(_device, _info, _allocator);
+	}
+
+	
+
+#pragma endregion ImageView
 
 #pragma region ImagePackage
 

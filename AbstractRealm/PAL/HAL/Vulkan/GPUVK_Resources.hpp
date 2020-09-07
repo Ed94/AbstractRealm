@@ -16,6 +16,27 @@ namespace HAL::GPU::Vulkan
 
 		using Parent = V3::Image;
 
+		EResult Create(const LogicalDevice& _device, const CreateInfo& _info);
+
+		EResult Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks* _allocator);
+
+		EResult CreateAndBind
+		(
+			const LogicalDevice&        _device     ,  
+			const CreateInfo&           _info       ,  
+				  Memory::PropertyFlags _memoryFlags,
+				  Memory&               _memory
+		);
+
+		EResult CreateAndBind
+		(
+			const LogicalDevice&               _device        ,  
+			const CreateInfo&                  _info          , 
+				  Memory::PropertyFlags        _memoryFlags   ,
+				  Memory&                      _memory        ,
+			const Memory::AllocationCallbacks* _allocator
+		);
+
 		EFormat GetFormat() const ;
 
 		bool HasStencilComponent() const;
@@ -25,6 +46,23 @@ namespace HAL::GPU::Vulkan
 		operator Parent&();
 
 	protected:
+
+		CreateInfo info;
+	};
+
+	class ImageView : public V3::ImageView
+	{
+	public:
+
+		using Parent = V3::ImageView;
+
+		EResult Create(const LogicalDevice& _device, const CreateInfo& _info);
+
+		EResult Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks* _allocator);
+
+	protected:
+
+		CreateInfo info;
 	};
 
 

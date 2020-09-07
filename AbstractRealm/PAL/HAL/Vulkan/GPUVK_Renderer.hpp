@@ -63,6 +63,8 @@ namespace HAL::GPU::Vulkan
 
 		EFormat GetFormat() const;
 
+		uint32 GetMinimumImageCount() const;
+
 		bool QuerySurfaceChanges();
 
 		const DynamicArray<Image>& GetImages() const;
@@ -76,6 +78,8 @@ namespace HAL::GPU::Vulkan
 		EResult GenerateViews();
 
 		EResult RetrieveImages();
+
+		CreateInfo info;
 
 		ptr<Surface> surface;
 
@@ -104,9 +108,11 @@ namespace HAL::GPU::Vulkan
 		ptr<GraphicsPipeline> Pipeline;
 	};
 
-	class RenderPass_WIP : V3::RenderPass
+	class RenderPass : public V3::RenderPass
 	{
 	public:
+
+		using Parent = V3::RenderPass;
 
 		struct Attachment 
 		{
@@ -114,18 +120,39 @@ namespace HAL::GPU::Vulkan
 			AttachmentReference   Reference  ;
 		};
 
-		struct SubpassInfo
+		/*struct SubpassInfo
 		{
 			SubpassDescription Description;
 			SubpassDependency  Dependency ;
-		};
+		};*/
 
-		EResult Create();
+		EResult Create(const LogicalDevice& _device, CreateInfo& _info);
 
+		EResult Create(const LogicalDevice& _device, CreateInfo& _info, const Memory::AllocationCallbacks* _allocator);
+
+		uint32 GetAttachmentCount() const;
 
 	protected:
 
-		DynamicArray<Attachment > attachments;
+		struct SubpassInfo
+		{
+			SubpassDescription Description;
+			SubpassDependency  Dependency;
+
+			DynamicArray<AttachmentReference> Inputs       ;
+			DynamicArray<AttachmentReference> Colors       ;
+			DynamicArray<AttachmentReference> Resolves     ;
+			DynamicArray<AttachmentReference> DepthStencils;
+
+			DynamicArray<uint32> Preserves;
+		};
+
+		CreateInfo info;
+
+		//DynamicArray<Attachment > attachments;
+		//DynamicArray<SubpassInfo> subpasses;
+
+		DynamicArray<AttachmentDescription> attachments;
 		DynamicArray<SubpassInfo> subpasses;
 
 		ImagePackage depthBuffer;
@@ -189,7 +216,7 @@ namespace HAL::GPU::Vulkan
 		// Semaphore Pool
 		//DynamicArray<Semaphore> semaphores;
 
-		ptr<Deque<RenderPass_WIP>> renderPasses;
+		Deque<RenderPass> renderPasses;
 
 		// Thread Count
 		DataSize threadsAssigned;
@@ -256,7 +283,7 @@ namespace HAL::GPU::Vulkan
 
 		// Proper render pass array...
 
-		DynamicArray<RenderPass_WIP> RenderPasses;
+		DynamicArray<RenderPass> RenderPasses;
 	};
 
 	class PrimitiveRenderable : public ARenderable

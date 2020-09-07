@@ -16,8 +16,6 @@ namespace Dev
 
 	// Compile-Time
 
-	
-
 	constexpr RoCStr DevLogPath = "Engine/Dev/Logs";
 	constexpr RoCStr DevLogName = "DevLog"         ;
 

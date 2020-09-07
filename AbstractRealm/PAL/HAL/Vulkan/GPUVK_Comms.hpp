@@ -64,6 +64,36 @@ namespace HAL::GPU::Vulkan
 		@todo Make the device listing container type specifiable using an interface.
 		*/
 		EResult GetAvailablePhysicalDevices(DynamicArray<PhysicalDevice>& _deviceListing) const;
+
+	protected:
+
+		AppInfo    appInfo   ;
+		CreateInfo createInfo;
+
+
+	};
+
+	struct DebugUtils : public V3::DebugUtils
+	{
+		using Parent = V3::DebugUtils;
+
+		class Messenger : public Parent::Messenger
+		{
+		public:
+			using Parent = V3::DebugUtils::Messenger;
+
+			void AssignInfo(const CreateInfo& _info);
+
+			EResult Create(const AppInstance& _app);
+
+			EResult Create(const AppInstance& _app, const Memory::AllocationCallbacks& _allocator);
+
+			const CreateInfo& GetInfo() const;
+
+		protected:
+
+			CreateInfo info;
+		};
 	};
 
 	class LogicalDevice : public V3::LogicalDevice
@@ -110,6 +140,8 @@ namespace HAL::GPU::Vulkan
 
 			EQueueFlag Assignment;
 		};
+
+		CreateInfo info;
 
 		//DynamicArray<CommandPool> commandPools;   // CommandPools are assigned per device. (There as many as there are working cpu threads for the gpu).
 

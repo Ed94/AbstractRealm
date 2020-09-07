@@ -124,8 +124,6 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_CPP_STL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Debug.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Enums.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_GPU.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_GPU_Comms.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Initialization.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_LogicalDevice.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_Memory.hpp" />
@@ -165,6 +163,12 @@
     <ClInclude Include="Manifest\Zone.hpp" />
     <ClInclude Include="Manifest\States\BasicState.hpp" />
     <ClInclude Include="Manifest\World.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VT_APISpecGroups.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Comms.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Renderer.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Payload.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Resource.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Comms_Implementation.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

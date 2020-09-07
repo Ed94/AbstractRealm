@@ -30,7 +30,7 @@ namespace HAL::GPU
 		// Usings
 
 		using namespace VT;
-		using namespace VT::V4;
+		using namespace VT::V3;
 		using namespace VT::SPIR_V;
 
 		using namespace LAL ;

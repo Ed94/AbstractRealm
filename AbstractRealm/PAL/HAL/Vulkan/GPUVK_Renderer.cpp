@@ -93,7 +93,7 @@ namespace HAL::GPU::Vulkan
 	{
 		surface = &_surface;
 
-		info.Surface = _surface.GetHandle();
+		info.Surface = _surface;
 
 		const auto& presentationModes = _surface.GetPresentationModes();
 
@@ -210,6 +210,11 @@ namespace HAL::GPU::Vulkan
 	EFormat Swapchain::GetFormat() const
 	{
 		return info.ImageFormat;
+	}
+
+	uint32 Swapchain::GetMinimumImageCount() const
+	{
+		return info.MinImageCount;
 	}
 
 	bool Swapchain::QuerySurfaceChanges()
@@ -367,7 +372,7 @@ namespace HAL::GPU::Vulkan
 
 		for (auto& image : images)
 		{
-			viewInfo.Image = image.GetHandle();
+			viewInfo.Image = image;
 
 			ImageView view;
 
@@ -408,6 +413,26 @@ namespace HAL::GPU::Vulkan
 	}
 
 #pragma endregion Swapchain
+
+#pragma region RenderPass
+
+	EResult RenderPass::Create(const LogicalDevice& _device, CreateInfo& _info)
+	{
+		info = _info;
+
+		return Parent::Create(_device, _info);
+	}
+
+	EResult RenderPass::Create(const LogicalDevice& _device, CreateInfo& _info, const Memory::AllocationCallbacks* _allocator)
+	{
+		info = _info;
+
+		return Parent::Create(_device, _info, _allocator);
+	}
+
+	uint32 RenderPass::GetAttachmentCount() const { return info.AttachmentCount; }
+
+#pragma endregion
 
 #pragma region FrameReference
 
@@ -657,14 +682,18 @@ namespace HAL::GPU::Vulkan
 	{
 		auto& frameRef = frameRefs[currentFrameBuffer];
 
+		static DynamicArray<Swapchain::Handle> swapchainsToSubmit;
+
 		Swapchain::PresentationInfo presentInfo;
 
 		// Wait to make sure that the frame to put into the swap for presentation has finished being processed.
 		presentInfo.WaitSemaphoreCount = 1                             ;
 		presentInfo.WaitSemaphores     = frameRef.PresentSubmitStatus();
+		
+		swapchainsToSubmit.push_back(*swapchain);
 
 		presentInfo.SwapchainCount = 1;
-		presentInfo.Swapchains     = &swapchain->GetHandle();
+		presentInfo.Swapchains     = *swapchain;
 		presentInfo.ImageIndices   = &currentSwap;
 
 		presentInfo.Results = nullptr;

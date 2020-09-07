@@ -19,7 +19,7 @@ namespace HAL::GPU::Vulkan
 		DynamicArray<RoCStr>   DesiredInstanceExts   ;
 		DynamicArray<RoCStr>   DesiredDeviceExts     ;
 
-		V3::DebugUtils::Messenger GPU_Messenger;
+		DebugUtils::Messenger GPU_Messenger;
 
 		PhysicalDeviceList PhysicalGPUs;
 		LogicalDeviceList  LogicalGPUs ;
@@ -83,6 +83,30 @@ namespace HAL::GPU::Vulkan
 	}
 
 #pragma endregion PhysicalDevice
+
+#pragma region DebugUtils
+
+	void DebugUtils::Messenger::AssignInfo(const CreateInfo& _info) 
+	{ 
+		info = _info; 
+	}
+
+	EResult DebugUtils::Messenger::Create(const AppInstance& _app)
+	{
+		return Parent::Create(_app, info);
+	}
+
+	EResult DebugUtils::Messenger::Create(const AppInstance& _app, const Memory::AllocationCallbacks& _allocator)
+	{
+		return Parent::Create(_app, info, &_allocator);
+	}
+
+	const DebugUtils::Messenger::CreateInfo& DebugUtils::Messenger::GetInfo() const 
+	{ 
+		return info; 
+	}
+
+#pragma endregion DebugUtils
 
 #pragma region AppInstance
 
@@ -294,19 +318,19 @@ namespace HAL::GPU::Vulkan
 			{
 				case EQueueFlag::Graphics:
 				{
-					graphicsQueue.Assign(dref(this), queueFamilyInfos[index], 0, EQueueFlag::Graphics);
+					graphicsQueue.Assign(dref(this), queueFamilyInfos[index].QueueFamilyIndex, 0, EQueueFlag::Graphics);
 
 					break;
 				}
 				case EQueueFlag::Compute:
 				{
-					computeQueue.Assign(dref(this), queueFamilyInfos[index], 0, EQueueFlag::Compute);
+					computeQueue.Assign(dref(this), queueFamilyInfos[index].QueueFamilyIndex, 0, EQueueFlag::Compute);
 
 					break;
 				}
 				case EQueueFlag::Transfer:
 				{
-					transferQueue.Assign(dref(this), queueFamilyInfos[index], 0, EQueueFlag::Transfer);
+					transferQueue.Assign(dref(this), queueFamilyInfos[index].QueueFamilyIndex, 0, EQueueFlag::Transfer);
 
 					break;
 				}
@@ -487,7 +511,7 @@ namespace HAL::GPU::Vulkan
 			createSpec.Next = nullptr;
 		}
 
-		stack<EResult> creationResult = Heap(AppGPU_Comms.Create(spec, createSpec));  
+		stack<EResult> creationResult = Heap(AppGPU_Comms.Create(createSpec));  
 
 		if (creationResult != EResult::Success) 
 			throw RuntimeError("Failed to create Vulkan app instance.");

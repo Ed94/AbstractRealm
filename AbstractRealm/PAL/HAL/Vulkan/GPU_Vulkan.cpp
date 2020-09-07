@@ -26,16 +26,16 @@
 
 			// Command
 
-			CommandPool                        SingleTimeCommandPool;
+			CommandPool                         SingleTimeCommandPool;
 			DynamicArray<CommandPool          > CommandPools_Old     ;   
 			DynamicArray<CommandBuffer        > CommandBuffers_Old   ;
 			DynamicArray<CommandBuffer::Handle> CommandBufferHandles ;
 
 			// Model V1 Rendering Pipeline
 
-			V3::GraphicsPipeline GraphicsPipeline_Old;
+			GraphicsPipeline GraphicsPipeline_Old;
 
-			V3::RenderPass RenderPass_Old;   
+			RenderPass RenderPass_Old;   
 
 			Pipeline::Cache PipelineCache;   // Implement.
 
@@ -64,13 +64,15 @@
 
 			// Swapchain for surface
 
-			V3::Swapchain SwapChain_Old        ;
-			Extent2D      SwapChain_Extent     ;
-			V3::EFormat   SwapChain_ImageFormat;
+			Swapchain SwapChain_Old        ;
+			Extent2D  SwapChain_Extent     ;
+			EFormat   SwapChain_ImageFormat;
 
 			DynamicArray<Image>       SwapChain_Images      ;
 			DynamicArray<ImageView>   SwapChain_ImageViews  ;
 			DynamicArray<Framebuffer> SwapChain_Framebuffers;
+
+			uint32 Swap_MinImageCount;
 
 			// Related to Rendering State Tracking
 
@@ -267,8 +269,8 @@
 
 				RenderPass::BeginInfo renderPassInfo{};
 
-				renderPassInfo.RenderPass  = RenderPass_Old.GetHandle()                   ;
-				renderPassInfo.Framebuffer = SwapChain_Framebuffers[index].GetHandle();
+				renderPassInfo.RenderPass  = RenderPass_Old               ;
+				renderPassInfo.Framebuffer = SwapChain_Framebuffers[index];
 
 				renderPassInfo.RenderArea.Offset.X = 0;
 				renderPassInfo.RenderArea.Offset.Y = 0;
@@ -287,7 +289,7 @@
 
 				CommandBuffers_Old[index].BindPipeline(EPipelineBindPoint::Graphics, GraphicsPipeline_Old);
 
-				Buffer::Handle vertexBuffers = VertexBuffer_Old.GetHandle();
+				Buffer::Handle vertexBuffers = VertexBuffer_Old;
 
 				DeviceSize offsets = 0;
 
@@ -375,7 +377,7 @@
 					if (Heap(CommandPools_Old[index].Allocate(info,  CommandBuffers_Old[index])) != EResult::Success)
 						throw std::runtime_error("failed to allocate command buffers!");
 
-					CommandBufferHandles[index] = CommandBuffers_Old[index].GetHandle();
+					CommandBufferHandles[index] = CommandBuffers_Old[index];
 				}
 			}
 
@@ -427,11 +429,11 @@
 
 			void CreateDescriptorSets()
 			{
-				DynamicArray<Pipeline::Layout::DescriptorSet::Handle> layouts(SwapChain_Images.size(), DescriptorSetLayout.GetHandle());
+				DynamicArray<Pipeline::Layout::DescriptorSet::Handle> layouts(SwapChain_Images.size(), Pipeline::Layout::DescriptorSet::Handle(DescriptorSetLayout));
 
 				DescriptorPool::AllocateInfo allocInfo{};
 
-				allocInfo.DescriptorPool     = DescriptorPool.GetHandle();
+				allocInfo.DescriptorPool     = DescriptorPool;
 				allocInfo.DescriptorSetCount = SCast<uint32>(SwapChain_Images.size());
 				allocInfo.SetLayouts         = layouts.data();
 
@@ -442,7 +444,7 @@
 				{
 					DescriptorSet::BufferInfo bufferInfo{};
 
-					bufferInfo.Buffer = UniformBuffers[index].GetHandle()      ;
+					bufferInfo.Buffer = UniformBuffers[index]      ;
 					bufferInfo.Offset = 0                          ;
 					bufferInfo.Range  = sizeof(UniformBufferObject);
 
@@ -450,15 +452,15 @@
 					DescriptorSet::ImageInfo imageInfo{};
 
 					imageInfo.ImageLayout = EImageLayout::Shader_ReadonlyOptimal;
-					imageInfo.ImageView   = TextureImageView.GetHandle()        ;
-					imageInfo.Sampler     = TextureSampler.GetHandle()          ;
+					imageInfo.ImageView   = TextureImageView        ;
+					imageInfo.Sampler     = TextureSampler;
 
 
 					StaticArray<DescriptorSet::Write, 2> descriptorWrites;
 
-					descriptorWrites[0].DstSet          = DescriptorSets[index].GetHandle()          ;
-					descriptorWrites[0].DstBinding      = 0                              ;
-					descriptorWrites[0].DstArrayElement = 0                              ;
+					descriptorWrites[0].DstSet          = DescriptorSets[index];
+					descriptorWrites[0].DstBinding      = 0                    ;
+					descriptorWrites[0].DstArrayElement = 0                    ;
 
 					descriptorWrites[0].DescriptorType  = EDescriptorType::UniformBuffer;
 					descriptorWrites[0].DescriptorCount = 1                             ;
@@ -467,7 +469,7 @@
 					descriptorWrites[0].ImageInfo       = nullptr    ; // Optional
 					descriptorWrites[0].TexelBufferView = nullptr    ; // Optional
 
-					descriptorWrites[1].DstSet          = DescriptorSets[index].GetHandle()          ;
+					descriptorWrites[1].DstSet          = DescriptorSets[index]          ;
 					descriptorWrites[1].DstBinding      = 1                              ;
 					descriptorWrites[1].DstArrayElement = 0                              ;
 
@@ -478,7 +480,7 @@
 					descriptorWrites[1].ImageInfo       = &imageInfo; // Optional
 					descriptorWrites[1].TexelBufferView = nullptr   ; // Optional
 
-					DescriptorSets[0].Render(SCast<uint32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
+					DescriptorSets[0].Update(SCast<uint32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
 				}
 			}
 
@@ -512,7 +514,7 @@
 				layoutInfo.BindingCount = SCast<uint32>(bindings.size());
 				layoutInfo.Bindings = bindings.data();
 
-				DescriptorSetLayout.Assign(GetEngagedDevice().GetHandle(), layoutInfo);
+				DescriptorSetLayout.Assign(GetEngagedDevice(), layoutInfo);
 
 				if (Heap(DescriptorSetLayout.Create()) != EResult::Success)
 					throw RuntimeError("Failed to create descriptor set layout!");
@@ -526,14 +528,14 @@
 				{
 					StaticArray<ImageView::Handle, 2> attachments = 
 					{
-						SwapChain_ImageViews[index].GetHandle(),
-						DepthImageView.GetHandle()
+						SwapChain_ImageViews[index],
+						DepthImageView
 						//ColorImageView.GetHandle(), // Sampler image.
 					};
 
 					Framebuffer::CreateInfo framebufferInfo {};
 
-					framebufferInfo.RenderPass      = RenderPass_Old.GetHandle()       ;
+					framebufferInfo.RenderPass      = RenderPass_Old       ;
 					framebufferInfo.AttachmentCount = SCast<uint32>(attachments.size());
 					framebufferInfo.Attachments     = attachments.data()               ;
 					framebufferInfo.Width           = SwapChain_Extent.Width           ;
@@ -698,13 +700,13 @@
 
 				Pipeline::Layout::CreateInfo pipelineLayout_CreationSpec {};
 
-				pipelineLayout_CreationSpec.SetLayoutCount         = 1                               ;
-				pipelineLayout_CreationSpec.SetLayouts             = &DescriptorSetLayout.GetHandle();
-				pipelineLayout_CreationSpec.PushConstantRangeCount = 0                               ;
-				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr                         ;
+				pipelineLayout_CreationSpec.SetLayoutCount         = 1                  ;
+				pipelineLayout_CreationSpec.SetLayouts             = DescriptorSetLayout;
+				pipelineLayout_CreationSpec.PushConstantRangeCount = 0                  ;
+				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr            ;
 
 				EResult piplineLayout_CreationResult = 
-					Heap(PipelineLayout.Create(GetEngagedDevice().GetHandle(), pipelineLayout_CreationSpec));
+					Heap(PipelineLayout.Create(GetEngagedDevice(), pipelineLayout_CreationSpec));
 					//Pipeline::Layout::Create(LogicalDevice.GetHandle(), pipelineLayout_CreationSpec, nullptr, PipelineLayout);
 
 
@@ -728,9 +730,9 @@
 				pipelineInfo.DynamicState       = nullptr                       ;   // Optional
 				pipelineInfo.TessellationState = nullptr;
 
-				pipelineInfo.Layout = PipelineLayout.GetHandle();
+				pipelineInfo.Layout = PipelineLayout;
 
-				pipelineInfo.RenderPass = RenderPass_Old.GetHandle();
+				pipelineInfo.RenderPass = RenderPass_Old;
 				pipelineInfo.Subpass    = 0          ;
 
 				pipelineInfo.BasePipelineHandle = VK_NULL_HANDLE;   // Optional
@@ -793,7 +795,7 @@
 			{
 				ImageView::CreateInfo viewInfo;
 
-				viewInfo.Image    = _image.GetHandle()       ;
+				viewInfo.Image    = _image                   ;
 				viewInfo.ViewType = ImageView::EViewType::_2D;
 				viewInfo.Format   = _format                  ;
 
@@ -1282,7 +1284,7 @@
 				);
 			}
 
-			V4::EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features)
+			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features)
 			{
 				for (EFormat format : _canidates)
 				{
@@ -1319,7 +1321,7 @@
 
 				Image::Memory_Barrier barrier{};
 
-				barrier.Image               = _image.GetHandle();
+				barrier.Image               = _image             ;
 				barrier.SrcQueueFamilyIndex = QueueFamily_Ignored;
 				barrier.DstQueueFamilyIndex = QueueFamily_Ignored;
 
@@ -1631,7 +1633,7 @@
 					SwapChain_Old.AcquireNextImage
 					(
 						UInt64Max                              , 
-						ImageAvailable_Semaphores[CurrentFrame].GetHandle(), 
+						ImageAvailable_Semaphores[CurrentFrame], 
 						Null<Fence::Handle>                     ,
 						imageIndex
 					);
@@ -1647,7 +1649,7 @@
 					throw std::runtime_error("Failed to acquire swap chain image!");
 				}
 
-				if (ImagesInFlight[imageIndex].GetHandle() != Null<Fence::Handle>) 
+				if (ImagesInFlight[imageIndex] != Null<Fence::Handle>) 
 					ImagesInFlight[imageIndex].WaitFor(UInt64Max);
 
 				ImagesInFlight[imageIndex] = InFlightFences[CurrentFrame];
@@ -1665,30 +1667,30 @@
 
 				CommandBuffer::SubmitInfo submitInfo {};
 
-				Semaphore::Handle waitSemaphores[] = { ImageAvailable_Semaphores[CurrentFrame].GetHandle() };
+				Semaphore::Handle waitSemaphores[] = { ImageAvailable_Semaphores[CurrentFrame] };
 
 				Pipeline::StageFlags waitStages[1] {};
 
 				waitStages[0].Set(EPipelineStageFlag::ColorAttachmentOutput);
 
-				CommandBuffersToSubmit.push_back(CommandBuffers_Old[CurrentFrame].GetHandle());
+				CommandBuffersToSubmit.push_back(CommandBuffers_Old[CurrentFrame]);
 
 				submitInfo.WaitSemaphoreCount = 1             ;
 				submitInfo.WaitSemaphores     = waitSemaphores;
 				submitInfo.WaitDstStageMask   = waitStages    ;
 
 				submitInfo.CommandBufferCount = 1;
-				submitInfo.CommandBuffers     = &CommandBuffers_Old[imageIndex].GetHandle();// CommandBuffersToSubmit.data();
+				submitInfo.CommandBuffers     = CommandBuffers_Old[imageIndex];// CommandBuffersToSubmit.data();
 
 
-				Semaphore::Handle signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame].GetHandle() };
+				Semaphore::Handle signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame] };
 
 				submitInfo.SignalSemaphoreCount = 1               ;
 				submitInfo.SignalSemaphores     = signalSemaphores;
 
 				InFlightFences[CurrentFrame].Reset();
 
-				if (GetGraphicsQueue().SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame].GetHandle()) != EResult::Success) 
+				if (GetGraphicsQueue().SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame]) != EResult::Success) 
 					throw std::runtime_error("Failed to submit draw command buffer!");
 
 				CommandBuffersToSubmit.clear();
@@ -1701,7 +1703,7 @@
 				presentInfo.WaitSemaphores     = signalSemaphores     ;
 
 
-				Swapchain::Handle swapChains[] = { SwapChain_Old.GetHandle() };
+				Swapchain::Handle swapChains[] = { SwapChain_Old };
 
 				presentInfo.SwapchainCount = 1          ;
 				presentInfo.Swapchains     = swapChains ;
