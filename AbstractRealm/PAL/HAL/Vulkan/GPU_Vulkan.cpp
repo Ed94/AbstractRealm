@@ -423,7 +423,7 @@
 
 				poolInfo.MaxSets = SCast<uint32>(SwapChain_Images.size());
 
-				if (Heap(DescriptorPool.Create(GetEngagedDevice(), poolInfo, nullptr)) != EResult::Success)
+				if (Heap(DescriptorPool.Create(GetEngagedDevice(), poolInfo)) != EResult::Success)
 					throw RuntimeError("Failed to create descriptor pool!");
 			}
 
@@ -812,7 +812,7 @@
 
 				ImageView result;
 
-				if (Heap(result.Create(GetEngagedDevice(), viewInfo, Memory::DefaultAllocator)) != EResult::Success )
+				if (Heap(result.Create(GetEngagedDevice(), viewInfo)) != EResult::Success )
 					throw RuntimeError("Failed to create texture image view!");
 
 				return result;
@@ -1123,7 +1123,7 @@
 				samplerInfo.MinimumLod = 0.0f                      ;
 				samplerInfo.MaxLod     = SCast<float32>(MipMapLevels);
 
-				if (Heap(TextureSampler.Create(GetEngagedDevice(), samplerInfo, nullptr)) != EResult::Success)
+				if (Heap(TextureSampler.Create(GetEngagedDevice(), samplerInfo)) != EResult::Success)
 					throw RuntimeError("Failed to create texture sampler!");
 			}
 

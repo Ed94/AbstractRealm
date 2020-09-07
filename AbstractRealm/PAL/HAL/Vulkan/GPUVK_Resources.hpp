@@ -18,7 +18,7 @@ namespace HAL::GPU::Vulkan
 
 		EResult Create(const LogicalDevice& _device, const CreateInfo& _info);
 
-		EResult Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks* _allocator);
+		EResult Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator);
 
 		EResult CreateAndBind
 		(
@@ -58,7 +58,7 @@ namespace HAL::GPU::Vulkan
 
 		EResult Create(const LogicalDevice& _device, const CreateInfo& _info);
 
-		EResult Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks* _allocator);
+		EResult Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator);
 
 	protected:
 

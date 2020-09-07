@@ -423,7 +423,7 @@ namespace HAL::GPU::Vulkan
 		return Parent::Create(_device, _info);
 	}
 
-	EResult RenderPass::Create(const LogicalDevice& _device, CreateInfo& _info, const Memory::AllocationCallbacks* _allocator)
+	EResult RenderPass::Create(const LogicalDevice& _device, CreateInfo& _info, const Memory::AllocationCallbacks& _allocator)
 	{
 		info = _info;
 

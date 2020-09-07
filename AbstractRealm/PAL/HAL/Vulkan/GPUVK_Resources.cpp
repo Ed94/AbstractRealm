@@ -19,7 +19,7 @@ namespace HAL::GPU::Vulkan
 		return Parent::Create(_device, info);
 	}
 
-	EResult Image::Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks* _allocator)
+	EResult Image::Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator)
 	{
 		info = _info;
 
@@ -159,7 +159,7 @@ namespace HAL::GPU::Vulkan
 		return Parent::Create(_device, _info);
 	}
 
-	EResult ImageView::Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks* _allocator)
+	EResult ImageView::Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator)
 	{
 		info = _info;
 
