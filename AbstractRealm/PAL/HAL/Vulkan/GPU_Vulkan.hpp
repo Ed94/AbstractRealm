@@ -71,7 +71,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				LogicalDevice::Queue         Queue              ;
 				Pipeline::Cache              PipelineCache      ;
 				EFormat                      ImageFormat        ;
-				V3::RenderPass               RenderPass         ;
+				V3::RenderPass::Handle       RenderPass         ;
 				Memory::AllocationCallbacks* Allocator          ;
 				uint32                       MinimumFrameBuffers;
 				uint32                       FrameBufferCount   ;

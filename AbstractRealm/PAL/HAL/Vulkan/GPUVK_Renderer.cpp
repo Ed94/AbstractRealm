@@ -816,12 +816,12 @@ namespace HAL::GPU::Vulkan
 
 		Framebuffer::CreateInfo info;
 
-		info.RenderPass = renderPass;
+		info.RenderPass      = renderPass;
 		info.AttachmentCount = SCast<uint32>(viewHandles.size());
-		info.Attachments = viewHandles.data();
-		info.Width = swapchain->GetExtent().Width;
-		info.Height = swapchain->GetExtent().Height;
-		info.Layers = 1;
+		info.Attachments     = viewHandles.data();
+		info.Width           = swapchain->GetExtent().Width;
+		info.Height          = swapchain->GetExtent().Height;
+		info.Layers          = 1;
 
 		if (bufferDepth)
 		{
@@ -830,19 +830,18 @@ namespace HAL::GPU::Vulkan
 
 		frameBuffers.clear();
 
-		for (auto& swapViews : swapchain->GetImageViews())
+		frameBuffers.resize(swapchain->GetImageViews().size());
+
+		auto& swapImageViews = swapchain->GetImageViews();
+
+		for (WordSize index = 0; index < frameBuffers.size(); index++)
 		{
-			viewHandles[0] = swapViews;
+			viewHandles[0] = swapImageViews[index];
 
-			Framebuffer framebuffer;
-
-			result = framebuffer.Create(GetEngagedDevice(), info);
-
-			frameBuffers.push_back(framebuffer);
+			result = frameBuffers[index].Create(GetEngagedDevice(), info);
 
 			if (result != EResult::Success) return result;
 		}
-
 
 		return result;
 	}
@@ -980,7 +979,9 @@ namespace HAL::GPU::Vulkan
 
 	Surface& Request_Surface(ptr<OSAL::Window> _window)
 	{
-		Surface surface;
+		Surfaces.resize(Surfaces.size() + 1);
+
+		Surface& surface = Surfaces.back();
 
 		surface.AssignPhysicalDevice(GetEngagedPhysicalGPU());
 
@@ -989,9 +990,7 @@ namespace HAL::GPU::Vulkan
 			throw RuntimeError("Failed to create surface for targeted window.");
 		}
 
-		Surfaces.push_back(surface);
-
-		return Surfaces.back();
+		return surface;
 	}
 
 	void Retire_Surface(ptr<Surface> _surface)
@@ -1003,9 +1002,11 @@ namespace HAL::GPU::Vulkan
 
 	Swapchain& Request_SwapChain(Surface& _surface, Surface::Format _formatDesired)
 	{
-		Swapchain swapchain;
+		Swapchain::CreateInfo info;
 
-		Swapchain::CreateInfo info{};
+		Swapchains.resize(Swapchains.size() + 1);
+
+		Swapchain& swapchain = Swapchains.back();
 
 		EResult result = swapchain.Create(_surface, _formatDesired);
 
@@ -1014,9 +1015,7 @@ namespace HAL::GPU::Vulkan
 			throw std::runtime_error("Failed to create the swap chain!");
 		}
 
-		Swapchains.push_back(swapchain);
-
-		return Swapchains.back();
+		return swapchain;
 	}
 
 	void Retire_Swapchain(ptr<Swapchain> _swapchain)
@@ -1028,13 +1027,11 @@ namespace HAL::GPU::Vulkan
 
 	RenderContext& Request_RenderContext(Swapchain& _swapchain)
 	{
-		RenderContext context;
+		RenderContexts.resize(RenderContexts.size() + 1);
 
-		EResult result = context.Create(_swapchain);
+		EResult result = RenderContexts.back().Create(_swapchain);
 
 		if (result != EResult::Success) throw RuntimeError("Failed to create render context");	
-
-		RenderContexts.push_back(move(context));
 
 		return RenderContexts.back();
 	}

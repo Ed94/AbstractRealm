@@ -35,7 +35,7 @@
 
 			GraphicsPipeline GraphicsPipeline_Old;
 
-			RenderPass RenderPass_Old;   
+			V3::RenderPass RenderPass_Old;   
 
 			Pipeline::Cache PipelineCache;   // Implement.
 
@@ -64,9 +64,9 @@
 
 			// Swapchain for surface
 
-			Swapchain SwapChain_Old        ;
-			Extent2D  SwapChain_Extent     ;
-			EFormat   SwapChain_ImageFormat;
+			Swapchain* SwapChain_Old        ;
+			Extent2D   SwapChain_Extent     ;
+			EFormat    SwapChain_ImageFormat;
 
 			DynamicArray<Image>       SwapChain_Images      ;
 			DynamicArray<ImageView>   SwapChain_ImageViews  ;
@@ -207,7 +207,7 @@
 						SwapChain_ImageViews[index].Destroy();
 					}
 
-					SwapChain_Old.Destroy();
+					SwapChain_Old->Destroy();
 
 					for (WordSize index = 0; index < SwapChain_ImageViews.size(); index++)
 					{
@@ -1146,10 +1146,9 @@
 				ShaderModule::CreateInfo fragInfo(triShader_FragCode.data(), triShader_FragCode.size());
 
 				ShaderModule triShaderModule_Vert; triShaderModule_Vert.Create(GetEngagedDevice(), vertInfo);
-
 				ShaderModule triShaderModule_Frag; triShaderModule_Frag.Create(GetEngagedDevice(), fragInfo);
 
-				StaticArray<ShaderModule, 2> result = { triShaderModule_Vert, triShaderModule_Frag };
+				StaticArray<ShaderModule, 2> result = { move(triShaderModule_Vert), move(triShaderModule_Frag) };
 
 				return result;
 			}
@@ -1206,12 +1205,13 @@
 				vertShaderModule.Create(GetEngagedDevice(), vertShaderInfo);
 				fragShaderModule.Create(GetEngagedDevice(), fragShaderInfo);
 				
-				StaticArray<ShaderModule, 2> result = { vertShaderModule, fragShaderModule };
+				StaticArray<ShaderModule, 2> result = { move(vertShaderModule), move(fragShaderModule) };
+				//StaticArray<ShaderModule, 2> result = { vertShaderModule, fragShaderModule };
 
 				return result;
 			}
 
-			void CreateVertexBuffers(Buffer& _vertexBuffer, V3::Memory&_vertexBufferMemory)
+			void CreateVertexBuffers(Buffer& _vertexBuffer, V3::Memory& _vertexBufferMemory)
 			{
 				DeviceSize bufferSize = sizeof(ModelVerticies[0]) * ModelVerticies.size();
 
@@ -1490,7 +1490,7 @@
 				RenderContext_Default.FrameSize           = SwapChain_Extent        ;
 				RenderContext_Default.Allocator           = Memory::DefaultAllocator;
 				RenderContext_Default.RenderPass          = RenderPass_Old              ;
-				RenderContext_Default.MinimumFrameBuffers = SwapChain_Old.GetMinimumImageCount();
+				RenderContext_Default.MinimumFrameBuffers = SwapChain_Old->GetMinimumImageCount();
 				RenderContext_Default.FrameBufferCount    = SCast<uint32>(SwapChain_Images.size());
 				RenderContext_Default.MSAA_Samples        = MSAA_Samples            ;
 			}
@@ -1506,9 +1506,9 @@
 				format.Format     = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				auto swapchain =Request_SwapChain(*Surface_Old, format); 
+				auto& swapchain = Request_SwapChain(*Surface_Old, format); 
 
-				SwapChain_Old = swapchain;
+				SwapChain_Old = &swapchain;
 				SwapChain_Extent = swapchain.GetExtent();
 				SwapChain_ImageFormat = swapchain.GetFormat();
 				SwapChain_Images = swapchain.GetImages();
@@ -1522,7 +1522,7 @@
 
 				CreateGraphicsPipeline(shaders);
 
-				for (auto shader : shaders)
+				for (auto& shader : shaders)
 				{
 					shader.Destroy();
 				}
@@ -1586,9 +1586,9 @@
 				format.Format = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				auto swapchain = Request_SwapChain(*Surface_Old, format);
+				auto& swapchain = Request_SwapChain(*Surface_Old, format);
 
-				SwapChain_Old = swapchain;
+				SwapChain_Old = &swapchain;
 				SwapChain_Extent = swapchain.GetExtent();
 				SwapChain_ImageFormat = swapchain.GetFormat();
 				SwapChain_Images = swapchain.GetImages();
@@ -1602,7 +1602,7 @@
 
 				CreateGraphicsPipeline(shaders);
 
-				for (auto shader : shaders)
+				for (auto& shader : shaders)
 				{
 					shader.Destroy();
 				}
@@ -1630,7 +1630,7 @@
 				uint32 imageIndex;
 
 				EResult result = 
-					SwapChain_Old.AcquireNextImage
+					SwapChain_Old->AcquireNextImage
 					(
 						UInt64Max                              , 
 						ImageAvailable_Semaphores[CurrentFrame], 
@@ -1703,7 +1703,7 @@
 				presentInfo.WaitSemaphores     = signalSemaphores     ;
 
 
-				Swapchain::Handle swapChains[] = { SwapChain_Old };
+				Swapchain::Handle swapChains[] = { *SwapChain_Old };
 
 				presentInfo.SwapchainCount = 1          ;
 				presentInfo.Swapchains     = swapChains ;

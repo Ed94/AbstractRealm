@@ -71,9 +71,9 @@ namespace HAL::GPU::Vulkan
 	public:
 		EFormat GetFormat();
 
-		Image     image;
+		Image     image ;
 		Memory    memory;
-		ImageView view;
+		ImageView view  ;
 	};
 
 	struct VertexInputState : Pipeline::VertexInputState

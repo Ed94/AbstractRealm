@@ -173,7 +173,7 @@ namespace HAL::GPU::Vulkan
 
 			for (auto& extension : _extensions)
 			{
-				if (CStr_Compare(enabledExtension, extension) == 0)
+				if (CStrCompare(enabledExtension, extension) == 0)
 				{
 					extensionsLeft--;
 				}
@@ -653,7 +653,7 @@ namespace HAL::GPU::Vulkan
 
 		for (const auto& layerAndExtenions : AppLayersAndExtensions)
 		{
-			if (CStr_Compare(Layer::Khronos_Validation, layerAndExtenions.Layer.Name) == 0)
+			if (CStrCompare(Layer::Khronos_Validation, layerAndExtenions.Layer.Name) == 0)
 			{
 				DesiredLayers.push_back(Layer::Khronos_Validation);
 
@@ -671,7 +671,7 @@ namespace HAL::GPU::Vulkan
 		{
 			for (const auto& layerAndExtenions : AppLayersAndExtensions)
 			{
-				if (CStr_Compare(Layer::LunarG_StandardValidation, layerAndExtenions.Layer.Name) == 0)
+				if (CStrCompare(Layer::LunarG_StandardValidation, layerAndExtenions.Layer.Name) == 0)
 				{
 					DesiredLayers.push_back(Layer::LunarG_StandardValidation);
 
@@ -702,7 +702,7 @@ namespace HAL::GPU::Vulkan
 			{
 				for (const auto& layerAndExtenions : AppLayersAndExtensions)
 				{
-					if (CStr_Compare(validationLayerName, layerAndExtenions.Layer.Name) == 0)
+					if (CStrCompare(validationLayerName, layerAndExtenions.Layer.Name) == 0)
 					{
 						layersFound++;
 
@@ -730,7 +730,7 @@ namespace HAL::GPU::Vulkan
 		{
 			for (const auto& layerAndExtenions : AppLayersAndExtensions)
 			{
-				if (CStr_Compare(Layer::LunarG_CoreValidation, layerAndExtenions.Layer.Name) == 0)
+				if (CStrCompare(Layer::LunarG_CoreValidation, layerAndExtenions.Layer.Name) == 0)
 				{
 					DesiredLayers.push_back(Layer::LunarG_CoreValidation);
 
@@ -752,7 +752,7 @@ namespace HAL::GPU::Vulkan
 		{
 			for (const auto& layerAndExtenions : AppLayersAndExtensions)
 			{
-				if (CStr_Compare(validationLayerName, layerAndExtenions.Layer.Name) == 0)
+				if (CStrCompare(validationLayerName, layerAndExtenions.Layer.Name) == 0)
 				{
 					layersFound++;
 

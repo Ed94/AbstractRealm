@@ -19,5 +19,5 @@ namespace LAL
 
 
 
-	constexpr auto CStr_Compare = strcmp;
+	constexpr auto CStrCompare = strcmp;
 }

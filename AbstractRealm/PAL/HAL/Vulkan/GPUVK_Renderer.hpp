@@ -150,10 +150,10 @@ namespace HAL::GPU::Vulkan
 		CreateInfo info;
 
 		//DynamicArray<Attachment > attachments;
-		//DynamicArray<SubpassInfo> subpasses;
+		//DynamicArray<SubpassInfo> subpasses  ;
 
-		DynamicArray<AttachmentDescription> attachments;
-		DynamicArray<SubpassInfo> subpasses;
+		/*DynamicArray<AttachmentDescription> attachments;
+		DynamicArray<SubpassInfo          > subpasses  ;
 
 		ImagePackage depthBuffer;
 
@@ -161,7 +161,7 @@ namespace HAL::GPU::Vulkan
 
 		ESampleCount samples = ESampleCount::_1;
 
-		bool shouldClear = true, bufferDepth = true;
+		bool shouldClear = true, bufferDepth = true;*/
 	};
 
 
@@ -216,7 +216,7 @@ namespace HAL::GPU::Vulkan
 		// Semaphore Pool
 		//DynamicArray<Semaphore> semaphores;
 
-		Deque<RenderPass> renderPasses;
+		//Deque<RenderPass> renderPasses;
 
 		// Thread Count
 		WordSize threadsAssigned;

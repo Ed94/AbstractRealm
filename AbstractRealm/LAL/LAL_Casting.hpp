@@ -66,6 +66,9 @@ namespace LAL
 		return reinterpret_cast< Derived* >(_ptr);
 	}
 
+	//template<typename Object>
+	
+
 	/*
 	Static Cast (Direct)
 	*/
