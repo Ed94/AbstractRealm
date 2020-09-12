@@ -10,18 +10,14 @@ namespace HAL::GPU::Vulkan
 		AllocateInfo info;
 
 		info.BufferCount = 1;
-		info.Pool = handle;
-		info.Level = ECommandBufferLevel::Primary;
-
-		CommandBuffer commandBuffer;
+		info.Pool        = handle;
+		info.Level       = ECommandBufferLevel::Primary;
 
 		CommandBuffer::Handle handle;
 		
 		Allocate(info, &handle);
 
-		commandBuffer.Assign(GetEngagedDevice(), info, handle);
-
-		commandBuffers.push_back(commandBuffer);
+		commandBuffers.push_back(CommandBuffer(GetEngagedDevice(), info, handle));
 
 		return commandBuffers.back();
 	}
@@ -30,7 +26,9 @@ namespace HAL::GPU::Vulkan
 	{
 		EResult result;
 
-		Heap(commandBuffers.push_back(BeginSingleTimeCommands(result)));
+		Heap(commandBuffers.push_back(move(BeginSingleTimeCommands(result))));
+
+		if (result != EResult::Success) throw RuntimeError("UsaDumbass");
 
 		return commandBuffers.back();
 	}
@@ -74,24 +72,20 @@ namespace HAL::GPU::Vulkan
 
 		// Only one set of pools for now since its single threaded
 
-		CommandPool generalPool;
-		
-		Heap(generalPool.Create(GetEngagedDevice(), info));
-
-		CommandPools.push_back(generalPool);
+		CommandPools.resize(CommandPools.size() + 1);
 
 		GeneralPool = &CommandPools.back();
+		
+		Heap(GeneralPool->Create(GetEngagedDevice(), info));
 
 
-		CommandPool transientPool;
+		CommandPools.resize(CommandPools.size() + 1);
+
+		TransientPool = &CommandPools.back();
 
 		info.Flags.Set(ECommandPoolCreateFlag::Transient);
 
-		Heap(transientPool.Create(GetEngagedDevice(), info));
-
-		CommandPools.push_back(transientPool);
-
-		TransientPool = &CommandPools.back();
+		Heap(TransientPool->Create(GetEngagedDevice(), info));
 	}
 
 	const CommandBuffer& RecordOnGraphics()
@@ -112,7 +106,7 @@ namespace HAL::GPU::Vulkan
 
 		CommandPool::CreateInfo info;
 
-		info.QueueFamilyIndex =  GetGraphicsQueue().GetFamilyIndex();
+		info.QueueFamilyIndex = GetGraphicsQueue().GetFamilyIndex();
 
 		EResult result = CommandPools.back().Create(GetEngagedDevice(), info);
 

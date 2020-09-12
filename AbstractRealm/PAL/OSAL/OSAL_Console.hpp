@@ -37,7 +37,9 @@ namespace OSAL
 				Background_Red       = BACKGROUND_RED      ,
 				Background_Green     = BACKGROUND_GREEN    ,
 				Background_Blue      = BACKGROUND_BLUE     ,
-				Background_Intensity = BACKGROUND_INTENSITY
+				Background_Intensity = BACKGROUND_INTENSITY,
+
+				SpecifyBitmaskable = sizeof(WORD)
 			};
 
 			using AttributeFlags = Bitmask<EAttributeFlag, WORD>;
@@ -138,4 +140,4 @@ namespace OSAL
 	constexpr auto WriteToConsole                = ConsoleAPI::WriteToConsole       ;
 }
 
-SpecifyBitmaskable(OSAL::PlatformBackend::ConsoleTypes_Maker<OSAL::EOS::Windows>::EAttributeFlag);
+//SpecifyBitmaskable(OSAL::PlatformBackend::ConsoleTypes_Maker<OSAL::EOS::Windows>::EAttributeFlag);

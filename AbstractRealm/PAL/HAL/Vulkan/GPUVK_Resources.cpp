@@ -189,7 +189,7 @@ namespace HAL::GPU::Vulkan
 
 		Memory stagingBufferMemory;
 
-		Buffer::CreateInfo stagingBufferInfo {};
+		Buffer::CreateInfo stagingBufferInfo;
 
 		stagingBufferInfo.SharingMode = ESharingMode::Exclusive;
 		stagingBufferInfo.Size        = _dataSize;

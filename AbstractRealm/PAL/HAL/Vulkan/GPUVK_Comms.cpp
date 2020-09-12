@@ -98,7 +98,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult DebugUtils::Messenger::Create(const AppInstance& _app, const Memory::AllocationCallbacks& _allocator)
 	{
-		return Parent::Create(_app, info, &_allocator);
+		return Parent::Create(_app, info, _allocator);
 	}
 
 	const DebugUtils::Messenger::CreateInfo& DebugUtils::Messenger::GetInfo() const 
@@ -276,7 +276,7 @@ namespace HAL::GPU::Vulkan
 			queueInfo.QueueFamilyIndex = familyIndex;
 			queueInfo.QueueCount       = 1          ;   // For now only getting one queue of any type.
 
-			if (queueFamily.QueueFlags.Has(EQueueFlag::Graphics))
+			if (queueFamily.QueueFlags.HasFlag(EQueueFlag::Graphics))
 			{
 				queueFamilyInfos.push_back(queueInfo);
 

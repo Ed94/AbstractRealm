@@ -11,14 +11,17 @@ ease of use functionality for manipulating the mask.
 
 
 
+#include "LAL_Casting.hpp"
 #include "LAL_Declarations.hpp"
+#include "LAL_Reflection.hpp"
+#include "LAL_Types.hpp"
 
 
 
 #ifndef BITMASK_DEFINED
 #define BITMASK_DEFINED
 
-	template<typename Enum>
+	/*template<typename Enum>
 	struct Bitmaskable
 	{
 		static constexpr bool specified = false;
@@ -29,7 +32,7 @@ ease of use functionality for manipulating the mask.
 	struct Bitmaskable<__ENUM>                  \
 	{                                           \
 		static constexpr bool specified = true; \
-	};
+	};*/
 
 #endif
 
@@ -37,6 +40,31 @@ ease of use functionality for manipulating the mask.
 
 namespace LAL
 {
+	template<typename Enum, typename = void>
+	struct IsBitmaskable : std::false_type
+	{};
+
+	template<typename Enum>
+	struct IsBitmaskable<Enum, decltype(SCast<void>(Enum::SpecifyBitmaskable))> : IsEnumType<Enum>
+	{};
+
+	template <typename Enum>
+	constexpr typename Where<IsBitmaskable<Enum>::value, 
+	bool> Bitmaskable() noexcept
+	{
+		return static_cast<WordSize>(Enum::SpecifyBitmaskable) > WordSize(0) ? true : false;
+	}
+
+	template <typename Enum> 
+	constexpr typename Where<!IsBitmaskable<Enum>::value, 
+	bool> Bitmaskable() noexcept
+	{
+		return false;
+	}
+
+	/*template<typename Enum>
+	using Bitmaskable = TBitmaskable<Enum>;*/
+
 	template
 	<
 		typename EnumType,
@@ -45,7 +73,7 @@ namespace LAL
 	struct Bitmask
 	{
 	private:
-		EnforceConstraint(Bitmaskable<EnumType>::specified, "EnumType must be of Bitmaskable type.");
+		EnforceConstraint(Bitmaskable<EnumType>(), "EnumType must be of Bitmaskable type.");
 
 		using _ThisType = Bitmask<EnumType, BitmaskRepresentation>;
 

@@ -38,7 +38,9 @@ namespace IO
 		ForInput              = std::ios::in    ,
 		ForOutput             = std::ios::out   ,
 		DiscardStreamContents = std::ios::trunc ,
-		SeekToEOF             = std::ios::ate
+		SeekToEOF             = std::ios::ate   ,
+
+		SpecifyBitmaskable = sizeof(std::ios::openmode)
 	};
 
 	
@@ -65,4 +67,4 @@ namespace IO
 	bool OpenFile(File_InputStream&  _fileStream, OpenFlags _flags, const Path& _file);
 }
 
-SpecifyBitmaskable(IO::EOpenFlag);
+//SpecifyBitmaskable(IO::EOpenFlag);

@@ -691,7 +691,7 @@
 				{
 					EDynamicState::Viewport ,
 					EDynamicState::LineWidth
-				};
+				};	
 
 				Pipeline::DynamicState::CreateInfo dynamicState {};
 
@@ -1310,7 +1310,7 @@
 				// Check if image format supports linear blitting
 				FormatProperties formatProperties = GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(_format);
 
-				if (!(formatProperties.OptimalTilingFeatures.Has(EFormatFeatureFlag::SampledImageFilterLinear)))
+				if (!(formatProperties.OptimalTilingFeatures.HasFlag(EFormatFeatureFlag::SampledImageFilterLinear)))
 				{
 					throw std::runtime_error("Texture image format does not support linear blitting!");
 				}
@@ -1757,7 +1757,7 @@
 
 					SingleTimeCommandPool.Destroy();   
 
-					for (auto pool : CommandPools_Old)
+					for (auto& pool : CommandPools_Old)
 					{
 						pool.Destroy();
 					}

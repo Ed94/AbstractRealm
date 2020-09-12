@@ -71,7 +71,7 @@ namespace HAL::GPU::Vulkan
 
 		GetPhysicalDeviceCapabilities(queryResult);
 
-		if (capabilities.operator !=(queryResult))
+		if (capabilities.operator!=(queryResult))
 		{
 			capabilities = queryResult;
 

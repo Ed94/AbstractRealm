@@ -59,6 +59,9 @@ namespace LAL
 	// Type Signage
 
 	template<typename Type>
+	using IsEnumType = std::is_enum<Type>;
+
+	template<typename Type>
 	using IsSignedType = std::is_signed<Type>;
 
 	template<typename Type>
@@ -67,17 +70,23 @@ namespace LAL
 	// Type Primary Categories
 
 	template<typename Type>
-	using IsPointer_T = std::is_pointer<Type>;
+	using T_IsPointer= std::is_pointer<Type>;
 
 	template<typename Type>
-	using IsFunction_T = std::is_function<Type>;
+	using T_IsFunction = std::is_function<Type>;
 	
 	template<typename Type>
-	using IsFunctionPtr_T = std::bool_constant< IsPointer_T<Type>::value && IsFunction_T< RemovePtr<Type>>::value >;
+	using T_IsFunctionPtr = std::bool_constant< T_IsPointer<Type>::value && T_IsFunction< RemovePtr<Type>>::value >;
 
 
 
 	// Functions
+
+	template<typename Type>
+	constexpr bool IsEnum()
+	{
+		return IsEnumType<Type>::value;
+	}
 
 	template<typename Type>
 	constexpr bool IsSigned()
@@ -114,18 +123,18 @@ namespace LAL
 	template<typename Type> constexpr
 	bool IsPointer()
 	{
-		return IsPointer_T<Type>::value;
+		return T_IsPointer<Type>::value;
 	}
 
 	template<typename Type> constexpr
 	bool IsFunction()
 	{
-		return IsFunction_T<Type>::value;
+		return T_IsFunction<Type>::value;
 	}
 
 	template<typename Type> constexpr
 	bool IsFunctionPtr()
 	{
-		return IsFunctionPtr_T<Type>::value;
+		return T_IsFunctionPtr<Type>::value;
 	}
 }
