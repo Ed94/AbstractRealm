@@ -66,7 +66,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			{
 				AppInstance::Handle          ApplicationInstance;
 				V3::PhysicalDevice           PhysicalDevice     ;
-				V3::LogicalDevice            LogicalDevice      ;
+				V3::LogicalDevice::Handle    LogicalDevice      ;
 				uint32                       QueueFamilyIndex   ;
 				LogicalDevice::Queue         Queue              ;
 				Pipeline::Cache              PipelineCache      ;
