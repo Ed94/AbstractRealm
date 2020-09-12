@@ -69,7 +69,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				V3::LogicalDevice::Handle    LogicalDevice      ;
 				uint32                       QueueFamilyIndex   ;
 				LogicalDevice::Queue         Queue              ;
-				Pipeline::Cache              PipelineCache      ;
+				Pipeline::Cache::Handle      PipelineCache      ;
 				EFormat                      ImageFormat        ;
 				V3::RenderPass::Handle       RenderPass         ;
 				Memory::AllocationCallbacks* Allocator          ;
@@ -141,7 +141,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features);
 
-			void GenerateMipMaps(Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels);
+			void GenerateMipMaps(Image& _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels);
 
 			void Start_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
 

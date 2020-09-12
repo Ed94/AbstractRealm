@@ -263,7 +263,7 @@ namespace HAL::GPU::Vulkan
 
 		Semaphore presentSubmitStatus;
 
-		DynamicArray<Fence> swapsInFlight;
+		DynamicArray<ptr<Fence>> swapsInFlight;
 
 
 		// Render pass object (To be used later)

@@ -53,7 +53,7 @@
 			// Basic Rendering Synch (Upgrade this later)			
 
 			DynamicArray<Fence> InFlightFences;
-			DynamicArray<Fence> ImagesInFlight;
+			DynamicArray<ptr<Fence>> ImagesInFlight;
 
 			DynamicArray<Semaphore> ImageAvailable_Semaphores;
 			DynamicArray<Semaphore> RenderFinished_Semaphores;
@@ -65,11 +65,11 @@
 			// Swapchain for surface
 
 			Swapchain* SwapChain_Old        ;
-			Extent2D   SwapChain_Extent     ;
-			EFormat    SwapChain_ImageFormat;
+			//Extent2D   SwapChain_Extent     ;
+			//EFormat    SwapChain_ImageFormat;
 
-			DynamicArray<Image>       SwapChain_Images      ;
-			DynamicArray<ImageView>   SwapChain_ImageViews  ;
+			//DynamicArray<Image>       SwapChain_Images      ;
+			//DynamicArray<ImageView>   SwapChain_ImageViews  ;
 			DynamicArray<Framebuffer> SwapChain_Framebuffers;
 
 			uint32 Swap_MinImageCount;
@@ -154,7 +154,7 @@
 
 			uint32 GetNumberOfFramebuffers()
 			{
-				return SCast<uint32>(SwapChain_Images.size());
+				return SCast<uint32>(SwapChain_Old->GetImages().size());
 			}
 
 			CommandBuffer RequestSingleTimeBuffer()
@@ -202,24 +202,28 @@
 					PipelineLayout  .Destroy();
 					RenderPass_Old      .Destroy();
 
-					for (WordSize index = 0; index < SwapChain_ImageViews.size(); index++)
+					/*for (WordSize index = 0; index < SwapChain_ImageViews.size(); index++)
 					{
 						SwapChain_ImageViews[index].Destroy();
-					}
+					}*/
 
-					SwapChain_Old->Destroy();
+					//SwapChain_Old->Destroy();
 
-					for (WordSize index = 0; index < SwapChain_ImageViews.size(); index++)
+					//SwapChain_Old->Regenerate();
+
+					for (WordSize index = 0; index < SwapChain_Old->GetImageViews().size(); index++)
 					{
 						UniformBuffers      [index].Destroy();
 						UniformBuffersMemory[index].Free();
 					}
+
+					
 					
 					DescriptorPool.Destroy();
 				//);
 			}
 
-			void CopyBufferToImage(Buffer _buffer, Image _image, uint32 _width, uint32 _height)
+			void CopyBufferToImage(Buffer& _buffer, Image& _image, uint32 _width, uint32 _height)
 			{
 				EResult result;
 
@@ -275,7 +279,7 @@
 				renderPassInfo.RenderArea.Offset.X = 0;
 				renderPassInfo.RenderArea.Offset.Y = 0;
 
-				renderPassInfo.RenderArea.Extent = SwapChain_Extent;
+				renderPassInfo.RenderArea.Extent = SwapChain_Old->GetExtent();
 
 				StaticArray<ClearValue, 2> clearValues {}; 
 
@@ -328,12 +332,14 @@
 
 			void CreateColorResources()
 			{
-				EFormat colorFormat = SwapChain_ImageFormat;
+				EFormat colorFormat = SwapChain_Old->GetFormat();
+
+				auto swapExtent = SwapChain_Old->GetExtent();
 
 				CreateImage
 				(
-					SwapChain_Extent.Width, 
-					SwapChain_Extent.Height, 
+					swapExtent.Width, 
+					swapExtent.Height, 
 					1, 
 					MSAA_Samples, 
 					colorFormat, 
@@ -357,11 +363,11 @@
 
 				Heap(SingleTimeCommandPool.Create(GetEngagedDevice(), poolInfo));
 
-				CommandPools_Old    .resize(SwapChain_Images.size());
-				CommandBuffers_Old  .resize(SwapChain_Images.size());
-				CommandBufferHandles.resize(SwapChain_Images.size());
+				CommandPools_Old    .resize(SwapChain_Old->GetImages().size());
+				CommandBuffers_Old  .resize(SwapChain_Old->GetImages().size());
+				CommandBufferHandles.resize(SwapChain_Old->GetImages().size());
 
-				for (DeviceSize index = 0; index < SwapChain_Images.size(); index++)
+				for (DeviceSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
 				{
 					if (Heap(CommandPools_Old[index].Create(GetEngagedDevice(), poolInfo)) != EResult::Success)
 					{
@@ -385,10 +391,12 @@
 			{
 				EFormat depthFormat = FindDepthFormat();
 
+				auto swapExtent = SwapChain_Old->GetExtent();
+
 				CreateImage
 				(
-					SwapChain_Extent.Width, 
-					SwapChain_Extent.Height, 
+					swapExtent.Width, 
+					swapExtent.Height, 
 					1,
 					MSAA_Samples,   // TODO: Change me.
 					depthFormat, 
@@ -411,17 +419,17 @@
 				StaticArray<DescriptorPool::Size, 2> poolSizes {};
 
 				poolSizes[0].Type = EDescriptorType::UniformBuffer;
-				poolSizes[0].Count = SCast<uint32>(SwapChain_Images.size());
+				poolSizes[0].Count = SCast<uint32>(SwapChain_Old->GetImages().size());
 
 				poolSizes[1].Type = EDescriptorType::Sampler;
-				poolSizes[1].Count = SCast<uint32>(SwapChain_Images.size());
+				poolSizes[1].Count = SCast<uint32>(SwapChain_Old->GetImages().size());
 
 				DescriptorPool::CreateInfo poolInfo {};
 
 				poolInfo.PoolSizeCount = SCast<uint32>(poolSizes.size());
 				poolInfo.PoolSizes     = poolSizes.data()               ;
 
-				poolInfo.MaxSets = SCast<uint32>(SwapChain_Images.size());
+				poolInfo.MaxSets = SCast<uint32>(SwapChain_Old->GetImages().size());
 
 				if (Heap(DescriptorPool.Create(GetEngagedDevice(), poolInfo)) != EResult::Success)
 					throw RuntimeError("Failed to create descriptor pool!");
@@ -429,18 +437,18 @@
 
 			void CreateDescriptorSets()
 			{
-				DynamicArray<Pipeline::Layout::DescriptorSet::Handle> layouts(SwapChain_Images.size(), Pipeline::Layout::DescriptorSet::Handle(DescriptorSetLayout));
+				DynamicArray<Pipeline::Layout::DescriptorSet::Handle> layouts(SwapChain_Old->GetImages().size(), Pipeline::Layout::DescriptorSet::Handle(DescriptorSetLayout));
 
 				DescriptorPool::AllocateInfo allocInfo{};
 
 				allocInfo.DescriptorPool     = DescriptorPool;
-				allocInfo.DescriptorSetCount = SCast<uint32>(SwapChain_Images.size());
+				allocInfo.DescriptorSetCount = SCast<uint32>(SwapChain_Old->GetImages().size());
 				allocInfo.SetLayouts         = layouts.data();
 
 				if (Heap(DescriptorPool.Allocate(allocInfo, DescriptorSets, DescriptorSetHandles)) != EResult::Success)
 					throw std::runtime_error("failed to allocate descriptor sets!");
 
-				for (WordSize index = 0; index < SwapChain_Images.size(); index++)
+				for (WordSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
 				{
 					DescriptorSet::BufferInfo bufferInfo{};
 
@@ -522,24 +530,26 @@
 
 			void CreateFrameBuffers()
 			{
-				SwapChain_Framebuffers.resize(SwapChain_ImageViews.size());
+				SwapChain_Framebuffers.resize(SwapChain_Old->GetImages().size());
 
-				for (WordSize index = 0; index < SwapChain_ImageViews.size(); index++) 
+				for (WordSize index = 0; index < SwapChain_Old->GetImages().size(); index++) 
 				{
 					StaticArray<ImageView::Handle, 2> attachments = 
 					{
-						SwapChain_ImageViews[index],
+						SwapChain_Old->GetImageViews()[index],
 						DepthImageView
 						//ColorImageView.GetHandle(), // Sampler image.
 					};
 
 					Framebuffer::CreateInfo framebufferInfo {};
 
+					auto swapExtent = SwapChain_Old->GetExtent();
+
 					framebufferInfo.RenderPass      = RenderPass_Old       ;
 					framebufferInfo.AttachmentCount = SCast<uint32>(attachments.size());
 					framebufferInfo.Attachments     = attachments.data()               ;
-					framebufferInfo.Width           = SwapChain_Extent.Width           ;
-					framebufferInfo.Height          = SwapChain_Extent.Height          ;
+					framebufferInfo.Width           = swapExtent.Width           ;
+					framebufferInfo.Height          = swapExtent.Height          ;
 					framebufferInfo.Layers          = 1                                ;
 
 					if (Heap(SwapChain_Framebuffers[index].Create(GetEngagedDevice(), framebufferInfo)) != EResult::Success) 
@@ -594,10 +604,12 @@
 
 				Viewport viewport{};
 
+				auto swapExtent = SwapChain_Old->GetExtent();
+
 				viewport.X        = 0.0f                          ;
 				viewport.Y        = 0.0f                          ;
-				viewport.Width    = float(SwapChain_Extent.Width) ;
-				viewport.Height   = float(SwapChain_Extent.Height);
+				viewport.Width    = float(swapExtent.Width) ;
+				viewport.Height   = float(swapExtent.Height);
 				viewport.MinDepth = 0.0f                          ;
 				viewport.MaxDepth = 1.0f                          ;
 
@@ -606,7 +618,7 @@
 				scissor.Offset.X = 0;
 				scissor.Offset.Y = 0;
 
-				scissor.Extent = SwapChain_Extent;
+				scissor.Extent = swapExtent;
 
 				Pipeline::ViewportState::CreateInfo viewportState_CreationSpec{};
 
@@ -818,7 +830,7 @@
 				return result;
 			}
 
-			void CreateSwapChain_ImageViews()
+			/*void CreateSwapChain_ImageViews()
 			{
 				SwapChain_ImageViews.resize(SwapChain_Images.size());
 
@@ -826,7 +838,7 @@
 				{
 					SwapChain_ImageViews[index] = CreateImageView(SwapChain_Images[index], SwapChain_ImageFormat, Image::AspectFlags(EImageAspect::Color), MipMapLevels);
 				}
-			}
+			}*/
 
 			void CreateIndexBuffer()
 			{
@@ -889,7 +901,7 @@
 			{
 				RenderPass::AttachmentDescription colorAttachment {};
 
-				colorAttachment.Format  = SwapChain_ImageFormat;
+				colorAttachment.Format  = SwapChain_Old->GetFormat();
 				colorAttachment.Samples = MSAA_Samples        ;
 
 				colorAttachment.LoadOp  = EAttachmentLoadOperation ::Clear;
@@ -929,7 +941,7 @@
 
 				RenderPass::AttachmentDescription colorAttachmentResolve {};
 
-				colorAttachmentResolve.Format = SwapChain_ImageFormat;
+				colorAttachmentResolve.Format = SwapChain_Old->GetFormat();
 
 				colorAttachmentResolve.Samples = ESampleCount::_1;
 
@@ -992,7 +1004,7 @@
 				RenderFinished_Semaphores.resize(MaxFramesInFlight);
 
 				InFlightFences.resize(MaxFramesInFlight      );
-				ImagesInFlight.resize(SwapChain_Images.size());
+				ImagesInFlight.resize(SwapChain_Old->GetImages().size());
 
 				Semaphore::CreateInfo semaphore_CreationSpec;
 
@@ -1157,8 +1169,8 @@
 			{
 				DeviceSize bufferSize = sizeof(UniformBufferObject);
 
-				UniformBuffers      .resize(SwapChain_Images.size());
-				UniformBuffersMemory.resize(SwapChain_Images.size());
+				UniformBuffers      .resize(SwapChain_Old->GetImages().size());
+				UniformBuffersMemory.resize(SwapChain_Old->GetImages().size());
 
 				Buffer::CreateInfo uniformBufferInfo {};
 
@@ -1168,7 +1180,7 @@
 
 				uniformBufferInfo.SharingMode = ESharingMode::Exclusive;
 
-				for (WordSize index = 0; index < SwapChain_Images.size(); index++)
+				for (WordSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
 				{
 					Heap
 					(
@@ -1303,7 +1315,7 @@
 				throw RuntimeError("Failed to find supported format!");
 			}
 
-			void GenerateMipMaps(V3::Image _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
+			void GenerateMipMaps(V3::Image& _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
 			{
 				EResult result = EResult::Incomplete;
 
@@ -1436,7 +1448,7 @@
 				ubo.Viewport = glm::lookAt(glm::vec3(1.7f, 1.7f, 1.7f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));   // The default
 				//ubo.Viewport = glm::lookAt(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)); crying cat
 
-				ubo.Projection = glm::perspective(glm::radians(45.0f), SwapChain_Extent.Width / (float) SwapChain_Extent.Height, 0.1f, 10.0f);
+				ubo.Projection = glm::perspective(glm::radians(45.0f), SwapChain_Old->GetExtent().Width / (float) SwapChain_Old->GetExtent().Height, 0.1f, 10.0f);
 
 				ubo.Projection[1][1] *= -1;
 
@@ -1486,12 +1498,12 @@
 				RenderContext_Default.LogicalDevice       =  GetEngagedDevice()          ;
 				RenderContext_Default.Queue               = GetEngagedDevice().GetGraphicsQueue();
 				RenderContext_Default.PipelineCache       = PipelineCache           ;
-				RenderContext_Default.ImageFormat         = SwapChain_ImageFormat   ;
-				RenderContext_Default.FrameSize           = SwapChain_Extent        ;
+				RenderContext_Default.ImageFormat         = SwapChain_Old->GetFormat()   ;
+				RenderContext_Default.FrameSize           = SwapChain_Old->GetExtent()        ;
 				RenderContext_Default.Allocator           = Memory::DefaultAllocator;
 				RenderContext_Default.RenderPass          = RenderPass_Old              ;
 				RenderContext_Default.MinimumFrameBuffers = SwapChain_Old->GetMinimumImageCount();
-				RenderContext_Default.FrameBufferCount    = SCast<uint32>(SwapChain_Images.size());
+				RenderContext_Default.FrameBufferCount    = SCast<uint32>(SwapChain_Old->GetImages().size());
 				RenderContext_Default.MSAA_Samples        = MSAA_Samples            ;
 			}
 
@@ -1509,10 +1521,10 @@
 				auto& swapchain = Request_SwapChain(*Surface_Old, format); 
 
 				SwapChain_Old = &swapchain;
-				SwapChain_Extent = swapchain.GetExtent();
-				SwapChain_ImageFormat = swapchain.GetFormat();
-				SwapChain_Images = swapchain.GetImages();
-				SwapChain_ImageViews = swapchain.GetImageViews();
+				//SwapChain_Extent = swapchain.GetExtent();
+				//SwapChain_ImageFormat = swapchain.GetFormat();
+				//SwapChain_Images = swapchain.GetImages();
+				//SwapChain_ImageViews = swapchain.GetImageViews();
 
 				CreateRenderPass();
 
@@ -1579,22 +1591,24 @@
 
 				CleanupSwapChain();
 
-				Surface_Old->RequeryCapabilities();
+				//Surface_Old->RequeryCapabilities();
+
+				SwapChain_Old->QuerySurfaceChanges();
 
 				Surface::Format format;
 
 				format.Format = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				auto& swapchain = Request_SwapChain(*Surface_Old, format);
+				//auto& swapchain = Request_SwapChain(*Surface_Old, format);
 
-				SwapChain_Old = &swapchain;
-				SwapChain_Extent = swapchain.GetExtent();
-				SwapChain_ImageFormat = swapchain.GetFormat();
-				SwapChain_Images = swapchain.GetImages();
-				SwapChain_ImageViews = swapchain.GetImageViews();
+				//SwapChain_Old = &swapchain;
+				//SwapChain_Extent = swapchain.GetExtent();
+				//SwapChain_ImageFormat = swapchain.GetFormat();
+				//SwapChain_Images = swapchain.GetImages();
+				//SwapChain_ImageViews = swapchain.GetImageViews();
 
-				CreateSwapChain_ImageViews();
+				//CreateSwapChain_ImageViews();
 
 				CreateRenderPass();
 
@@ -1649,10 +1663,10 @@
 					throw std::runtime_error("Failed to acquire swap chain image!");
 				}
 
-				if (ImagesInFlight[imageIndex] != Null<Fence::Handle>) 
-					ImagesInFlight[imageIndex].WaitFor(UInt64Max);
+				if (ImagesInFlight[imageIndex] != nullptr && *ImagesInFlight[imageIndex] != Null<Fence::Handle>) 
+					ImagesInFlight[imageIndex]->WaitFor(UInt64Max);
 
-				ImagesInFlight[imageIndex] = InFlightFences[CurrentFrame];
+				ImagesInFlight[imageIndex] = &InFlightFences[CurrentFrame];
 
 
 				// Updating

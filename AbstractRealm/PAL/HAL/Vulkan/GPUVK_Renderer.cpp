@@ -381,7 +381,7 @@ namespace HAL::GPU::Vulkan
 			if (result != EResult::Success)
 				return result;
 
-			imageViews.push_back(view);
+			imageViews.push_back(move(view));
 		}
 
 		return result;
@@ -591,11 +591,11 @@ namespace HAL::GPU::Vulkan
 		}
 
 		// Make sure that the acquired image has been processed by the presentation queue.
-		if (swapsInFlight[currentSwap].GetHandle() != Null<Fence::Handle>)
-			swapsInFlight[currentSwap].WaitFor(UInt64Max);
+		if (swapsInFlight[currentSwap] != nullptr && *swapsInFlight[currentSwap] != Null<Fence::Handle>)
+			swapsInFlight[currentSwap]->WaitFor(UInt64Max);
 
 		// Set the current swap image fence to that of the frame queue fence.
-		swapsInFlight[currentSwap] = frameRef.RenderingInFlight();
+		swapsInFlight[currentSwap] = &frameRef.RenderingInFlight();
 
 		// Prep the ClearValue for the render pass...
 		switch (currentFrameBuffer)
