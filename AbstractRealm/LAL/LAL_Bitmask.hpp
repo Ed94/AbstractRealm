@@ -41,33 +41,42 @@ ease of use functionality for manipulating the mask.
 namespace LAL
 {
 	template<typename Enum, typename = void>
+	/**
+	@brief Used when the enum does not meet the criteria for bitmaskable.
+	*/
 	struct IsBitmaskable : std::false_type
 	{};
 
 	template<typename Enum>
-	struct IsBitmaskable<Enum, decltype(SCast<void>(Enum::SpecifyBitmaskable))> : IsEnumType<Enum>
+	/**
+	@brief Will be defined with a true_type when enum has the SpecifyBitmaskable enum value.
+	*/
+	struct IsBitmaskable<Enum, decltype(static_cast<void>(Enum::SpecifyBitmaskable))> : IsEnumType<Enum>
 	{};
 
 	template <typename Enum>
-	constexpr typename Where<IsBitmaskable<Enum>::value, 
+	/**
+	@brief Returns true if IsBitmaskable is false.
+	*/
+	constexpr Where<IsBitmaskable<Enum>::value, 
 	bool> Bitmaskable() noexcept
 	{
 		return static_cast<WordSize>(Enum::SpecifyBitmaskable) > WordSize(0) ? true : false;
 	}
 
 	template <typename Enum> 
-	constexpr typename Where<!IsBitmaskable<Enum>::value, 
+	/**
+	@brief Returns false if bitmaskable is false (Default case).
+	*/
+	constexpr Where<!IsBitmaskable<Enum>::value, 
 	bool> Bitmaskable() noexcept
 	{
 		return false;
 	}
 
-	/*template<typename Enum>
-	using Bitmaskable = TBitmaskable<Enum>;*/
-
 	template
 	<
-		typename EnumType,
+		typename EnumType             ,
 		typename BitmaskRepresentation
 	>
 	struct Bitmask
@@ -79,10 +88,13 @@ namespace LAL
 
 	public:
 
-		using Representation = BitmaskRepresentation;
 		using Enum           = EnumType             ;
+		using Representation = BitmaskRepresentation;
 
 		Bitmask() : mask(0) {}
+
+		Bitmask(Representation _mask) : mask(_mask)
+		{}
 
 		template<typename... BitTypes>
 		Bitmask(const BitTypes... _bits) : mask(0)
@@ -96,20 +108,23 @@ namespace LAL
 			mask |= (Representation(_bits) | ...);
 		}
 
-		void Clear()
+		template<typename... BitType>
+		bool CheckForEither(const BitType... _bits) const
 		{
-			mask = 0;
-		}
-
-		bool Has(const Enum _bit) const
-		{
-			return (mask & Representation(_bit)) == Representation(_bit);
+			return (mask & (Representation(_bits) | ...)) != 0;
 		}
 
 		template<typename... BitType>
-		bool HasOrEither(const BitType... _bits) const
+		void Clear(const BitType... _bits)
 		{
-			return (mask & (Representation(_bits) | ...)) != 0;
+			if (mask <= 0) return;
+
+			mask &= ~(Representation(_bits) | ...);
+		}
+
+		bool HasFlag(const Enum _bit) const
+		{
+			return (mask & Representation(_bit)) == Representation(_bit);
 		}
 
 		template<typename... BitType>
@@ -118,13 +133,10 @@ namespace LAL
 			return (mask & (Representation(_bits) | ...)) == mask;
 		}
 
-		template<typename... BitType>
-		void Remove(const BitType... _bits)
-		{
-			if (mask <= 0) return;
+		bool HasAnyFlag() const { return mask != 0 ? true : false; }
+		bool IsZero    () const { return mask == 0 ? true : false; }	
 
-			mask &= ~(Representation(_bits) | ...);
-		}
+		void Reset() { mask = 0; }
 
 		template<typename... BitType>
 		void Set(const BitType... _bits)
@@ -132,24 +144,51 @@ namespace LAL
 			mask = (Representation(_bits) | ...);
 		}
 
-		_ThisType& operator= (const BitmaskRepresentation _mask) { mask = _mask; return *this; }
-
-		operator Representation() const
+		template<typename... BitType>
+		void Toggle(const BitType... _bits)
 		{
-			return mask;
+			mask ^= (Representation(_bits) | ...);
 		}
 
-		bool operator== (const Representation _other) const
-		{
-			return mask == _other;
-		}
+		operator Representation() const { return mask; }
 
-		bool operator== (const _ThisType& _other) const
-		{
-			return mask == _other.mask;
-		}
+		_ThisType& operator= (const Representation _mask ) { mask = _mask      ; return *this; }
+		_ThisType& operator= (const _ThisType      _other) { mask = _other.mask; return *this; }
+
+		_ThisType& operator&= (const Representation _mask ) { mask &= mask       ; return *this; }
+		_ThisType& operator&= (const _ThisType      _other) { mask &= _other.mask; return *this; }
+
+		_ThisType& operator|= (const Representation _mask ) { mask |= mask       ; return *this; }
+		_ThisType& operator|= (const _ThisType      _other) { mask |= _other.mask; return *this; }	
+
+		_ThisType& operator^= (const Representation _mask ) { mask ^= mask       ; return *this; }
+		_ThisType& operator^= (const _ThisType      _other) { mask ^= _other.mask; return *this; }	
+
+		_ThisType& operator<<= (const Representation _mask ) { mask <<= mask       ; return *this; }
+		_ThisType& operator>>= (const _ThisType      _other) { mask >>= _other.mask; return *this; }	
+
+		_ThisType operator~ () const { return ~mask; }
+
+		Representation operator& (const Representation _other) const { return mask & _other     ; }
+		_ThisType      operator& (const _ThisType      _other) const { return mask & _other.mask; }
+
+		Representation operator| (const Representation _other) const { return mask | _other     ; }
+		_ThisType      operator| (const _ThisType      _other) const { return mask | _other.mask; }
+
+		Representation operator^ (const Representation _other) const { return mask ^ _other     ; }
+		_ThisType      operator^ (const _ThisType      _other) const { return mask ^ _other.mask; }
+
+		Representation operator<< (const Representation _other) const { return mask << _other     ; }
+		_ThisType      operator>> (const _ThisType      _other) const { return mask >> _other.mask; }
+
+		bool operator== (const Representation _other) const { return mask == _other     ; }
+		bool operator== (const _ThisType      _other) const { return mask == _other.mask; }
+
+		bool operator!= (const Representation _other) const { return mask != _other     ; }
+		bool operator!= (const _ThisType      _other) const { return mask != _other.mask; }
 
 	private:
+
 		Representation mask;
 	};
 }
