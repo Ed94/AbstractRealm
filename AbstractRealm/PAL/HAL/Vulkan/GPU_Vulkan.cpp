@@ -65,11 +65,7 @@
 			// Swapchain for surface
 
 			Swapchain* SwapChain_Old        ;
-			//Extent2D   SwapChain_Extent     ;
-			//EFormat    SwapChain_ImageFormat;
 
-			//DynamicArray<Image>       SwapChain_Images      ;
-			//DynamicArray<ImageView>   SwapChain_ImageViews  ;
 			DynamicArray<Framebuffer> SwapChain_Framebuffers;
 
 			uint32 Swap_MinImageCount;
@@ -166,7 +162,6 @@
 
 			void EndSingleTimeBuffer(CommandBuffer& _buffer)
 			{
-				//SingleTimeCommandPool.EndSingleTimeCommands(_buffer, *GraphicsQueue);
 				Heap(SingleTimeCommandPool.EndSingleTimeCommands(_buffer, GetEngagedDevice().GetGraphicsQueue()));
 			}
 
@@ -202,23 +197,12 @@
 					PipelineLayout  .Destroy();
 					RenderPass_Old      .Destroy();
 
-					/*for (WordSize index = 0; index < SwapChain_ImageViews.size(); index++)
-					{
-						SwapChain_ImageViews[index].Destroy();
-					}*/
-
-					//SwapChain_Old->Destroy();
-
-					//SwapChain_Old->Regenerate();
-
 					for (WordSize index = 0; index < SwapChain_Old->GetImageViews().size(); index++)
 					{
 						UniformBuffers      [index].Destroy();
 						UniformBuffersMemory[index].Free();
 					}
 
-					
-					
 					DescriptorPool.Destroy();
 				//);
 			}
@@ -250,7 +234,6 @@
 
 				commandBuffer.CopyBufferToImage(_buffer, _image, VT::Corridors::EImageLayout::TransferDestination_Optimal, 1, &region);
 				
-				//SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, *GraphicsQueue);
 				Heap(SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, GetEngagedDevice().GetGraphicsQueue()));
 			}
 
@@ -307,7 +290,7 @@
 					PipelineLayout,
 					0,
 					1,
-					&DescriptorSets[index].GetHandle()
+					DescriptorSets[index]
 				);
 
 				CommandBuffers_Old[index].DrawIndexed
@@ -357,7 +340,6 @@
 			{
 				CommandPool::CreateInfo poolInfo {};
 
-				//poolInfo.QueueFamilyIndex = QueueIndices.Graphics.value();
 				poolInfo.QueueFamilyIndex = GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex();
 				poolInfo.Flags            = CommandPool::CreateFlgas()                            ;   // Optional
 
@@ -410,8 +392,6 @@
 				DepthImageView = CreateImageView(DepthImage, depthFormat, Image::AspectFlags(EImageAspect::Depth), 1);
 
 				DepthImage.TransitionLayout(EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal);
-
-				//TransitionImageLayout(DepthImage, depthFormat, EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal, 1);
 			}
 
 			void CreateDescriptorPool()
@@ -719,8 +699,6 @@
 
 				EResult piplineLayout_CreationResult = 
 					Heap(PipelineLayout.Create(GetEngagedDevice(), pipelineLayout_CreationSpec));
-					//Pipeline::Layout::Create(LogicalDevice.GetHandle(), pipelineLayout_CreationSpec, nullptr, PipelineLayout);
-
 
 				if (piplineLayout_CreationResult != EResult::Success)
 				{
@@ -829,16 +807,6 @@
 
 				return result;
 			}
-
-			/*void CreateSwapChain_ImageViews()
-			{
-				SwapChain_ImageViews.resize(SwapChain_Images.size());
-
-				for (WordSize index = 0; index < SwapChain_Images.size(); index++)
-				{
-					SwapChain_ImageViews[index] = CreateImageView(SwapChain_Images[index], SwapChain_ImageFormat, Image::AspectFlags(EImageAspect::Color), MipMapLevels);
-				}
-			}*/
 
 			void CreateIndexBuffer()
 			{
@@ -966,7 +934,6 @@
 				subpass.ColorAttachmentCount   = 1                           ;
 				subpass.ColorAttachments       = &colorAttachmentRef         ;
 				subpass.DepthStencilAttachment = &depthAttachmentRef         ;
-				//subpass.ResolveAttachments     = &colorAttachmentResolveRef  ;
 
 				StaticArray<RenderPass::AttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
 
@@ -1068,8 +1035,6 @@
 				);
 				
 				VoidPtr address = imageData;
-
-				//Vault_2::Memory::WriteToGPU(LogicalDevice.GetHandle(), stagingBufferMemory, 0, imageSize, 0, address);
 
 				stagingBufferMemory.WriteToGPU(0, imageSize, 0, address);
 
@@ -1218,7 +1183,6 @@
 				fragShaderModule.Create(GetEngagedDevice(), fragShaderInfo);
 				
 				StaticArray<ShaderModule, 2> result = { move(vertShaderModule), move(fragShaderModule) };
-				//StaticArray<ShaderModule, 2> result = { vertShaderModule, fragShaderModule };
 
 				return result;
 			}
@@ -1521,10 +1485,6 @@
 				auto& swapchain = Request_SwapChain(*Surface_Old, format); 
 
 				SwapChain_Old = &swapchain;
-				//SwapChain_Extent = swapchain.GetExtent();
-				//SwapChain_ImageFormat = swapchain.GetFormat();
-				//SwapChain_Images = swapchain.GetImages();
-				//SwapChain_ImageViews = swapchain.GetImageViews();
 
 				CreateRenderPass();
 
@@ -1591,24 +1551,12 @@
 
 				CleanupSwapChain();
 
-				//Surface_Old->RequeryCapabilities();
-
 				SwapChain_Old->QuerySurfaceChanges();
 
 				Surface::Format format;
 
 				format.Format = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
-
-				//auto& swapchain = Request_SwapChain(*Surface_Old, format);
-
-				//SwapChain_Old = &swapchain;
-				//SwapChain_Extent = swapchain.GetExtent();
-				//SwapChain_ImageFormat = swapchain.GetFormat();
-				//SwapChain_Images = swapchain.GetImages();
-				//SwapChain_ImageViews = swapchain.GetImageViews();
-
-				//CreateSwapChain_ImageViews();
 
 				CreateRenderPass();
 
@@ -1687,14 +1635,14 @@
 
 				waitStages[0].Set(EPipelineStageFlag::ColorAttachmentOutput);
 
-				CommandBuffersToSubmit.push_back(CommandBuffers_Old[CurrentFrame].operator CommandBuffer::Handle());
+				CommandBuffersToSubmit.push_back(CommandBuffers_Old[CurrentFrame]);
 
 				submitInfo.WaitSemaphoreCount = 1             ;
 				submitInfo.WaitSemaphores     = waitSemaphores;
 				submitInfo.WaitDstStageMask   = waitStages    ;
 
 				submitInfo.CommandBufferCount = 1;
-				submitInfo.CommandBuffers     = CommandBuffers_Old[imageIndex];// CommandBuffersToSubmit.data();
+				submitInfo.CommandBuffers     = CommandBuffers_Old[imageIndex];
 
 
 				Semaphore::Handle signalSemaphores[] = { RenderFinished_Semaphores[CurrentFrame] };

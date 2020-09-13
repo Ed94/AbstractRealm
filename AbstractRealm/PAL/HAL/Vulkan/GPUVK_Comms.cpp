@@ -152,7 +152,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult LogicalDevice::Create()
 	{
-		EResult result = Heap(Parent::Parent::Create(physicalDevice->GetHandle(), info, handle));
+		EResult result = Heap(Parent::Parent::Create(*physicalDevice, info, handle));
 
 		if (result != EResult::Success) return result;
 
@@ -407,7 +407,7 @@ namespace HAL::GPU::Vulkan
 
 			gpuHandle.str(String());
 
-			gpuHandle << gpu.GetHandle();
+			gpuHandle << gpu;
 
 			CLog(gpu.GetProperties().Name + String(" Handle: ") + gpuHandle.str());
 		}
