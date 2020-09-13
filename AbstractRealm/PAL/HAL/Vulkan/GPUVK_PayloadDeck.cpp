@@ -17,23 +17,35 @@ namespace HAL::GPU::Vulkan
 		
 		Allocate(info, &handle);
 
-		commandBuffers.push_back(CommandBuffer(GetEngagedDevice(), info, handle));
+		commandBuffers.push_back(CommandBuffer(GetEngagedDevice(), handle));
 
 		return commandBuffers.back();
 	}
 
-	const CommandBuffer& CommandPool::RecordSingleTime()
+	const CommandBuffer& CommandPool::BeginSingleTimeCommands()
 	{
 		EResult result;
 
-		Heap(commandBuffers.push_back(move(BeginSingleTimeCommands(result))));
+		commandBuffers.resize(commandBuffers.size() + 1);
 
-		if (result != EResult::Success) throw RuntimeError("UsaDumbass");
+		CommandBuffer& buffer = commandBuffers.back();
+
+		result = Heap(Allocate(buffer));
+
+		if (result != EResult::Success) throw RuntimeError("Failed to allocate...");
+
+		CommandBuffer::BeginInfo beginInfo;
+
+		beginInfo.Flags = ECommandBufferUsageFlag::OneTimeSubmit;
+
+		result = buffer.BeginRecord(beginInfo);
+
+		if (result != EResult::Success) throw RuntimeError("Failed to begin recording...");
 
 		return commandBuffers.back();
 	}
 
-	void CommandPool::EndSingleTimeRecord(const CommandBuffer& _buffer)
+	void CommandPool::EndSingleTimeCommands(const CommandBuffer& _buffer)
 	{
 		auto result = std::find(commandBuffers.begin(), commandBuffers.end(), _buffer);
 
@@ -41,7 +53,26 @@ namespace HAL::GPU::Vulkan
 		{
 			auto pos = std::distance(commandBuffers.begin(), result); 
 
-			Heap(EndSingleTimeCommands(commandBuffers.at(pos), GetGraphicsQueue()));
+			CommandBuffer& buffer = commandBuffers.at(pos);
+
+			auto vResult = buffer.EndRecord();
+
+			if (vResult != EResult::Success) throw RuntimeError("Failed to end buffer recording");
+
+			CommandBuffer::SubmitInfo submitInfo;
+
+			submitInfo.CommandBufferCount = 1     ;
+			submitInfo.CommandBuffers     = buffer;
+
+			vResult = GetGraphicsQueue().SubmitToQueue(1, submitInfo, Null<Fence::Handle>);
+
+			if (vResult != EResult::Success) throw RuntimeError("Failed to submit to queue.");
+
+			vResult = GetGraphicsQueue().WaitUntilIdle();
+
+			if (vResult != EResult::Success) throw RuntimeError("Failed to wait for queue to idle.");
+
+			Free(buffer);
 
 			commandBuffers.erase(result);
 		}
@@ -95,7 +126,7 @@ namespace HAL::GPU::Vulkan
 
 	const CommandBuffer& RecordOnTransient()
 	{
-		return TransientPool->RecordSingleTime(); 
+		return TransientPool->BeginSingleTimeCommands(); 
 	}
 
 	const ptr<CommandPool> RequestCommandPools(WordSize _numDesired)
@@ -120,7 +151,7 @@ namespace HAL::GPU::Vulkan
 
 	void EndRecordOnTransient(const CommandBuffer& _buffer)
 	{
-		TransientPool->EndSingleTimeRecord(_buffer);
+		TransientPool->EndSingleTimeCommands(_buffer);
 	}
 
 	void WipeDecks()

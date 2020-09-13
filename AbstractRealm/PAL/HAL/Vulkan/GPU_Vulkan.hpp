@@ -16,6 +16,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 #include "Vulkan_API.hpp"
 
 #include "GPU_HAL_CoreDefs.hpp"
+#include "GPUVK_PayloadDeck.hpp"
 #include "Meta/AppInfo.hpp"
 #include "Meta/Config/HAL_Config.hpp"
 #include "Meta/EngineInfo.hpp"
@@ -105,9 +106,9 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			
 			// Command Buffer Related
 
-			void EndSingleTimeBuffer(CommandBuffer& _buffer);
+			void EndSingleTimeBuffer(const CommandBuffer& _buffer);
 
-			CommandBuffer RequestSingleTimeBuffer();
+			const CommandBuffer& RequestSingleTimeBuffer();
 
 		#pragma endregion Staying
 
@@ -156,7 +157,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			uint32 GetMinimumFramebufferCount();
 
-			using RenderCallback = void(*)(CommandBuffer& _buffer, int _index);
+			using RenderCallback = void(*)(const CommandBuffer& _buffer, int _index);
 
 			void AddRenderCallback(RenderCallback _callback);
 

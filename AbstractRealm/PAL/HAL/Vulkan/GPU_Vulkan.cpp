@@ -153,16 +153,14 @@
 				return SCast<uint32>(SwapChain_Old->GetImages().size());
 			}
 
-			CommandBuffer RequestSingleTimeBuffer()
+			const CommandBuffer& RequestSingleTimeBuffer()
 			{
-				EResult result;
-
-				return Heap(SingleTimeCommandPool.BeginSingleTimeCommands(result));
+				return Heap(SingleTimeCommandPool.BeginSingleTimeCommands());
 			}
 
-			void EndSingleTimeBuffer(CommandBuffer& _buffer)
+			void EndSingleTimeBuffer(const CommandBuffer& _buffer)
 			{
-				Heap(SingleTimeCommandPool.EndSingleTimeCommands(_buffer, GetEngagedDevice().GetGraphicsQueue()));
+				Heap(SingleTimeCommandPool.EndSingleTimeCommands(_buffer));
 			}
 
 			EResult RequestDescriptorPool(V3::DescriptorPool& _pool, V3::DescriptorPool::CreateInfo _info)
@@ -209,9 +207,7 @@
 
 			void CopyBufferToImage(Buffer& _buffer, Image& _image, uint32 _width, uint32 _height)
 			{
-				EResult result;
-
-				CommandBuffer commandBuffer = Heap(SingleTimeCommandPool.BeginSingleTimeCommands(result));
+				CommandBuffer commandBuffer = Heap(SingleTimeCommandPool.BeginSingleTimeCommands());
 
 				CommandBuffer::BufferImageRegion region {};
 
@@ -234,7 +230,7 @@
 
 				commandBuffer.CopyBufferToImage(_buffer, _image, VT::Corridors::EImageLayout::TransferDestination_Optimal, 1, &region);
 				
-				Heap(SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, GetEngagedDevice().GetGraphicsQueue()));
+				Heap(SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer));
 			}
 
 			DynamicArray<RenderCallback> RenderCallbacks;
@@ -1281,8 +1277,6 @@
 
 			void GenerateMipMaps(V3::Image& _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
 			{
-				EResult result = EResult::Incomplete;
-
 				// Check if image format supports linear blitting
 				FormatProperties formatProperties = GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(_format);
 
@@ -1291,9 +1285,7 @@
 					throw std::runtime_error("Texture image format does not support linear blitting!");
 				}
 
-				CommandBuffer commandBuffer = SingleTimeCommandPool.BeginSingleTimeCommands(result);
-
-				if (result != EResult::Success) throw RuntimeError("Could not begin single time commands for GenerateMipmaps.");
+				CommandBuffer commandBuffer = SingleTimeCommandPool.BeginSingleTimeCommands();
 
 				Image::Memory_Barrier barrier{};
 
@@ -1392,9 +1384,7 @@
 					1, &barrier
 				);
 
-				result = SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer, GetEngagedDevice().GetGraphicsQueue());
-
-				if (result != EResult::Success) throw RuntimeError("Could not end command buffer commands properly: GenerateMipmaps");
+				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer);
 			}
 
 			void UpdateUniformBuffers(uint32 _currentImage)

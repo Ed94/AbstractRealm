@@ -8,6 +8,25 @@
 
 namespace HAL::GPU::Vulkan
 {
+	class CommandBuffer : public V3::CommandBuffer
+	{
+	public:
+		using Parent = V3::CommandBuffer;
+
+		CommandBuffer() : Parent::CommandBuffer() {};
+
+		CommandBuffer(const LogicalDevice& _device, Handle& _handle) : Parent::CommandBuffer(_device, _handle) {}
+
+		void Assign(const LogicalDevice& _device, AllocateInfo& _info, Handle& _handle);
+		 
+		void Clear();
+
+		const AllocateInfo& GetAllocateInfo() const { return info; }
+
+	protected:
+		AllocateInfo info;
+	};
+
 	class CommandPool : public V3::CommandPool
 	{
 	public:
@@ -15,14 +34,12 @@ namespace HAL::GPU::Vulkan
 
 		const CommandBuffer& RequestBuffer();
 
-		const CommandBuffer& RecordSingleTime();
+		const CommandBuffer& BeginSingleTimeCommands();
 
-		void EndSingleTimeRecord(const CommandBuffer& _buffer);
-
-
+		void EndSingleTimeCommands(const CommandBuffer& _buffer);
 
 
-	private:
+	protected:
 		DynamicArray<CommandBuffer> commandBuffers;
 	};
 

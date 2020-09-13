@@ -73,7 +73,7 @@ namespace SAL::Imgui
 			}
 		}
 
-		void Vulkan_GPU_DrawRender(VT::V3::CommandBuffer& _buffer, int /* _index */)
+		void Vulkan_GPU_DrawRender(const HAL::GPU::Vulkan::CommandBuffer& _buffer, int /* _index */)
 		{
 			ImDrawData* draw_data = ImGui::GetDrawData();
 
@@ -218,7 +218,7 @@ namespace SAL::Imgui
 			{
 				using namespace HAL::GPU::Vulkan;
 
-				VT::V3::CommandBuffer cmdBuffer = RequestSingleTimeBuffer();
+				const HAL::GPU::Vulkan::CommandBuffer& cmdBuffer = RequestSingleTimeBuffer();
 
 				ImGui_ImplVulkan_CreateFontsTexture(cmdBuffer);
 
