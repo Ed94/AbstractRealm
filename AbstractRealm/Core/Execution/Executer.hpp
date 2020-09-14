@@ -127,10 +127,9 @@ namespace Core::Execution
 
 
 
-	StaticData
-	(
+	StaticData()
+
 		eGlobal ptr<OSAL::Window> EngineWindow;
-	)
 }
 
 

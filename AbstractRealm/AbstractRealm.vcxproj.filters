@@ -169,6 +169,8 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Payload.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Resource.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Comms_Implementation.hpp" />
+    <ClInclude Include="Core\Memory\StaticMemory.hpp" />
+    <ClInclude Include="Core\Memory\MemTracking.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -218,6 +220,7 @@
     <ClCompile Include="Resource\Mesh\Mesh_Primitives.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Resource\Texture\Texture.cpp" />
+    <ClCompile Include="Core\Memory\MemTracking.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="PAL\HAL\Vulkan\VaultedThermals\CMakeLists.txt" />

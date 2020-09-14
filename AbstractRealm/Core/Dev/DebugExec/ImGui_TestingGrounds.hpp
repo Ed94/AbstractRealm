@@ -29,19 +29,15 @@ namespace Debug
 		
 
 
-		BSS
-		(
-			ptr<Window> TestWindow;
-		)
+		StaticData
 
-		Data
-		(
+			ptr<Window> TestWindow;
+
 			AppVersion AppVer = { 1, 0, 0 };
 
 			FrameBufferDimensions WindowSize = { 1280, 720 };
 
 			bool WindowResized = false;
-		)
 
 
 

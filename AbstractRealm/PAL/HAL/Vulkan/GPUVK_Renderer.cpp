@@ -189,7 +189,7 @@ namespace HAL::GPU::Vulkan
 		info.Clipped          = true                                       ;
 		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
-		EResult result = Heap(Parent::Create(GetEngagedDevice(), info));
+		Heap() EResult result = Parent::Create(GetEngagedDevice(), info);
 
 		if (result != EResult::Success) return result;
 
@@ -339,7 +339,7 @@ namespace HAL::GPU::Vulkan
 		info.Clipped          = true                                       ;
 		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
-		EResult result = Heap(Parent::Create(GetEngagedDevice(), info));
+		Heap() EResult result = Parent::Create(GetEngagedDevice(), info);
 
 		if (result != EResult::Success) throw RuntimeError("Unable to regenerate swapchain.");
 
@@ -376,7 +376,7 @@ namespace HAL::GPU::Vulkan
 
 			ImageView view;
 
-			result = Heap(view.Create(GetEngagedDevice(), viewInfo));	
+			Heap() result = view.Create(GetEngagedDevice(), viewInfo);	
 
 			if (result != EResult::Success)
 				return result;
@@ -557,7 +557,7 @@ namespace HAL::GPU::Vulkan
 
 		depthBuffer.image.Destroy();
 
-		depthBuffer.memory.Free();
+		//depthBuffer.memory.Free();
 
 		depthBuffer.view.Destroy();
 	}
@@ -776,13 +776,14 @@ namespace HAL::GPU::Vulkan
 
 		imgInfo.Usage.Set(EImageUsage::DepthStencil_Attachment);
 
-		EResult result = Heap(depthBuffer.image.CreateAndBind
+		Heap() 
+		EResult result = depthBuffer.image.CreateAndBind
 		(
 			GetEngagedDevice(), 
 			imgInfo, 
 			Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
 			depthBuffer.memory
-		));
+		);
 
 		if (result != EResult::Success) return result;
 
@@ -801,7 +802,7 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.BaseArrayLayer = 0;
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
-		result = Heap(depthBuffer.view.Create(GetEngagedDevice(), viewInfo));
+		Heap() result = depthBuffer.view.Create(GetEngagedDevice(), viewInfo);
 
 		return result;
 	}
@@ -963,12 +964,12 @@ namespace HAL::GPU::Vulkan
 	{
 		for (auto& swapchain : Swapchains)
 		{
-			Heap(swapchain.Destroy());
+			Heap() swapchain.Destroy();
 		}
 
 		for (auto& surface : Surfaces)
 		{
-			Heap(surface.Destroy());
+			Heap() surface.Destroy();
 		}
 
 		for (auto& renderContext : RenderContexts)
@@ -985,7 +986,7 @@ namespace HAL::GPU::Vulkan
 
 		surface.AssignPhysicalDevice(GetEngagedPhysicalGPU());
 
-		if (Heap(surface.Create(_window) != EResult::Success))
+		Heap() if (surface.Create(_window) != EResult::Success)
 		{
 			throw RuntimeError("Failed to create surface for targeted window.");
 		}

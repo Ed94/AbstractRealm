@@ -5,8 +5,8 @@
 
 namespace Meta
 {
-	StaticData
-	(
+	StaticData()
+
 		EOperationMode OperationalMode = Default_OperationalMode();
 
 		bool UseEditor    = OperationalMode == EOperationMode::Development;
@@ -16,5 +16,4 @@ namespace Meta
 		bool UseConcurrency = false;
 
 		bool FixRenderRateToRefreshRate = false;
-	)
 }

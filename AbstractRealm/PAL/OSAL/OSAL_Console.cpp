@@ -103,7 +103,7 @@ namespace OSAL
 
 			if (!created)
 			{
-				created = Heap(AllocConsole());
+				Heap() created = AllocConsole();
 
 				auto handle = GetStdHandle(EHandle::Output);
 
@@ -126,7 +126,7 @@ namespace OSAL
 			if (!result) return result;
 
 			// Detach from console
-			result = Heap(FreeConsole());
+			Heap() result = FreeConsole();
 
 			if (result) CLog("Console destroyed");
 

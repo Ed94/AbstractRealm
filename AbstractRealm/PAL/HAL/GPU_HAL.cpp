@@ -49,8 +49,8 @@ namespace HAL
 			
 
 
-			StaticData
-			(
+			StaticData()
+
 				Delegate_Initalize_GPUComms Initialize_GPUComms_Bind;
 				Delegate_Cease_GPUComms     Cease_GPUComms_Bind     ;
 				Delegate_WaitFor_GPUIdle    WaitFor_GPUIdle         ;
@@ -63,7 +63,6 @@ namespace HAL
 				Delegate_DrawFrame              Default_DrawFrame_Bind           ;
 
 				Delegate_ReinitalizeRenderer Default_ReinitializeRenderer_Bind;
-			);
 
 
 

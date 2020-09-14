@@ -16,8 +16,8 @@ namespace OSAL
 
 
 
-	StaticData
-	(
+	StaticData()
+
 		String CPU_Vendor   ;
 		String CPU_Model    ;
 		uInt64 CPU_Frequency;
@@ -27,7 +27,6 @@ namespace OSAL
 		DynamicArray<DisplayInfo> Displays;
 
 		DisplayInfo* MainDisplay;
-	)
 
 
 	const DisplayInfo& GetMainDisplay()

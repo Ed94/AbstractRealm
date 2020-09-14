@@ -22,71 +22,73 @@
 	{
 		namespace Vulkan
 		{
-			// Static Data
+			StaticData()
 
-			// Command
+				// Command
 
-			CommandPool                         SingleTimeCommandPool;
-			DynamicArray<CommandPool          > CommandPools_Old     ;   
-			DynamicArray<CommandBuffer        > CommandBuffers_Old   ;
-			DynamicArray<CommandBuffer::Handle> CommandBufferHandles ;
+				CommandPool                         SingleTimeCommandPool;
+				DynamicArray<CommandPool          > CommandPools_Old     ;   
+				DynamicArray<CommandBuffer        > CommandBuffers_Old   ;
+				DynamicArray<CommandBuffer::Handle> CommandBufferHandles ;
 
-			// Model V1 Rendering Pipeline
+				// Model V1 Rendering Pipeline
 
-			GraphicsPipeline GraphicsPipeline_Old;
+				GraphicsPipeline GraphicsPipeline_Old;
 
-			V3::RenderPass RenderPass_Old;   
+				V3::RenderPass RenderPass_Old;   
 
-			Pipeline::Cache PipelineCache;   // Implement.
+				Pipeline::Cache PipelineCache;   // Implement.
 
-			Pipeline::Layout::DescriptorSet DescriptorSetLayout;
-			Pipeline::Layout                PipelineLayout;
+				Pipeline::Layout::DescriptorSet DescriptorSetLayout;
+				Pipeline::Layout                PipelineLayout;
 
-			V3::DescriptorPool DescriptorPool;
+				V3::DescriptorPool DescriptorPool;
 
-			DynamicArray<DescriptorSet        > DescriptorSets      ;
-			DynamicArray<DescriptorSet::Handle> DescriptorSetHandles;
+				DynamicArray<DescriptorSet        > DescriptorSets      ;
+				DynamicArray<DescriptorSet::Handle> DescriptorSetHandles;
 
-			uint32       MipMapLevels                   ;
-			ESampleCount MSAA_Samples = ESampleCount::_1;
+				uint32       MipMapLevels                   ;
+				ESampleCount MSAA_Samples = ESampleCount::_1;
 
-			// Basic Rendering Synch (Upgrade this later)			
+				// Basic Rendering Synch (Upgrade this later)			
 
-			DynamicArray<Fence> InFlightFences;
-			DynamicArray<ptr<Fence>> ImagesInFlight;
+				DynamicArray<Fence> InFlightFences;
+				DynamicArray<ptr<Fence>> ImagesInFlight;
 
-			DynamicArray<Semaphore> ImageAvailable_Semaphores;
-			DynamicArray<Semaphore> RenderFinished_Semaphores;
+				DynamicArray<Semaphore> ImageAvailable_Semaphores;
+				DynamicArray<Semaphore> RenderFinished_Semaphores;
 
-			// Surface Context
+				// Surface Context
 
-			ptr<Surface> Surface_Old;
+				ptr<Surface> Surface_Old;
 
-			// Swapchain for surface
+				// Swapchain for surface
 
-			Swapchain* SwapChain_Old        ;
+				Swapchain* SwapChain_Old        ;
 
-			DynamicArray<Framebuffer> SwapChain_Framebuffers;
+				DynamicArray<Framebuffer> SwapChain_Framebuffers;
 
-			uint32 Swap_MinImageCount;
+				uint32 Swap_MinImageCount;
 
-			// Related to Rendering State Tracking
+				// Related to Rendering State Tracking
 
-			bool     FramebufferResized = false;
-			WordSize CurrentFrame       = 0;
-			sint32   MaxFramesInFlight  = 2;
-			
-			// Not Sure
+				bool     FramebufferResized = false;
+				WordSize CurrentFrame       = 0;
+				sint32   MaxFramesInFlight  = 2;
+				
+				// Not Sure
 
-			Image     DepthImage      ;
-			Memory    DepthImageMemory;
-			ImageView DepthImageView  ;
+				Image     DepthImage      ;
+				Memory    DepthImageMemory;
+				ImageView DepthImageView  ;
 
-			Image     ColorImage      ;
-			Memory    ColorImageMemory;
-			ImageView ColorImageView  ;
+				Image     ColorImage      ;
+				Memory    ColorImageMemory;
+				ImageView ColorImageView  ;
 
-			RawRenderContext RenderContext_Default;   // Should this still be used?
+				RawRenderContext RenderContext_Default;   // Should this still be used?
+
+			// End Static Data
 
 
 
@@ -155,17 +157,19 @@
 
 			const CommandBuffer& RequestSingleTimeBuffer()
 			{
-				return Heap(SingleTimeCommandPool.BeginSingleTimeCommands());
+				return SingleTimeCommandPool.BeginSingleTimeCommands();
 			}
 
 			void EndSingleTimeBuffer(const CommandBuffer& _buffer)
 			{
-				Heap(SingleTimeCommandPool.EndSingleTimeCommands(_buffer));
+				SingleTimeCommandPool.EndSingleTimeCommands(_buffer);
 			}
 
 			EResult RequestDescriptorPool(V3::DescriptorPool& _pool, V3::DescriptorPool::CreateInfo _info)
 			{
-				EResult returnCode = Heap(_pool.Create(GetEngagedDevice(), _info));
+				Heap()
+
+				EResult returnCode =  _pool.Create(GetEngagedDevice(), _info);
 
 				return returnCode;
 			}
@@ -192,7 +196,7 @@
 					}
 
 					GraphicsPipeline_Old.Destroy();
-					PipelineLayout  .Destroy();
+					PipelineLayout      .Destroy();
 					RenderPass_Old      .Destroy();
 
 					for (WordSize index = 0; index < SwapChain_Old->GetImageViews().size(); index++)
@@ -207,7 +211,7 @@
 
 			void CopyBufferToImage(Buffer& _buffer, Image& _image, uint32 _width, uint32 _height)
 			{
-				CommandBuffer commandBuffer = Heap(SingleTimeCommandPool.BeginSingleTimeCommands());
+				CommandBuffer commandBuffer = SingleTimeCommandPool.BeginSingleTimeCommands();
 
 				CommandBuffer::BufferImageRegion region {};
 
@@ -230,7 +234,7 @@
 
 				commandBuffer.CopyBufferToImage(_buffer, _image, VT::Corridors::EImageLayout::TransferDestination_Optimal, 1, &region);
 				
-				Heap(SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer));
+				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer);
 			}
 
 			DynamicArray<RenderCallback> RenderCallbacks;
@@ -334,12 +338,12 @@
 
 			void CreateFrameObjects()
 			{
-				CommandPool::CreateInfo poolInfo {};
+				CommandPool::CreateInfo poolInfo;
 
 				poolInfo.QueueFamilyIndex = GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex();
 				poolInfo.Flags            = CommandPool::CreateFlgas()                            ;   // Optional
 
-				Heap(SingleTimeCommandPool.Create(GetEngagedDevice(), poolInfo));
+				SingleTimeCommandPool.Create(GetEngagedDevice(), poolInfo);
 
 				CommandPools_Old    .resize(SwapChain_Old->GetImages().size());
 				CommandBuffers_Old  .resize(SwapChain_Old->GetImages().size());
@@ -347,7 +351,7 @@
 
 				for (DeviceSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
 				{
-					if (Heap(CommandPools_Old[index].Create(GetEngagedDevice(), poolInfo)) != EResult::Success)
+					Heap() if (CommandPools_Old[index].Create(GetEngagedDevice(), poolInfo) != EResult::Success)
 					{
 						throw std::runtime_error("failed to create command pool!");
 					}
@@ -358,7 +362,7 @@
 					info.Pool        = CommandPools_Old[index];
 					info.Level       = ECommandBufferLevel::Primary;
 
-					if (Heap(CommandPools_Old[index].Allocate(info,  CommandBuffers_Old[index])) != EResult::Success)
+					Heap() if (CommandPools_Old[index].Allocate(info,  CommandBuffers_Old[index]) != EResult::Success)
 						throw std::runtime_error("failed to allocate command buffers!");
 
 					CommandBufferHandles[index] = CommandBuffers_Old[index];
@@ -407,7 +411,7 @@
 
 				poolInfo.MaxSets = SCast<uint32>(SwapChain_Old->GetImages().size());
 
-				if (Heap(DescriptorPool.Create(GetEngagedDevice(), poolInfo)) != EResult::Success)
+				Heap() if (DescriptorPool.Create(GetEngagedDevice(), poolInfo) != EResult::Success)
 					throw RuntimeError("Failed to create descriptor pool!");
 			}
 
@@ -421,7 +425,7 @@
 				allocInfo.DescriptorSetCount = SCast<uint32>(SwapChain_Old->GetImages().size());
 				allocInfo.SetLayouts         = layouts.data();
 
-				if (Heap(DescriptorPool.Allocate(allocInfo, DescriptorSets, DescriptorSetHandles)) != EResult::Success)
+				Heap() if (DescriptorPool.Allocate(allocInfo, DescriptorSets, DescriptorSetHandles) != EResult::Success)
 					throw std::runtime_error("failed to allocate descriptor sets!");
 
 				for (WordSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
@@ -500,7 +504,7 @@
 
 				DescriptorSetLayout.Assign(GetEngagedDevice(), layoutInfo);
 
-				if (Heap(DescriptorSetLayout.Create()) != EResult::Success)
+				Heap() if (DescriptorSetLayout.Create() != EResult::Success)
 					throw RuntimeError("Failed to create descriptor set layout!");
 			}
 
@@ -528,7 +532,7 @@
 					framebufferInfo.Height          = swapExtent.Height          ;
 					framebufferInfo.Layers          = 1                                ;
 
-					if (Heap(SwapChain_Framebuffers[index].Create(GetEngagedDevice(), framebufferInfo)) != EResult::Success) 
+					Heap() if (SwapChain_Framebuffers[index].Create(GetEngagedDevice(), framebufferInfo) != EResult::Success) 
 					{
 						throw std::runtime_error("Failed to create framebuffer!");
 					}
@@ -693,8 +697,8 @@
 				pipelineLayout_CreationSpec.PushConstantRangeCount = 0                  ;
 				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr            ;
 
-				EResult piplineLayout_CreationResult = 
-					Heap(PipelineLayout.Create(GetEngagedDevice(), pipelineLayout_CreationSpec));
+				Heap() EResult piplineLayout_CreationResult = 
+					PipelineLayout.Create(GetEngagedDevice(), pipelineLayout_CreationSpec);
 
 				if (piplineLayout_CreationResult != EResult::Success)
 				{
@@ -724,7 +728,7 @@
 				pipelineInfo.BasePipelineHandle = VK_NULL_HANDLE;   // Optional
 				pipelineInfo.BasePipelineIndex  = -1            ;   // Optional
 
-				EResult returnCode = Heap(GraphicsPipeline_Old.Create(GetEngagedDevice(), pipelineInfo));
+				Heap() EResult returnCode = GraphicsPipeline_Old.Create(GetEngagedDevice(), pipelineInfo);
 
 				if (returnCode != EResult::Success) 
 					throw std::runtime_error("Failed to create graphics pipeline!");
@@ -761,7 +765,7 @@
 				imageInfo.Samples      = _numSamples            ;
 				imageInfo.Flags        = 0                      ;
 
-				if (Heap(_image.Create(GetEngagedDevice(), imageInfo)) != EResult::Success)
+				Heap() if (_image.Create(GetEngagedDevice(), imageInfo) != EResult::Success)
 					throw RuntimeError("Failed to create image!");
 
 				Memory::AllocateInfo allocationInfo {};
@@ -771,7 +775,7 @@
 				allocationInfo.AllocationSize = _image.GetMemoryRequirements().Size;
 				allocationInfo.MemoryTypeIndex = gpu.FindMemoryType(_image.GetMemoryRequirements().MemoryTypeBits, _properties);
 
-				if (Heap(_imageMemory.Allocate(_image.GetMemoryRequirements(), _properties)) != EResult::Success)
+				Heap() if (_imageMemory.Allocate(_image.GetMemoryRequirements(), _properties) != EResult::Success)
 					throw RuntimeError("Failed to allocate image memory!");
 
 				_image.BindMemory(_imageMemory, 0);
@@ -798,7 +802,7 @@
 
 				ImageView result;
 
-				if (Heap(result.Create(GetEngagedDevice(), viewInfo)) != EResult::Success )
+				Heap() if (result.Create(GetEngagedDevice(), viewInfo) != EResult::Success )
 					throw RuntimeError("Failed to create texture image view!");
 
 				return result;
@@ -808,32 +812,48 @@
 			{
 				DeviceSize bufferSize = sizeof(ModelIndicies[0]) * ModelIndicies.size();
 
-				Buffer             stagingBuffer       ;
-				Buffer::CreateInfo stagingBufferInfo {};
-				Memory             stagingBufferMemory ;
+				//BufferPackage stagingBuffer(GetEngagedDevice());
+
+				Buffer             stagingBuffer      ;
+				Buffer::CreateInfo stagingBufferInfo  ;
+				Memory             stagingBufferMemory;
 
 				stagingBufferInfo.SharingMode = ESharingMode::Exclusive;
 				stagingBufferInfo.Size        = bufferSize            ; 
 
 				stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-				Heap
+				Heap()
+				stagingBuffer.Create(GetEngagedDevice(), stagingBufferInfo);
+
+				Memory::AllocateInfo allocInfo;
+
+				auto& memReq = stagingBuffer.GetMemoryRequirements();
+
+				allocInfo.AllocationSize = memReq.Size;
+
+				allocInfo.MemoryTypeIndex =
+					stagingBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
+					(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
+
+				stagingBufferMemory.Allocate(GetEngagedDevice(), allocInfo);
+
+				stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
+
+				/*stagingBuffer.CreateAndBind
 				(
-					stagingBuffer.CreateAndBind
-					(
-						GetEngagedDevice(),
-						stagingBufferInfo, 
-						Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
-						stagingBufferMemory
-					);
-				);
+					GetEngagedDevice(),
+					stagingBufferInfo,
+					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
+					stagingBufferMemory
+				)*/;
 				
 
 				// Hard coded vertex data...
 
 				VoidPtr address = ModelIndicies.data();
 
-				stagingBufferMemory.WriteToGPU(0, bufferSize, 0, address);
+				stagingBufferMemory.WriteToGPU(0, bufferSize, Memory::MapFlags(), address);
 
 				Buffer::CreateInfo indexBufferInfo {};
 
@@ -842,23 +862,35 @@
 
 				indexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::IndexBuffer);
 
-				Heap
+				Heap()
+				IndexBuffer.Create(GetEngagedDevice(), indexBufferInfo);
+
+				auto& memReqIndex = IndexBuffer.GetMemoryRequirements();
+
+				allocInfo.AllocationSize = memReqIndex.Size;
+
+				allocInfo.MemoryTypeIndex = 
+					IndexBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
+					(memReqIndex.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
+
+				IndexBufferMemory.Allocate(GetEngagedDevice(),allocInfo);
+
+				IndexBuffer.BindMemory(IndexBufferMemory, Memory::ZeroOffset);
+
+				/*IndexBuffer.CreateAndBind
 				(
-					IndexBuffer.CreateAndBind
-					(
-						GetEngagedDevice(), 
-						indexBufferInfo, 
-						Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
-						IndexBufferMemory
-					);
-				);
+					GetEngagedDevice(),
+					indexBufferInfo,
+					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal),
+					IndexBufferMemory
+				);*/
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				Heap(SingleTimeCommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue()));
+				Heap() SingleTimeCommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue());
 
-				stagingBuffer      .Destroy();
-				stagingBufferMemory.Free();
+				stagingBuffer.Destroy();
+				//stagingBufferMemory.Free();
 			}
 
 			void CreateRenderPass()
@@ -955,7 +987,7 @@
 				renderPassInfo.DependencyCount = 1          ;
 				renderPassInfo.Dependencies    = &dependency;
 
-				if (Heap(RenderPass_Old.Create(GetEngagedDevice(), renderPassInfo) != EResult::Success))
+				Heap() if (RenderPass_Old.Create(GetEngagedDevice(), renderPassInfo) != EResult::Success)
 				{
 					throw std::runtime_error("failed to create render pass!");
 				}
@@ -977,14 +1009,11 @@
 
 				for (WordSize index = 0; index < MaxFramesInFlight; index++)
 				{
+					Heap()
 					EResult
-				
-					Heap
-					(
-						result = ImageAvailable_Semaphores[index].Create(GetEngagedDevice(), semaphore_CreationSpec);
-						result = RenderFinished_Semaphores[index].Create(GetEngagedDevice(), semaphore_CreationSpec);
-						result = InFlightFences           [index].Create(GetEngagedDevice(), fence_CreationSpec    );
-					);
+					result = ImageAvailable_Semaphores[index].Create(GetEngagedDevice(), semaphore_CreationSpec);
+					result = RenderFinished_Semaphores[index].Create(GetEngagedDevice(), semaphore_CreationSpec);
+					result = InFlightFences           [index].Create(GetEngagedDevice(), fence_CreationSpec    );
 
 					if (result != EResult::Success)
 						throw std::runtime_error("Failed to create synchronization objects for a frame!");
@@ -997,7 +1026,7 @@
 
 				using ImageBytes = stbi_uc;
 
-				ImageBytes* imageData = Heap(stbi_load(_filePath, &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha));
+				Heap() ImageBytes* imageData = stbi_load(_filePath, &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
 
 				DeviceSize imageSize = textureWidth * textureHeight	 * 4;
 
@@ -1019,22 +1048,37 @@
 
 				stagingBufferInfo.Usage.Set(EImageUsage::TransferSource);
 
-				Heap
+				Heap()
+				stagingBuffer.Create(GetEngagedDevice(), stagingBufferInfo);
+
+				Memory::AllocateInfo allocInfo;
+
+				auto& memReq = stagingBuffer.GetMemoryRequirements();
+
+				allocInfo.AllocationSize = memReq.Size;
+
+				allocInfo.MemoryTypeIndex =
+					stagingBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
+					(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
+
+				stagingBufferMemory.Allocate(GetEngagedDevice(), allocInfo);
+
+				stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
+
+
+				/*stagingBuffer.CreateAndBind
 				(
-					stagingBuffer.CreateAndBind
-					(
-						GetEngagedDevice(),
-						stagingBufferInfo,
-						Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
-						stagingBufferMemory
-					);
-				);
+					GetEngagedDevice(),
+					stagingBufferInfo,
+					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
+					stagingBufferMemory
+				);*/
 				
 				VoidPtr address = imageData;
 
 				stagingBufferMemory.WriteToGPU(0, imageSize, 0, address);
 
-				Heap(stbi_image_free(imageData));
+				Heap() stbi_image_free(imageData);
 
 				CreateImage
 				(
@@ -1059,11 +1103,9 @@
 
 				GenerateMipMaps(TextureImage, EFormat::R8_G8_B8_A8_UNormalized, textureWidth, textureHeight, MipMapLevels);
 
-				Heap
-				(
-					stagingBuffer.Destroy(); 
-					stagingBufferMemory.Free();
-				);
+				Heap()
+				stagingBuffer.Destroy(); 
+				stagingBufferMemory.Free();
 			}
 
 			void CreateTextureImageView()
@@ -1096,7 +1138,7 @@
 				samplerInfo.MinimumLod = 0.0f                      ;
 				samplerInfo.MaxLod     = SCast<float32>(MipMapLevels);
 
-				if (Heap(TextureSampler.Create(GetEngagedDevice(), samplerInfo)) != EResult::Success)
+				Heap() if (TextureSampler.Create(GetEngagedDevice(), samplerInfo) != EResult::Success)
 					throw RuntimeError("Failed to create texture sampler!");
 			}
 
@@ -1108,8 +1150,8 @@
 
 				using namespace Renderer::Shader;
 
-				auto triShader_VertCode = IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Vert.spv");
-				auto triShader_FragCode = IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Frag.spv");
+				auto triShader_VertCode = Core::IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Vert.spv");
+				auto triShader_FragCode = Core::IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Frag.spv");
 
 				//TODO: FIGURE THIS OUT.
 				Bytecode_Buffer triShader_Vert_Bytecode(triShader_VertCode.begin(), triShader_VertCode.end());
@@ -1143,17 +1185,31 @@
 
 				for (WordSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
 				{
-					Heap
+					Heap()
+					UniformBuffers[index].Create(GetEngagedDevice(), uniformBufferInfo);
+
+					Memory::AllocateInfo allocInfo;
+
+					auto& memReq = UniformBuffers[index].GetMemoryRequirements();
+
+					allocInfo.AllocationSize = memReq.Size;
+
+					allocInfo.MemoryTypeIndex =
+						UniformBuffers[index].GetDevice().GetPhysicalDevice().FindMemoryType
+						(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
+
+					UniformBuffersMemory[index].Allocate(GetEngagedDevice(), allocInfo);
+
+					UniformBuffers[index].BindMemory(UniformBuffersMemory[index], Memory::ZeroOffset);
+
+					/*UniformBuffers[index].CreateAndBind
 					(
-						UniformBuffers[index].CreateAndBind
-						(
-							GetEngagedDevice(),
-							uniformBufferInfo,
-							Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
-							UniformBuffersMemory[index],
-							Memory::DefaultAllocator
-						);
-					);
+						GetEngagedDevice(),
+						uniformBufferInfo,
+						Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
+						UniformBuffersMemory[index],
+						Memory::DefaultAllocator
+					);*/
 				}
 			}
 
@@ -1165,8 +1221,8 @@
 
 				using namespace Renderer::Shader;
 
-				auto vertCode = IO::BufferFile(String(Paths::VKTut) + "VKTut_V5_Vert.spv");
-				auto fragCode = IO::BufferFile(String(Paths::VKTut) + "VKTut_V5_Frag.spv");
+				auto vertCode = Core::IO::BufferFile(String(Paths::VKTut) + "VKTut_V5_Vert.spv");
+				auto fragCode = Core::IO::BufferFile(String(Paths::VKTut) + "VKTut_V5_Frag.spv");
 
 				//TODO: FIGURE THIS OUT.
 				Bytecode_Buffer vertBytecode(vertCode.begin(), vertCode.end());
@@ -1183,7 +1239,7 @@
 				return result;
 			}
 
-			void CreateVertexBuffers(Buffer& _vertexBuffer, V3::Memory& _vertexBufferMemory)
+			void CreateVertexBuffers(Buffer& _vertexBuffer, Memory& _vertexBufferMemory)
 			{
 				DeviceSize bufferSize = sizeof(ModelVerticies[0]) * ModelVerticies.size();
 
@@ -1198,16 +1254,30 @@
 
 				stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-				Heap
+				Heap()
+				stagingBuffer.Create(GetEngagedDevice(), stagingBufferInfo);
+
+				Memory::AllocateInfo allocInfo;
+
+				auto& memReq = stagingBuffer.GetMemoryRequirements();
+
+				allocInfo.AllocationSize = memReq.Size;
+
+				allocInfo.MemoryTypeIndex =
+					stagingBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
+					(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
+
+				stagingBufferMemory.Allocate(GetEngagedDevice(), allocInfo);
+
+				stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
+
+				/*stagingBuffer.CreateAndBind
 				(
-					stagingBuffer.CreateAndBind
-					(
-						GetEngagedDevice(),
-						stagingBufferInfo,
-						Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
-						stagingBufferMemory
-					);
-				);
+					GetEngagedDevice(),
+					stagingBufferInfo,
+					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
+					stagingBufferMemory
+				);*/
 				
 				// Hard coded vertex data...
 
@@ -1224,26 +1294,36 @@
 
 				vertexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::VertexBuffer);
 
-				Heap
+				Heap()
+				_vertexBuffer.Create(GetEngagedDevice(), vertexBufferInfo);
+
+				auto& memReqVert = _vertexBuffer.GetMemoryRequirements();
+
+				allocInfo.AllocationSize = memReqVert.Size;
+
+				allocInfo.MemoryTypeIndex = 
+					_vertexBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
+					(memReqVert.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
+
+				_vertexBufferMemory.Allocate(GetEngagedDevice(), allocInfo);
+
+				_vertexBuffer.BindMemory(_vertexBufferMemory, Memory::ZeroOffset);
+
+				/*_vertexBuffer.CreateAndBind
 				(
-					_vertexBuffer.CreateAndBind
-					(
-						GetEngagedDevice(), 
-						vertexBufferInfo, 
-						Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
-						_vertexBufferMemory
-					);
-				);
+					GetEngagedDevice(), 
+					vertexBufferInfo, 
+					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
+					_vertexBufferMemory
+				)*/;
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				Heap(SingleTimeCommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue()));
+				Heap() SingleTimeCommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue());
 
-				Heap
-				(
-					stagingBuffer.Destroy();
-					stagingBufferMemory.Free();
-				);
+				Heap()
+				stagingBuffer      .Destroy();
+				stagingBufferMemory.Free();
 			}
 
 			EFormat FindDepthFormat()

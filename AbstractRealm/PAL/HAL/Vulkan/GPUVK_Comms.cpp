@@ -11,8 +11,8 @@
 
 namespace HAL::GPU::Vulkan
 {
-	StaticData
-	(
+	StaticData()
+
 		AppInstance            AppGPU_Comms          ;
 		LayerandExtensionsList AppLayersAndExtensions;
 		DynamicArray<RoCStr>   DesiredLayers         ;
@@ -27,7 +27,6 @@ namespace HAL::GPU::Vulkan
 		/*  Currently the design of the vulkan backend is monolithic.
 			Only one device of those available is engaged at a time */
 		ptr<LogicalDevice> DeviceEngaged = nullptr;
-	)
 
 
 	// Forwards
@@ -152,7 +151,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult LogicalDevice::Create()
 	{
-		EResult result = Heap(Parent::Parent::Create(*physicalDevice, info, handle));
+		Heap() EResult result = Parent::Parent::Create(*physicalDevice, info, handle);
 
 		if (result != EResult::Success) return result;
 
@@ -419,23 +418,21 @@ namespace HAL::GPU::Vulkan
 
 		for (auto& device : LogicalGPUs)
 		{
-			Heap(device.Destroy());
+			Heap() device.Destroy();
 		}
 
 		CLog("Device disengaged and logical devices destroyed");
 
-		Heap(AppGPU_Comms.Destroy());
+		Heap() AppGPU_Comms.Destroy();
 
 		CLog("GPU communications ceased");
 	}
 
 	void AppGPU_Comms_Initialize(RoCStr _appName, Meta::AppVersion _version)
 	{
-		Stack
-		(
+		Stack()
 			AppInstance::AppInfo    spec       {};
 			AppInstance::CreateInfo createSpec {};
-		)
 
 		AppInstance::GetAvailableLayersAndExtensions(AppLayersAndExtensions);
 
@@ -513,7 +510,7 @@ namespace HAL::GPU::Vulkan
 			createSpec.Next = nullptr;
 		}
 
-		stack<EResult> creationResult = Heap(AppGPU_Comms.Create(createSpec));  
+		Heap() stack<EResult> creationResult = AppGPU_Comms.Create(createSpec);  
 
 		if (creationResult != EResult::Success) 
 			throw RuntimeError("Failed to create Vulkan app instance.");
@@ -522,7 +519,7 @@ namespace HAL::GPU::Vulkan
 
 		if (Meta::Vulkan::EnableLayers)
 		{
-			creationResult = Heap(GPU_Messenger.Create(AppGPU_Comms));
+			Heap() creationResult = GPU_Messenger.Create(AppGPU_Comms);
 
 			if (creationResult != EResult::Success)
 				throw RuntimeError("Failed to setup debug messenger.");
@@ -550,7 +547,7 @@ namespace HAL::GPU::Vulkan
 
 		Surface testSurface;
 
-		if (Heap(testSurface.Create(AppGPU_Comms, OSAL::GetOS_WindowHandle(testWindow)) != EResult::Success))
+		Heap() if (testSurface.Create(AppGPU_Comms, OSAL::GetOS_WindowHandle(testWindow)) != EResult::Success)
 		{
 			throw RuntimeError("Failed to create window surface!");
 		}
@@ -605,7 +602,7 @@ namespace HAL::GPU::Vulkan
 			device.AssignPhysicalDevice(PhysicalGPUs[gpuIndex]);
 
 			// Creates the logical device, and the queues retrieve their respective data.
-			EResult result = Heap(device.Create());
+			Heap() EResult result = device.Create();
 
 			if (result != EResult::Success)
 			{

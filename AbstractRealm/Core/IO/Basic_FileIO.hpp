@@ -16,7 +16,7 @@
 
 
 
-namespace IO
+namespace Core::IO
 {
 	//Bitmaskable_ScopeBase();
 

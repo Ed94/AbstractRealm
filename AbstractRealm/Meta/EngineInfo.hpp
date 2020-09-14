@@ -105,8 +105,8 @@ namespace Meta
 
 
 
-	StaticData
-	(
+	StaticData()
+
 		/*
 		Determines the operational mode of the engine.
 
@@ -129,5 +129,4 @@ namespace Meta
 
 		// #TODO: Put in a Execution config
 		eGlobal bool FixRenderRateToRefreshRate;
-	)
 }

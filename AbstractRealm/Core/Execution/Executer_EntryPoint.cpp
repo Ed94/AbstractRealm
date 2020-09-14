@@ -32,10 +32,10 @@ namespace Core::Execution
 
 
 
-	StaticData
-	(
+	StaticData()
+
 		ptr<Window> EngineWindow;
-		ptr<Window> DemoWindow;
+		ptr<Window> DemoWindow  ;
 
 		AppVersion AppVer = 
 		{ 
@@ -54,7 +54,6 @@ namespace Core::Execution
 
 			WindowSize.Width = _width; WindowSize.Height = _height;
 		}
-	)
 
 
 

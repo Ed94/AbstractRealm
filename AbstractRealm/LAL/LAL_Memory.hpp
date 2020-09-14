@@ -18,23 +18,23 @@ Last Modified: 5/18/2020
 
 namespace LAL
 {
+	#define LAL_UseMemorySpecifiers
+
+#ifdef LAL_UseMemorySpecifiers
+
 	/*
 	Macro Stack scope specifier.
 	*/
-	#define Stack(...) \
-	__VA_ARGS__
+	#define Stack() \
 
 	// Macro Static Variable scope specifier.
-	#define StaticData(...) \
-	__VA_ARGS__
+	#define StaticData() \
 
 	// Macro Data Segment scope specifier.
-	#define Data(...) \
-	__VA_ARGS__
+	#define Data() \
 
 	// Macro BSS Segment scope specifier.
-	#define BSS(...) \
-	__VA_ARGS__
+	#define BSS() \
 
 	enum class EHeap
 	{
@@ -43,39 +43,7 @@ namespace LAL
 	};
 
 	// Macro Heap manipulation specifier.
-	#define Heap(...) \
-	__VA_ARGS__
-
-
-	// Heap Tracking stuff. Not using for now
-
-//#define LAL_TrackHeap
-
-//#ifdef LAL_TrackHeap
-//
-//	DataSize Internal_Heap_AllocationsLeft();
-//
-//	void ProcessHeapAction(EHeap _action, DataSize _objectsAllocated);
-//
-//	// Macro Heap manipulation specifier.
-//	#define Heap(_EHEAP_, _NumObjects_, ...) \
-//	ProcessHeapAction(_EHEAP_, _NumObjects_); \
-//	__VA_ARGS__
-//
-//	#define Heap_AllocationsLeft() \
-//	Internal_Heap_AllocationsLeft()
-//
-//#else
-//
-//	// Macro Heap manipulation specifier.
-//	#define Heap(_EHEAP_, _NumObj_, ...) \
-//	__VA_ARGS__
-//
-//	#define Heap_AllocationsLeft() \
-//	0
-//
-//#endif
-	
+	#define Heap() \
 
 	/*
 	Stack Scope Type Specifier
@@ -110,6 +78,8 @@ namespace LAL
 	(Explicit indication. Does not do anything)
 	*/
 	template<typename Type> using bss = Type;
+
+#endif
 
 	/*
 	Pointer Template

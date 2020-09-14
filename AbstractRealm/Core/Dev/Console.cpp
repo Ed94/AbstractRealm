@@ -557,7 +557,7 @@ namespace Dev
 			Create_Directories(path);
 		}
 		
-		using namespace IO;
+		using namespace Core::IO;
 
 		bool openResult = OpenFile
 		(

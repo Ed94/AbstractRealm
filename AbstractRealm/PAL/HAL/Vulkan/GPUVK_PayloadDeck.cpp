@@ -30,7 +30,7 @@ namespace HAL::GPU::Vulkan
 
 		CommandBuffer& buffer = commandBuffers.back();
 
-		result = Heap(Allocate(buffer));
+		result = Heap() Allocate(buffer);
 
 		if (result != EResult::Success) throw RuntimeError("Failed to allocate...");
 
@@ -84,13 +84,13 @@ namespace HAL::GPU::Vulkan
 
 
 
-	StaticData
-	(
+	StaticData()
+
 		Deque<CommandPool> CommandPools;
 
 		ptr<CommandPool> GeneralPool ;
 		ptr<CommandPool> TransientPool;
-	)
+
 
 
 
@@ -107,7 +107,7 @@ namespace HAL::GPU::Vulkan
 
 		GeneralPool = &CommandPools.back();
 		
-		Heap(GeneralPool->Create(GetEngagedDevice(), info));
+		Heap() GeneralPool->Create(GetEngagedDevice(), info);
 
 
 		CommandPools.resize(CommandPools.size() + 1);
@@ -116,7 +116,7 @@ namespace HAL::GPU::Vulkan
 
 		info.Flags.Set(ECommandPoolCreateFlag::Transient);
 
-		Heap(TransientPool->Create(GetEngagedDevice(), info));
+		Heap() TransientPool->Create(GetEngagedDevice(), info);
 	}
 
 	const CommandBuffer& RecordOnGraphics()

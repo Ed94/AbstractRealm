@@ -12,17 +12,17 @@ namespace SAL::GLFW
 
 	ptr<Window> MakeWindow(int _width, int _height, ptr<const char> _title, ptr<Monitor> _fullscreenCast, ptr<Window> _windowToShareWith)
 	{
-		return Heap(glfwCreateWindow(_width, _height, _title, _fullscreenCast, _windowToShareWith));
+		return Heap() glfwCreateWindow(_width, _height, _title, _fullscreenCast, _windowToShareWith);
 	}
 
 	void DestroyWindow(ptr<Window> _window)
 	{
-		Heap(glfwDestroyWindow(_window));
+		Heap() glfwDestroyWindow(_window);
 	}
 
 	bool Initalize()
 	{
-		return Heap(glfwInit()) ? true : false;
+		Heap() return glfwInit() ? true : false;
 	}
 
 	void PollEvents()
@@ -34,7 +34,7 @@ namespace SAL::GLFW
 
 	void Terminate()
 	{
-		Heap(glfwTerminate());
+		Heap() glfwTerminate();
 	}
 
 

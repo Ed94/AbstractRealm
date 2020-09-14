@@ -4,6 +4,7 @@
 
 
 #include "GPUVK_PayloadDeck.hpp"
+#include "GPUVK_Memory.hpp"
 
 
 
@@ -139,7 +140,7 @@ namespace HAL::GPU::Vulkan
 			1, &barrier
 		);
 
-		Heap(EndRecordOnTransient(commandBuffer));
+		Heap() EndRecordOnTransient(commandBuffer);
 	}
 
 
@@ -166,9 +167,74 @@ namespace HAL::GPU::Vulkan
 		return Parent::Create(_device, _info, _allocator);
 	}
 
-	
-
 #pragma endregion ImageView
+
+#pragma region BufferPackage
+
+	BufferPackage::BufferPackage() : buffer(), memory(), memoryOffset(0), view()
+	{}
+
+	BufferPackage::BufferPackage(const LogicalDevice& _device) : buffer(_device), memory(nullptr), memoryOffset(0), view(_device)
+	{}
+
+	BufferPackage::BufferPackage(const LogicalDevice& _device, const Memory::AllocationCallbacks& _memory) : 
+		buffer(_device), memory(nullptr), memoryOffset(0), view(_device)
+	{}
+
+	BufferPackage::~BufferPackage()
+	{
+		// Individual objects handle their destruction.
+	}
+
+	void BufferPackage::Create(const Buffer::CreateInfo& _bufferInfo, Memory::PropertyFlags _memoryFlags)
+	{
+		EResult returnCode = buffer.Create(_bufferInfo);
+
+		Memory::AllocateInfo allocInfo;
+
+		auto& memReq = buffer.GetMemoryRequirements();
+
+		allocInfo.AllocationSize = memReq.Size;
+
+		allocInfo.MemoryTypeIndex = 
+			buffer.GetDevice().GetPhysicalDevice().FindMemoryType(memReq.MemoryTypeBits, _memoryFlags);
+
+		memory = &RequestMemory(allocInfo);
+
+		buffer.BindMemory(*memory, memoryOffset);
+	}
+
+	void BufferPackage::Destroy()
+	{
+		buffer.Destroy();
+		view  .Destroy();
+
+		memory = nullptr;
+
+		memoryOffset = 0;
+	}
+
+	const Buffer& BufferPackage::GetBuffer()
+	{
+		return buffer;
+	}
+
+	const Memory& BufferPackage::GetMemory()
+	{
+		return *memory;
+	}
+
+	const DeviceSize& BufferPackage::GetMemoryOffset()
+	{
+		return memoryOffset;
+	}
+
+	const BufferView& BufferPackage::GetView()
+	{
+		return view;
+	}
+
+#pragma endregion BufferPackage
 
 #pragma region ImagePackage
 
@@ -196,16 +262,14 @@ namespace HAL::GPU::Vulkan
 
 		stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-		Heap
+		Heap()
+		/*result = stagingBuffer.CreateAndBind
 		(
-			result = stagingBuffer.CreateAndBind
-			(
-				GetEngagedDevice(),
-				stagingBufferInfo,
-				Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
-				stagingBufferMemory
-			);
-		);
+			GetEngagedDevice(),
+			stagingBufferInfo,
+			Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
+			stagingBufferMemory
+		);*/
 
 		if (result != EResult::Success) return result;
 
@@ -222,16 +286,14 @@ namespace HAL::GPU::Vulkan
 
 		vertexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::VertexBuffer);
 
-		Heap
+		Heap()
+		/*result = buffer.CreateAndBind
 		(
-			result = buffer.CreateAndBind
-			(
-				GetEngagedDevice(), 
-				vertexBufferInfo, 
-				Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
-				memory
-			);
-		);
+			GetEngagedDevice(),
+			vertexBufferInfo,
+			Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal),
+			memory
+		);*/
 
 		if (result != EResult::Success) return result;
 
@@ -243,11 +305,9 @@ namespace HAL::GPU::Vulkan
 
 		EndRecordOnTransient(commandBuffer);
 
-		Heap
-		(
-			stagingBuffer.Destroy();
-			stagingBufferMemory.Free();
-		);
+		Heap()
+		stagingBuffer.Destroy();
+		stagingBufferMemory.Free();
 
 		return result;
 	}
@@ -256,8 +316,10 @@ namespace HAL::GPU::Vulkan
 	{
 		buffer.Destroy();
 
-		memory.Free();
+		//memory.Free();
 	}
 
 #pragma endregion VertexBuffer
+
+	
 }

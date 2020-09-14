@@ -212,7 +212,15 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Core\Memory\MemTracking.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Core\Memory\MemTypes.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\StaticMemory.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -715,6 +723,7 @@
     <ClCompile Include="Core\Execution\MasterExecution.cpp" />
     <ClCompile Include="Core\Execution\PrimitiveExecuter_Implem.hpp" />
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
+    <ClCompile Include="Core\Memory\MemTracking.cpp" />
     <ClCompile Include="LAL\LAL_IO.cpp" />
     <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />

@@ -20,13 +20,12 @@ namespace Core::Concurrency
 
 
 
-	StaticData
-	(
+	StaticData()
+
 		DynamicArray<Unit> Pool;
 
 		bool   Initiated   = false;
 		uInt16 ActiveUnits = 0    ;
-	)
 
 
 

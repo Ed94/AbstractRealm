@@ -10,6 +10,26 @@ namespace HAL::GPU::Vulkan
 {
 	// Classes
 
+	class Buffer : public V3::Buffer
+	{
+	public:
+		using Parent = V3::Buffer;
+
+		Buffer() : Parent::Buffer()
+		{}
+
+		Buffer(const LogicalDevice& _device) : Parent::Buffer(_device)
+		{}
+
+		Buffer(const LogicalDevice& _device, const Memory::AllocationCallbacks& _allocator) :
+			Parent::Buffer(_device, _allocator)
+		{}
+
+	protected:
+
+		CreateInfo info;
+	};
+
 	class Image : public V3::Image
 	{
 	public:
@@ -48,6 +68,10 @@ namespace HAL::GPU::Vulkan
 	protected:
 
 		CreateInfo info;
+
+		const Memory* memory;   // #TODO: Move out to V4 buffer package.
+
+		DeviceSize memoryOffset;   // #TODO: Move out to V4 buffer package.
 	};
 
 	class ImageView : public V3::ImageView
@@ -65,15 +89,47 @@ namespace HAL::GPU::Vulkan
 		CreateInfo info;
 	};
 
+	class BufferPackage
+	{
+	public:
+
+		BufferPackage();
+
+		BufferPackage(const LogicalDevice& _device);
+
+		BufferPackage(const LogicalDevice& _device, const Memory::AllocationCallbacks& _allocator);
+
+		~BufferPackage();
+
+		void Create(const Buffer::CreateInfo& _bufferInfo, Memory::PropertyFlags _memoryFlags);
+
+		void Destroy();
+
+		const Buffer&     GetBuffer();
+		const Memory&     GetMemory();
+		const DeviceSize& GetMemoryOffset();
+		const BufferView& GetView();
+
+		void WriteToGPU();
+
+	protected:
+
+		      Buffer     buffer      ;
+		const Memory*    memory      ;
+		      DeviceSize memoryOffset;
+		      BufferView view        ;
+	};
 
 	class ImagePackage
 	{
 	public:
 		EFormat GetFormat();
 
-		Image     image ;
-		Memory    memory;
-		ImageView view  ;
+		Image      image ;
+		Memory     memory;
+		//Memory*    memory;
+		DeviceSize memoryOffset;
+		ImageView  view  ;
 	};
 
 	struct VertexInputState : Pipeline::VertexInputState
@@ -92,9 +148,27 @@ namespace HAL::GPU::Vulkan
 
 	protected:
 
-		Buffer buffer;
-		Memory memory;
+		Buffer     buffer      ;
+		Memory*    memory      ;
+		DeviceSize memoryOffset;
 
 		VertexInputState state;
+	};
+
+	class IndexBuffer
+	{
+	public:
+
+		EResult Create();
+
+		void Destroy();
+
+	protected:
+
+		Buffer     buffer      ;
+		Memory*    memory      ;
+		DeviceSize memoryOffset;
+
+		DynamicArray<uint32> indices;
 	};
 }
