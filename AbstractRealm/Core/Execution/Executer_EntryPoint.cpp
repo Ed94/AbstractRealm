@@ -14,6 +14,7 @@
 
 
 
+
 namespace Core::Execution
 {
 	// Usings
@@ -170,3 +171,17 @@ namespace Core::Execution
 		return OSAL::ExitValT(EExitCode::Success);
 	}
 }
+
+
+
+// OSAL Entrypoint:  Setting function overload.
+
+namespace OSAL
+{
+	OSAL::ExitValT EntryPoint()
+	{
+		return Core::Execution::EntryPoint();
+	}
+
+}
+

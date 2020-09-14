@@ -20,5 +20,8 @@
 
 namespace OSAL
 {
-	//using FN_EntryPoint = LAL::Function<ExitValT()>;
+	/**
+	* Engine application entry point.
+	*/
+	ExitValT EntryPoint();
 }

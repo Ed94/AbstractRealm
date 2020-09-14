@@ -8,22 +8,9 @@
 
 
 
-// DEFINE YOUR INCLUDE WITH YOUR ENTRY POINT HERE.
-#include "Core/Execution/Executer.hpp"
-
-
-
 namespace OSAL
 {
 	OS_AppHandle AppInstance;
-
-	namespace PlatformBackend
-	{
-		/**
-		 * DEFINE YOUR ENTRYPOINT FUNCTION HERE.
-		 */
-		constexpr auto EntryPoint = Core::Execution::EntryPoint;
-	}
 }
 
 
@@ -36,7 +23,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /* hPrevInstance */, LPSTR /* 
 
 	OSAL::AppInstance = hInstance;
 
-	return OSAL::PlatformBackend::EntryPoint();
+	return OSAL::EntryPoint();
 }
 
 #endif
