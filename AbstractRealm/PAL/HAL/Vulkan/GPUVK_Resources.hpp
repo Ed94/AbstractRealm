@@ -40,23 +40,6 @@ namespace HAL::GPU::Vulkan
 
 		EResult Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator);
 
-		EResult CreateAndBind
-		(
-			const LogicalDevice&        _device     ,  
-			const CreateInfo&           _info       ,  
-				  Memory::PropertyFlags _memoryFlags,
-				  Memory&               _memory
-		);
-
-		EResult CreateAndBind
-		(
-			const LogicalDevice&               _device        ,  
-			const CreateInfo&                  _info          , 
-				  Memory::PropertyFlags        _memoryFlags   ,
-				  Memory&                      _memory        ,
-			const Memory::AllocationCallbacks* _allocator
-		);
-
 		EFormat GetFormat() const ;
 
 		bool HasStencilComponent() const;
@@ -68,10 +51,6 @@ namespace HAL::GPU::Vulkan
 	protected:
 
 		CreateInfo info;
-
-		const Memory* memory;   // #TODO: Move out to V4 buffer package.
-
-		DeviceSize memoryOffset;   // #TODO: Move out to V4 buffer package.
 	};
 
 	class ImageView : public V3::ImageView

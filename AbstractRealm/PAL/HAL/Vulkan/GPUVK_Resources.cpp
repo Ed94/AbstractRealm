@@ -27,33 +27,6 @@ namespace HAL::GPU::Vulkan
 		return Parent::Create(_device, _info);
 	}
 
-	EResult Image::CreateAndBind
-	(
-		const LogicalDevice&        _device     ,  
-		const CreateInfo&           _info       ,  
-			  Memory::PropertyFlags _memoryFlags,
-			  Memory&               _memory
-	)
-	{
-		info = _info;
-
-		return Parent::CreateAndBind(_device, _info, _memoryFlags, _memory);
-	}
-
-	EResult Image::CreateAndBind
-	(
-		const LogicalDevice&               _device        ,  
-		const CreateInfo&                  _info          , 
-			  Memory::PropertyFlags        _memoryFlags   ,
-			  Memory&                      _memory        ,
-		const Memory::AllocationCallbacks* _allocator
-	)
-	{
-		info = _info;
-
-		return Parent::CreateAndBind(_device, _info, _memoryFlags, _memory, _allocator);
-	}
-
 	EFormat Image::GetFormat() const
 	{
 		return info.Format;

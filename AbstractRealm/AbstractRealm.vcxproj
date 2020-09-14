@@ -220,10 +220,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Memory\StaticMemory.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="Core\Objects\Object.hpp">
       <SubType>
       </SubType>

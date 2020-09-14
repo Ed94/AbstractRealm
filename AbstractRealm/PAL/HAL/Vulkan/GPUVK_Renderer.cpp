@@ -777,13 +777,29 @@ namespace HAL::GPU::Vulkan
 		imgInfo.Usage.Set(EImageUsage::DepthStencil_Attachment);
 
 		Heap() 
-		EResult result = depthBuffer.image.CreateAndBind
+		EResult result = depthBuffer.image.Create(GetEngagedDevice(), imgInfo);
+
+		auto& memReq = depthBuffer.image.GetMemoryRequirements();
+
+		Memory::AllocateInfo allocInfo;
+
+		allocInfo.AllocationSize = memReq.Size;
+
+		allocInfo.MemoryTypeIndex = 
+			GetEngagedDevice().GetPhysicalDevice().FindMemoryType
+			(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
+
+		depthBuffer.memory.Allocate(GetEngagedDevice(), allocInfo);
+
+		depthBuffer.image.BindMemory(depthBuffer.memory, depthBuffer.memoryOffset);
+
+		/*EResult result = depthBuffer.image.CreateAndBind
 		(
 			GetEngagedDevice(), 
 			imgInfo, 
 			Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
 			depthBuffer.memory
-		);
+		);*/
 
 		if (result != EResult::Success) return result;
 
