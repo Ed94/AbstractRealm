@@ -448,7 +448,7 @@ namespace HAL::GPU::Vulkan
 			}
 
 			// In order to process receive layer messages, need the debugger.
-			DesiredInstanceExts.push_back(InstanceExt::DebugUtility);
+			//DesiredInstanceExts.push_back(InstanceExt::DebugUtility);
 
 			if (Meta::Vulkan::Enable_API_Dump)
 			{
@@ -768,15 +768,17 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
+	using Messenger = DebugUtils::Messenger;
+
 	Bool DebugCallback
 	(
-		      DebugUtils::MessageServerityFlags   _messageServerity, 
-		      DebugUtils::MessageTypeFlags        /*_messageType*/ ,
-		const DebugUtils::Messenger::CallbackData _callbackData    , 
-		      ptr<void>                           /*_userData*/
+		      Messenger::ServerityFlags _messageServerity,
+		      Messenger::TypeFlags      /*_messageType*/,
+		const Messenger::CallbackData   _callbackData    , 
+		      void*                     /*_userData*/
 	)
 	{
-		using ESeverity = EDebugUtils_MessageSeverity;
+		using ESeverity = Messenger::EServerity;
 
 		Dev::CLog_Error(String(_callbackData.Message));
 
@@ -836,7 +838,7 @@ namespace HAL::GPU::Vulkan
 
 	void SetupDebugMessenger()
 	{
-		stack<DebugUtils::Messenger::CreateInfo> info{};
+		stack<Messenger::CreateInfo> info{};
 
 		using EMaskS = decltype(info.Serverity)::Enum;
 

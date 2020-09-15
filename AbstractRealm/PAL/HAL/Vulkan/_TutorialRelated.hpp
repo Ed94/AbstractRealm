@@ -88,9 +88,7 @@ namespace HAL::GPU
 				posAttrib.Binding  = 0;
 				posAttrib.Location = 0;
 				posAttrib.Format   = EFormat::R32_G32_B32_SFloat;
-				//posAttrib.Offset   = offsetof(Vertex, Vertex::Position);
-
-				posAttrib.Offset = OffsetOf(Vertex::Position);
+				posAttrib.Offset   = OffsetOf(Vertex::Position);
 
 				// Color Attributes
 

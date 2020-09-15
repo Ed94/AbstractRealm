@@ -132,10 +132,10 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			// Exposed but really should not be used directly unless for another implementation I guess.
 			Bool DebugCallback
 			(
-				DebugUtils::MessageServerityFlags         _messageServerity,
-				DebugUtils::MessageTypeFlags              _messageType,
-				const V1::DebugUtils::Messenger::CallbackData _callbackData,
-				ptr<void>                                 _userData
+				      DebugUtils::Messenger::ServerityFlags   _messageServerity,
+				      DebugUtils::Messenger::TypeFlags        _messageType     ,
+				const V1::DebugUtils::Messenger::CallbackData _callbackData    ,
+				      void*                                   _userData
 			);
 
 			EFormat FindDepthFormat();
