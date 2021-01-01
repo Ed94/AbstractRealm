@@ -130,7 +130,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			void CreateSyncObjects();
 
 			// Exposed but really should not be used directly unless for another implementation I guess.
-			Bool DebugCallback
+			Bool DebugCallback_Error
 			(
 				      DebugUtils::Messenger::ServerityFlags   _messageServerity,
 				      DebugUtils::Messenger::TypeFlags        _messageType     ,

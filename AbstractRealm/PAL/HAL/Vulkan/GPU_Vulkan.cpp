@@ -138,6 +138,8 @@
 
 			void Stop_ClearColorDemo()
 			{
+				CLog("Stopping Clear Color Demo...");
+
 				Retire_RenderContext(ClearColor_Context);
 				Retire_Swapchain    (ClearColor_Swap   );
 				Retire_Surface      (ClearColor_Surface);
@@ -1795,6 +1797,8 @@
 					}
 
 					//if (Meta::Vulkan::EnableLayers) GPU_Messenger.Destroy();
+
+					Retire_Swapchain(SwapChain_Old);
 
 					Retire_Surface(Surface_Old);
 				//);

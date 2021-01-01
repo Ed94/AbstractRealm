@@ -26,8 +26,9 @@ namespace Sim
 			Meta::DecN_UseHighAccuracy_Compare ? LAL::Float32_HighAccuracy : LAL::Float32_LowAccuracy :
 			(
 				Meta::DecN_UseHighAccuracy_Compare ?
-				Meta::DecN_UseNanoAccuracy_Compare ? LAL::Float64_NanoAccuracy : LAL::Float64_HighAccuracy :
-				                                     LAL::Float64_LowAccuracy
+					Meta::DecN_UseNanoAccuracy_Compare ? 
+						LAL::Float64_NanoAccuracy : LAL::Float64_HighAccuracy :
+				        LAL::Float64_LowAccuracy
 			);
 	}
 

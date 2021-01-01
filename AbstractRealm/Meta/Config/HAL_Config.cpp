@@ -21,5 +21,10 @@ namespace Meta
 		data< bool> Enable_API_Dump   = false;
 		data< bool> Enable_FPSMonitor = true;
 		data< bool> Enable_Validation = true;
+
+		data< bool> Enable_LogVerbose = false;
+		data< bool> Enable_LogInfo    = true;
+		data< bool> Enable_LogWarning = true;
+		data< bool> Enable_LogError   = true;
 	}
 }

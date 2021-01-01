@@ -75,10 +75,22 @@ namespace OSAL
 			using ExitValT = int;
 		};
 
-		using PlatformTypes = PlatformTypes_Maker<OSAL::OS>;
+		template<>
+		struct PlatformTypes_Maker<EOS::Mac>
+		{
+			using OS_Handle = int;
+
+			// Fill with mac stuff.
+		};
+
+		template<>
+		struct PlatformTypes_Maker<EOS::Linux>
+		{
+			// Fill with linux stuff.
+		};
 	}
 
-	using PlatformTypes = PlatformBackend::PlatformTypes;
+	using PlatformTypes = PlatformBackend::PlatformTypes_Maker<OSAL::OS>;
 
 	using OS_AppHandle    = PlatformTypes::OS_AppHandle   ;
 	using OS_Handle       = PlatformTypes::OS_Handle      ;

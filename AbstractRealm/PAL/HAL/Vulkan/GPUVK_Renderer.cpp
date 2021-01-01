@@ -202,6 +202,21 @@ namespace HAL::GPU::Vulkan
 		return result;
 	}
 
+	void Swapchain::Destroy()
+	{
+		for (auto& image : images)
+		{
+			image.Clear();
+		}
+
+		for (auto& imageView : imageViews)
+		{
+			imageView.Destroy();
+		}
+
+		Parent::Destroy();
+	}
+
 	Extent2D Swapchain::GetExtent() const
 	{
 		return info.ImageExtent;
@@ -248,11 +263,6 @@ namespace HAL::GPU::Vulkan
 
 	void Swapchain::Regenerate()
 	{
-		for (auto& imageView : imageViews)
-		{
-			imageView.Destroy();
-		}
-
 		Destroy();
 
 		const auto& presentationModes = surface->GetPresentationModes();
@@ -309,7 +319,9 @@ namespace HAL::GPU::Vulkan
 		}
 
 		if (surface->GetCapabilities().CurrentExtent.Width != UInt32Max)
+		{
 			info.ImageExtent = surface->GetCapabilities().CurrentExtent;
+		}
 		else
 		{
 			OSAL::FrameBufferDimensions frameBufferSize = OSAL::GetFramebufferDimensions(surface->GetWindow());

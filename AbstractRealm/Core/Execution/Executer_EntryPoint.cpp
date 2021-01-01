@@ -182,6 +182,5 @@ namespace OSAL
 	{
 		return Core::Execution::EntryPoint();
 	}
-
 }
 

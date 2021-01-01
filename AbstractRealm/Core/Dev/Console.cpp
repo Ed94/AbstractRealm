@@ -124,14 +124,17 @@ namespace Dev
 
 		WordSize lineLength = dateSig.str().size() + _info.size();
 
+		DevLogFileOut 
+			<< dateSig.str()
+			<< _info 
+			<< endl;
+
 		if (lineLength > ConsoleWidth)
 		{
 			DevLogStream 
 				<< dateSig.str()
 				<< setfill(' ')
 				<< setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
-
-			DevLogFileOut << DevLogStream.str() << endl;
 
 			WriteTo_Buffer
 			(
@@ -190,8 +193,6 @@ namespace Dev
 				<< setfill(' ')
 				<< setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
 
-			DevLogFileOut << DevLogStream.str() << endl;
-
 			WriteTo_Buffer
 			(
 				linePos - 1,
@@ -227,14 +228,18 @@ namespace Dev
 
 		WordSize lineLength = dateSig.str().size() + _info.size();
 
+		DevLogFileOut
+			<< dateSig.str()
+			<< "\n"
+			<< _info
+			<< endl;
+
 		if (lineLength > ConsoleWidth)
 		{
 			DevLogStream
 				<< dateSig.str()
 				<< setfill(' ')
 				<< setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
-
-			DevLogFileOut << DevLogStream.str() << endl;
 
 			WriteTo_Buffer
 			(
@@ -292,8 +297,6 @@ namespace Dev
 				<< _info
 				<< setfill(' ')
 				<< setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
-
-			DevLogFileOut << DevLogStream.str() << endl;
 
 			WriteTo_Buffer
 			(

@@ -59,6 +59,8 @@ namespace HAL::GPU::Vulkan
 
 		EResult Create(Surface& _surface, Surface::Format _format);
 
+		void Destroy();
+
 		Extent2D GetExtent() const;
 
 		EFormat GetFormat() const;

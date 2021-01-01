@@ -17,12 +17,11 @@ C++17
 #ifndef CALLING_CONVENTION_ENFORCER_H
 #define CALLING_CONVENTION_ENFORCER_H
 
-
 	template <class ID>
 	struct CallEnforcementSet;
 
 	#define MakeCallEnforcer_ConventionID(__API_NAME) \
-	class CallEnforcerID_##__API_NAME;
+	CustomClassSpecifier CallEnforcerID_##__API_NAME;
 
 	#define MakeCallEnforcer_EnforcementSet(__API_NAME, __ATTRIBUTE, __CALL)         \
 	template<>                                                                       \

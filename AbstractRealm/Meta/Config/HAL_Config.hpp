@@ -87,9 +87,9 @@ namespace Meta
 	namespace  Vulkan
 	{
 		/**
-		 * Determines if vulkan will use injectable layers.
+		 * Determines if Vulkan will use injectable layers.
 		 */
-		eGlobal data< bool> EnableLayers   ;
+		eGlobal data< bool> EnableLayers;
 
 		/**
 		 * Enables the wall of debug essentially for Vulkan.
@@ -105,5 +105,10 @@ namespace Meta
 		Determines if Vulkan will use validation layers.
 		*/
 		eGlobal data< bool> Enable_Validation;
+
+		eGlobal data< bool> Enable_LogVerbose;
+		eGlobal data< bool> Enable_LogInfo   ;
+		eGlobal data< bool> Enable_LogWarning;
+		eGlobal data< bool> Enable_LogError  ;
 	}
 }

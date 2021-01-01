@@ -58,10 +58,10 @@ namespace LAL
 	/**
 	Static Data Scope Type Specifier
 
-	Specifies that the object will be allocated within a static segment of memory.
+	Specifies that the object will be allocated within a readonly data segment of memory.
 	(Explicit indication. Does not do anything)
 	*/
-	template<typename Type> using staticData = Type;
+	template<typename Type> using roData = Type;
 	
 	/*
 	Data Segment Scope Type Specifier

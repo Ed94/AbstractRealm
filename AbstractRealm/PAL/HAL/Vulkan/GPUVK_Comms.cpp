@@ -19,12 +19,15 @@ namespace HAL::GPU::Vulkan
 		DynamicArray<RoCStr>   DesiredInstanceExts   ;
 		DynamicArray<RoCStr>   DesiredDeviceExts     ;
 
-		DebugUtils::Messenger GPU_Messenger;
+		DebugUtils::Messenger GPU_Messenger_Verbose;
+		DebugUtils::Messenger GPU_Messenger_Info;
+		DebugUtils::Messenger GPU_Messenger_Warning;
+		DebugUtils::Messenger GPU_Messenger_Error;
 
 		PhysicalDeviceList PhysicalGPUs;
 		LogicalDeviceList  LogicalGPUs ;
 
-		/*  Currently the design of the vulkan backend is monolithic.
+		/*  Currently the design of the Vulkan backend is monolithic.
 			Only one device of those available is engaged at a time */
 		ptr<LogicalDevice> DeviceEngaged = nullptr;
 
@@ -414,6 +417,11 @@ namespace HAL::GPU::Vulkan
 
 	void AppGPU_Comms_Cease()
 	{
+		if (Meta::Vulkan::Enable_LogError) GPU_Messenger_Error.Destroy();
+		if (Meta::Vulkan::Enable_LogWarning) GPU_Messenger_Warning.Destroy();
+		if (Meta::Vulkan::Enable_LogInfo) GPU_Messenger_Info.Destroy();
+		if (Meta::Vulkan::Enable_LogVerbose) GPU_Messenger_Verbose.Destroy();
+
 		DeviceEngaged = nullptr;
 
 		for (auto& device : LogicalGPUs)
@@ -494,6 +502,8 @@ namespace HAL::GPU::Vulkan
 		createSpec.EnabledExtensionCount = SCast<uint32>(DesiredInstanceExts.size());
 		createSpec.EnabledExtensionNames = DesiredInstanceExts.data()               ;
 
+		DynamicArray<DebugUtils::Messenger::CreateInfo> debugInfos;
+
 		if (Meta::Vulkan::EnableLayers)
 		{
 			createSpec.EnabledLayerCount = SCast<uint32>(DesiredLayers.size());
@@ -501,13 +511,17 @@ namespace HAL::GPU::Vulkan
 
 			SetupDebugMessenger();
 
-			createSpec.Next = getAddress(GPU_Messenger.GetInfo());
+			if (Meta::Vulkan::Enable_LogError  ) debugInfos.push_back(GPU_Messenger_Error  .GetInfo());
+			if (Meta::Vulkan::Enable_LogWarning) debugInfos.push_back(GPU_Messenger_Warning.GetInfo());
+			if (Meta::Vulkan::Enable_LogInfo   ) debugInfos.push_back(GPU_Messenger_Info   .GetInfo());
+			if (Meta::Vulkan::Enable_LogVerbose) debugInfos.push_back(GPU_Messenger_Verbose.GetInfo());
+
+			createSpec.Next = debugInfos.data();
 		}
 		else
 		{
 			createSpec.EnabledLayerCount = 0;
-
-			createSpec.Next = nullptr;
+			createSpec.Next              = nullptr;
 		}
 
 		Heap() stack<EResult> creationResult = AppGPU_Comms.Create(createSpec);  
@@ -519,10 +533,37 @@ namespace HAL::GPU::Vulkan
 
 		if (Meta::Vulkan::EnableLayers)
 		{
-			Heap() creationResult = GPU_Messenger.Create(AppGPU_Comms);
+			if (Meta::Vulkan::Enable_LogError)
+			{
+				Heap() creationResult = GPU_Messenger_Error.Create(AppGPU_Comms);
 
-			if (creationResult != EResult::Success)
-				throw RuntimeError("Failed to setup debug messenger.");
+				if (creationResult != EResult::Success)
+					throw RuntimeError("Failed to setup error debug messenger.");
+			}
+
+			if (Meta::Vulkan::Enable_LogWarning)
+			{
+				Heap() creationResult = GPU_Messenger_Warning.Create(AppGPU_Comms);
+
+				if (creationResult != EResult::Success)
+					throw RuntimeError("Failed to setup warning debug messenger.");
+			}
+			
+			if (Meta::Vulkan::Enable_LogInfo)
+			{
+				Heap() creationResult = GPU_Messenger_Info.Create(AppGPU_Comms);
+
+				if (creationResult != EResult::Success)
+					throw RuntimeError("Failed to setup info debug messenger.");
+			}
+
+			if (Meta::Vulkan::Enable_LogVerbose)
+			{
+				Heap() creationResult = GPU_Messenger_Verbose.Create(AppGPU_Comms);
+
+				if (creationResult != EResult::Success)
+					throw RuntimeError("Failed to setup verbose debug messenger.");
+			}
 
 			CLog("Debug messenger created");
 		}
@@ -770,7 +811,68 @@ namespace HAL::GPU::Vulkan
 
 	using Messenger = DebugUtils::Messenger;
 
-	Bool DebugCallback
+	Bool DebugCallback_Verbose
+	(
+		Messenger::ServerityFlags _messageServerity,
+		Messenger::TypeFlags      /*_messageType*/,
+		const Messenger::CallbackData   _callbackData,
+		void*                     /*_userData*/
+	)
+	{
+		using ESeverity = Messenger::EServerity;
+
+		String formattedMessage("Verbose: \n");
+
+		formattedMessage.append(_callbackData.MesssageIDName);
+
+		formattedMessage.append(": " + String(_callbackData.Message));
+
+		Dev::CLog(formattedMessage);
+
+		return EBool::True;
+	}
+
+	Bool DebugCallback_Info
+	(
+		Messenger::ServerityFlags _messageServerity,
+		Messenger::TypeFlags      /*_messageType*/,
+		const Messenger::CallbackData   _callbackData,
+		void*                     /*_userData*/
+	)
+	{
+		using ESeverity = Messenger::EServerity;
+
+		String formattedMessage("Info: \n");
+
+		formattedMessage.append(_callbackData.MesssageIDName);
+
+		formattedMessage.append(": " + String(_callbackData.Message));
+
+		Dev::CLog(formattedMessage);
+
+		return EBool::True;
+	}
+
+	Bool DebugCallback_Warning
+	(
+		Messenger::ServerityFlags _messageServerity,
+		Messenger::TypeFlags      /*_messageType*/,
+		const Messenger::CallbackData   _callbackData,
+		void*                     /*_userData*/
+	)
+	{
+		using ESeverity = Messenger::EServerity;
+
+		String formattedMessage(_callbackData.MesssageIDName);
+		
+		formattedMessage.append(": " + String(_callbackData.Message));
+
+		Dev::CLog_Error(formattedMessage);
+
+		return EBool::True;
+	}
+
+	Bool DebugCallback_Error
 	(
 		      Messenger::ServerityFlags _messageServerity,
 		      Messenger::TypeFlags      /*_messageType*/,
@@ -780,7 +882,11 @@ namespace HAL::GPU::Vulkan
 	{
 		using ESeverity = Messenger::EServerity;
 
-		Dev::CLog_Error(String(_callbackData.Message));
+		String formattedMessage(_callbackData.MesssageIDName);
+
+		formattedMessage.append(": " + String(_callbackData.Message));
+
+		Dev::CLog_Error(formattedMessage);
 
 		return EBool::True;
 	}
@@ -815,9 +921,9 @@ namespace HAL::GPU::Vulkan
 				CLog("Added desired instance extension: " + String(InstanceExt::Surface));
 
 				// Surface OS platform extension.
-				DesiredInstanceExts.push_back(Surface::OSSurface);
+				DesiredInstanceExts.push_back(Surface::OS_Extension);
 
-				CLog("Added desired instance extension: " + String(Surface::OSSurface));
+				CLog("Added desired instance extension: " + String(Surface::OS_Extension));
 
 				break;
 			}
@@ -832,7 +938,7 @@ namespace HAL::GPU::Vulkan
 		{
 			DesiredInstanceExts.push_back(InstanceExt::DebugUtility);
 
-		CLog("Added desired instance extension: " + String(InstanceExt::DebugUtility));
+			CLog("Added desired instance extension: " + String(InstanceExt::DebugUtility));
 		}
 	}
 
@@ -841,18 +947,47 @@ namespace HAL::GPU::Vulkan
 		stack<Messenger::CreateInfo> info{};
 
 		using EMaskS = decltype(info.Serverity)::Enum;
-
-		info.Serverity.Set(EMaskS::Verbose, EMaskS::Warning, EMaskS::Error);
-
 		using EMaskT = decltype(info.Type)::Enum;
 
 		info.Type.Set(EMaskT::General, EMaskT::Validation, EMaskT::Performance);
 
-		info.UserCallback = EnforceVulkanCallingConvention(DebugCallback);
-
 		info.UserData = nullptr;
 
-		GPU_Messenger.AssignInfo(info);
+		if (Meta::Vulkan::Enable_LogError)
+		{
+			info.Serverity.Set(EMaskS::Error);
+
+			info.UserCallback = GetVTAPI_Call(DebugCallback_Error);
+
+			GPU_Messenger_Error.AssignInfo(info);
+		}
+		
+		if (Meta::Vulkan::Enable_LogWarning)
+		{
+			info.Serverity.Set(EMaskS::Warning);
+
+			info.UserCallback = GetVTAPI_Call(DebugCallback_Warning);
+
+			GPU_Messenger_Warning.AssignInfo(info);
+		}
+
+		if (Meta::Vulkan::Enable_LogInfo)
+		{
+			info.Serverity.Set(EMaskS::Info);
+
+			info.UserCallback = GetVTAPI_Call(DebugCallback_Info);
+
+			GPU_Messenger_Info.AssignInfo(info);
+		}
+
+		if (Meta::Vulkan::Enable_LogVerbose)
+		{
+			info.Serverity.Set(EMaskS::Verbose);
+
+			info.UserCallback = GetVTAPI_Call(DebugCallback_Verbose);
+
+			GPU_Messenger_Verbose.AssignInfo(info);
+		}
 	}
 }
 
