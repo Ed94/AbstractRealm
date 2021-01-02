@@ -156,28 +156,25 @@ namespace Meta
 
 
 
-	StaticData()
+	/*
+	Determines the operational mode of the engine.
 
-		/*
-		Determines the operational mode of the engine.
+	Depending on build type, different operational modes of the engine may be available.
 
-		Depending on build type, different operational modes of the engine may be available.
+	Note: Changing the operational mode will require many modules to reinitialize themselves.
+	*/
+	EOperationMode OperationalMode();
 
-		Note: Changing the operational mode will require many modules to reinitialize themselves.
-		*/
-		eGlobal EOperationMode OperationalMode;
+	bool UseEditor();
+	bool UseDebug();
+	bool UseProfiling();
 
-		eGlobal bool UseEditor   ;
-		eGlobal bool UseDebug    ;
-		eGlobal bool UseProfiling;
+	/**
+	* Determines whether the engine should use the core's concurrency module (multi-threading at the CPU).
+	* 
+	* Concurrency still occurs on other hardware such as the GPU. (Just not from the Host CPU)
+	*/
+	bool UseConcurrency();
 
-		/**
-		 * Determines whether the engine should use the core's concurrency module (multi-threading at the CPU).
-		 * 
-		 * Concurrency still occurs on other hardware such as the GPU. (Just not from the Host CPU)
-		 */
-		eGlobal bool UseConcurrency;
-
-		// #TODO: Put in a Execution config
-		eGlobal bool FixRenderRateToRefreshRate;
+	bool FixRenderRateToRefreshRate();
 }

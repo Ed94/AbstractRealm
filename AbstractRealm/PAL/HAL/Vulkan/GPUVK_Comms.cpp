@@ -6,6 +6,7 @@
 #include "OSAL_Platform.hpp"
 #include "OSAL_Windowing.hpp"
 #include "HAL_Backend.hpp"
+#include "Meta/EngineInfo.hpp"
 
 
 
@@ -34,13 +35,13 @@ namespace HAL::GPU::Vulkan
 
 	// Forwards
 
-	void AquireSupportedValidationLayers();
+	//void AquireSupportedValidationLayers();
 
-	bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified);
+	//bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified);
 
-	void DetermineRequiredExtensions();
+	//void DetermineRequiredExtensions();
 
-	void SetupDebugMessenger();
+	//void SetupDebugMessenger();
 
 
 
@@ -74,7 +75,7 @@ namespace HAL::GPU::Vulkan
 		return layersAndExtensions;
 	}
 
-	PhysicalDevice::operator Parent&()
+	PhysicalDevice::operator Parent& ()
 	{
 		return *static_cast<Parent*>(this);
 	}
@@ -338,6 +339,12 @@ namespace HAL::GPU::Vulkan
 
 					break;
 				}
+				default:
+				{
+					graphicsQueue.Assign(dref(this), queueFamilyInfos[index].QueueFamilyIndex, 0, EQueueFlag::Graphics);
+
+					break;
+				}
 			}
 		}
 
@@ -369,7 +376,7 @@ namespace HAL::GPU::Vulkan
 
 	void LogicalDevice::ProcessLayerSupport()
 	{
-		if (Meta::Vulkan::EnableLayers)
+		if (Meta::Vulkan::EnableLayers())
 		{
 			info.EnabledLayerCount = SCast<ui32>(DesiredLayers.size());
 			info.EnabledLayerNames = DesiredLayers.data();
@@ -386,12 +393,12 @@ namespace HAL::GPU::Vulkan
 
 #pragma region Public
 
-	const AppInstance& GetAppInstance()
+	const AppInstance& GPU_Comms::GetAppInstance()
 	{
 		return AppGPU_Comms;
 	}
 
-	void AcquirePhysicalDevices()
+	void GPU_Comms::AcquirePhysicalDevices()
 	{
 		EResult result = AppGPU_Comms.GetAvailablePhysicalDevices(PhysicalGPUs);
 
@@ -415,12 +422,12 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void AppGPU_Comms_Cease()
+	void GPU_Comms::Cease()
 	{
-		if (Meta::Vulkan::Enable_LogError  ) GPU_Messenger_Error  .Destroy();
-		if (Meta::Vulkan::Enable_LogWarning) GPU_Messenger_Warning.Destroy();
-		if (Meta::Vulkan::Enable_LogInfo   ) GPU_Messenger_Info   .Destroy();
-		if (Meta::Vulkan::Enable_LogVerbose) GPU_Messenger_Verbose.Destroy();
+		if (Meta::Vulkan::Enable_LogError  ()) GPU_Messenger_Error  .Destroy();
+		if (Meta::Vulkan::Enable_LogWarning()) GPU_Messenger_Warning.Destroy();
+		if (Meta::Vulkan::Enable_LogInfo   ()) GPU_Messenger_Info   .Destroy();
+		if (Meta::Vulkan::Enable_LogVerbose()) GPU_Messenger_Verbose.Destroy();
 
 		DeviceEngaged = nullptr;
 
@@ -436,14 +443,14 @@ namespace HAL::GPU::Vulkan
 		CLog("GPU communications ceased");
 	}
 
-	void AppGPU_Comms_Initialize(RoCStr _appName, Meta::AppVersion _version)
+	void GPU_Comms::Initialize(RoCStr _appName, Meta::AppVersion _version)
 	{
 		AppInstance::AppInfo    spec       {};
 		AppInstance::CreateInfo createSpec {};
 
 		AppInstance::GetAvailableLayersAndExtensions(AppLayersAndExtensions);
 
-		if (Meta::Vulkan::EnableLayers)
+		if (Meta::Vulkan::EnableLayers())
 		{
 			CLog("EnableLayers specified");
 
@@ -457,21 +464,21 @@ namespace HAL::GPU::Vulkan
 			// In order to process receive layer messages, need the debugger.
 			//DesiredInstanceExts.push_back(InstanceExt::DebugUtility);
 
-			if (Meta::Vulkan::Enable_API_Dump)
+			if (Meta::Vulkan::Enable_API_Dump())
 			{
 				DesiredLayers.push_back(Layer::LunarG_API_Dump);
 
 				CLog("Layer Selected: LunarG API Dump");
 			}
 
-			if (Meta::Vulkan::Enable_FPSMonitor)
+			if (Meta::Vulkan::Enable_FPSMonitor())
 			{
 				DesiredLayers.push_back(Layer::LunarG_Monitor);
 
 				CLog("Layer Selected: LunarG Monitor (FPS on window");
 			}
 
-			if (Meta::Vulkan::Enable_Validation)
+			if (Meta::Vulkan::Enable_Validation())
 			{
 				AquireSupportedValidationLayers();
 			}
@@ -503,17 +510,17 @@ namespace HAL::GPU::Vulkan
 
 		DynamicArray<DebugUtils::Messenger::CreateInfo> debugInfos;
 
-		if (Meta::Vulkan::EnableLayers)
+		if (Meta::Vulkan::EnableLayers())
 		{
 			createSpec.EnabledLayerCount = SCast<ui32>(DesiredLayers.size());
 			createSpec.EnabledLayerNames = DesiredLayers.data();
 
 			SetupDebugMessenger();
 
-			if (Meta::Vulkan::Enable_LogError  ) debugInfos.push_back(GPU_Messenger_Error  .GetInfo());
-			if (Meta::Vulkan::Enable_LogWarning) debugInfos.push_back(GPU_Messenger_Warning.GetInfo());
-			if (Meta::Vulkan::Enable_LogInfo   ) debugInfos.push_back(GPU_Messenger_Info   .GetInfo());
-			if (Meta::Vulkan::Enable_LogVerbose) debugInfos.push_back(GPU_Messenger_Verbose.GetInfo());
+			if (Meta::Vulkan::Enable_LogError  ()) debugInfos.push_back(GPU_Messenger_Error  .GetInfo());
+			if (Meta::Vulkan::Enable_LogWarning()) debugInfos.push_back(GPU_Messenger_Warning.GetInfo());
+			if (Meta::Vulkan::Enable_LogInfo   ()) debugInfos.push_back(GPU_Messenger_Info   .GetInfo());
+			if (Meta::Vulkan::Enable_LogVerbose()) debugInfos.push_back(GPU_Messenger_Verbose.GetInfo());
 
 			createSpec.Next = debugInfos.data();
 		}
@@ -530,9 +537,9 @@ namespace HAL::GPU::Vulkan
 
 		CLog("Application handshake complete.");
 
-		if (Meta::Vulkan::EnableLayers)
+		if (Meta::Vulkan::EnableLayers())
 		{
-			if (Meta::Vulkan::Enable_LogError)
+			if (Meta::Vulkan::Enable_LogError())
 			{
 				creationResult = GPU_Messenger_Error.Create(AppGPU_Comms);
 
@@ -540,7 +547,7 @@ namespace HAL::GPU::Vulkan
 					throw RuntimeError("Failed to setup error debug messenger.");
 			}
 
-			if (Meta::Vulkan::Enable_LogWarning)
+			if (Meta::Vulkan::Enable_LogWarning())
 			{
 				creationResult = GPU_Messenger_Warning.Create(AppGPU_Comms);
 
@@ -548,7 +555,7 @@ namespace HAL::GPU::Vulkan
 					throw RuntimeError("Failed to setup warning debug messenger.");
 			}
 			
-			if (Meta::Vulkan::Enable_LogInfo)
+			if (Meta::Vulkan::Enable_LogInfo())
 			{
 				creationResult = GPU_Messenger_Info.Create(AppGPU_Comms);
 
@@ -556,7 +563,7 @@ namespace HAL::GPU::Vulkan
 					throw RuntimeError("Failed to setup info debug messenger.");
 			}
 
-			if (Meta::Vulkan::Enable_LogVerbose)
+			if (Meta::Vulkan::Enable_LogVerbose())
 			{
 				creationResult = GPU_Messenger_Verbose.Create(AppGPU_Comms);
 
@@ -568,7 +575,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void EngageMostSuitableDevice()
+	void GPU_Comms::EngageMostSuitableDevice()
 	{
 		CLog("Determining most suitable device to engage.");
 
@@ -626,7 +633,7 @@ namespace HAL::GPU::Vulkan
 		OSAL::Destroy_Window(testWindow);
 	}
 
-	void GenerateLogicalDevices()
+	void GPU_Comms::GenerateLogicalDevices()
 	{
 		LogicalGPUs.resize(PhysicalGPUs.size());
 
@@ -653,36 +660,36 @@ namespace HAL::GPU::Vulkan
 		CLog("Logical devices generated");
 	}
 
-	const LogicalDevice& GetEngagedDevice()
+	const LogicalDevice& GPU_Comms::GetEngagedDevice()
 	{
 		return dref(DeviceEngaged);
 	}
 
-	const PhysicalDevice& GetEngagedPhysicalGPU()
+	const PhysicalDevice& GPU_Comms::GetEngagedPhysicalGPU()
 	{
 		return DeviceEngaged->GetPhysicalDevice();
 	}
 
-	const LogicalDevice::Queue& GetGraphicsQueue()
+	const LogicalDevice::Queue& GPU_Comms::GetGraphicsQueue()
 	{
 		return DeviceEngaged->GetGraphicsQueue();
 	}
 
-	const LogicalDevice::Queue& GetComputeQueue()
+	const LogicalDevice::Queue& GPU_Comms::GetComputeQueue()
 	{
 		return DeviceEngaged->GetComputeQueue();
 	}
 
-	const LogicalDevice::Queue& GetTransferQueue()
+	const LogicalDevice::Queue& GPU_Comms::GetTransferQueue()
 	{
 		return DeviceEngaged->GetTransferQueue();
 	}
 
 #pragma endregion Public
 
-#pragma region Private
+#pragma region Protected
 
-	void AquireSupportedValidationLayers()
+	void GPU_Comms::AquireSupportedValidationLayers()
 	{
 		bool found = false;
 
@@ -781,7 +788,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
+	bool GPU_Comms::CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
 	{
 		WordSize layersFound = 0;
 
@@ -798,7 +805,7 @@ namespace HAL::GPU::Vulkan
 			}
 		}
 
-		if (!layersFound == _layersSpecified.size())
+		if (!(layersFound == _layersSpecified.size()))
 		{
 			return false;
 		}
@@ -812,14 +819,12 @@ namespace HAL::GPU::Vulkan
 
 	Bool DebugCallback_Verbose
 	(
-		Messenger::ServerityFlags _messageServerity,
+		Messenger::ServerityFlags /*_messageServerity*/,
 		Messenger::TypeFlags      /*_messageType*/,
 		const Messenger::CallbackData   _callbackData,
 		void*                     /*_userData*/
 	)
 	{
-		using ESeverity = Messenger::EServerity;
-
 		String formattedMessage("Verbose: \n");
 
 		formattedMessage.append(_callbackData.MesssageIDName);
@@ -833,14 +838,12 @@ namespace HAL::GPU::Vulkan
 
 	Bool DebugCallback_Info
 	(
-		Messenger::ServerityFlags _messageServerity,
+		Messenger::ServerityFlags /*_messageServerity*/,
 		Messenger::TypeFlags      /*_messageType*/,
 		const Messenger::CallbackData   _callbackData,
 		void*                     /*_userData*/
 	)
 	{
-		using ESeverity = Messenger::EServerity;
-
 		String formattedMessage("Info: \n");
 
 		formattedMessage.append(_callbackData.MesssageIDName);
@@ -854,14 +857,12 @@ namespace HAL::GPU::Vulkan
 
 	Bool DebugCallback_Warning
 	(
-		Messenger::ServerityFlags _messageServerity,
+		Messenger::ServerityFlags /*_messageServerity*/,
 		Messenger::TypeFlags      /*_messageType*/,
 		const Messenger::CallbackData   _callbackData,
 		void*                     /*_userData*/
 	)
 	{
-		using ESeverity = Messenger::EServerity;
-
 		String formattedMessage(_callbackData.MesssageIDName);
 		
 		formattedMessage.append(": " + String(_callbackData.Message));
@@ -873,14 +874,12 @@ namespace HAL::GPU::Vulkan
 
 	Bool DebugCallback_Error
 	(
-		      Messenger::ServerityFlags _messageServerity,
+		      Messenger::ServerityFlags /*_messageServerity*/,
 		      Messenger::TypeFlags      /*_messageType*/,
 		const Messenger::CallbackData   _callbackData    , 
 		      void*                     /*_userData*/
 	)
 	{
-		using ESeverity = Messenger::EServerity;
-
 		String formattedMessage(_callbackData.MesssageIDName);
 
 		formattedMessage.append(": " + String(_callbackData.Message));
@@ -890,7 +889,7 @@ namespace HAL::GPU::Vulkan
 		return EBool::True;
 	}
 
-	void DetermineRequiredExtensions()
+	void GPU_Comms::DetermineRequiredExtensions()
 	{
 		switch (OSAL::WindowingPlatform)
 		{
@@ -933,7 +932,7 @@ namespace HAL::GPU::Vulkan
 
 		CLog("Added desired device extension: " + String(DeviceExt::Swapchain));
 
-		if (Meta::Vulkan::EnableLayers)
+		if (Meta::Vulkan::EnableLayers())
 		{
 			DesiredInstanceExts.push_back(InstanceExt::DebugUtility);
 
@@ -941,7 +940,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void SetupDebugMessenger()
+	void GPU_Comms::SetupDebugMessenger()
 	{
 		Messenger::CreateInfo info{};
 
@@ -952,7 +951,7 @@ namespace HAL::GPU::Vulkan
 
 		info.UserData = nullptr;
 
-		if (Meta::Vulkan::Enable_LogError)
+		if (Meta::Vulkan::Enable_LogError())
 		{
 			info.Serverity.Set(EMaskS::Error);
 
@@ -961,7 +960,7 @@ namespace HAL::GPU::Vulkan
 			GPU_Messenger_Error.AssignInfo(info);
 		}
 		
-		if (Meta::Vulkan::Enable_LogWarning)
+		if (Meta::Vulkan::Enable_LogWarning())
 		{
 			info.Serverity.Set(EMaskS::Warning);
 
@@ -970,7 +969,7 @@ namespace HAL::GPU::Vulkan
 			GPU_Messenger_Warning.AssignInfo(info);
 		}
 
-		if (Meta::Vulkan::Enable_LogInfo)
+		if (Meta::Vulkan::Enable_LogInfo())
 		{
 			info.Serverity.Set(EMaskS::Info);
 
@@ -979,7 +978,7 @@ namespace HAL::GPU::Vulkan
 			GPU_Messenger_Info.AssignInfo(info);
 		}
 
-		if (Meta::Vulkan::Enable_LogVerbose)
+		if (Meta::Vulkan::Enable_LogVerbose())
 		{
 			info.Serverity.Set(EMaskS::Verbose);
 
@@ -990,4 +989,4 @@ namespace HAL::GPU::Vulkan
 	}
 }
 
-#pragma endregion Private
+#pragma endregion Protected

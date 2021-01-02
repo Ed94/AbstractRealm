@@ -29,7 +29,7 @@ namespace SAL::Imgui
 
 	namespace PlatformBackend
 	{
-		eGlobal bool GLFW_InstallCallbacks;
+		//eGlobal bool GLFW_InstallCallbacks;
 	}
 
 	void Dirty_DoSurfaceStuff(ptr<OSAL::Window> _window);

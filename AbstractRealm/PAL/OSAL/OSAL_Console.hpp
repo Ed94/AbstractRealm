@@ -109,7 +109,7 @@ namespace OSAL
 
 		// The console black boxed properly...
 
-		template<EOS> struct Console;
+		template<EOS> class Console;
 		
 		template<> class Console<EOS::Windows>
 		{

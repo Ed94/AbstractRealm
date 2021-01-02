@@ -125,11 +125,7 @@ namespace Core::Execution
 	 */
 	OSAL::ExitValT EntryPoint();
 
-
-
-	StaticData()
-
-		eGlobal ptr<OSAL::Window> EngineWindow;
+	ptr<OSAL::Window> EngineWindow();
 }
 
 

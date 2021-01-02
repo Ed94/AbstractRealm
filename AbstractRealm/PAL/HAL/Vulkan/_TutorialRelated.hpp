@@ -88,7 +88,7 @@ namespace HAL::GPU
 				posAttrib.Binding  = 0;
 				posAttrib.Location = 0;
 				posAttrib.Format   = EFormat::R32_G32_B32_SFloat;
-				posAttrib.Offset   = OffsetOf(Vertex::Position);
+				posAttrib.Offset   = (ui32) OffsetOf(Vertex::Position);
 
 				// Color Attributes
 
@@ -97,7 +97,7 @@ namespace HAL::GPU
 				colorAttrib.Binding  = 0;
 				colorAttrib.Location = 1;
 				colorAttrib.Format   = EFormat::R32_G32_B32_SFloat;
-				colorAttrib.Offset   = OffsetOf(Vertex::Color);
+				colorAttrib.Offset   = (ui32) OffsetOf(Vertex::Color);
 
 				// Texture Coordinate Attributes
 
@@ -106,7 +106,7 @@ namespace HAL::GPU
 				texCoordAttrib.Binding  = 0;
 				texCoordAttrib.Location = 2;
 				texCoordAttrib.Format   = EFormat::R32_G32_SFloat;
-				texCoordAttrib.Offset   = OffsetOf(Vertex::TextureCoordinates);
+				texCoordAttrib.Offset   = (ui32) OffsetOf(Vertex::TextureCoordinates);
 
 				return result;
 			}
@@ -195,7 +195,7 @@ namespace HAL::GPU
 			};
 
 			eGlobal DynamicArray<Vertex> ModelVerticies;
-			eGlobal DynamicArray<ui32> ModelIndicies ;
+			eGlobal DynamicArray<ui32  > ModelIndicies ;
 
 			multiDefs const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
 			multiDefs const String VikingRoom_TexturePath = "Engine/Data/Models/VikingRoom/viking_room.png";

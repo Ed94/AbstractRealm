@@ -5,6 +5,7 @@
 
 // Engine
 #include "Cycler.hpp"
+#include "Meta/Meta.hpp"
 #include "Meta/AppInfo.hpp"
 #include "HAL.hpp"
 #include "HAL/GPU_HAL.hpp"
@@ -32,10 +33,14 @@ namespace Core::Execution
 
 
 
+	namespace StaticData 
+	{
+		ptr<Window> EngineWindow;
+	}
+
 	StaticData()
 
-		ptr<Window> EngineWindow;
-		ptr<Window> DemoWindow  ;
+		ptr<Window> DemoWindow;
 
 		AppVersion AppVer = 
 		{ 
@@ -75,9 +80,11 @@ namespace Core::Execution
 
 	OSAL::ExitValT EntryPoint()
 	{
+		//Meta::
+
 		try
 		{
-			if (UseDebug)
+			if (UseDebug())
 			{
 				using namespace LAL;
 
@@ -116,9 +123,9 @@ namespace Core::Execution
 			windowSpec.Windowed    = OSAL::WindowInfo ::WindowedMode;
 			windowSpec.Resizable   = OSAL::WinBool::True            ;
 
-			EngineWindow = OSAL::Create_Window(windowSpec);
+			StaticData::EngineWindow = OSAL::Create_Window(windowSpec);
 
-			OSAL::SetWindow_SizeChangeCallback(EngineWindow, WindowSizeChanged);
+			OSAL::SetWindow_SizeChangeCallback(StaticData::EngineWindow, WindowSizeChanged);
 
 			windowSpec.WindowTitle = "Clear Color Demo";
 
@@ -126,11 +133,11 @@ namespace Core::Execution
 
 			OSAL::SetWindow_SizeChangeCallback(DemoWindow, WindowSizeChanged);
 
-			HAL::GPU::Default_InitializeRenderer(EngineWindow);
+			HAL::GPU::Default_InitializeRenderer(StaticData::EngineWindow);
 
 			HAL::GPU::Vulkan::Start_ClearColorDemo(DemoWindow);
 
-			Imgui::Initialize(EngineWindow);
+			Imgui::Initialize(StaticData::EngineWindow);
 
 			// Master execution
 
@@ -144,15 +151,15 @@ namespace Core::Execution
 
 			HAL::GPU::Vulkan::Stop_ClearColorDemo();
 
-			HAL::GPU::Default_DeinitializeRenderer(EngineWindow);
+			HAL::GPU::Default_DeinitializeRenderer(StaticData::EngineWindow);
 
-			OSAL::Destroy_Window(EngineWindow);
+			OSAL::Destroy_Window(StaticData::EngineWindow);
 
 			HAL::GPU::Cease_GPUComms();
 
 			OSAL::Unload();
 
-			if (UseDebug)
+			if (UseDebug())
 			{
 				OSAL::DestroyConsole();
 
@@ -168,6 +175,8 @@ namespace Core::Execution
 
 		return OSAL::ExitValT(EExitCode::Success);
 	}
+
+	ptr<OSAL::Window> EngineWindow() { return StaticData::EngineWindow; }
 }
 
 

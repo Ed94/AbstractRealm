@@ -109,7 +109,7 @@ namespace Dev
 
 	void CLog(String _info)
 	{
-		if (!Meta::UseDebug) return;
+		if (!Meta::UseDebug()) return;
 
 		static uI16 linePos = 3;
 
@@ -131,7 +131,7 @@ namespace Dev
 			<< _info 
 			<< endl;
 
-		if (lineLength > ConsoleWidth)
+		if (lineLength > WordSize(ConsoleWidth))
 		{
 			DevLogStream 
 				<< dateSig.str()
@@ -174,7 +174,7 @@ namespace Dev
 
 				DevLogStream.str(String());
 
-				if (_info.length() < ConsoleWidth)
+				if (_info.length() < WordSize(ConsoleWidth))
 				{
 					_info.erase(0, _info.length());
 				}
@@ -215,7 +215,7 @@ namespace Dev
 
 	void CLog_Error(String _info)
 	{
-		if (!Meta::UseDebug) return;
+		if (!Meta::UseDebug()) return;
 
 		static uI16 linePos = 4;
 
@@ -238,7 +238,7 @@ namespace Dev
 			<< _info
 			<< endl;
 
-		if (lineLength > ConsoleWidth)
+		if (lineLength > WordSize(ConsoleWidth))
 		{
 			DevLogStream
 				<< dateSig.str()
@@ -281,7 +281,7 @@ namespace Dev
 
 				DevLogStream.str(String());
 
-				if (_info.length() < ConsoleWidth)
+				if (_info.length() < WordSize(ConsoleWidth))
 				{
 					_info.erase(0, _info.length());
 				}
@@ -322,7 +322,7 @@ namespace Dev
 
 	void CLog_Status(String _info, int _row, int _col)
 	{
-		if (Meta::UseDebug)
+		if (Meta::UseDebug())
 		{
 			StatusStreams[_row][_col].str(String());
 
@@ -403,7 +403,10 @@ namespace Dev
 	// Offload windows stuff to OSAL...
 	void Console_UpdateInput()
 	{
-		static DWORD cNumRead, fdwMode, i; 
+		static DWORD 
+			cNumRead, 
+			//fdwMode,
+			i; 
 		static INPUT_RECORD irInBuf[1]; 
 
 		// Wait for the events. 
@@ -427,7 +430,7 @@ namespace Dev
 				&cNumRead
 			);
 
-			bool takeInput = true;
+			//bool takeInput = true;
 
 			// Dispatch the events to the appropriate handler. 
 
@@ -479,15 +482,15 @@ namespace Dev
 		// Read from File up to buffer allows
 
 		// Status Update
-		for  (int y = 0; y < 4; y++)
+		for  (WordSize y = 0; y < 4; y++)
 		{
-			for (int x = 0; x < 4; x++)
+			for (WordSize x = 0; x < 4; x++)
 			{
 				String str = StatusStreams[y][x].str();
 
-				for (int index = 0; index < str.size(); index++)
+				for (WordSize index = 0; index < str.size(); index++)
 				{
-					int col = index + StatusColumnWidth * x;
+					WordSize col = index + StatusColumnWidth * x;
 
 					/*ConsoleCharBuffer.data()[y + StatusStart + 1 ][col].Char.UnicodeChar = str.at(index);
 
@@ -539,7 +542,7 @@ namespace Dev
 
 		WriteToConsole(ConsoleOutput, &ConsoleCharBuffer[0], ConsoleCharBufferSize, ConsoleCharPos, &ConsoleSize);
 
-		auto error = GetLastError();
+		//auto error = GetLastError();
 
 		SetConsoleCursorPosition (ConsoleOutput, {0, sI16(ConsoleBufferSize.Y + 1)});
 		
@@ -756,7 +759,7 @@ namespace Dev
 	{
 		auto str = DevLogStream.str();
 
-		for (int index = 0; index < str.size(); index++)
+		for (WordSize index = 0; index < str.size(); index++)
 		{
 			/*ConsoleCharBuffer[_line][index].Char.UnicodeChar = str.at(index);
 			ConsoleCharBuffer[_line][index].Attributes       = _flags       ;*/
@@ -772,9 +775,9 @@ namespace Dev
 
 		_row = StatusStart + _row + 1;
 
-		for (int index = 0; index < str.size(); index++)
+		for (WordSize index = 0; index < str.size(); index++)
 		{
-			int col = index + StatusColumnWidth * _col;
+			WordSize col = index + StatusColumnWidth * _col;
 
 			/*ConsoleCharBuffer[_row][col].Char.UnicodeChar = str.at(index);
 			ConsoleCharBuffer[_row][col].Attributes       = WORD(_flags);*/

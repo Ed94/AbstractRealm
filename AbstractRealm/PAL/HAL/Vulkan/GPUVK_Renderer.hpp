@@ -87,9 +87,9 @@ namespace HAL::GPU::Vulkan
 
 		ui32 SupportedImageCount;
 
-		Meta::EGPU_PresentMode presentationMode = Meta::GPU_PresentationPref;
+		Meta::EGPU_PresentMode presentationMode = Meta::GPU_PresentationPref();
 
-		Meta::EGPU_FrameBuffering frameBuffering = Meta::GPU_FrameBufferingPref;
+		Meta::EGPU_FrameBuffering frameBuffering = Meta::GPU_FrameBufferingPref();
 
 		DynamicArray<Image    > images    ;
 		DynamicArray<ImageView> imageViews;

@@ -20,21 +20,21 @@ namespace SAL::Imgui
 
 	namespace PlatformBackend
 	{
-		// Static Data
+		StaticData()
 
-		// GLFW
+			// GLFW
 
-		bool GLFW_InstallCallbacks = true;
+			bool GLFW_InstallCallbacks = true;
 
-		// Vulkan
+			// Vulkan
 
-		HAL::GPU::Vulkan::RawRenderContext* RenderContext;
+			HAL::GPU::Vulkan::RawRenderContext* RenderContext;
 
-		VT::V3::GraphicsPipeline GraphicsPipeline;
+			VT::V3::GraphicsPipeline GraphicsPipeline;
 
-		VT::V3::DescriptorPool DescriptorPool;
+			VT::V3::DescriptorPool DescriptorPool;
 
-		DynamicArray<VT::V3::Framebuffer> SwapChain_Framebuffers;
+			DynamicArray<VT::V3::Framebuffer> SwapChain_Framebuffers;
 
 
 		// Functions
@@ -117,9 +117,15 @@ namespace SAL::Imgui
 
 				break;
 			}
+			case Meta::EWindowingPlatform::OSAL:
+			{
+				throw NotImplementedException();
+
+				break;
+			}
 		}
 
-		switch (Meta::GPU_API)
+		switch (Meta::GPU_API())
 		{
 			case Meta::EGPUPlatformAPI::Vulkan:
 			{
@@ -154,6 +160,12 @@ namespace SAL::Imgui
 				CLog("Hooked onto Vulkan backend");
 
 				//ImGui_ImplVulkan_SetMinImageCount(HAL::GPU::Vulkan::GetMinimumFramebufferCount());
+
+				break;
+			}
+			case Meta::EGPUPlatformAPI::No_API:
+			{
+				throw RuntimeError("No API Selected");
 
 				break;
 			}
@@ -217,7 +229,7 @@ namespace SAL::Imgui
 
 	void SetupFonts()
 	{
-		switch (Meta::GPU_API)
+		switch (Meta::GPU_API())
 		{
 			case Meta::EGPUPlatformAPI::Vulkan:
 			{
@@ -231,12 +243,16 @@ namespace SAL::Imgui
 
 				break;
 			}
+			case Meta::EGPUPlatformAPI::No_API:
+			{
+				throw RuntimeError("No API Selected.");
+			}
 		}
 	}
 
 	void SetupGPU_Interface()
 	{
-		switch (Meta::GPU_API)
+		switch (Meta::GPU_API())
 		{
 			case Meta::EGPUPlatformAPI::Vulkan:
 			{
@@ -247,6 +263,10 @@ namespace SAL::Imgui
 				HAL::GPU::Vulkan::AddRenderCallback(PlatformBackend::Vulkan_GPU_DrawRender);
 
 				break;
+			}
+			case Meta::EGPUPlatformAPI::No_API:
+			{
+				throw RuntimeError("No API Selected.");
 			}
 		}
 	}	

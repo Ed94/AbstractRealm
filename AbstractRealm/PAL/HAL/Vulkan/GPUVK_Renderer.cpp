@@ -1,5 +1,6 @@
 // Parent Header
 #include "GPUVK_Renderer.hpp"
+#include "Meta/EngineInfo.hpp"
 
 
 
@@ -11,15 +12,15 @@ namespace HAL::GPU::Vulkan
 
 	EResult Surface::Create(ptr<OSAL::Window> _window)
 	{
-		AssignPhysicalDevice(GetEngagedPhysicalGPU());
+		AssignPhysicalDevice(GPU_Comms::GetEngagedPhysicalGPU());
 
-		EResult result = Parent::Create(GetAppInstance(), OSAL::GetOS_WindowHandle(_window));
+		EResult result = Parent::Create(GPU_Comms::GetAppInstance(), OSAL::GetOS_WindowHandle(_window));
 
 		if (result != EResult::Success) return result;
 
 		Bool presentationSupport = false; 
 
-		CheckPhysicalDeviceSupport(GetGraphicsQueue().GetFamilyIndex(), presentationSupport);
+		CheckPhysicalDeviceSupport(GPU_Comms::GetGraphicsQueue().GetFamilyIndex(), presentationSupport);
 
 		if (!presentationSupport) return EResult::Incomplete;
 
@@ -191,7 +192,7 @@ namespace HAL::GPU::Vulkan
 		info.Clipped          = true                                       ;
 		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
-		EResult result = Parent::Create(GetEngagedDevice(), info);
+		EResult result = Parent::Create(GPU_Comms::GetEngagedDevice(), info);
 
 		if (result != EResult::Success) return result;
 
@@ -238,7 +239,7 @@ namespace HAL::GPU::Vulkan
 	{
 		if (surface->RequeryCapabilities())
 		{
-			GetEngagedDevice().GetGraphicsQueue().WaitUntilIdle();	
+			GPU_Comms::GetEngagedDevice().GetGraphicsQueue().WaitUntilIdle();	
 
 			Regenerate();
 
@@ -353,7 +354,7 @@ namespace HAL::GPU::Vulkan
 		info.Clipped          = true                                       ;
 		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
-		EResult result = Parent::Create(GetEngagedDevice(), info);
+		EResult result = Parent::Create(GPU_Comms::GetEngagedDevice(), info);
 
 		if (result != EResult::Success) throw RuntimeError("Unable to regenerate swapchain.");
 
@@ -380,7 +381,7 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.BaseArrayLayer = 0;
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
-		EResult result;
+		EResult result = EResult::Incomplete;
 
 		imageViews.clear();
 
@@ -390,7 +391,7 @@ namespace HAL::GPU::Vulkan
 
 			ImageView view;
 
-			result = view.Create(GetEngagedDevice(), viewInfo);	
+			result = view.Create(GPU_Comms::GetEngagedDevice(), viewInfo);	
 
 			if (result != EResult::Success)
 				return result;
@@ -470,7 +471,7 @@ namespace HAL::GPU::Vulkan
 
 		// For now I'm just assigning the GeneralPool.
 
-		if (!Meta::UseConcurrency)
+		if (!Meta::UseConcurrency())
 		{
 			threadsAssigned = 0;
 
@@ -478,14 +479,14 @@ namespace HAL::GPU::Vulkan
 
 			fenceInfo.Flags.Set(EFenceCreateFlag::Signaled);
 
-			flightToRender.Create(GetEngagedDevice(), fenceInfo);
+			flightToRender.Create(GPU_Comms::GetEngagedDevice(), fenceInfo);
 
 			
 			Semaphore::CreateInfo semaphoreInfo;
 
-			swapAcquisitionStatus.Create(GetEngagedDevice(), semaphoreInfo);
+			swapAcquisitionStatus.Create(GPU_Comms::GetEngagedDevice(), semaphoreInfo);
 
-			presentSubmitStatus.Create(GetEngagedDevice(), semaphoreInfo);
+			presentSubmitStatus.Create(GPU_Comms::GetEngagedDevice(), semaphoreInfo);
 
 
 			ptr<CommandPool> pools = RequestCommandPools(1);
@@ -551,7 +552,7 @@ namespace HAL::GPU::Vulkan
 
 		Semaphore::CreateInfo semaphoreInfo;
 
-		presentSubmitStatus.Create(GetEngagedDevice(), semaphoreInfo);
+		presentSubmitStatus.Create(GPU_Comms::GetEngagedDevice(), semaphoreInfo);
 
 		swapsInFlight.resize(frameBuffers.size());	
 
@@ -633,7 +634,7 @@ namespace HAL::GPU::Vulkan
 
 		beginInfo.Framebuffer = frameBuffers[currentSwap];
 
-		if (!Meta::UseConcurrency)
+		if (!Meta::UseConcurrency())
 		{
 			frameRefs[currentFrameBuffer].ResetCommandPool();
 
@@ -669,7 +670,7 @@ namespace HAL::GPU::Vulkan
 
 			frameRef.RenderingInFlight().Reset();
 
-			result = GetGraphicsQueue().SubmitToQueue(1, submitInfo, frameRef.RenderingInFlight());
+			result = GPU_Comms::GetGraphicsQueue().SubmitToQueue(1, submitInfo, frameRef.RenderingInFlight());
 
 			if (result != EResult::Success)
 			{
@@ -712,7 +713,7 @@ namespace HAL::GPU::Vulkan
 
 		presentInfo.Results = nullptr;
 
-		EResult result = GetGraphicsQueue().QueuePresentation(presentInfo);
+		EResult result = GPU_Comms::GetGraphicsQueue().QueuePresentation(presentInfo);
 
 		if (result == EResult::Error_OutOfDate_KHR || result == EResult::Suboptimal_KHR)
 		{
@@ -765,7 +766,7 @@ namespace HAL::GPU::Vulkan
 
 		imgInfo.ImageType = EImageType::_2D;
 
-		GetEngagedPhysicalGPU().FindSupportedFormat
+		GPU_Comms::GetEngagedPhysicalGPU().FindSupportedFormat
 		(
 			{ EFormat::D32_SFloat, EFormat::D32_SFloat_S8_UInt, EFormat::D24_UNormalized_S8_UInt },
 			EImageTiling::Optimal,
@@ -790,7 +791,7 @@ namespace HAL::GPU::Vulkan
 
 		imgInfo.Usage.Set(EImageUsage::DepthStencil_Attachment);
 
-		EResult result = depthBuffer.image.Create(GetEngagedDevice(), imgInfo);
+		EResult result = depthBuffer.image.Create(GPU_Comms::GetEngagedDevice(), imgInfo);
 
 		auto& memReq = depthBuffer.image.GetMemoryRequirements();
 
@@ -799,10 +800,10 @@ namespace HAL::GPU::Vulkan
 		allocInfo.AllocationSize = memReq.Size;
 
 		allocInfo.MemoryTypeIndex = 
-			GetEngagedDevice().GetPhysicalDevice().FindMemoryType
+			GPU_Comms::GetEngagedDevice().GetPhysicalDevice().FindMemoryType
 			(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
 
-		result = depthBuffer.memory.Allocate(GetEngagedDevice(), allocInfo);
+		result = depthBuffer.memory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
 
 		result = depthBuffer.image.BindMemory(depthBuffer.memory, depthBuffer.memoryOffset);
 
@@ -823,7 +824,7 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.BaseArrayLayer = 0;
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
-		result = depthBuffer.view.Create(GetEngagedDevice(), viewInfo);
+		result = depthBuffer.view.Create(GPU_Comms::GetEngagedDevice(), viewInfo);
 
 		return result;
 	}
@@ -860,7 +861,7 @@ namespace HAL::GPU::Vulkan
 		{
 			viewHandles[0] = swapImageViews[index];
 
-			result = frameBuffers[index].Create(GetEngagedDevice(), info);
+			result = frameBuffers[index].Create(GPU_Comms::GetEngagedDevice(), info);
 
 			if (result != EResult::Success) return result;
 		}
@@ -940,7 +941,7 @@ namespace HAL::GPU::Vulkan
 		info.DependencyCount = 0;
 		info.Dependencies = nullptr;
 
-		EResult result = renderPass.Create(GetEngagedDevice(), info);
+		EResult result = renderPass.Create(GPU_Comms::GetEngagedDevice(), info);
 
 		if (result != EResult::Success) return result;
 
@@ -1005,7 +1006,7 @@ namespace HAL::GPU::Vulkan
 
 		Surface& surface = Surfaces.back();
 
-		surface.AssignPhysicalDevice(GetEngagedPhysicalGPU());
+		surface.AssignPhysicalDevice(GPU_Comms::GetEngagedPhysicalGPU());
 
 		if (surface.Create(_window) != EResult::Success)
 		{

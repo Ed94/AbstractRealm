@@ -98,7 +98,7 @@ namespace LAL
 	}
 
 	template<typename FunctionType>
-	auto getFuncAddress(FunctionType& _obj)
+	auto getFuncAddress(FunctionType& /*_obj*/)
 	{
 		return NULL;
 	}

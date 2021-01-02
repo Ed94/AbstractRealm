@@ -39,6 +39,12 @@ namespace Meta
 
 	// Enums
 
+	enum class EGPU_Engage
+	{
+		Single,
+		Multi
+	};
+
 	enum class EGPUPlatformAPI
 	{
 		No_API,
@@ -72,46 +78,46 @@ namespace Meta
 
 	constexpr EGPUPlatformAPI Default_GPU_API = EGPUPlatformAPI::Vulkan;
 
+	constexpr EGPU_Engage GPU_Engagement = EGPU_Engage::Single;   // Currently only supports single.
+
 
 	// Runtime
 
-	StaticData()
+	/*
+	Note: Changing the GPU_API will require the GPU_HAL to reinitialize.
+	*/
+	EGPUPlatformAPI GPU_API();
 
-		/*
-		Note: Changing the GPU_API will require the GPU_HAL to reinitialize.
-		*/
-		eGlobal EGPUPlatformAPI GPU_API;
+	EGPU_PresentMode    GPU_PresentationPref  ();
+	EGPU_FrameBuffering GPU_FrameBufferingPref();
 
-		eGlobal EGPU_PresentMode    GPU_PresentationPref  ;
-		eGlobal EGPU_FrameBuffering GPU_FrameBufferingPref;
+
 
 	namespace  Vulkan
 	{
-		StaticData()
+		/**
+		 * Determines if Vulkan will use injectable layers.
+		 */
+		bool EnableLayers();
 
-			/**
-			 * Determines if Vulkan will use injectable layers.
-			 */
-			eGlobal bool EnableLayers;
+		/**
+		 * Enables the wall of debug essentially for Vulkan.
+		 */
+		bool Enable_API_Dump();
 
-			/**
-			 * Enables the wall of debug essentially for Vulkan.
-			 */
-			eGlobal bool Enable_API_Dump;
+		/**
+		 * Enables the fps monitor of the surface on the window title bar.
+		 */
+		bool Enable_FPSMonitor();
 
-			/**
-			 * Enables the fps monitor of the surface on the window title bar.
-			 */
-			eGlobal bool Enable_FPSMonitor;
+		/*
+		Determines if Vulkan will use validation layers.
+		*/
+		bool Enable_Validation();
 
-			/*
-			Determines if Vulkan will use validation layers.
-			*/
-			eGlobal bool Enable_Validation;
-
-			eGlobal bool Enable_LogVerbose;
-			eGlobal bool Enable_LogInfo   ;
-			eGlobal bool Enable_LogWarning;
-			eGlobal bool Enable_LogError  ;
+		bool Enable_LogVerbose();
+		bool Enable_LogInfo   ();
+		bool Enable_LogWarning();
+		bool Enable_LogError  ();
 	}
 }

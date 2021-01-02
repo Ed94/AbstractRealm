@@ -76,7 +76,7 @@ namespace HAL::GPU::Vulkan
 
 		BufferPackage(const LogicalDevice& _device);
 
-		BufferPackage(const LogicalDevice& _device, const Memory::AllocationCallbacks& _allocator);
+		BufferPackage(const LogicalDevice& _device, const Memory& _allocator);
 
 		~BufferPackage();
 

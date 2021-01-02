@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -339,6 +339,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Meta\Meta.hpp" />
     <ClInclude Include="Networking\Networking.hpp">
       <SubType>
       </SubType>
@@ -392,6 +393,8 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.cpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PayloadDeck.hpp">
       <SubType>
       </SubType>
@@ -410,6 +413,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Renderer.hpp">
       <SubType>
       </SubType>
@@ -724,12 +728,14 @@
     <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
+    <ClCompile Include="Meta\Meta.cpp" />
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL_Backend.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Memory.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PayloadDeck.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Renderer.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Resources.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />

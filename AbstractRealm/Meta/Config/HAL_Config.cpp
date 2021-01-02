@@ -8,27 +8,53 @@
 
 namespace Meta
 {
-	StaticData()
-
+	namespace StaticData
+	{
 		EGPUPlatformAPI GPU_API = Default_GPU_API;
 
-		eGlobal EGPU_PresentMode    GPU_PresentationPref   = EGPU_PresentMode   ::MailBox;
-		eGlobal EGPU_FrameBuffering GPU_FrameBufferingPref = EGPU_FrameBuffering::Triple ;
+		EGPU_PresentMode    GPU_PresentationPref   = EGPU_PresentMode   ::MailBox;
+		EGPU_FrameBuffering GPU_FrameBufferingPref = EGPU_FrameBuffering::Triple ;
+	}
 
-	namespace Vulkan
+	// Public
+
+	EGPUPlatformAPI     GPU_API() { return StaticData::GPU_API; }
+
+	EGPU_PresentMode    GPU_PresentationPref  () { return StaticData::GPU_PresentationPref  ; }
+	EGPU_FrameBuffering GPU_FrameBufferingPref() { return StaticData::GPU_FrameBufferingPref; }
+
+
+
+	namespace  Vulkan
 	{
-		StaticData()
-
-		// TODO: I needed to inverse the result of use debug. I have no idea why...
+		namespace StaticData
+		{
+			// TODO: I needed to inverse the result of use debug. I have no idea why...
 			bool EnableLayers = true;
 
-			bool Enable_API_Dump   = false;
+			bool Enable_API_Dump = false;
 			bool Enable_FPSMonitor = true;
 			bool Enable_Validation = true;
 
 			bool Enable_LogVerbose = false;
-			bool Enable_LogInfo    = true;
+			bool Enable_LogInfo = true;
 			bool Enable_LogWarning = true;
-			bool Enable_LogError   = true;
+			bool Enable_LogError = true;
+		}
+
+
+
+		// Public
+
+		bool EnableLayers() { return StaticData::EnableLayers; }
+
+		bool Enable_API_Dump  () { return StaticData::Enable_API_Dump  ; }
+		bool Enable_FPSMonitor() { return StaticData::Enable_FPSMonitor; }
+		bool Enable_Validation() { return StaticData::Enable_Validation; }
+
+		bool Enable_LogVerbose() { return StaticData::Enable_LogVerbose; }
+		bool Enable_LogInfo   () { return StaticData::Enable_LogInfo   ; }
+		bool Enable_LogWarning() { return StaticData::Enable_LogWarning; }
+		bool Enable_LogError  () { return StaticData::Enable_LogError  ; }
 	}
 }

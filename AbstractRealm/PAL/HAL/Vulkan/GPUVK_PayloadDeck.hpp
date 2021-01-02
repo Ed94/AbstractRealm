@@ -49,7 +49,7 @@ namespace HAL::GPU::Vulkan
 
 	void PrepareDecks();	
 
-	const ptr<CommandPool> RequestCommandPools(WordSize _numDesired);
+	ptr<CommandPool> RequestCommandPools(WordSize _numDesired);
 
 	const CommandBuffer& RecordOnTransient();
 

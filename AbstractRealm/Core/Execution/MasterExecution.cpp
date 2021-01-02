@@ -33,7 +33,7 @@ namespace Core::Execution
 
 		//MasterCycler.AssignInterval(Duration64(1.0 / 1036.0));
 
-		std::chrono::seconds sec(1);
+		//std::chrono::seconds sec(1);
 
 		Dev::CLog(String("Interval: ") + ToString(std::chrono::duration<f64, std::ratio<1>>(1.0 / 144.0).count()));
 
@@ -49,7 +49,7 @@ namespace Core::Execution
 		OSAL::PollEvents();
 
 		sGlobal Duration64 consoleUpdateDelta(0), consoleUpdateInterval(1.0 / 30.0);
-		sGlobal Duration64 renderPresentDelta(0), renderPresentInterval = Meta::FixRenderRateToRefreshRate ? Duration64(1.0 / OSAL::GetMainDisplay().RefreshRate) : Duration64(0.0);
+		sGlobal Duration64 renderPresentDelta(0), renderPresentInterval = Meta::FixRenderRateToRefreshRate() ? Duration64(1.0 / OSAL::GetMainDisplay().RefreshRate) : Duration64(0.0);
 
 		if (consoleUpdateDelta >= consoleUpdateInterval)
 		{
@@ -89,13 +89,13 @@ namespace Core::Execution
 
 			Imgui::Render();
 
-			HAL::GPU::Default_DrawFrame(EngineWindow);
+			HAL::GPU::Default_DrawFrame(EngineWindow());
 
 			HAL::GPU::Vulkan::Render();
 
 			HAL::GPU::Vulkan::Present();
 
-			Imgui::Dirty_DoSurfaceStuff(EngineWindow);	
+			Imgui::Dirty_DoSurfaceStuff(EngineWindow());	
 
 			renderPresentDelta = Duration64(0);
 		}
@@ -104,11 +104,11 @@ namespace Core::Execution
 			renderPresentDelta += MasterCycler.GetDeltaTime();
 		}
 
-		if (OSAL::CanClose(EngineWindow))
+		if (OSAL::CanClose(EngineWindow()))
 		{
 			HAL::GPU::WaitFor_GPUIdle();
 
-			if (Meta::UseConcurrency)
+			if (Meta::UseConcurrency())
 			{
 				Concurrency::CyclerPool::RequestShutdown();
 			}
@@ -118,7 +118,7 @@ namespace Core::Execution
 			}
 		}
 
-		if (Meta::UseConcurrency)
+		if (Meta::UseConcurrency())
 		{
 			// Query module states to see if its safe for the master cycler to shutdown.
 			if (Concurrency::CyclerPool::IsShutdown())

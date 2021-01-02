@@ -1,16 +1,10 @@
 // Parent Header
 #include "GPUVK_PayloadDeck.hpp"
 
-// Engine
-#include "Core/Memory/MemTracking.hpp"
-
-
 
 
 namespace HAL::GPU::Vulkan
 {
-	using namespace Core::Memory;
-
 	const CommandBuffer& CommandPool::RequestBuffer()
 	{
 		AllocateInfo info;
@@ -19,13 +13,13 @@ namespace HAL::GPU::Vulkan
 		info.Pool        = handle;
 		info.Level       = ECommandBufferLevel::Primary;
 
-		CommandBuffer::Handle handle;
+		CommandBuffer::Handle newBuffer;
 		
-		Allocate(info, &handle);
+		Allocate(info, &newBuffer);
 
 		// Allocations of buffers here are not tracked. They are freed automatically by the command pool on its destruction.
 
-		commandBuffers.push_back(CommandBuffer(GetEngagedDevice(), handle));
+		commandBuffers.push_back(CommandBuffer(GPU_Comms::GetEngagedDevice(), newBuffer));
 
 		return commandBuffers.back();
 	}
@@ -72,11 +66,11 @@ namespace HAL::GPU::Vulkan
 			submitInfo.CommandBufferCount = 1     ;
 			submitInfo.CommandBuffers     = buffer;
 
-			vResult = GetGraphicsQueue().SubmitToQueue(1, submitInfo, Null<Fence::Handle>);
+			vResult = GPU_Comms::GetGraphicsQueue().SubmitToQueue(1, submitInfo, Null<Fence::Handle>);
 
 			if (vResult != EResult::Success) throw RuntimeError("Failed to submit to queue.");
 
-			vResult = GetGraphicsQueue().WaitUntilIdle();
+			vResult = GPU_Comms::GetGraphicsQueue().WaitUntilIdle();
 
 			if (vResult != EResult::Success) throw RuntimeError("Failed to wait for queue to idle.");
 
@@ -105,7 +99,7 @@ namespace HAL::GPU::Vulkan
 	{
 		CommandPool::CreateInfo info {};
 
-		info.QueueFamilyIndex = GetGraphicsQueue().GetFamilyIndex();   // Hard coding pool to graphics queue
+		info.QueueFamilyIndex = GPU_Comms::GetGraphicsQueue().GetFamilyIndex();   // Hard coding pool to graphics queue
 
 		// Only one set of pools for now since its single threaded
 
@@ -113,7 +107,7 @@ namespace HAL::GPU::Vulkan
 
 		GeneralPool = &CommandPools.back();
 		
-		GeneralPool->Create(GetEngagedDevice(), info); 
+		GeneralPool->Create(GPU_Comms::GetEngagedDevice(), info); 
 
 		CommandPools.resize(CommandPools.size() + 1);
 
@@ -121,7 +115,7 @@ namespace HAL::GPU::Vulkan
 
 		info.Flags.Set(ECommandPoolCreateFlag::Transient);
 
-		TransientPool->Create(GetEngagedDevice(), info);
+		TransientPool->Create(GPU_Comms::GetEngagedDevice(), info);
 	}
 
 	const CommandBuffer& RecordOnGraphics()
@@ -134,7 +128,7 @@ namespace HAL::GPU::Vulkan
 		return TransientPool->BeginSingleTimeCommands(); 
 	}
 
-	const ptr<CommandPool> RequestCommandPools(WordSize _numDesired)
+	ptr<CommandPool> RequestCommandPools(WordSize _numDesired)
 	{
 		WordSize firstOfNewPools = CommandPools.size();
 
@@ -142,9 +136,9 @@ namespace HAL::GPU::Vulkan
 
 		CommandPool::CreateInfo info;
 
-		info.QueueFamilyIndex = GetGraphicsQueue().GetFamilyIndex();
+		info.QueueFamilyIndex = GPU_Comms::GetGraphicsQueue().GetFamilyIndex();
 
-		EResult result = CommandPools.back().Create(GetEngagedDevice(), info);
+		EResult result = CommandPools.back().Create(GPU_Comms::GetEngagedDevice(), info);
 
 		if (result != EResult::Success)
 		{

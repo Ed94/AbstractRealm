@@ -22,7 +22,8 @@ namespace HAL::GPU::Vulkan
 
 	EResult Image::Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator)
 	{
-		info = _info;
+		info      = _info;
+		allocator = &_allocator;
 
 		return Parent::Create(_device, _info);
 	}
@@ -150,8 +151,8 @@ namespace HAL::GPU::Vulkan
 	BufferPackage::BufferPackage(const LogicalDevice& _device) : buffer(_device), memory(nullptr), memoryOffset(0), view(_device)
 	{}
 
-	BufferPackage::BufferPackage(const LogicalDevice& _device, const Memory::AllocationCallbacks& _memory) : 
-		buffer(_device), memory(nullptr), memoryOffset(0), view(_device)
+	BufferPackage::BufferPackage(const LogicalDevice& _device, const Memory& _memory) : 
+		buffer(_device), memory(&_memory), memoryOffset(0), view(_device)
 	{}
 
 	BufferPackage::~BufferPackage()
@@ -162,6 +163,9 @@ namespace HAL::GPU::Vulkan
 	void BufferPackage::Create(const Buffer::CreateInfo& _bufferInfo, Memory::PropertyFlags _memoryFlags)
 	{
 		EResult returnCode = buffer.Create(_bufferInfo);
+
+		if (returnCode != EResult::Success)
+			throw RuntimeError("Failed to initialize buffer package.");
 
 		Memory::AllocateInfo allocInfo;
 
@@ -220,7 +224,7 @@ namespace HAL::GPU::Vulkan
 
 #pragma region VertexBuffer
 
-	EResult VertexBuffer::Create(ptr<void> data, ui32 _dataSize, ui32 _stride, VertexInputState& _stateInfo)
+	EResult VertexBuffer::Create(ptr<void> data, ui32 _dataSize, ui32 /*_stride*/, VertexInputState& /*_stateInfo*/)
 	{
 		EResult result = EResult::Incomplete;
 

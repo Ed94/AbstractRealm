@@ -5,11 +5,15 @@
 
 namespace OSAL
 {
-	ui32 NumberOfLogicalCores;   
+	StaticData()
+		ui32 NumberOfLogicalCores;
+		
 
 	
 	namespace Backend
 	{
+		namespace StaticData { ThreadManager ThreadPool; };
+
 		void ThreadManager::GenerateThreads()
 		{
 			threads.resize(NumberOfLogicalCores - 1);
@@ -35,16 +39,18 @@ namespace OSAL
 			return num;
 		}
 
-		ThreadManager ThreadPool;
+		ThreadManager& ThreadPool() { return StaticData::ThreadPool; }
 	}
 
-	void GenerateThreads() { Backend::ThreadPool.GenerateThreads(); }
 
-	WordSize GetNumOfActiveThreads() { return Backend::ThreadPool.GetNumOfActiveThreads(); }
+
+	void GenerateThreads() { Backend::ThreadPool().GenerateThreads(); }
+
+	WordSize GetNumOfActiveThreads() { return Backend::StaticData::ThreadPool.GetNumOfActiveThreads(); }
 
 	void DecommissionThread(WordSize _handle) 
 	{
-		Backend::ThreadPool.DecommissionThread(_handle); 
+		Backend::StaticData::ThreadPool.DecommissionThread(_handle); 
 	}
 
 	void QueryThreadInfo()

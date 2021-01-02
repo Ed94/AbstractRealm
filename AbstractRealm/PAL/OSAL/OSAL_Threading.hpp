@@ -69,7 +69,7 @@ namespace OSAL
 		};
 
 
-		eGlobal ThreadManager ThreadPool;
+		ThreadManager& ThreadPool();
 	}
 
 	void DecommissionThread(WordSize _handle);
@@ -85,6 +85,6 @@ namespace OSAL
 	template<class FN_Type, class... Arguments>
 	WordSize RequestThread(FN_Type&& _threadRoutine, Arguments&&... _args)
 	{
-		return Backend::ThreadPool.RequestThread(_threadRoutine, _args...);
+		return Backend::ThreadPool().RequestThread(_threadRoutine, _args...);
 	}
 }

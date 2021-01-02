@@ -69,7 +69,7 @@ namespace HAL
 
 			void Determine_PlatformBindings()
 			{
-				switch (GPU_API)
+				switch (GPU_API())
 				{
 					case EGPUPlatformAPI::Vulkan:
 					{
@@ -94,6 +94,10 @@ namespace HAL
 						CLog("Loaded platform bindings: Vulkan");
 
 						break;
+					}
+					case Meta::EGPUPlatformAPI::No_API:
+					{
+						throw RuntimeError("No API Selected.");
 					}
 				}
 			}

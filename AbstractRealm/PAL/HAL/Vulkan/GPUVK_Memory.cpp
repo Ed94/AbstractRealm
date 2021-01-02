@@ -38,13 +38,13 @@ namespace HAL::GPU::Vulkan
 	{
 		info.AllocationSize  = _requirements.Size;
 
-		info.MemoryTypeIndex = GetEngagedPhysicalGPU().FindMemoryType
+		info.MemoryTypeIndex = GPU_Comms::GetEngagedPhysicalGPU().FindMemoryType
 		(
 			_requirements.MemoryTypeBits,
 			_propertyFlags
 		);
 
-		return Parent::Allocate(GetEngagedDevice(), info);
+		return Parent::Allocate(GPU_Comms::GetEngagedDevice(), info);
 	}
 
 	void Memory::Free()

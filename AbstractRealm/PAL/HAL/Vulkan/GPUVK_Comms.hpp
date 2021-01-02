@@ -4,17 +4,15 @@
 
 #include "Vulkan_API.hpp"
 
-#include "Core/Memory/MemTracking.hpp"
 #include "LAL.hpp"
 #include "Meta/AppInfo.hpp"
+#include "Meta/Config/HAL_Config.hpp"
 
 
 
 namespace HAL::GPU::Vulkan
 {
 	//Usings
-
-	using namespace Core::Memory;
 
 	using namespace VT;
 	using namespace VT::Corridors;
@@ -27,8 +25,8 @@ namespace HAL::GPU::Vulkan
 
 	using LayerandExtensionsList = DynamicArray<LayerAndExtensionProperties>;
 
-
 	
+
 	// Classes
 
 	class PhysicalDevice : public V3::PhysicalDevice
@@ -71,8 +69,6 @@ namespace HAL::GPU::Vulkan
 
 		AppInfo    appInfo   ;
 		CreateInfo createInfo;
-
-
 	};
 
 	struct DebugUtils : public V3::DebugUtils
@@ -162,31 +158,52 @@ namespace HAL::GPU::Vulkan
 	};
 
 
-	
+
 	using PhysicalDeviceList = DynamicArray<PhysicalDevice>;
-	using LogicalDeviceList = DynamicArray<LogicalDevice>;
+	using LogicalDeviceList  = DynamicArray<LogicalDevice>;
 
-	
 
-	const AppInstance& GetAppInstance();
 
-	void AcquirePhysicalDevices();
+	template<Meta::EGPU_Engage>
+	class GPU_Comms_Maker;
 
-	void AppGPU_Comms_Cease();
+	template<>
+	class GPU_Comms_Maker<Meta::EGPU_Engage::Single>
+	{
+	public:
 
-	void AppGPU_Comms_Initialize(RoCStr _appName, Meta::AppVersion _version);
+		unbound const AppInstance& GetAppInstance();
 
-	void EngageMostSuitableDevice();
+		unbound void AcquirePhysicalDevices();
 
-	void GenerateLogicalDevices();
+		unbound void Cease();
 
-	const LogicalDevice& GetEngagedDevice();
+		unbound void Initialize(RoCStr _appName, Meta::AppVersion _version);
 
-	const PhysicalDevice& GetEngagedPhysicalGPU();
+		unbound void EngageMostSuitableDevice();
 
-	// Engaged queues. (Since only one device is engaged in design, these are easy references to its queues).
+		unbound void GenerateLogicalDevices();
 
-	const LogicalDevice::Queue& GetGraphicsQueue();   // Provides a reference to the engaged device's graphics queue.
-	const LogicalDevice::Queue& GetComputeQueue ();   // Provides a reference to the engaged device's compute queue.
-	const LogicalDevice::Queue& GetTransferQueue();   // Provides a reference to the engaged device's transfer queue.
+		unbound const LogicalDevice& GetEngagedDevice();
+
+		unbound const PhysicalDevice& GetEngagedPhysicalGPU();
+
+		// Engaged queues. (Since only one device is engaged in design, these are easy references to its queues).
+
+		unbound const LogicalDevice::Queue& GetGraphicsQueue();   // Provides a reference to the engaged device's graphics queue.
+		unbound const LogicalDevice::Queue& GetComputeQueue ();   // Provides a reference to the engaged device's compute queue.
+		unbound const LogicalDevice::Queue& GetTransferQueue();   // Provides a reference to the engaged device's transfer queue.
+
+	protected:
+
+		unbound void AquireSupportedValidationLayers();
+
+		unbound bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified);
+
+		unbound void DetermineRequiredExtensions();
+
+		unbound void SetupDebugMessenger();
+	};
+
+	using GPU_Comms = GPU_Comms_Maker<Meta::GPU_Engagement>;
 }

@@ -170,7 +170,7 @@
 
 			EResult RequestDescriptorPool(V3::DescriptorPool& _pool, V3::DescriptorPool::CreateInfo _info)
 			{
-				EResult returnCode =  _pool.Create(GetEngagedDevice(), _info);
+				EResult returnCode =  _pool.Create(GPU_Comms::GetEngagedDevice(), _info);
 
 				return returnCode;
 			}
@@ -338,10 +338,10 @@
 			{
 				CommandPool::CreateInfo poolInfo;
 
-				poolInfo.QueueFamilyIndex = GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex();
-				poolInfo.Flags            = CommandPool::CreateFlgas()                            ;   // Optional
+				poolInfo.QueueFamilyIndex = GPU_Comms::GetEngagedDevice().GetGraphicsQueue().GetFamilyIndex();
+				poolInfo.Flags            = CommandPool::CreateFlgas()                                       ;   // Optional
 
-				SingleTimeCommandPool.Create(GetEngagedDevice(), poolInfo);
+				SingleTimeCommandPool.Create(GPU_Comms::GetEngagedDevice(), poolInfo);
 
 				CommandPools_Old    .resize(SwapChain_Old->GetImages().size());
 				CommandBuffers_Old  .resize(SwapChain_Old->GetImages().size());
@@ -349,7 +349,7 @@
 
 				for (DeviceSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
 				{
-					if (CommandPools_Old[index].Create(GetEngagedDevice(), poolInfo) != EResult::Success)
+					if (CommandPools_Old[index].Create(GPU_Comms::GetEngagedDevice(), poolInfo) != EResult::Success)
 					{
 						throw std::runtime_error("failed to create command pool!");
 					}
@@ -411,7 +411,7 @@
 
 				poolInfo.MaxSets = SCast<ui32>(SwapChain_Old->GetImages().size());
 
-				if (DescriptorPool.Create(GetEngagedDevice(), poolInfo) != EResult::Success)
+				if (DescriptorPool.Create(GPU_Comms::GetEngagedDevice(), poolInfo) != EResult::Success)
 					throw RuntimeError("Failed to create descriptor pool!");
 			}
 
@@ -504,7 +504,7 @@
 				layoutInfo.BindingCount = SCast<ui32>(bindings.size());
 				layoutInfo.Bindings = bindings.data();
 
-				DescriptorSetLayout.Assign(GetEngagedDevice(), layoutInfo);
+				DescriptorSetLayout.Assign(GPU_Comms::GetEngagedDevice(), layoutInfo);
 
 				if (DescriptorSetLayout.Create() != EResult::Success)
 					throw RuntimeError("Failed to create descriptor set layout!");
@@ -534,7 +534,7 @@
 					framebufferInfo.Height          = swapExtent.Height          ;
 					framebufferInfo.Layers          = 1                                ;
 
-					if (SwapChain_Framebuffers[index].Create(GetEngagedDevice(), framebufferInfo) != EResult::Success) 
+					if (SwapChain_Framebuffers[index].Create(GPU_Comms::GetEngagedDevice(), framebufferInfo) != EResult::Success) 
 					{
 						throw std::runtime_error("Failed to create framebuffer!");
 					}
@@ -700,7 +700,7 @@
 				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr            ;
 
 				EResult piplineLayout_CreationResult = 
-					PipelineLayout.Create(GetEngagedDevice(), pipelineLayout_CreationSpec);
+					PipelineLayout.Create(GPU_Comms::GetEngagedDevice(), pipelineLayout_CreationSpec);
 
 				if (piplineLayout_CreationResult != EResult::Success)
 				{
@@ -730,7 +730,7 @@
 				pipelineInfo.BasePipelineHandle = VK_NULL_HANDLE;   // Optional
 				pipelineInfo.BasePipelineIndex  = -1            ;   // Optional
 
-				EResult returnCode = GraphicsPipeline_Old.Create(GetEngagedDevice(), pipelineInfo);
+				EResult returnCode = GraphicsPipeline_Old.Create(GPU_Comms::GetEngagedDevice(), pipelineInfo);
 
 				if (returnCode != EResult::Success) 
 					throw std::runtime_error("Failed to create graphics pipeline!");
@@ -767,12 +767,12 @@
 				imageInfo.Samples      = _numSamples            ;
 				imageInfo.Flags        = 0                      ;
 
-				if (_image.Create(GetEngagedDevice(), imageInfo) != EResult::Success)
+				if (_image.Create(GPU_Comms::GetEngagedDevice(), imageInfo) != EResult::Success)
 					throw RuntimeError("Failed to create image!");
 
 				Memory::AllocateInfo allocationInfo {};
 
-				auto& gpu = GetEngagedDevice().GetPhysicalDevice();
+				auto& gpu = GPU_Comms::GetEngagedDevice().GetPhysicalDevice();
 
 				allocationInfo.AllocationSize = _image.GetMemoryRequirements().Size;
 				allocationInfo.MemoryTypeIndex = gpu.FindMemoryType(_image.GetMemoryRequirements().MemoryTypeBits, _properties);
@@ -804,7 +804,7 @@
 
 				ImageView result;
 
-				if (result.Create(GetEngagedDevice(), viewInfo) != EResult::Success )
+				if (result.Create(GPU_Comms::GetEngagedDevice(), viewInfo) != EResult::Success )
 					throw RuntimeError("Failed to create texture image view!");
 
 				return result;
@@ -813,8 +813,6 @@
 			void CreateIndexBuffer()
 			{
 				DeviceSize bufferSize = sizeof(ModelIndicies[0]) * ModelIndicies.size();
-
-				//BufferPackage stagingBuffer(GetEngagedDevice());
 
 				Buffer             stagingBuffer      ;
 				Buffer::CreateInfo stagingBufferInfo  ;
@@ -825,7 +823,7 @@
 
 				stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-				stagingBuffer.Create(GetEngagedDevice(), stagingBufferInfo);
+				stagingBuffer.Create(GPU_Comms::GetEngagedDevice(), stagingBufferInfo);
 
 				Memory::AllocateInfo allocInfo;
 
@@ -837,7 +835,7 @@
 					stagingBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
 					(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
 
-				stagingBufferMemory.Allocate(GetEngagedDevice(), allocInfo);
+				stagingBufferMemory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
 
 				stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
 
@@ -854,7 +852,7 @@
 
 				indexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::IndexBuffer);
 
-				IndexBuffer.Create(GetEngagedDevice(), indexBufferInfo);
+				IndexBuffer.Create(GPU_Comms::GetEngagedDevice(), indexBufferInfo);
 
 				auto& memReqIndex = IndexBuffer.GetMemoryRequirements();
 
@@ -864,13 +862,13 @@
 					IndexBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
 					(memReqIndex.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
 
-				IndexBufferMemory.Allocate(GetEngagedDevice(),allocInfo);
+				IndexBufferMemory.Allocate(GPU_Comms::GetEngagedDevice(),allocInfo);
 
 				IndexBuffer.BindMemory(IndexBufferMemory, Memory::ZeroOffset);
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				SingleTimeCommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue());
+				SingleTimeCommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, GPU_Comms::GetEngagedDevice().GetGraphicsQueue());
 
 				stagingBuffer.Destroy();
 				stagingBufferMemory.Free();
@@ -971,7 +969,7 @@
 				renderPassInfo.DependencyCount = 1          ;
 				renderPassInfo.Dependencies    = &dependency;
 
-				if (RenderPass_Old.Create(GetEngagedDevice(), renderPassInfo) != EResult::Success)
+				if (RenderPass_Old.Create(GPU_Comms::GetEngagedDevice(), renderPassInfo) != EResult::Success)
 				{
 					throw std::runtime_error("failed to create render pass!");
 				}
@@ -991,12 +989,12 @@
 
 				fence_CreationSpec.Flags.Set(EFenceCreateFlag::Signaled);
 
-				for (WordSize index = 0; index < MaxFramesInFlight; index++)
+				for (WordSize index = 0; index < WordSize(MaxFramesInFlight); index++)
 				{
 					EResult
-					result = ImageAvailable_Semaphores[index].Create(GetEngagedDevice(), semaphore_CreationSpec);
-					result = RenderFinished_Semaphores[index].Create(GetEngagedDevice(), semaphore_CreationSpec);
-					result = InFlightFences           [index].Create(GetEngagedDevice(), fence_CreationSpec    );
+					result = ImageAvailable_Semaphores[index].Create(GPU_Comms::GetEngagedDevice(), semaphore_CreationSpec);
+					result = RenderFinished_Semaphores[index].Create(GPU_Comms::GetEngagedDevice(), semaphore_CreationSpec);
+					result = InFlightFences           [index].Create(GPU_Comms::GetEngagedDevice(), fence_CreationSpec    );
 
 					if (result != EResult::Success)
 						throw std::runtime_error("Failed to create synchronization objects for a frame!");
@@ -1031,7 +1029,7 @@
 
 				stagingBufferInfo.Usage.Set(EImageUsage::TransferSource);
 
-				stagingBuffer.Create(GetEngagedDevice(), stagingBufferInfo);
+				stagingBuffer.Create(GPU_Comms::GetEngagedDevice(), stagingBufferInfo);
 
 				Memory::AllocateInfo allocInfo;
 
@@ -1043,7 +1041,7 @@
 					stagingBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
 					(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
 
-				stagingBufferMemory.Allocate(GetEngagedDevice(), allocInfo);
+				stagingBufferMemory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
 
 				stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
 
@@ -1105,7 +1103,7 @@
 				samplerInfo.MinimumLod = 0.0f                      ;
 				samplerInfo.MaxLod     = SCast<f32>(MipMapLevels);
 
-				if (TextureSampler.Create(GetEngagedDevice(), samplerInfo) != EResult::Success)
+				if (TextureSampler.Create(GPU_Comms::GetEngagedDevice(), samplerInfo) != EResult::Success)
 					throw RuntimeError("Failed to create texture sampler!");
 			}
 
@@ -1127,8 +1125,8 @@
 				ShaderModule::CreateInfo vertInfo(triShader_VertCode.data(), triShader_VertCode.size());
 				ShaderModule::CreateInfo fragInfo(triShader_FragCode.data(), triShader_FragCode.size());
 
-				ShaderModule triShaderModule_Vert; triShaderModule_Vert.Create(GetEngagedDevice(), vertInfo);
-				ShaderModule triShaderModule_Frag; triShaderModule_Frag.Create(GetEngagedDevice(), fragInfo);
+				ShaderModule triShaderModule_Vert; triShaderModule_Vert.Create(GPU_Comms::GetEngagedDevice(), vertInfo);
+				ShaderModule triShaderModule_Frag; triShaderModule_Frag.Create(GPU_Comms::GetEngagedDevice(), fragInfo);
 
 				StaticArray<ShaderModule, 2> result = { move(triShaderModule_Vert), move(triShaderModule_Frag) };
 
@@ -1152,7 +1150,7 @@
 
 				for (WordSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
 				{
-					UniformBuffers[index].Create(GetEngagedDevice(), uniformBufferInfo);
+					UniformBuffers[index].Create(GPU_Comms::GetEngagedDevice(), uniformBufferInfo);
 
 					Memory::AllocateInfo allocInfo;
 
@@ -1164,7 +1162,7 @@
 						UniformBuffers[index].GetDevice().GetPhysicalDevice().FindMemoryType
 						(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
 
-					UniformBuffersMemory[index].Allocate(GetEngagedDevice(), allocInfo);
+					UniformBuffersMemory[index].Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
 
 					UniformBuffers[index].BindMemory(UniformBuffersMemory[index], Memory::ZeroOffset);
 				}
@@ -1188,8 +1186,8 @@
 				ShaderModule vertShaderModule; ShaderModule::CreateInfo vertShaderInfo(vertCode.data(), vertCode.size());
 				ShaderModule fragShaderModule; ShaderModule::CreateInfo fragShaderInfo(fragCode.data(), fragCode.size());
 
-				vertShaderModule.Create(GetEngagedDevice(), vertShaderInfo);
-				fragShaderModule.Create(GetEngagedDevice(), fragShaderInfo);
+				vertShaderModule.Create(GPU_Comms::GetEngagedDevice(), vertShaderInfo);
+				fragShaderModule.Create(GPU_Comms::GetEngagedDevice(), fragShaderInfo);
 				
 				StaticArray<ShaderModule, 2> result = { move(vertShaderModule), move(fragShaderModule) };
 
@@ -1211,7 +1209,7 @@
 
 				stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-				stagingBuffer.Create(GetEngagedDevice(), stagingBufferInfo);
+				stagingBuffer.Create(GPU_Comms::GetEngagedDevice(), stagingBufferInfo);
 
 				Memory::AllocateInfo allocInfo;
 
@@ -1223,7 +1221,7 @@
 					stagingBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
 					(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
 
-				stagingBufferMemory.Allocate(GetEngagedDevice(), allocInfo);
+				stagingBufferMemory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
 
 				stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
 
@@ -1242,7 +1240,7 @@
 
 				vertexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::VertexBuffer);
 
-				_vertexBuffer.Create(GetEngagedDevice(), vertexBufferInfo);
+				_vertexBuffer.Create(GPU_Comms::GetEngagedDevice(), vertexBufferInfo);
 
 				auto& memReqVert = _vertexBuffer.GetMemoryRequirements();
 
@@ -1252,13 +1250,13 @@
 					_vertexBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
 					(memReqVert.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
 
-				_vertexBufferMemory.Allocate(GetEngagedDevice(), allocInfo);
+				_vertexBufferMemory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
 
 				_vertexBuffer.BindMemory(_vertexBufferMemory, Memory::ZeroOffset);
 
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				SingleTimeCommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue());
+				SingleTimeCommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, GPU_Comms::GetEngagedDevice().GetGraphicsQueue());
 
 				stagingBuffer      .Destroy();
 				stagingBufferMemory.Free();
@@ -1278,7 +1276,7 @@
 			{
 				for (EFormat format : _canidates)
 				{
-					FormatProperties properties = GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(format);
+					FormatProperties properties = GPU_Comms::GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(format);
 
 					if (_tiling == EImageTiling::Linear && (properties.LinearTilingFeatures & _features) == _features)
 					{
@@ -1296,7 +1294,7 @@
 			void GenerateMipMaps(V3::Image& _image, EFormat _format, ui32 _textureWidth, ui32 _textureHeight, ui32 _mipLevels)
 			{
 				// Check if image format supports linear blitting
-				FormatProperties formatProperties = GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(_format);
+				FormatProperties formatProperties = GPU_Comms::GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(_format);
 
 				if (!(formatProperties.OptimalTilingFeatures.HasFlag(EFormatFeatureFlag::SampledImageFilterLinear)))
 				{
@@ -1435,13 +1433,13 @@
 			{
 				CLog("Initializing GPU Communication");
 
-				AppGPU_Comms_Initialize(_applicationName, _applicationVersion);
+				GPU_Comms::Initialize(_applicationName, _applicationVersion);
 
-				AcquirePhysicalDevices();
+				GPU_Comms::AcquirePhysicalDevices();
 
-				GenerateLogicalDevices();
+				GPU_Comms::GenerateLogicalDevices();
 
-				EngageMostSuitableDevice();
+				GPU_Comms::EngageMostSuitableDevice();
 
 				PrepareDecks();
 			}
@@ -1450,12 +1448,12 @@
 			{
 				WipeDecks();
 
-				AppGPU_Comms_Cease();	
+				GPU_Comms::Cease();	
 			}
 
 			void WaitFor_GPUIdle()
 			{
-				GetEngagedDevice().WaitUntilIdle();
+				GPU_Comms::GetEngagedDevice().WaitUntilIdle();
 			}
 			
 			ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> /* _window */)
@@ -1465,10 +1463,10 @@
 
 			void SetRenderContext()
 			{
-				RenderContext_Default.ApplicationInstance =  GetAppInstance();
-				RenderContext_Default.PhysicalDevice      =  GetEngagedDevice().GetPhysicalDevice();
-				RenderContext_Default.LogicalDevice       =  GetEngagedDevice()          ;
-				RenderContext_Default.Queue               = GetEngagedDevice().GetGraphicsQueue();
+				RenderContext_Default.ApplicationInstance = GPU_Comms::GetAppInstance();
+				RenderContext_Default.PhysicalDevice      = GPU_Comms::GetEngagedDevice().GetPhysicalDevice();
+				RenderContext_Default.LogicalDevice       = GPU_Comms::GetEngagedDevice()          ;
+				RenderContext_Default.Queue               = GPU_Comms::GetEngagedDevice().GetGraphicsQueue();
 				RenderContext_Default.PipelineCache       = PipelineCache           ;
 				RenderContext_Default.ImageFormat         = SwapChain_Old->GetFormat()   ;
 				RenderContext_Default.FrameSize           = SwapChain_Old->GetExtent()        ;
@@ -1555,7 +1553,7 @@
 					SAL::GLFW::WaitForEvents();
 				}
 
-				GetEngagedDevice().GetGraphicsQueue().WaitUntilIdle();
+				GPU_Comms::GetEngagedDevice().GetGraphicsQueue().WaitUntilIdle();
 
 				CleanupSwapChain();
 
@@ -1660,7 +1658,7 @@
 
 				InFlightFences[CurrentFrame].Reset();
 
-				if (GetGraphicsQueue().SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame]) != EResult::Success) 
+				if (GPU_Comms::GetGraphicsQueue().SubmitToQueue(1, submitInfo, InFlightFences[CurrentFrame]) != EResult::Success) 
 					throw std::runtime_error("Failed to submit draw command buffer!");
 
 				CommandBuffersToSubmit.clear();
@@ -1681,7 +1679,7 @@
 
 				presentInfo.Results = nullptr; // Optional
 
-				result = GetEngagedDevice().GetGraphicsQueue().QueuePresentation(presentInfo);
+				result = GPU_Comms::GetEngagedDevice().GetGraphicsQueue().QueuePresentation(presentInfo);
 
 				if (result == EResult::Error_OutOfDate_KHR || result == EResult::Suboptimal_KHR || FramebufferResized) 
 				{
@@ -1718,7 +1716,7 @@
 					VertexBuffer_Old  .Destroy(); 
 					VertexBufferMemory.Free   (); 
 
-					for (WordSize index = 0; index < MaxFramesInFlight; index++) 
+					for (WordSize index = 0; index < WordSize(MaxFramesInFlight); index++) 
 					{
 						RenderFinished_Semaphores[index].Destroy(); 
 						ImageAvailable_Semaphores[index].Destroy(); 

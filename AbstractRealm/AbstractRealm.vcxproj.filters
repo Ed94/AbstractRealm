@@ -169,6 +169,10 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Comms_Implementation.hpp" />
     <ClInclude Include="Core\Memory\MemTracking.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\magic_enum\include\magic_enum.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.cpp" />
+    <ClInclude Include="Meta\Meta.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -219,6 +223,8 @@
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Resource\Texture\Texture.cpp" />
     <ClCompile Include="Core\Memory\MemTracking.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.cpp" />
+    <ClCompile Include="Meta\Meta.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="PAL\HAL\Vulkan\VaultedThermals\CMakeLists.txt" />
