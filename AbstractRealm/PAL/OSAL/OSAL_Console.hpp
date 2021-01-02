@@ -71,7 +71,7 @@ namespace OSAL
 			using EHandle = ConsoleTypes::EHandle;
 			using Extent  = ConsoleTypes::Extent ;
 			using Rect    = PSMALL_RECT          ;
-			using Char   = ConsoleTypes::Char  ;
+			using Char    = ConsoleTypes::Char  ;
 
 			// CAUSED MEMORY LEAK. (Sigh)
 			// https://stackoverflow.com/questions/311955/redirecting-cout-to-a-console-in-windows   

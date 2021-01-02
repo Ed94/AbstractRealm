@@ -57,7 +57,7 @@ namespace Meta
 		/*
 		Provide both debugging and profiling tools on top of the application runtime.		
 		*/
-		Debugging  ,
+		Debugging,
 
 		/*
 		Provide only profiling tools on top of the application runtime.
@@ -68,6 +68,57 @@ namespace Meta
 		Provide only the application runtime, no tool overhead.	
 		*/
 		User,
+	};
+
+	enum class EModule
+	{
+		Core,
+		Core_Concurrency,
+		Core_Dev,
+		Core_Events,
+		Core_Execution,
+		Core_IO,
+		Core_Memory,
+		Core_Objects,
+		
+		Editor,
+		Editor_Assets,
+		Editor_DevUI,
+		Editor_Manifest,
+		Editor_Profiling,
+
+		LAL,
+
+		Manifest,
+		Manifest_ECS,
+		Manifest_States,
+
+		Meta,
+		Meta_Config,
+
+		Networking,
+
+		PAL,
+		PAL_HAL,
+		PAL_HAL_Vulkan,
+		PAL_OSAL,
+		PAL_SAL,
+		PAL_Thirdparty,
+
+		Renderer,
+		Renderer_Shader,
+
+		Resource,
+		Resource_Mesh,
+		Resource_Model,
+		Resource_Sprite,
+		Resource_Texture,
+
+		Simulation,
+		Simulation_Math,
+
+		User,
+		User_Interface
 	};
 
 

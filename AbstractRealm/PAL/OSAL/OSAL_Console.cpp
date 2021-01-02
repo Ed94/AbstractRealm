@@ -2,7 +2,7 @@
 #include "OSAL_Console.hpp"
 
 
-
+#include "Core/Memory/MemTracking.hpp"
 #include "OSAL_Backend.hpp"
 
 
@@ -11,6 +11,8 @@ namespace OSAL
 {
 	namespace PlatformBackend
 	{
+		using namespace Core::Memory;
+
 		//template<>
 		bool ConsoleAPI_Maker<EOS::Windows>::Bind_IOBuffersTo_OSIO()
 		{				 
@@ -22,29 +24,26 @@ namespace OSAL
 			freopen_s(&dummyFile, "CONOUT$", "w", stdout);
 			freopen_s(&dummyFile, "CONOUT$", "w", stderr);
 
-			//Heap
-			//(
-				// Redirect STDIN if the console has an input handle
-				if (GetStdHandle(STD_INPUT_HANDLE) != INVALID_HANDLE_VALUE)
-					if (freopen_s(&dummyFile, "CONIN$", "r", stdin) != 0)
-						result = false;
-					else
-						setvbuf(stdin, NULL, _IONBF, 0);
+			// Redirect STDIN if the console has an input handle
+			if (GetStdHandle(STD_INPUT_HANDLE) != INVALID_HANDLE_VALUE)
+				if (freopen_s(&dummyFile, "CONIN$", "r", stdin) != 0)
+					result = false;
+				else
+					setvbuf(stdin, NULL, _IONBF, 0);
 
-				// Redirect STDOUT if the console has an output handle
-				if (GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
-					if (freopen_s(&dummyFile, "CONOUT$", "w", stdout) != 0)
-						result = false;
-					else
-						setvbuf(stdout, NULL, _IONBF, 0);
+			// Redirect STDOUT if the console has an output handle
+			if (GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
+				if (freopen_s(&dummyFile, "CONOUT$", "w", stdout) != 0)
+					result = false;
+				else
+					setvbuf(stdout, NULL, _IONBF, 0);
 
-				// Redirect STDERR if the console has an error handle
-				if (GetStdHandle(STD_ERROR_HANDLE) != INVALID_HANDLE_VALUE)
-					if (freopen_s(&dummyFile, "CONOUT$", "w", stderr) != 0)
-						result = false;
-					else
-						setvbuf(stderr, NULL, _IONBF, 0);
-			//);
+			// Redirect STDERR if the console has an error handle
+			if (GetStdHandle(STD_ERROR_HANDLE) != INVALID_HANDLE_VALUE)
+				if (freopen_s(&dummyFile, "CONOUT$", "w", stderr) != 0)
+					result = false;
+				else
+					setvbuf(stderr, NULL, _IONBF, 0);
 
 			// Make C++ standard streams point to console as well.
 			std::ios::sync_with_stdio(true);
@@ -68,26 +67,23 @@ namespace OSAL
 
 			// Just to be safe, redirect standard IO to NUL before releasing.
 
-			//Heap
-			//(
-				// Redirect STDIN to NUL
-				if (freopen_s(&dummyFile, "NUL:", "r", stdin) != 0)
-					result = false;
-				else
-					setvbuf(stdin, NULL, _IONBF, 0);
+			// Redirect STDIN to NUL
+			if (freopen_s(&dummyFile, "NUL:", "r", stdin) != 0)
+				result = false;
+			else
+				setvbuf(stdin, NULL, _IONBF, 0);
 
-				// Redirect STDOUT to NUL
-				if (freopen_s(&dummyFile, "NUL:", "w", stdout) != 0)
-					result = false;
-				else
-					setvbuf(stdout, NULL, _IONBF, 0);
+			// Redirect STDOUT to NUL
+			if (freopen_s(&dummyFile, "NUL:", "w", stdout) != 0)
+				result = false;
+			else
+				setvbuf(stdout, NULL, _IONBF, 0);
 
-				// Redirect STDERR to NUL
-				if (freopen_s(&dummyFile, "NUL:", "w", stderr) != 0)
-					result = false;
-				else
-					setvbuf(stderr, NULL, _IONBF, 0);
-			//);
+			// Redirect STDERR to NUL
+			if (freopen_s(&dummyFile, "NUL:", "w", stderr) != 0)
+				result = false;
+			else
+				setvbuf(stderr, NULL, _IONBF, 0);
 
 			return result;
 		}
@@ -103,13 +99,13 @@ namespace OSAL
 
 			if (!created)
 			{
-				Heap() created = AllocConsole();
+				created = AllocConsole();
 
 				auto handle = GetStdHandle(EHandle::Output);
 
 				created = Bind_IOBuffersTo_OSIO();
 
-				if (created) CLog("Console created");
+				if (created) cout << "Console created" << endl;
 
 				return created;
 			}
@@ -126,7 +122,7 @@ namespace OSAL
 			if (!result) return result;
 
 			// Detach from console
-			Heap() result = FreeConsole();
+			result = FreeConsole();
 
 			if (result) CLog("Console destroyed");
 
@@ -163,6 +159,8 @@ namespace OSAL
 		)
 		{
 			auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+			if (handle == INVALID_HANDLE_VALUE) return false;
 
 			return WriteConsoleOutput(_handle, _buffer, _bufferSize, _bufferCoord, _readRegion);
 		}

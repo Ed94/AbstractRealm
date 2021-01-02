@@ -5,7 +5,7 @@
 
 namespace OSAL
 {
-	uint32 NumberOfLogicalCores;   
+	ui32 NumberOfLogicalCores;   
 
 	
 	namespace Backend
@@ -59,7 +59,7 @@ namespace OSAL
 		CLog(String("Number of Logical Cores: " + std::to_string(NumberOfLogicalCores)));
 	}
 
-	uint32 GetNumberOfLogicalCores()
+	ui32 GetNumberOfLogicalCores()
 	{
 		return NumberOfLogicalCores;
 	}

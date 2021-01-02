@@ -4,7 +4,7 @@
 
 #include "Vulkan_API.hpp"
 
-
+#include "Core/Memory/MemTracking.hpp"
 #include "LAL.hpp"
 #include "Meta/AppInfo.hpp"
 
@@ -13,6 +13,8 @@
 namespace HAL::GPU::Vulkan
 {
 	//Usings
+
+	using namespace Core::Memory;
 
 	using namespace VT;
 	using namespace VT::Corridors;
@@ -136,7 +138,7 @@ namespace HAL::GPU::Vulkan
 
 			Queue::CreateInfo* Info = nullptr;   // Stores a reference from the queue info container.
 
-			float32 Priority = 1.0F;   // Later on will need to be a dynamic array of each queue's priority.
+			f32 Priority = 1.0F;   // Later on will need to be a dynamic array of each queue's priority.
 
 			EQueueFlag Assignment;
 		};

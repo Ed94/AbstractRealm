@@ -7,7 +7,8 @@
 // This can be done by making the design of the GPU HAL agnostic to what the tutorial requires.
 #include "_TutorialRelated.hpp"
 
-// Proper stuff
+// Engine
+#include "Core/Memory/MemTracking.hpp"
 #include "HAL_Backend.hpp"
 #include "GPUVK_Comms.hpp"
 #include "GPUVK_PayloadDeck.hpp"
@@ -20,6 +21,8 @@
 
 	namespace HAL::GPU
 	{
+		using namespace Core::Memory;
+
 		namespace Vulkan
 		{
 			StaticData()
@@ -47,12 +50,12 @@
 				DynamicArray<DescriptorSet        > DescriptorSets      ;
 				DynamicArray<DescriptorSet::Handle> DescriptorSetHandles;
 
-				uint32       MipMapLevels                   ;
+				ui32         MipMapLevels                   ;
 				ESampleCount MSAA_Samples = ESampleCount::_1;
 
 				// Basic Rendering Synch (Upgrade this later)			
 
-				DynamicArray<Fence> InFlightFences;
+				DynamicArray<Fence>      InFlightFences;
 				DynamicArray<ptr<Fence>> ImagesInFlight;
 
 				DynamicArray<Semaphore> ImageAvailable_Semaphores;
@@ -64,17 +67,17 @@
 
 				// Swapchain for surface
 
-				Swapchain* SwapChain_Old        ;
+				Swapchain* SwapChain_Old;
 
 				DynamicArray<Framebuffer> SwapChain_Framebuffers;
 
-				uint32 Swap_MinImageCount;
+				ui32 Swap_MinImageCount;
 
 				// Related to Rendering State Tracking
 
 				bool     FramebufferResized = false;
 				WordSize CurrentFrame       = 0;
-				sint32   MaxFramesInFlight  = 2;
+				si32     MaxFramesInFlight  = 2;
 				
 				// Not Sure
 
@@ -88,42 +91,40 @@
 
 				RawRenderContext RenderContext_Default;   // Should this still be used?
 
-			// End Static Data
-
 
 
 			void CreateImage
 			(
-				uint32                _width,
-				uint32                _height,
-				uint32                _mipLevels,
+				ui32                  _width,
+				ui32                  _height,
+				ui32                  _mipLevels,
 				ESampleCount          _numSamples,
 				EFormat               _format,
 				EImageTiling          _tiling,
 				Image::UsageFlags     _usage,
 				Memory::PropertyFlags _properties,
-				Image& _image,
-				Memory& _imageMemory
+				Image&                _image,
+				Memory&               _imageMemory
 			);
 
-			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 /*_miplevels*/);
+			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, ui32 /*_miplevels*/);
 
-			ptr<Surface> ClearColor_Surface;
-			ptr<Swapchain> ClearColor_Swap;
+			ptr<Surface>       ClearColor_Surface;
+			ptr<Swapchain>     ClearColor_Swap;
 			ptr<RenderContext> ClearColor_Context;
 
 			void Start_ClearColorDemo(ptr<OSAL::Window> _window)
 			{
-				ClearColor_Surface = &Request_Surface(_window);
+				ClearColor_Surface = getAddress(Request_Surface(_window));
 
 				Surface::Format format;
 
 				format.Format = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				ClearColor_Swap = &Request_SwapChain(*ClearColor_Surface, format);
+				ClearColor_Swap = getAddress(Request_SwapChain(*ClearColor_Surface, format));
 
-				ClearColor_Context = &Request_RenderContext(*ClearColor_Swap);
+				ClearColor_Context = getAddress(Request_RenderContext(*ClearColor_Swap));
 			}
 
 			void Render()
@@ -147,14 +148,14 @@
 
 		#pragma region Staying
 
-			uint32 GetMinimumFramebufferCount()
+			ui32 GetMinimumFramebufferCount()
 			{
 				return 2;
 			}
 
-			uint32 GetNumberOfFramebuffers()
+			ui32 GetNumberOfFramebuffers()
 			{
-				return SCast<uint32>(SwapChain_Old->GetImages().size());
+				return SCast<ui32>(SwapChain_Old->GetImages().size());
 			}
 
 			const CommandBuffer& RequestSingleTimeBuffer()
@@ -169,8 +170,6 @@
 
 			EResult RequestDescriptorPool(V3::DescriptorPool& _pool, V3::DescriptorPool::CreateInfo _info)
 			{
-				Heap()
-
 				EResult returnCode =  _pool.Create(GetEngagedDevice(), _info);
 
 				return returnCode;
@@ -182,36 +181,33 @@
 
 			void CleanupSwapChain()
 			{
-				//Heap
-				//(
-					ColorImageView  .Destroy();
-					ColorImage      .Destroy();
-					ColorImageMemory.Free();
+					ColorImageView  .Destroy(); 
+					ColorImage      .Destroy(); 
+					ColorImageMemory.Free   (); 
 
-					DepthImageView  .Destroy();
-					DepthImage      .Destroy();
-					DepthImageMemory.Free   ();
+					DepthImageView  .Destroy(); 
+					DepthImage      .Destroy(); 
+					DepthImageMemory.Free   (); 
 
 					for (WordSize index = 0; index < SwapChain_Framebuffers.size(); index++)
 					{
-						SwapChain_Framebuffers[index].Destroy();
+						SwapChain_Framebuffers[index].Destroy(); 
 					}
 
-					GraphicsPipeline_Old.Destroy();
-					PipelineLayout      .Destroy();
-					RenderPass_Old      .Destroy();
+					GraphicsPipeline_Old.Destroy(); 
+					PipelineLayout      .Destroy(); 
+					RenderPass_Old      .Destroy(); 
 
 					for (WordSize index = 0; index < SwapChain_Old->GetImageViews().size(); index++)
 					{
-						UniformBuffers      [index].Destroy();
-						UniformBuffersMemory[index].Free();
+						UniformBuffers      [index].Destroy(); 
+						UniformBuffersMemory[index].Free   (); 
 					}
 
-					DescriptorPool.Destroy();
-				//);
+					DescriptorPool.Destroy(); 
 			}
 
-			void CopyBufferToImage(Buffer& _buffer, Image& _image, uint32 _width, uint32 _height)
+			void CopyBufferToImage(Buffer& _buffer, Image& _image, ui32 _width, ui32 _height)
 			{
 				CommandBuffer commandBuffer = SingleTimeCommandPool.BeginSingleTimeCommands();
 
@@ -271,7 +267,7 @@
 				clearValues[0].Color        = { 0.0f, 0.0f, 0.0f, 0.1f };
 				clearValues[1].DepthStencil = { 1.0f, 0                };
 
-				renderPassInfo.ClearValueCount = SCast<uint32>(clearValues.size());
+				renderPassInfo.ClearValueCount = SCast<ui32>(clearValues.size());
 				renderPassInfo.ClearValues     = clearValues.data()               ;
 
 				CommandBuffers_Old[index].BeginRenderPass(renderPassInfo, ESubpassContents::Inline);
@@ -297,7 +293,7 @@
 
 				CommandBuffers_Old[index].DrawIndexed
 				(
-					SCast<uint32>(ModelIndicies.size()),
+					SCast<ui32>(ModelIndicies.size()),
 					1,
 					0,
 					0,
@@ -353,7 +349,7 @@
 
 				for (DeviceSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
 				{
-					Heap() if (CommandPools_Old[index].Create(GetEngagedDevice(), poolInfo) != EResult::Success)
+					if (CommandPools_Old[index].Create(GetEngagedDevice(), poolInfo) != EResult::Success)
 					{
 						throw std::runtime_error("failed to create command pool!");
 					}
@@ -364,8 +360,10 @@
 					info.Pool        = CommandPools_Old[index];
 					info.Level       = ECommandBufferLevel::Primary;
 
-					Heap() if (CommandPools_Old[index].Allocate(info,  CommandBuffers_Old[index]) != EResult::Success)
+					if (CommandPools_Old[index].Allocate(info,  CommandBuffers_Old[index]) != EResult::Success)
 						throw std::runtime_error("failed to allocate command buffers!");
+
+					// Allocations of buffers here are not tracked. They are freed automatically by the command pool on its destruction.
 
 					CommandBufferHandles[index] = CommandBuffers_Old[index];
 				}
@@ -401,19 +399,19 @@
 				StaticArray<DescriptorPool::Size, 2> poolSizes {};
 
 				poolSizes[0].Type = EDescriptorType::UniformBuffer;
-				poolSizes[0].Count = SCast<uint32>(SwapChain_Old->GetImages().size());
+				poolSizes[0].Count = SCast<ui32>(SwapChain_Old->GetImages().size());
 
 				poolSizes[1].Type = EDescriptorType::Sampler;
-				poolSizes[1].Count = SCast<uint32>(SwapChain_Old->GetImages().size());
+				poolSizes[1].Count = SCast<ui32>(SwapChain_Old->GetImages().size());
 
 				DescriptorPool::CreateInfo poolInfo {};
 
-				poolInfo.PoolSizeCount = SCast<uint32>(poolSizes.size());
+				poolInfo.PoolSizeCount = SCast<ui32>(poolSizes.size());
 				poolInfo.PoolSizes     = poolSizes.data()               ;
 
-				poolInfo.MaxSets = SCast<uint32>(SwapChain_Old->GetImages().size());
+				poolInfo.MaxSets = SCast<ui32>(SwapChain_Old->GetImages().size());
 
-				Heap() if (DescriptorPool.Create(GetEngagedDevice(), poolInfo) != EResult::Success)
+				if (DescriptorPool.Create(GetEngagedDevice(), poolInfo) != EResult::Success)
 					throw RuntimeError("Failed to create descriptor pool!");
 			}
 
@@ -424,11 +422,13 @@
 				DescriptorPool::AllocateInfo allocInfo{};
 
 				allocInfo.DescriptorPool     = DescriptorPool;
-				allocInfo.DescriptorSetCount = SCast<uint32>(SwapChain_Old->GetImages().size());
+				allocInfo.DescriptorSetCount = SCast<ui32>(SwapChain_Old->GetImages().size());
 				allocInfo.SetLayouts         = layouts.data();
 
-				Heap() if (DescriptorPool.Allocate(allocInfo, DescriptorSets, DescriptorSetHandles) != EResult::Success)
+				if (DescriptorPool.Allocate(allocInfo, DescriptorSets, DescriptorSetHandles) != EResult::Success)
 					throw std::runtime_error("failed to allocate descriptor sets!");
+
+				// Allocations of sets here are not tracked. They are freed automatically by the descriptor pool on its destruction.
 
 				for (WordSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
 				{
@@ -470,7 +470,7 @@
 					descriptorWrites[1].ImageInfo       = &imageInfo; // Optional
 					descriptorWrites[1].TexelBufferView = nullptr   ; // Optional
 
-					DescriptorSets[0].Update(SCast<uint32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
+					DescriptorSets[0].Update(SCast<ui32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
 				}
 			}
 
@@ -501,12 +501,12 @@
 				
 				Pipeline::Layout::DescriptorSet::CreateInfo layoutInfo;
 
-				layoutInfo.BindingCount = SCast<uint32>(bindings.size());
+				layoutInfo.BindingCount = SCast<ui32>(bindings.size());
 				layoutInfo.Bindings = bindings.data();
 
 				DescriptorSetLayout.Assign(GetEngagedDevice(), layoutInfo);
 
-				Heap() if (DescriptorSetLayout.Create() != EResult::Success)
+				if (DescriptorSetLayout.Create() != EResult::Success)
 					throw RuntimeError("Failed to create descriptor set layout!");
 			}
 
@@ -528,13 +528,13 @@
 					auto swapExtent = SwapChain_Old->GetExtent();
 
 					framebufferInfo.RenderPass      = RenderPass_Old       ;
-					framebufferInfo.AttachmentCount = SCast<uint32>(attachments.size());
+					framebufferInfo.AttachmentCount = SCast<ui32>(attachments.size());
 					framebufferInfo.Attachments     = attachments.data()               ;
 					framebufferInfo.Width           = swapExtent.Width           ;
 					framebufferInfo.Height          = swapExtent.Height          ;
 					framebufferInfo.Layers          = 1                                ;
 
-					Heap() if (SwapChain_Framebuffers[index].Create(GetEngagedDevice(), framebufferInfo) != EResult::Success) 
+					if (SwapChain_Framebuffers[index].Create(GetEngagedDevice(), framebufferInfo) != EResult::Success) 
 					{
 						throw std::runtime_error("Failed to create framebuffer!");
 					}
@@ -574,7 +574,7 @@
 				auto attributes = Vertex::GetAttributeDescriptions();
 
 				vertexInputState_CreationSpec.VertexBindingDescriptionCount = 1;
-				vertexInputState_CreationSpec.AttributeDescriptionCount = SCast<uint32>(attributes.size());
+				vertexInputState_CreationSpec.AttributeDescriptionCount = SCast<ui32>(attributes.size());
 
 				vertexInputState_CreationSpec.BindingDescriptions = &binding;
 				vertexInputState_CreationSpec.AttributeDescription = attributes.data();
@@ -699,7 +699,7 @@
 				pipelineLayout_CreationSpec.PushConstantRangeCount = 0                  ;
 				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr            ;
 
-				Heap() EResult piplineLayout_CreationResult = 
+				EResult piplineLayout_CreationResult = 
 					PipelineLayout.Create(GetEngagedDevice(), pipelineLayout_CreationSpec);
 
 				if (piplineLayout_CreationResult != EResult::Success)
@@ -730,7 +730,7 @@
 				pipelineInfo.BasePipelineHandle = VK_NULL_HANDLE;   // Optional
 				pipelineInfo.BasePipelineIndex  = -1            ;   // Optional
 
-				Heap() EResult returnCode = GraphicsPipeline_Old.Create(GetEngagedDevice(), pipelineInfo);
+				EResult returnCode = GraphicsPipeline_Old.Create(GetEngagedDevice(), pipelineInfo);
 
 				if (returnCode != EResult::Success) 
 					throw std::runtime_error("Failed to create graphics pipeline!");
@@ -738,9 +738,9 @@
 
 			void CreateImage
 			(
-				uint32                _width      , 
-				uint32                _height     , 
-				uint32                _mipLevels  ,
+				ui32                _width      , 
+				ui32                _height     , 
+				ui32                _mipLevels  ,
 				ESampleCount          _numSamples ,
 				EFormat               _format     , 
 				EImageTiling          _tiling     , 
@@ -753,8 +753,8 @@
 				Image::CreateInfo imageInfo {};
 
 				imageInfo.ImageType     = EImageType::_2D       ;
-				imageInfo.Extent.Width  = SCast<uint32>(_width );
-				imageInfo.Extent.Height = SCast<uint32>(_height);
+				imageInfo.Extent.Width  = SCast<ui32>(_width );
+				imageInfo.Extent.Height = SCast<ui32>(_height);
 				imageInfo.Extent.Depth  = 1                     ;
 				imageInfo.MipmapLevels  = _mipLevels            ;
 				imageInfo.ArrayLayers   = 1                     ;
@@ -767,7 +767,7 @@
 				imageInfo.Samples      = _numSamples            ;
 				imageInfo.Flags        = 0                      ;
 
-				Heap() if (_image.Create(GetEngagedDevice(), imageInfo) != EResult::Success)
+				if (_image.Create(GetEngagedDevice(), imageInfo) != EResult::Success)
 					throw RuntimeError("Failed to create image!");
 
 				Memory::AllocateInfo allocationInfo {};
@@ -777,13 +777,13 @@
 				allocationInfo.AllocationSize = _image.GetMemoryRequirements().Size;
 				allocationInfo.MemoryTypeIndex = gpu.FindMemoryType(_image.GetMemoryRequirements().MemoryTypeBits, _properties);
 
-				Heap() if (_imageMemory.Allocate(_image.GetMemoryRequirements(), _properties) != EResult::Success)
+				if (_imageMemory.Allocate(_image.GetMemoryRequirements(), _properties) != EResult::Success)
 					throw RuntimeError("Failed to allocate image memory!");
 
 				_image.BindMemory(_imageMemory, 0);
 			}
 
-			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, uint32 /*_miplevels*/)
+			ImageView CreateImageView(Image& _image, EFormat _format, Image::AspectFlags _aspectFlags, ui32 /*_miplevels*/)
 			{
 				ImageView::CreateInfo viewInfo;
 
@@ -804,7 +804,7 @@
 
 				ImageView result;
 
-				Heap() if (result.Create(GetEngagedDevice(), viewInfo) != EResult::Success )
+				if (result.Create(GetEngagedDevice(), viewInfo) != EResult::Success )
 					throw RuntimeError("Failed to create texture image view!");
 
 				return result;
@@ -825,7 +825,6 @@
 
 				stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-				Heap()
 				stagingBuffer.Create(GetEngagedDevice(), stagingBufferInfo);
 
 				Memory::AllocateInfo allocInfo;
@@ -842,15 +841,6 @@
 
 				stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
 
-				/*stagingBuffer.CreateAndBind
-				(
-					GetEngagedDevice(),
-					stagingBufferInfo,
-					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
-					stagingBufferMemory
-				)*/;
-				
-
 				// Hard coded vertex data...
 
 				VoidPtr address = ModelIndicies.data();
@@ -864,7 +854,6 @@
 
 				indexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::IndexBuffer);
 
-				Heap()
 				IndexBuffer.Create(GetEngagedDevice(), indexBufferInfo);
 
 				auto& memReqIndex = IndexBuffer.GetMemoryRequirements();
@@ -879,20 +868,13 @@
 
 				IndexBuffer.BindMemory(IndexBufferMemory, Memory::ZeroOffset);
 
-				/*IndexBuffer.CreateAndBind
-				(
-					GetEngagedDevice(),
-					indexBufferInfo,
-					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal),
-					IndexBufferMemory
-				);*/
-
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				Heap() SingleTimeCommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue());
+				SingleTimeCommandPool.CopyBuffer(stagingBuffer, IndexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue());
 
 				stagingBuffer.Destroy();
-				//stagingBufferMemory.Free();
+				stagingBufferMemory.Free();
+				// TODO: WHY was it set to not free...
 			}
 
 			void CreateRenderPass()
@@ -969,7 +951,7 @@
 
 				RenderPass::CreateInfo renderPassInfo;
 
-				renderPassInfo.AttachmentCount = SCast<uint32>(attachments.size());
+				renderPassInfo.AttachmentCount = SCast<ui32>(attachments.size());
 				renderPassInfo.Attachments     = attachments.data()               ;
 				renderPassInfo.SubpassCount    = 1                                ;
 				renderPassInfo.Subpasses       = &subpass                         ;
@@ -989,7 +971,7 @@
 				renderPassInfo.DependencyCount = 1          ;
 				renderPassInfo.Dependencies    = &dependency;
 
-				Heap() if (RenderPass_Old.Create(GetEngagedDevice(), renderPassInfo) != EResult::Success)
+				if (RenderPass_Old.Create(GetEngagedDevice(), renderPassInfo) != EResult::Success)
 				{
 					throw std::runtime_error("failed to create render pass!");
 				}
@@ -1011,7 +993,6 @@
 
 				for (WordSize index = 0; index < MaxFramesInFlight; index++)
 				{
-					Heap()
 					EResult
 					result = ImageAvailable_Semaphores[index].Create(GetEngagedDevice(), semaphore_CreationSpec);
 					result = RenderFinished_Semaphores[index].Create(GetEngagedDevice(), semaphore_CreationSpec);
@@ -1028,11 +1009,11 @@
 
 				using ImageBytes = stbi_uc;
 
-				Heap() ImageBytes* imageData = stbi_load(_filePath, &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
+				ImageBytes* imageData = stbi_load(_filePath, &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
 
 				DeviceSize imageSize = textureWidth * textureHeight	 * 4;
 
-				MipMapLevels = SCast<uint32>(std::floor(std::log2(std::max(textureWidth, textureHeight)))) + 1;
+				MipMapLevels = SCast<ui32>(std::floor(std::log2(std::max(textureWidth, textureHeight)))) + 1;
 
 				if (!imageData)
 				{
@@ -1050,7 +1031,6 @@
 
 				stagingBufferInfo.Usage.Set(EImageUsage::TransferSource);
 
-				Heap()
 				stagingBuffer.Create(GetEngagedDevice(), stagingBufferInfo);
 
 				Memory::AllocateInfo allocInfo;
@@ -1067,20 +1047,11 @@
 
 				stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
 
-
-				/*stagingBuffer.CreateAndBind
-				(
-					GetEngagedDevice(),
-					stagingBufferInfo,
-					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
-					stagingBufferMemory
-				);*/
-				
 				VoidPtr address = imageData;
 
 				stagingBufferMemory.WriteToGPU(0, imageSize, 0, address);
 
-				Heap() stbi_image_free(imageData);
+				stbi_image_free(imageData);
 
 				CreateImage
 				(
@@ -1101,18 +1072,12 @@
 
 				TextureImage.TransitionLayout(EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal);
 
-				CopyBufferToImage(stagingBuffer, TextureImage, SCast<uint32>(textureWidth), SCast<uint32>(textureHeight));
+				CopyBufferToImage(stagingBuffer, TextureImage, SCast<ui32>(textureWidth), SCast<ui32>(textureHeight));
 
 				GenerateMipMaps(TextureImage, EFormat::R8_G8_B8_A8_UNormalized, textureWidth, textureHeight, MipMapLevels);
 
-				Heap()
 				stagingBuffer.Destroy(); 
 				stagingBufferMemory.Free();
-			}
-
-			void CreateTextureImageView()
-			{
-				TextureImageView = CreateImageView(TextureImage, EFormat::R8_G8_B8_A8_UNormalized, Image::AspectFlags(EImageAspect::Color), MipMapLevels);
 			}
 
 			void CreateTextureSampler()
@@ -1138,9 +1103,9 @@
 				samplerInfo.MipmapMode = ESamplerMipmapMode::Linear;
 				samplerInfo.MipLodBias = 0.0f                      ;
 				samplerInfo.MinimumLod = 0.0f                      ;
-				samplerInfo.MaxLod     = SCast<float32>(MipMapLevels);
+				samplerInfo.MaxLod     = SCast<f32>(MipMapLevels);
 
-				Heap() if (TextureSampler.Create(GetEngagedDevice(), samplerInfo) != EResult::Success)
+				if (TextureSampler.Create(GetEngagedDevice(), samplerInfo) != EResult::Success)
 					throw RuntimeError("Failed to create texture sampler!");
 			}
 
@@ -1187,7 +1152,6 @@
 
 				for (WordSize index = 0; index < SwapChain_Old->GetImages().size(); index++)
 				{
-					Heap()
 					UniformBuffers[index].Create(GetEngagedDevice(), uniformBufferInfo);
 
 					Memory::AllocateInfo allocInfo;
@@ -1203,15 +1167,6 @@
 					UniformBuffersMemory[index].Allocate(GetEngagedDevice(), allocInfo);
 
 					UniformBuffers[index].BindMemory(UniformBuffersMemory[index], Memory::ZeroOffset);
-
-					/*UniformBuffers[index].CreateAndBind
-					(
-						GetEngagedDevice(),
-						uniformBufferInfo,
-						Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent),
-						UniformBuffersMemory[index],
-						Memory::DefaultAllocator
-					);*/
 				}
 			}
 
@@ -1256,7 +1211,6 @@
 
 				stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-				Heap()
 				stagingBuffer.Create(GetEngagedDevice(), stagingBufferInfo);
 
 				Memory::AllocateInfo allocInfo;
@@ -1273,14 +1227,6 @@
 
 				stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
 
-				/*stagingBuffer.CreateAndBind
-				(
-					GetEngagedDevice(),
-					stagingBufferInfo,
-					Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
-					stagingBufferMemory
-				);*/
-				
 				// Hard coded vertex data...
 
 				VoidPtr vertexData = ModelVerticies.data();
@@ -1296,7 +1242,6 @@
 
 				vertexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::VertexBuffer);
 
-				Heap()
 				_vertexBuffer.Create(GetEngagedDevice(), vertexBufferInfo);
 
 				auto& memReqVert = _vertexBuffer.GetMemoryRequirements();
@@ -1311,19 +1256,10 @@
 
 				_vertexBuffer.BindMemory(_vertexBufferMemory, Memory::ZeroOffset);
 
-				/*_vertexBuffer.CreateAndBind
-				(
-					GetEngagedDevice(), 
-					vertexBufferInfo, 
-					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
-					_vertexBufferMemory
-				)*/;
-
 				Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
-				Heap() SingleTimeCommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue());
+				SingleTimeCommandPool.CopyBuffer(stagingBuffer, _vertexBuffer, copyInfo, GetEngagedDevice().GetGraphicsQueue());
 
-				Heap()
 				stagingBuffer      .Destroy();
 				stagingBufferMemory.Free();
 			}
@@ -1357,7 +1293,7 @@
 				throw RuntimeError("Failed to find supported format!");
 			}
 
-			void GenerateMipMaps(V3::Image& _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels)
+			void GenerateMipMaps(V3::Image& _image, EFormat _format, ui32 _textureWidth, ui32 _textureHeight, ui32 _mipLevels)
 			{
 				// Check if image format supports linear blitting
 				FormatProperties formatProperties = GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(_format);
@@ -1381,8 +1317,8 @@
 				barrier.SubresourceRange.LayerCount     = 1;
 				barrier.SubresourceRange.LevelCount     = 1;
 
-				sint32 mipWidth = _textureWidth;
-				sint32 mipHeight = _textureHeight;
+				si32 mipWidth = _textureWidth;
+				si32 mipHeight = _textureHeight;
 
 				for (uint32_t index = 1; index < _mipLevels; index++)
 				{
@@ -1469,7 +1405,7 @@
 				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer);
 			}
 
-			void UpdateUniformBuffers(uint32 _currentImage)
+			void UpdateUniformBuffers(ui32 _currentImage)
 			{
 				static auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -1539,7 +1475,7 @@
 				RenderContext_Default.Allocator           = Memory::DefaultAllocator;
 				RenderContext_Default.RenderPass          = RenderPass_Old              ;
 				RenderContext_Default.MinimumFrameBuffers = SwapChain_Old->GetMinimumImageCount();
-				RenderContext_Default.FrameBufferCount    = SCast<uint32>(SwapChain_Old->GetImages().size());
+				RenderContext_Default.FrameBufferCount    = SCast<ui32>(SwapChain_Old->GetImages().size());
 				RenderContext_Default.MSAA_Samples        = MSAA_Samples            ;
 			}
 
@@ -1593,7 +1529,7 @@
 
 				CreateTextureImage(VikingRoom_TexturePath.c_str()); 
 
-				CreateTextureImageView();
+				TextureImageView = CreateImageView(TextureImage, EFormat::R8_G8_B8_A8_UNormalized, Image::AspectFlags(EImageAspect::Color), MipMapLevels);
 
 				//
 
@@ -1661,7 +1597,7 @@
 				InFlightFences[CurrentFrame].WaitFor(UInt64Max);
 
 
-				uint32 imageIndex;
+				ui32 imageIndex;
 
 				EResult result = 
 					SwapChain_Old->AcquireNextImage
@@ -1769,31 +1705,31 @@
 
 				//Heap
 				//(
-					TextureSampler    .Destroy();
-					TextureImageView  .Destroy();
-					TextureImage      .Destroy();
-					TextureImageMemory.Free   ();
+					TextureSampler    .Destroy(); 
+					TextureImageView  .Destroy(); 
+					TextureImage      .Destroy(); 
+					TextureImageMemory.Free   (); 
 
 					DescriptorSetLayout.Destroy();
 
-					IndexBuffer      .Destroy();
-					IndexBufferMemory.Free   ();
+					IndexBuffer      .Destroy(); 
+					IndexBufferMemory.Free   (); 
 
-					VertexBuffer_Old      .Destroy();
-					VertexBufferMemory.Free   ();
+					VertexBuffer_Old  .Destroy(); 
+					VertexBufferMemory.Free   (); 
 
 					for (WordSize index = 0; index < MaxFramesInFlight; index++) 
 					{
-						RenderFinished_Semaphores[index].Destroy();
-						ImageAvailable_Semaphores[index].Destroy();
-						InFlightFences           [index].Destroy();
+						RenderFinished_Semaphores[index].Destroy(); 
+						ImageAvailable_Semaphores[index].Destroy(); 
+						InFlightFences           [index].Destroy(); 
 					}
 
-					SingleTimeCommandPool.Destroy();   
+					SingleTimeCommandPool.Destroy(); 
 
 					for (auto& pool : CommandPools_Old)
 					{
-						pool.Destroy();
+						pool.Destroy(); 
 					}
 
 					//if (Meta::Vulkan::EnableLayers) GPU_Messenger.Destroy();

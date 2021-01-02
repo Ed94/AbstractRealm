@@ -42,7 +42,7 @@ namespace Core::Execution
 		void BindExecuter(ptr<AExecuter> _executerToBind);
 
 		Duration64 GetAverageDelta() const;   // { return averageDelta; }
-		float64    GetCycle       () const;   // { return cycles      ; }
+		f64        GetCycle       () const;   // { return cycles      ; }
 		Duration64 GetDeltaTime   () const;   // { return deltaTime   ; }
 
 		void Lapse ()       { exist = false; }
@@ -59,7 +59,7 @@ namespace Core::Execution
 
 		ptr<AExecuter> executer;
 
-		float64 cycles;
+		f64 cycles;
 
 		Duration64 deltaTime, averageDelta, interval, deltaInterval;
 

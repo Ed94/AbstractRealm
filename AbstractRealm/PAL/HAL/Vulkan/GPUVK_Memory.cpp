@@ -11,7 +11,10 @@ namespace HAL::GPU::Vulkan
 		DynamicArray<Memory> Memories;
 
 
-	const Memory&  RequestMemory(const Memory::AllocateInfo& _info);
+
+	// Forwards
+
+	const Memory& RequestMemory(const Memory::AllocateInfo& _info);
 
 
 #pragma region Memory

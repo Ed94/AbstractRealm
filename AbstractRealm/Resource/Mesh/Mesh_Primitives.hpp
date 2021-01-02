@@ -17,7 +17,7 @@ namespace Resource::Mesh
 	template<BitAccuracy _accuracy> 
 	using Choose_Accuracy = 
 		ChooseEither<Meta::Is<BitAccuracy::_32_Bit>(_accuracy),
-			float32, float64>;
+			f32, f64>;
 
 	using DefaultValue = Choose_Accuracy<Meta::Default_VertexAccuracy>;
 

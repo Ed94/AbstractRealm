@@ -25,7 +25,7 @@ namespace OSAL
 
 			WordSize GetNumOfActiveThreads();
 
-			uint32 GetNumberOfLogicalCores();
+			ui32 GetNumberOfLogicalCores();
 
 			void QueryThreadInfo();
 
@@ -74,7 +74,7 @@ namespace OSAL
 
 	void DecommissionThread(WordSize _handle);
 
-	uint32 GetNumberOfLogicalCores();
+	ui32 GetNumberOfLogicalCores();
 
 	void GenerateThreads();
 

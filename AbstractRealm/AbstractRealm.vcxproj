@@ -195,8 +195,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Dev\DebugExec\ImGui_StandaloneExample.hpp" />
-    <ClInclude Include="Core\Dev\DebugExec\ImGui_TestingGrounds.hpp" />
     <ClInclude Include="Core\Dev\Dev.hpp">
       <SubType>
       </SubType>
@@ -629,6 +627,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\ThirdParty\Libraries\magic_enum\include\magic_enum.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\stb\stb_image.h" />
     <ClInclude Include="Renderer\Camera.hpp">
       <SubType>

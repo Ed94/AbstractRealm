@@ -2,6 +2,7 @@
 #include "MasterExecution.hpp"
 
 
+// Engine
 #include "Cycler.hpp"
 #include "Concurrency/CyclerPool.hpp"
 #include "Meta/EngineInfo.hpp"
@@ -34,9 +35,11 @@ namespace Core::Execution
 
 		std::chrono::seconds sec(1);
 
-		Dev::CLog(String("Interval: ") + ToString(std::chrono::duration<float64, std::ratio<1>>(1.0 / 144.0).count()));
+		Dev::CLog(String("Interval: ") + ToString(std::chrono::duration<f64, std::ratio<1>>(1.0 / 144.0).count()));
 
 		MasterCycler.Initiate();
+
+		Dev::Console_DisableAutoUpdate();
 	}
 
 	void MainCycle()
@@ -45,9 +48,8 @@ namespace Core::Execution
 
 		OSAL::PollEvents();
 
-		static Duration64 consoleUpdateDelta(0), consoleUpdateInterval(1.0 / 30.0);
-
-		static Duration64 renderPresentDelta(0), renderPresentInterval = Meta::FixRenderRateToRefreshRate ? Duration64(1.0 / OSAL::GetMainDisplay().RefreshRate) : Duration64(0.0);
+		sGlobal Duration64 consoleUpdateDelta(0), consoleUpdateInterval(1.0 / 30.0);
+		sGlobal Duration64 renderPresentDelta(0), renderPresentInterval = Meta::FixRenderRateToRefreshRate ? Duration64(1.0 / OSAL::GetMainDisplay().RefreshRate) : Duration64(0.0);
 
 		if (consoleUpdateDelta >= consoleUpdateInterval)
 		{
@@ -57,7 +59,7 @@ namespace Core::Execution
 
 			if (Concurrency::CyclerPool::GetNumUnits() > 0)
 			{
-				for (uInt16 row = 1, col = 0, cycleIndex = 0; cycleIndex < CyclerPool::GetNumUnits(); cycleIndex++)
+				for (uI16 row = 1, col = 0, cycleIndex = 0; cycleIndex < CyclerPool::GetNumUnits(); cycleIndex++)
 				{
 					Dev::CLog_Status("Thread 1  Delta: " + ToString(CyclerPool::GetCycler(cycleIndex).GetDeltaTime().count()), row++, col);
 

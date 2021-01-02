@@ -2,9 +2,13 @@
 #include "GLFW_SAL.hpp"
 
 
+#include "Core/Memory/MemTracking.hpp"
+
 
 namespace SAL::GLFW
 {
+	using namespace Core::Memory;
+
 	bool CanClose(const ptr<Window> _window)
 	{
 		return glfwWindowShouldClose(_window);
@@ -12,17 +16,26 @@ namespace SAL::GLFW
 
 	ptr<Window> MakeWindow(int _width, int _height, ptr<const char> _title, ptr<Monitor> _fullscreenCast, ptr<Window> _windowToShareWith)
 	{
-		return Heap() glfwCreateWindow(_width, _height, _title, _fullscreenCast, _windowToShareWith);
+		auto handle = glfwCreateWindow(_width, _height, _title, _fullscreenCast, _windowToShareWith);
+
+		return handle;
 	}
 
 	void DestroyWindow(ptr<Window> _window)
 	{
-		Heap() glfwDestroyWindow(_window);
+		glfwDestroyWindow(_window);
 	}
 
 	bool Initalize()
 	{
-		Heap() return glfwInit() ? true : false;
+		if (glfwInit())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	void PollEvents()
@@ -34,14 +47,14 @@ namespace SAL::GLFW
 
 	void Terminate()
 	{
-		Heap() glfwTerminate();
+		glfwTerminate();
 	}
 
 
 
 	// Vulkan Related
 
-	CStrArray GetRequiredVulkanAppExtensions(uint32& _extensionCount)
+	CStrArray GetRequiredVulkanAppExtensions(ui32& _extensionCount)
 	{
 		return glfwGetRequiredInstanceExtensions(getAddress(_extensionCount));
 	}

@@ -38,7 +38,7 @@ namespace Core::Execution
 		return averageDelta; 
 	}
 
-	float64 Cycler::GetCycle() const 
+	f64 Cycler::GetCycle() const 
 	{ 
 		return cycles; 
 	}
@@ -92,7 +92,7 @@ namespace Core::Execution
 	{
 		deltaTime = std::chrono::duration_cast<Duration64>(cycleEnd - cycleStart);
 
-		float64 alpha = 0.5;
+		f64 alpha = 0.5;
 
 		averageDelta = 	
 			// Exponential Moving Average method

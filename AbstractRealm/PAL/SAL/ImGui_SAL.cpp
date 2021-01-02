@@ -2,7 +2,8 @@
 #include "ImGui_SAL.hpp"
 
 
-
+// Engine
+#include "Memory/MemTracking.hpp"
 #include "GPU_HAL.hpp"
 #include "Console.hpp"
 
@@ -10,6 +11,8 @@
 
 namespace SAL::Imgui
 {
+	using namespace Core::Memory;
+
 	void CLog(String _info)
 	{
 		Dev::CLog("Imgui: " + _info);
@@ -59,7 +62,7 @@ namespace SAL::Imgui
 			info.Flags.Set(EDescriptorPoolCreateFlag::FreeDescriptorSet);
 
 			info.MaxSets       = 1000 *  ((int)(sizeof(pool_sizes)) / sizeof(*(pool_sizes)));   // TODO: Define this better
-			info.PoolSizeCount = (uint32)((int)(sizeof(pool_sizes)) / sizeof(*(pool_sizes)));
+			info.PoolSizeCount = (ui32)  ((int)(sizeof(pool_sizes)) / sizeof(*(pool_sizes)));
 			info.PoolSizes     = pool_sizes;
 
 			HAL::GPU::Vulkan::RequestDescriptorPool(DescriptorPool, info);
@@ -70,6 +73,8 @@ namespace SAL::Imgui
 			if (_returnCode != VkResult(VT::V3::EResult::Success))
 			{
 				std::cerr << "Imgui Callback Error Code: " << int(_returnCode) << std::endl;
+
+				CLog("Imgui Callback Error Code: " + ToString(int(_returnCode)));
 			}
 		}
 
@@ -120,7 +125,7 @@ namespace SAL::Imgui
 			{
 				using namespace HAL::GPU;
 
-				using Vulkan::RawRenderContext;
+				using HAL::GPU::Vulkan::RawRenderContext;
 
 				using namespace PlatformBackend;
 
@@ -239,7 +244,7 @@ namespace SAL::Imgui
 
 				PlatformBackend::Vulkan_CreateDescriptorObjects();
 
-				Vulkan::AddRenderCallback(PlatformBackend::Vulkan_GPU_DrawRender);
+				HAL::GPU::Vulkan::AddRenderCallback(PlatformBackend::Vulkan_GPU_DrawRender);
 
 				break;
 			}

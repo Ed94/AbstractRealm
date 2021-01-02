@@ -22,30 +22,30 @@ namespace OSAL
 
 	struct DisplayConfig
 	{
-		uint32 Width, Height;
+		ui32 Width, Height;
 
-		DynamicArray<float64> RefreshRates;
+		DynamicArray<f64> RefreshRates;
 	};
 
 	struct DisplayInfo
 	{
 		WordSize ID;
 
-		uint32 Width, Height;
+		ui32 Width, Height;
 
-		uint32 DPI, ColorDepth;
+		ui32 DPI, ColorDepth;
 
-		float64 RefreshRate;
+		f64 RefreshRate;
 
 		DynamicArray<DisplayConfig> Configurations;
 	};
 
 	struct MemoryInfo
 	{
-		uInt64 PhysicalTotal;
-		uInt64 PhysicalAvail;
-		uInt64 VirtualTotal;
-		uInt64 VirtualAvail;
+		uI64 PhysicalTotal;
+		uI64 PhysicalAvail;
+		uI64 VirtualTotal;
+		uI64 VirtualAvail;
 	};
 
 	const DisplayInfo& GetMainDisplay();

@@ -13,12 +13,15 @@
 
 // Engine
 #include "LAL/LAL.hpp"
+#include "Memory/MemTracking.hpp"
 
 
 
 namespace Core::IO
 {
-	//Bitmaskable_ScopeBase();
+	using namespace Core::Memory;
+
+	
 
 	// Usings
 
@@ -64,7 +67,6 @@ namespace Core::IO
 	FileBuffer BufferFile(const Path& _fileToBuffer);
 
 	bool OpenFile(File_OutputStream& _fileStream, OpenFlags _flags, const Path& _file);
+
 	bool OpenFile(File_InputStream&  _fileStream, OpenFlags _flags, const Path& _file);
 }
-
-//SpecifyBitmaskable(IO::EOpenFlag);

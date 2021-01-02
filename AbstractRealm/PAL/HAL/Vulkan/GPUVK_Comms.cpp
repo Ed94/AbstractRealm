@@ -114,7 +114,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult AppInstance::GetAvailablePhysicalDevices(DynamicArray<PhysicalDevice>& _deviceListing) const
 	{
-		uint32 count; DynamicArray<PhysicalDevice::Handle> handleList;
+		ui32 count; DynamicArray<PhysicalDevice::Handle> handleList;
 
 		EResult returnCode = QueryPhysicalDeviceListing(&count, nullptr);
 
@@ -154,7 +154,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult LogicalDevice::Create()
 	{
-		Heap() EResult result = Parent::Parent::Create(*physicalDevice, info, handle);
+		EResult result = Parent::Parent::Create(*physicalDevice, info, handle);
 
 		if (result != EResult::Success) return result;
 
@@ -196,9 +196,9 @@ namespace HAL::GPU::Vulkan
 
 	const PhysicalDevice& LogicalDevice::GetPhysicalDevice() const
 	{
-		const PhysicalDevice* intermed = SCast<const PhysicalDevice>(physicalDevice);
+		ptr<const PhysicalDevice> intermed = SCast<const PhysicalDevice>(physicalDevice);
 
-		return *intermed;
+		return dref(intermed);
 	}
 
 	const LogicalDevice::Queue& LogicalDevice::GetQueue(EQueueFlag _type) const
@@ -266,7 +266,7 @@ namespace HAL::GPU::Vulkan
 	{
 		// Queue Family Assignment
 
-		uint32 familyIndex = 0;
+		ui32 familyIndex = 0;
 
 		for (auto& queueFamily : physicalDevice->GetAvailableQueueFamilies())
 		{
@@ -341,7 +341,7 @@ namespace HAL::GPU::Vulkan
 			}
 		}
 
-		info.QueueCreateInfoCount = SCast<uint32>(queueFamilyInfos.size());
+		info.QueueCreateInfoCount = SCast<ui32>(queueFamilyInfos.size());
 		info.QueueCreateInfos     = queueFamilyInfos.data()               ;
 	}
 
@@ -363,7 +363,7 @@ namespace HAL::GPU::Vulkan
 			}			
 		}
 
-		info.EnabledExtensionCount = SCast<uint32>(extensionsEnabled.size());
+		info.EnabledExtensionCount = SCast<ui32>(extensionsEnabled.size());
 		info.EnabledExtensionNames = extensionsEnabled.data()               ;
 	}
 
@@ -371,7 +371,7 @@ namespace HAL::GPU::Vulkan
 	{
 		if (Meta::Vulkan::EnableLayers)
 		{
-			info.EnabledLayerCount = SCast<uint32>(DesiredLayers.size());
+			info.EnabledLayerCount = SCast<ui32>(DesiredLayers.size());
 			info.EnabledLayerNames = DesiredLayers.data();
 		}
 		else
@@ -393,7 +393,7 @@ namespace HAL::GPU::Vulkan
 
 	void AcquirePhysicalDevices()
 	{
-		stack<EResult> result = AppGPU_Comms.GetAvailablePhysicalDevices(PhysicalGPUs);
+		EResult result = AppGPU_Comms.GetAvailablePhysicalDevices(PhysicalGPUs);
 
 		if (result != EResult::Success)
 			throw RuntimeError("Failed to get the physical GPUs.");
@@ -417,30 +417,29 @@ namespace HAL::GPU::Vulkan
 
 	void AppGPU_Comms_Cease()
 	{
-		if (Meta::Vulkan::Enable_LogError) GPU_Messenger_Error.Destroy();
+		if (Meta::Vulkan::Enable_LogError  ) GPU_Messenger_Error  .Destroy();
 		if (Meta::Vulkan::Enable_LogWarning) GPU_Messenger_Warning.Destroy();
-		if (Meta::Vulkan::Enable_LogInfo) GPU_Messenger_Info.Destroy();
+		if (Meta::Vulkan::Enable_LogInfo   ) GPU_Messenger_Info   .Destroy();
 		if (Meta::Vulkan::Enable_LogVerbose) GPU_Messenger_Verbose.Destroy();
 
 		DeviceEngaged = nullptr;
 
 		for (auto& device : LogicalGPUs)
 		{
-			Heap() device.Destroy();
+			device.Destroy(); 
 		}
 
 		CLog("Device disengaged and logical devices destroyed");
 
-		Heap() AppGPU_Comms.Destroy();
-
+		AppGPU_Comms.Destroy(); 
+		
 		CLog("GPU communications ceased");
 	}
 
 	void AppGPU_Comms_Initialize(RoCStr _appName, Meta::AppVersion _version)
 	{
-		Stack()
-			AppInstance::AppInfo    spec       {};
-			AppInstance::CreateInfo createSpec {};
+		AppInstance::AppInfo    spec       {};
+		AppInstance::CreateInfo createSpec {};
 
 		AppInstance::GetAvailableLayersAndExtensions(AppLayersAndExtensions);
 
@@ -499,14 +498,14 @@ namespace HAL::GPU::Vulkan
 
 		DetermineRequiredExtensions();
 
-		createSpec.EnabledExtensionCount = SCast<uint32>(DesiredInstanceExts.size());
+		createSpec.EnabledExtensionCount = SCast<ui32>(DesiredInstanceExts.size());
 		createSpec.EnabledExtensionNames = DesiredInstanceExts.data()               ;
 
 		DynamicArray<DebugUtils::Messenger::CreateInfo> debugInfos;
 
 		if (Meta::Vulkan::EnableLayers)
 		{
-			createSpec.EnabledLayerCount = SCast<uint32>(DesiredLayers.size());
+			createSpec.EnabledLayerCount = SCast<ui32>(DesiredLayers.size());
 			createSpec.EnabledLayerNames = DesiredLayers.data();
 
 			SetupDebugMessenger();
@@ -524,7 +523,7 @@ namespace HAL::GPU::Vulkan
 			createSpec.Next              = nullptr;
 		}
 
-		Heap() stack<EResult> creationResult = AppGPU_Comms.Create(createSpec);  
+		EResult creationResult = AppGPU_Comms.Create(createSpec);  
 
 		if (creationResult != EResult::Success) 
 			throw RuntimeError("Failed to create Vulkan app instance.");
@@ -535,7 +534,7 @@ namespace HAL::GPU::Vulkan
 		{
 			if (Meta::Vulkan::Enable_LogError)
 			{
-				Heap() creationResult = GPU_Messenger_Error.Create(AppGPU_Comms);
+				creationResult = GPU_Messenger_Error.Create(AppGPU_Comms);
 
 				if (creationResult != EResult::Success)
 					throw RuntimeError("Failed to setup error debug messenger.");
@@ -543,7 +542,7 @@ namespace HAL::GPU::Vulkan
 
 			if (Meta::Vulkan::Enable_LogWarning)
 			{
-				Heap() creationResult = GPU_Messenger_Warning.Create(AppGPU_Comms);
+				creationResult = GPU_Messenger_Warning.Create(AppGPU_Comms);
 
 				if (creationResult != EResult::Success)
 					throw RuntimeError("Failed to setup warning debug messenger.");
@@ -551,7 +550,7 @@ namespace HAL::GPU::Vulkan
 			
 			if (Meta::Vulkan::Enable_LogInfo)
 			{
-				Heap() creationResult = GPU_Messenger_Info.Create(AppGPU_Comms);
+				creationResult = GPU_Messenger_Info.Create(AppGPU_Comms);
 
 				if (creationResult != EResult::Success)
 					throw RuntimeError("Failed to setup info debug messenger.");
@@ -559,7 +558,7 @@ namespace HAL::GPU::Vulkan
 
 			if (Meta::Vulkan::Enable_LogVerbose)
 			{
-				Heap() creationResult = GPU_Messenger_Verbose.Create(AppGPU_Comms);
+				creationResult = GPU_Messenger_Verbose.Create(AppGPU_Comms);
 
 				if (creationResult != EResult::Success)
 					throw RuntimeError("Failed to setup verbose debug messenger.");
@@ -588,7 +587,7 @@ namespace HAL::GPU::Vulkan
 
 		Surface testSurface;
 
-		Heap() if (testSurface.Create(AppGPU_Comms, OSAL::GetOS_WindowHandle(testWindow)) != EResult::Success)
+		if (testSurface.Create(AppGPU_Comms, OSAL::GetOS_WindowHandle(testWindow)) != EResult::Success)
 		{
 			throw RuntimeError("Failed to create window surface!");
 		}
@@ -631,7 +630,7 @@ namespace HAL::GPU::Vulkan
 	{
 		LogicalGPUs.resize(PhysicalGPUs.size());
 
-		uint32 gpuIndex = 0;
+		ui32 gpuIndex = 0;
 
 		for (auto& device : LogicalGPUs)
 		{
@@ -643,7 +642,7 @@ namespace HAL::GPU::Vulkan
 			device.AssignPhysicalDevice(PhysicalGPUs[gpuIndex]);
 
 			// Creates the logical device, and the queues retrieve their respective data.
-			Heap() EResult result = device.Create();
+			EResult result = device.Create();
 
 			if (result != EResult::Success)
 			{
@@ -784,7 +783,7 @@ namespace HAL::GPU::Vulkan
 
 	bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
 	{
-		stack<WordSize> layersFound = 0;
+		WordSize layersFound = 0;
 
 		for (auto validationLayerName : _layersSpecified)
 		{
@@ -897,11 +896,11 @@ namespace HAL::GPU::Vulkan
 		{
 			case Meta::EWindowingPlatform::GLFW:
 			{
-				stack<uint32> numExtensions;
+				ui32 numExtensions;
 
-				stack<CStrArray> extensions = CStrArray(SAL::GLFW::GetRequiredVulkanAppExtensions(numExtensions));
+				CStrArray extensions = CStrArray(SAL::GLFW::GetRequiredVulkanAppExtensions(numExtensions));
 
-				for (uint32 index = 0; index < numExtensions; index++)
+				for (ui32 index = 0; index < numExtensions; index++)
 				{
 					if (std::find(DesiredInstanceExts.begin(), DesiredInstanceExts.end(), extensions[index]) == DesiredInstanceExts.end())
 					{
@@ -944,7 +943,7 @@ namespace HAL::GPU::Vulkan
 
 	void SetupDebugMessenger()
 	{
-		stack<Messenger::CreateInfo> info{};
+		Messenger::CreateInfo info{};
 
 		using EMaskS = decltype(info.Serverity)::Enum;
 		using EMaskT = decltype(info.Type)::Enum;

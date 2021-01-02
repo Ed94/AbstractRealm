@@ -65,7 +65,7 @@ namespace HAL::GPU::Vulkan
 
 		EFormat GetFormat() const;
 
-		uint32 GetMinimumImageCount() const;
+		ui32 GetMinimumImageCount() const;
 
 		bool QuerySurfaceChanges();
 
@@ -85,7 +85,7 @@ namespace HAL::GPU::Vulkan
 
 		ptr<Surface> surface;
 
-		uint32 SupportedImageCount;
+		ui32 SupportedImageCount;
 
 		Meta::EGPU_PresentMode presentationMode = Meta::GPU_PresentationPref;
 
@@ -132,7 +132,7 @@ namespace HAL::GPU::Vulkan
 
 		EResult Create(const LogicalDevice& _device, CreateInfo& _info, const Memory::AllocationCallbacks& _allocator);
 
-		uint32 GetAttachmentCount() const;
+		ui32 GetAttachmentCount() const;
 
 	protected:
 
@@ -146,7 +146,7 @@ namespace HAL::GPU::Vulkan
 			DynamicArray<AttachmentReference> Resolves     ;
 			DynamicArray<AttachmentReference> DepthStencils;
 
-			DynamicArray<uint32> Preserves;
+			DynamicArray<ui32> Preserves;
 		};
 
 		CreateInfo info;
@@ -252,7 +252,7 @@ namespace HAL::GPU::Vulkan
 
 		bool processingFrame = false;
 
-		uint32 currentFrameBuffer = 0 ,    // Current frame to process
+		ui32 currentFrameBuffer = 0 ,    // Current frame to process
 			   previousFrame    ,    // Previously processed frame
 			   currentSwap      ,    // Currently rendered frame to present.
 			   maxFramesInFlight ;   // Maximum number of frames to process at the same time.

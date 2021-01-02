@@ -21,7 +21,7 @@ namespace Sim
 	{
 		return 
 			
-			LAL::IsOfClass<LAL::float32, DecN>() ? 
+			LAL::IsOfClass<LAL::f32, DecN>() ? 
 
 			Meta::DecN_UseHighAccuracy_Compare ? LAL::Float32_HighAccuracy : LAL::Float32_LowAccuracy :
 			(
@@ -47,7 +47,7 @@ namespace Sim
 	{
 		return 
 			
-			LAL::IsOfClass<LAL::float32, DecN>() ? 
+			LAL::IsOfClass<LAL::f32, DecN>() ? 
 			Meta::DecN_UseHighAccuracy_Unit ? LAL::Float32_HighAccuracy : LAL::Float32_LowAccuracy : 
 			(
 				Meta::DecN_UseHighAccuracy_Unit ? 
@@ -95,12 +95,12 @@ namespace Sim
 	constexpr 
 	DecN Infinity()
 	{
-		return LAL::IsOfClass<LAL::float32, DecN>() ? LAL::Float32_Infinity : LAL::Float64_Infinity;
+		return LAL::IsOfClass<LAL::f32, DecN>() ? LAL::Float32_Infinity : LAL::Float64_Infinity;
 	}
 
 	constexpr 
 	DecN NaN()
 	{
-		return LAL::IsOfClass<LAL::float32, DecN>() ? LAL::Float32_QNaN : LAL::Float64_QNaN;
+		return LAL::IsOfClass<LAL::f32, DecN>() ? LAL::Float32_QNaN : LAL::Float64_QNaN;
 	}
 }

@@ -8,23 +8,27 @@
 
 namespace Meta
 {
-	data< EGPUPlatformAPI> GPU_API = Default_GPU_API;
+	StaticData()
 
-	eGlobal data< EGPU_PresentMode   > GPU_PresentationPref   = EGPU_PresentMode   ::MailBox;
-	eGlobal data< EGPU_FrameBuffering> GPU_FrameBufferingPref = EGPU_FrameBuffering::Triple ;
+		EGPUPlatformAPI GPU_API = Default_GPU_API;
+
+		eGlobal EGPU_PresentMode    GPU_PresentationPref   = EGPU_PresentMode   ::MailBox;
+		eGlobal EGPU_FrameBuffering GPU_FrameBufferingPref = EGPU_FrameBuffering::Triple ;
 
 	namespace Vulkan
 	{
+		StaticData()
+
 		// TODO: I needed to inverse the result of use debug. I have no idea why...
-		data< bool> EnableLayers = true;
+			bool EnableLayers = true;
 
-		data< bool> Enable_API_Dump   = false;
-		data< bool> Enable_FPSMonitor = true;
-		data< bool> Enable_Validation = true;
+			bool Enable_API_Dump   = false;
+			bool Enable_FPSMonitor = true;
+			bool Enable_Validation = true;
 
-		data< bool> Enable_LogVerbose = false;
-		data< bool> Enable_LogInfo    = true;
-		data< bool> Enable_LogWarning = true;
-		data< bool> Enable_LogError   = true;
+			bool Enable_LogVerbose = false;
+			bool Enable_LogInfo    = true;
+			bool Enable_LogWarning = true;
+			bool Enable_LogError   = true;
 	}
 }

@@ -17,4 +17,6 @@ namespace Meta
 	 * This would make using try-catch exceptions optional and there would be an alternative implementation...
 	 */
 	constexpr bool UseCpp_Exceptions = true;
+
+	constexpr bool Enable_HeapTracking = true;
 }

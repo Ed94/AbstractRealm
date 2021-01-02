@@ -4,6 +4,7 @@
 
 
 // Engine
+#include "Core/Memory/MemTracking.hpp"
 #include "OSAL_Timing.hpp"
 
 
@@ -23,7 +24,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /* hPrevInstance */, LPSTR /* 
 
 	OSAL::AppInstance = hInstance;
 
-	return OSAL::EntryPoint();
+	auto result = OSAL::EntryPoint();
+
+	return result;
 }
 
 #endif

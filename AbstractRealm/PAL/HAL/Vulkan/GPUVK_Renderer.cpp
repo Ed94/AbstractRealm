@@ -5,6 +5,8 @@
 
 namespace HAL::GPU::Vulkan
 {
+
+
 #pragma region Surface
 
 	EResult Surface::Create(ptr<OSAL::Window> _window)
@@ -166,8 +168,8 @@ namespace HAL::GPU::Vulkan
 
 			Extent2D actualExtent;
 
-			actualExtent.Width  = SCast<uint32>(frameBufferSize.Width );
-			actualExtent.Height = SCast<uint32>(frameBufferSize.Height);
+			actualExtent.Width  = SCast<ui32>(frameBufferSize.Width );
+			actualExtent.Height = SCast<ui32>(frameBufferSize.Height);
 
 			actualExtent.Width  = std::clamp(actualExtent.Width , _surface.GetCapabilities().MinImageExtent.Width , _surface.GetCapabilities().MaxImageExtent.Width );
 			actualExtent.Height = std::clamp(actualExtent.Height, _surface.GetCapabilities().MinImageExtent.Height, _surface.GetCapabilities().MaxImageExtent.Height);
@@ -189,7 +191,7 @@ namespace HAL::GPU::Vulkan
 		info.Clipped          = true                                       ;
 		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
-		Heap() EResult result = Parent::Create(GetEngagedDevice(), info);
+		EResult result = Parent::Create(GetEngagedDevice(), info);
 
 		if (result != EResult::Success) return result;
 
@@ -227,7 +229,7 @@ namespace HAL::GPU::Vulkan
 		return info.ImageFormat;
 	}
 
-	uint32 Swapchain::GetMinimumImageCount() const
+	ui32 Swapchain::GetMinimumImageCount() const
 	{
 		return info.MinImageCount;
 	}
@@ -328,8 +330,8 @@ namespace HAL::GPU::Vulkan
 
 			Extent2D actualExtent;
 
-			actualExtent.Width  = SCast<uint32>(frameBufferSize.Width );
-			actualExtent.Height = SCast<uint32>(frameBufferSize.Height);
+			actualExtent.Width  = SCast<ui32>(frameBufferSize.Width );
+			actualExtent.Height = SCast<ui32>(frameBufferSize.Height);
 
 			actualExtent.Width  = std::clamp(actualExtent.Width , surface->GetCapabilities().MinImageExtent.Width , surface->GetCapabilities().MaxImageExtent.Width );
 			actualExtent.Height = std::clamp(actualExtent.Height, surface->GetCapabilities().MinImageExtent.Height, surface->GetCapabilities().MaxImageExtent.Height);
@@ -351,7 +353,7 @@ namespace HAL::GPU::Vulkan
 		info.Clipped          = true                                       ;
 		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
-		Heap() EResult result = Parent::Create(GetEngagedDevice(), info);
+		EResult result = Parent::Create(GetEngagedDevice(), info);
 
 		if (result != EResult::Success) throw RuntimeError("Unable to regenerate swapchain.");
 
@@ -388,7 +390,7 @@ namespace HAL::GPU::Vulkan
 
 			ImageView view;
 
-			Heap() result = view.Create(GetEngagedDevice(), viewInfo);	
+			result = view.Create(GetEngagedDevice(), viewInfo);	
 
 			if (result != EResult::Success)
 				return result;
@@ -401,7 +403,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult Swapchain::RetrieveImages()
 	{
-		uint32 numImages;
+		ui32 numImages;
 
 		EResult result = Parent::QueryImages(numImages, nullptr);
 
@@ -442,7 +444,7 @@ namespace HAL::GPU::Vulkan
 		return Parent::Create(_device, _info, _allocator);
 	}
 
-	uint32 RenderPass::GetAttachmentCount() const { return info.AttachmentCount; }
+	ui32 RenderPass::GetAttachmentCount() const { return info.AttachmentCount; }
 
 #pragma endregion
 
@@ -538,7 +540,7 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
-		maxFramesInFlight = SCast<uint32>(frameBuffers.size() - 1);
+		maxFramesInFlight = SCast<ui32>(frameBuffers.size() - 1);
 
 		frameRefs.resize(maxFramesInFlight);
 
@@ -569,7 +571,7 @@ namespace HAL::GPU::Vulkan
 
 		depthBuffer.image.Destroy();
 
-		//depthBuffer.memory.Free();
+		depthBuffer.memory.Free();
 
 		depthBuffer.view.Destroy();
 	}
@@ -788,7 +790,6 @@ namespace HAL::GPU::Vulkan
 
 		imgInfo.Usage.Set(EImageUsage::DepthStencil_Attachment);
 
-		Heap() 
 		EResult result = depthBuffer.image.Create(GetEngagedDevice(), imgInfo);
 
 		auto& memReq = depthBuffer.image.GetMemoryRequirements();
@@ -801,17 +802,9 @@ namespace HAL::GPU::Vulkan
 			GetEngagedDevice().GetPhysicalDevice().FindMemoryType
 			(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
 
-		depthBuffer.memory.Allocate(GetEngagedDevice(), allocInfo);
+		result = depthBuffer.memory.Allocate(GetEngagedDevice(), allocInfo);
 
-		depthBuffer.image.BindMemory(depthBuffer.memory, depthBuffer.memoryOffset);
-
-		/*EResult result = depthBuffer.image.CreateAndBind
-		(
-			GetEngagedDevice(), 
-			imgInfo, 
-			Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal), 
-			depthBuffer.memory
-		);*/
+		result = depthBuffer.image.BindMemory(depthBuffer.memory, depthBuffer.memoryOffset);
 
 		if (result != EResult::Success) return result;
 
@@ -830,7 +823,7 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.BaseArrayLayer = 0;
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
-		Heap() result = depthBuffer.view.Create(GetEngagedDevice(), viewInfo);
+		result = depthBuffer.view.Create(GetEngagedDevice(), viewInfo);
 
 		return result;
 	}
@@ -846,7 +839,7 @@ namespace HAL::GPU::Vulkan
 		Framebuffer::CreateInfo info;
 
 		info.RenderPass      = renderPass;
-		info.AttachmentCount = SCast<uint32>(viewHandles.size());
+		info.AttachmentCount = SCast<ui32>(viewHandles.size());
 		info.Attachments     = viewHandles.data();
 		info.Width           = swapchain->GetExtent().Width;
 		info.Height          = swapchain->GetExtent().Height;
@@ -938,7 +931,7 @@ namespace HAL::GPU::Vulkan
 
 		subpass.DepthStencilAttachment = bufferDepth ? &depthReference : nullptr;
 
-		info.AttachmentCount = SCast<uint32>(attachments.size());
+		info.AttachmentCount = SCast<ui32>(attachments.size());
 		info.Attachments = attachments.data();
 
 		info.SubpassCount = 1;
@@ -965,7 +958,7 @@ namespace HAL::GPU::Vulkan
 			beginInfo.ClearValues = clearValues.data();
 		}
 
-		beginInfo.ClearValueCount = SCast<uint32>(clearValues.size());
+		beginInfo.ClearValueCount = SCast<ui32>(clearValues.size());
 
 		return result;
 	}
@@ -992,12 +985,12 @@ namespace HAL::GPU::Vulkan
 	{
 		for (auto& swapchain : Swapchains)
 		{
-			Heap() swapchain.Destroy();
+			swapchain.Destroy(); 
 		}
 
 		for (auto& surface : Surfaces)
 		{
-			Heap() surface.Destroy();
+			surface.Destroy();
 		}
 
 		for (auto& renderContext : RenderContexts)
@@ -1014,7 +1007,7 @@ namespace HAL::GPU::Vulkan
 
 		surface.AssignPhysicalDevice(GetEngagedPhysicalGPU());
 
-		Heap() if (surface.Create(_window) != EResult::Success)
+		if (surface.Create(_window) != EResult::Success)
 		{
 			throw RuntimeError("Failed to create surface for targeted window.");
 		}
@@ -1081,8 +1074,6 @@ namespace HAL::GPU::Vulkan
 		for (auto& renderContext : RenderContexts)
 		{
 			renderContext.ProcessNextFrame();
-
-			//renderContext.SubmitFrameToPresentation();
 		}
 	}
 

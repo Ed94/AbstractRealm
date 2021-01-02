@@ -24,7 +24,7 @@ namespace LAL
 	template<class RepresentiveType, class Period = std::ratio<1>>
 	using Duration = std::chrono::duration<RepresentiveType, Period>;
 
-	using Duration64 = Duration<float64>;
+	using Duration64 = Duration<f64>;
 
 	//template<class ToDuration>
 	//using CastTODuration = std::chrono::duration_cast<ToDuration>;

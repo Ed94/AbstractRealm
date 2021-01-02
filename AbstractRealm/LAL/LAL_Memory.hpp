@@ -18,7 +18,8 @@ Last Modified: 5/18/2020
 
 namespace LAL
 {
-	#define LAL_UseMemorySpecifiers
+	// Macro Static Variable scope specifier.
+	#define StaticData()
 
 #ifdef LAL_UseMemorySpecifiers
 
@@ -27,23 +28,11 @@ namespace LAL
 	*/
 	#define Stack() \
 
-	// Macro Static Variable scope specifier.
-	#define StaticData() \
-
 	// Macro Data Segment scope specifier.
 	#define Data() \
 
 	// Macro BSS Segment scope specifier.
 	#define BSS() \
-
-	enum class EHeap
-	{
-		Allocate,
-		Free
-	};
-
-	// Macro Heap manipulation specifier.
-	#define Heap() \
 
 	/*
 	Stack Scope Type Specifier

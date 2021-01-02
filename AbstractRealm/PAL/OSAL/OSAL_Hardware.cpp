@@ -20,7 +20,7 @@ namespace OSAL
 
 		String CPU_Vendor   ;
 		String CPU_Model    ;
-		uInt64 CPU_Frequency;
+		uI64 CPU_Frequency;
 
 		MemoryInfo Memory;
 

@@ -29,6 +29,7 @@ namespace HAL
 		// Using
 
 		using namespace LAL;
+		using namespace Core::Memory;
 
 		using Meta::AppVersion;
 

@@ -33,7 +33,7 @@ namespace HAL::GPU::Vulkan
 		AllocateInfo info;
 	};
 
-	const Memory&  RequestMemory(const Memory::AllocateInfo& _info);
+	const Memory& RequestMemory(const Memory::AllocateInfo& _info);
 
 	void WipeMemory();
 }

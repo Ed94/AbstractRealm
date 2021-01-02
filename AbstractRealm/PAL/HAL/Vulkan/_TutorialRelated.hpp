@@ -57,21 +57,21 @@ namespace HAL::GPU
 
 			struct PositionT
 			{
-				float32 X, Y, Z;
+				f32 X, Y, Z;
 			} 
 			
 			Position;
 
 			struct ColorT
 			{
-				float32 R,G,B;
+				f32 R,G,B;
 			}
 			
 			Color;
 
 			struct CoordT
 			{
-				float32 X, Y;
+				f32 X, Y;
 			}
 			
 			TextureCoordinates;
@@ -188,14 +188,14 @@ namespace HAL::GPU
 				}
 			};
 
-			multiDefs const DynamicArray<uInt16> SquareIndices =
+			multiDefs const DynamicArray<uI16> SquareIndices =
 			{
 				0, 1, 2, 2, 3, 0,
 				4, 5, 6, 6, 7, 4
 			};
 
 			eGlobal DynamicArray<Vertex> ModelVerticies;
-			eGlobal DynamicArray<uint32> ModelIndicies ;
+			eGlobal DynamicArray<ui32> ModelIndicies ;
 
 			multiDefs const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
 			multiDefs const String VikingRoom_TexturePath = "Engine/Data/Models/VikingRoom/viking_room.png";

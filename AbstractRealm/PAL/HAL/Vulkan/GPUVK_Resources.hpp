@@ -121,7 +121,7 @@ namespace HAL::GPU::Vulkan
 	{
 	public:
 
-		EResult Create(ptr<void> data, uint32 _dataSize, uint32 _stride, VertexInputState& _stateInfo);
+		EResult Create(ptr<void> data, ui32 _dataSize, ui32 _stride, VertexInputState& _stateInfo);
 
 		void Destroy();
 
@@ -148,6 +148,6 @@ namespace HAL::GPU::Vulkan
 		Memory*    memory      ;
 		DeviceSize memoryOffset;
 
-		DynamicArray<uint32> indices;
+		DynamicArray<ui32> indices;
 	};
 }

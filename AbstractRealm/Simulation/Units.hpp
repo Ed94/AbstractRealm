@@ -30,8 +30,8 @@ namespace Sim
 	ChooseEither
 	<Meta::Is<BitAccuracy::_32_Bit>(_accuracy), 
 		
-		LAL::float32, 
-		LAL::float64
+		LAL::f32, 
+		LAL::f64
 	>;
 
 	/*
@@ -45,8 +45,8 @@ namespace Sim
 	ChooseEither
 	<Meta::Is<BitAccuracy::_32_Bit>(_accuracy),
 
-		LAL::sInt32,
-		LAL::sInt64
+		LAL::sI32,
+		LAL::sI64
 	>;
 
 	/*

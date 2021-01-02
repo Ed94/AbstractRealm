@@ -11,12 +11,12 @@
 
 namespace HAL::GPU::Vulkan
 {
-	//StaticData	
-	//(
+	StaticData()
+
 		// Public
 
 		DynamicArray<Vertex> ModelVerticies;
-		DynamicArray<uint32> ModelIndicies ;
+		DynamicArray<ui32> ModelIndicies ;
 
 		// TODO: Make the GPU hal agnostic to this.
 
@@ -33,46 +33,45 @@ namespace HAL::GPU::Vulkan
 		Memory    TextureImageMemory;
 		ImageView TextureImageView  ;
 		Sampler   TextureSampler    ;
-	//)
+
+
 
 	void LoadModel(String _modelPath)
 	{
+		tinyobj::attrib_t attrib;
+
+		DynamicArray<tinyobj::shape_t> shapes;
+
+		DynamicArray<tinyobj::material_t> materials;
+
+		String warning, error;
+
+		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warning, &error, _modelPath.c_str()))
+			throw RuntimeError(warning + error);
+
+		for (const auto& shape : shapes)
 		{
-			tinyobj::attrib_t attrib;
-
-			DynamicArray<tinyobj::shape_t> shapes;
-
-			DynamicArray<tinyobj::material_t> materials;
-
-			String warning, error;
-
-			if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warning, &error, _modelPath.c_str()))
-				throw RuntimeError(warning + error);
-
-			for (const auto& shape : shapes)
+			for (const auto& index : shape.mesh.indices)
 			{
-				for (const auto& index : shape.mesh.indices)
+				Vertex vertex{};
+
+				vertex.Position =
 				{
-					Vertex vertex{};
+					attrib.vertices[3 * index.vertex_index + 0],
+					attrib.vertices[3 * index.vertex_index + 1],
+					attrib.vertices[3 * index.vertex_index + 2]
+				};
 
-					vertex.Position =
-					{
-						attrib.vertices[3 * index.vertex_index + 0],
-						attrib.vertices[3 * index.vertex_index + 1],
-						attrib.vertices[3 * index.vertex_index + 2]
-					};
+				vertex.TextureCoordinates =
+				{
+					attrib.texcoords[2 * index.texcoord_index + 0],
+					1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+				};
 
-					vertex.TextureCoordinates =
-					{
-						attrib.texcoords[2 * index.texcoord_index + 0],
-						1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
-					};
+				vertex.Color = { 1.0f, 1.0f, 1.0f };
 
-					vertex.Color = { 1.0f, 1.0f, 1.0f };
-
-					ModelVerticies.push_back(vertex);
-					ModelIndicies.push_back(SCast<uint32>(ModelIndicies.size()));
-				}
+				ModelVerticies.push_back(vertex);
+				ModelIndicies.push_back(SCast<ui32>(ModelIndicies.size()));
 			}
 		}
 	}

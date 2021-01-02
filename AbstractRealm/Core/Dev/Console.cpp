@@ -22,11 +22,11 @@ namespace Dev
 
 
 
-	//StaticData
+	StaticData()
 	//(
 		// Windows uses short instead of unsigned short for rect...
-		sInt16 ConsoleWidth  = 160;   //140;
-		sInt16 ConsoleHeight = 118;   //50 ;
+		sI16 ConsoleWidth  = 160;   //140;
+		sI16 ConsoleHeight = 118;   //50 ;
 
 		using CharBuffer = ConsoleChar[1024][1024];
 
@@ -36,8 +36,8 @@ namespace Dev
 		ConsoleRect ConsoleSize =
 		{
 			0, 0,
-			sInt16(ConsoleWidth  - 1),   // Width
-			sInt16(ConsoleHeight - 1)    // Height	
+			sI16(ConsoleWidth  - 1),   // Width
+			sI16(ConsoleHeight - 1)    // Height	
 		};
 
 		ConsoleExtent ConsoleBufferSize = { ConsoleWidth, ConsoleHeight };
@@ -46,7 +46,7 @@ namespace Dev
 
 		StaticArray<OS_Handle, 2> ConsoleBuffers;
 
-		DynamicArray<ConsoleChar> ConsoleCharBuffer(uInt32(ConsoleHeight) * uInt32(ConsoleWidth));
+		DynamicArray<ConsoleChar> ConsoleCharBuffer(uI32(ConsoleHeight) * uI32(ConsoleWidth));
 
 		ConsoleExtent ConsoleCharBufferSize = { ConsoleWidth, ConsoleHeight };
 		ConsoleExtent ConsoleCharPos        = { 0           , 0             };
@@ -55,17 +55,17 @@ namespace Dev
 		ConsoleRect ConsoleWriteArea =
 		{
 			0, 0,
-			sInt16(ConsoleWidth  - 1),   // Width
-			sInt16(ConsoleHeight - 1)    // Height	
+			sI16(ConsoleWidth  - 1),   // Width
+			sI16(ConsoleHeight - 1)    // Height	
 		};
 
 		OS_Handle FrontBuffer = ConsoleBuffers[0],
 			      BackBuffer  = ConsoleBuffers[1] ;
 
-		uInt16 DevLogLineEnd = ConsoleHeight - 6;
-		uInt16 StatusStart   = ConsoleHeight - 5;
+		uI16 DevLogLineEnd = ConsoleHeight - 6;
+		uI16 StatusStart   = ConsoleHeight - 5;
 
-		uInt16 StatusColumnWidth = ConsoleWidth / 4;
+		uI16 StatusColumnWidth = ConsoleWidth / 4;
 
 		StaticArray<StaticArray<StringStream, 4>, 4> StatusStreams;
 
@@ -73,12 +73,14 @@ namespace Dev
 
 		File_OutputStream DevLogFileOut;
 		File_InputStream  DevLogFileIn ;
+
+		bool AutoUpdateConsole = false;
 	//)
 
 
 
 	// Forwards
-	void Load__DevLog_IOFileStream();
+	void Load_DevLog_IOFileStream();
 	void Load_DevLogStream        ();
 	void Load_DevLogStream_LogFeed();
 	void Load_DevLogStream_Status ();
@@ -93,9 +95,9 @@ namespace Dev
 
 	void ClearBuffer()
 	{
-		for (uInt16 y = 0; y < ConsoleHeight; ++y)
+		for (uI16 y = 0; y < ConsoleHeight; ++y)
 		{
-			for (uInt16 x = 0; x < ConsoleWidth; ++x)
+			for (uI16 x = 0; x < ConsoleWidth; ++x)
 			{
 				ConsoleCharBuffer[y * ConsoleWidth  + x].Char.UnicodeChar = ' ';
 				ConsoleCharBuffer[y * ConsoleHeight + x].Attributes       = 0  ;
@@ -109,7 +111,7 @@ namespace Dev
 	{
 		if (!Meta::UseDebug) return;
 
-		static uInt16 linePos = 3;
+		static uI16 linePos = 3;
 
 		if (linePos == StatusStart + 1 )
 		{
@@ -207,13 +209,15 @@ namespace Dev
 			<< setw(ConsoleWidth - DevLogStream.str().size()) << '-';
 
 		WriteTo_Buffer(linePos++, ConslAttribFlags(EConslAttribFlag::Background_Intensity));
+
+		if (AutoUpdateConsole) Console_UpdateBuffer();
 	}
 
 	void CLog_Error(String _info)
 	{
 		if (!Meta::UseDebug) return;
 
-		static uInt16 linePos = 4;
+		static uI16 linePos = 4;
 
 		if (linePos == StatusStart + 1)
 		{
@@ -312,6 +316,8 @@ namespace Dev
 			<< setw(ConsoleWidth - DevLogStream.str().size()) << '-';
 
 		WriteTo_Buffer(linePos++, ConslAttribFlags(EConslAttribFlag::Background_Red, EConslAttribFlag::Background_Intensity));
+
+		if (AutoUpdateConsole) Console_UpdateBuffer();
 	}
 
 	void CLog_Status(String _info, int _row, int _col)
@@ -382,6 +388,16 @@ namespace Dev
 		ClearBuffer();
 		
 		Load_DevLogStream();
+	}
+
+	void Console_EnableAutoUpdate()
+	{
+		AutoUpdateConsole = true;
+	}
+
+	void Console_DisableAutoUpdate()
+	{
+		AutoUpdateConsole = false;
 	}
 
 	// Offload windows stuff to OSAL...
@@ -503,7 +519,7 @@ namespace Dev
 
 	void Load_DevConsole()
 	{
-		Load__DevLog_IOFileStream();
+		Load_DevLog_IOFileStream();
 
 		ConsoleOutput = OSAL::Console_GetHandle(EConsoleHandle::Output);
 		ConsoleInput  = OSAL::Console_GetHandle(EConsoleHandle::Input );
@@ -525,7 +541,7 @@ namespace Dev
 
 		auto error = GetLastError();
 
-		SetConsoleCursorPosition (ConsoleOutput, {0, sInt16(ConsoleBufferSize.Y + 1)});
+		SetConsoleCursorPosition (ConsoleOutput, {0, sI16(ConsoleBufferSize.Y + 1)});
 		
 		Console_UpdateBuffer();
 
@@ -538,14 +554,14 @@ namespace Dev
 	{
 		CLog("Unloading dev console (there will be no logs after this)");
 
-		DevLogFileOut.close();
-		DevLogFileIn .close();
+		DevLogFileOut.close(); 
+		DevLogFileIn .close(); 
 	}
 
 
 	// Private
 
-	void Load__DevLog_IOFileStream()
+	void Load_DevLog_IOFileStream()
 	{
 		StringStream dateStream;
 
@@ -596,7 +612,7 @@ namespace Dev
 
 	void Load_DevLogStream_LogFeed()
 	{
-		for (uInt16 line = 3; line < DevLogLineEnd; line++)
+		for (uI16 line = 3; line < DevLogLineEnd; line++)
 		{
 			DevLogStream.str(std::string());
 
@@ -641,7 +657,7 @@ namespace Dev
 
 		WriteTo_Buffer(StatusStart + 1, ConslAttribFlags(EConslAttribFlag::Foreground_Red, EConslAttribFlag::Foreground_Intensity));
 
-		for (uInt16 line = StatusStart + 2; line < ConsoleHeight; line++)
+		for (uI16 line = StatusStart + 2; line < ConsoleHeight; line++)
 		{
 			DevLogStream.str(std::string());
 
@@ -745,8 +761,8 @@ namespace Dev
 			/*ConsoleCharBuffer[_line][index].Char.UnicodeChar = str.at(index);
 			ConsoleCharBuffer[_line][index].Attributes       = _flags       ;*/
 
-			ConsoleCharBuffer[_line * uInt32(ConsoleWidth) + index].Char.UnicodeChar = str.at(index);
-			ConsoleCharBuffer[_line * uInt32(ConsoleWidth) + index].Attributes       = _flags       ;
+			ConsoleCharBuffer[_line * uI32(ConsoleWidth) + index].Char.UnicodeChar = str.at(index);
+			ConsoleCharBuffer[_line * uI32(ConsoleWidth) + index].Attributes       = _flags       ;
 		}
 	}
 

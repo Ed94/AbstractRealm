@@ -25,6 +25,9 @@ namespace LAL
 	template<typename Type>
 	using Deque = std::deque<Type>;
 
+	template<typename KeyType, typename ValueType>
+	using Map = std::map<KeyType, ValueType>;
+
 	template<typename Type, WordSize NumberOfElements>
 	using StaticArray = std::array<Type, NumberOfElements>;
 }

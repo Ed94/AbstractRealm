@@ -15,7 +15,6 @@ Currently has GPU HAL related configuration
 
 #include "LAL/LAL.hpp"
 
-#include "Meta/EngineInfo.hpp"
 #include "Meta/Specification.hpp"
 
 
@@ -76,39 +75,43 @@ namespace Meta
 
 	// Runtime
 
-	/*
-	Note: Changing the GPU_API will require the GPU_HAL to reinitialize.
-	*/
-	eGlobal data< EGPUPlatformAPI> GPU_API;
+	StaticData()
 
-	eGlobal data< EGPU_PresentMode   > GPU_PresentationPref  ;
-	eGlobal data< EGPU_FrameBuffering> GPU_FrameBufferingPref;
+		/*
+		Note: Changing the GPU_API will require the GPU_HAL to reinitialize.
+		*/
+		eGlobal EGPUPlatformAPI GPU_API;
+
+		eGlobal EGPU_PresentMode    GPU_PresentationPref  ;
+		eGlobal EGPU_FrameBuffering GPU_FrameBufferingPref;
 
 	namespace  Vulkan
 	{
-		/**
-		 * Determines if Vulkan will use injectable layers.
-		 */
-		eGlobal data< bool> EnableLayers;
+		StaticData()
 
-		/**
-		 * Enables the wall of debug essentially for Vulkan.
-		 */
-		eGlobal data< bool> Enable_API_Dump;
+			/**
+			 * Determines if Vulkan will use injectable layers.
+			 */
+			eGlobal bool EnableLayers;
 
-		/**
-		 * Enables the fps monitor of the surface on the window title bar.
-		 */
-		eGlobal data< bool> Enable_FPSMonitor;
+			/**
+			 * Enables the wall of debug essentially for Vulkan.
+			 */
+			eGlobal bool Enable_API_Dump;
 
-		/*
-		Determines if Vulkan will use validation layers.
-		*/
-		eGlobal data< bool> Enable_Validation;
+			/**
+			 * Enables the fps monitor of the surface on the window title bar.
+			 */
+			eGlobal bool Enable_FPSMonitor;
 
-		eGlobal data< bool> Enable_LogVerbose;
-		eGlobal data< bool> Enable_LogInfo   ;
-		eGlobal data< bool> Enable_LogWarning;
-		eGlobal data< bool> Enable_LogError  ;
+			/*
+			Determines if Vulkan will use validation layers.
+			*/
+			eGlobal bool Enable_Validation;
+
+			eGlobal bool Enable_LogVerbose;
+			eGlobal bool Enable_LogInfo   ;
+			eGlobal bool Enable_LogWarning;
+			eGlobal bool Enable_LogError  ;
 	}
 }

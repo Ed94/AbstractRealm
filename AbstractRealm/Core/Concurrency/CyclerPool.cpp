@@ -24,8 +24,8 @@ namespace Core::Concurrency
 
 		DynamicArray<Unit> Pool;
 
-		bool   Initiated   = false;
-		uInt16 ActiveUnits = 0    ;
+		bool Initiated   = false;
+		uI16 ActiveUnits = 0    ;
 
 
 
@@ -38,12 +38,12 @@ namespace Core::Concurrency
 		ActiveUnits++;
 	}
 
-	const Cycler& CyclerPool::GetCycler(uInt16 _unit)
+	const Cycler& CyclerPool::GetCycler(uI16 _unit)
 	{
 		return Pool[_unit].Cycler;
 	}
 
-	uInt16 CyclerPool::GetNumUnits()
+	uI16 CyclerPool::GetNumUnits()
 	{
 		return ActiveUnits;
 	}
@@ -65,7 +65,7 @@ namespace Core::Concurrency
 
 	bool CyclerPool::RequestShutdown()
 	{		
-		for (uInt16 unitIndex = 0; unitIndex < ActiveUnits; unitIndex++)
+		for (uI16 unitIndex = 0; unitIndex < ActiveUnits; unitIndex++)
 		{
 			Pool[unitIndex].Cycler.Lapse();
 

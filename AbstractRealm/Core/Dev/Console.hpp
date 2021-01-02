@@ -23,6 +23,13 @@ namespace Dev
 
 	// Functions
 
+	/*class CLog
+	{
+	public:
+
+	protected:
+	}*/;
+
 	void CLog       (String _info                    );
 	void CLog_Error (String _info                    );
 	void CLog_Status(String _info, int _row, int _col);
@@ -32,4 +39,7 @@ namespace Dev
 
 	void Load_DevConsole();
 	void Unload_DevConsole();
+
+	void Console_EnableAutoUpdate();
+	void Console_DisableAutoUpdate();
 }

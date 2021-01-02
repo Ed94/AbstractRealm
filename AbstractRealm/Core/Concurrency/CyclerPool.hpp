@@ -21,9 +21,9 @@ namespace Core::Concurrency
 	{
 		static void ActivateUnit();
 
-		static const Cycler& GetCycler(uInt16 _unit);
+		static const Cycler& GetCycler(uI16 _unit);
 
-		static uInt16 GetNumUnits();
+		static uI16 GetNumUnits();
 
 		static void Initialize();
 

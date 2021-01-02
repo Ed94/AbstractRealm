@@ -13,7 +13,7 @@ namespace Core::IO
 
 		flags.Set(EOpenFlag::SeekToEOF, EOpenFlag::BinaryMode);
 
-		Heap() File_InputStream fileStream(_fileToBuffer, flags);
+		File_InputStream fileStream(_fileToBuffer, flags); 
 
 		if (! fileStream.is_open())
 		{
@@ -32,14 +32,14 @@ namespace Core::IO
 
 		fileStream.read(bufferToReturn.data(), streamSize);
 
-		Heap() fileStream.close();
+		fileStream.close(); 
 
 		return bufferToReturn;
 	}
 
 	bool OpenFile(File_OutputStream& _fileStream, OpenFlags _flags, const Path& _file)
 	{
-		Heap() _fileStream.open(_file, _flags);
+		_fileStream.open(_file, _flags);
 
 		if (! _fileStream.is_open()) 
 			return false;
@@ -49,7 +49,7 @@ namespace Core::IO
 
 	bool OpenFile(File_InputStream& _fileStream, OpenFlags _flags, const Path& _file)
 	{
-		Heap() _fileStream.open(_file, _flags);
+		_fileStream.open(_file, _flags);
 
 		if (!_fileStream.is_open())
 			return false;

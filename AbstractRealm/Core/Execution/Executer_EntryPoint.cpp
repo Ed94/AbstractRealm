@@ -14,7 +14,6 @@
 
 
 
-
 namespace Core::Execution
 {
 	// Usings
@@ -84,10 +83,12 @@ namespace Core::Execution
 
 				if (!OSAL::CreateConsole()) return 0;
 
-				Dev::CLog("Initializing Dev Module");
+				cout << "Initializing Dev Module" << endl;
 
 				Dev::LoadModule();
 			}
+
+			Dev::Console_EnableAutoUpdate();
 
 			std::cout.precision(10);
 
@@ -135,6 +136,8 @@ namespace Core::Execution
 
 			Initialize_MasterCycler();
 
+			Dev::Console_EnableAutoUpdate();
+
 			// App closing
 
 			Imgui::Deinitialize();
@@ -151,15 +154,10 @@ namespace Core::Execution
 
 			if (UseDebug)
 			{
-				Dev::UnloadModule();
-
 				OSAL::DestroyConsole();
-			}
 
-			/*if (Heap_AllocationsLeft() > 0)
-			{
-			throw RuntimeError("Heap has not been cleaned up properly.");
-			}*/
+				Dev::UnloadModule();
+			}
 		}
 		catch (std::exception e)
 		{

@@ -19,7 +19,6 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 #include "GPUVK_PayloadDeck.hpp"
 #include "Meta/AppInfo.hpp"
 #include "Meta/Config/HAL_Config.hpp"
-#include "Meta/EngineInfo.hpp"
 #include "Meta/Config/OSAL_Config.hpp"
 #include "Core/IO/Basic_FileIO.hpp"
 
@@ -68,14 +67,14 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				AppInstance::Handle          ApplicationInstance;
 				V3::PhysicalDevice           PhysicalDevice     ;
 				V3::LogicalDevice::Handle    LogicalDevice      ;
-				uint32                       QueueFamilyIndex   ;
+				ui32                         QueueFamilyIndex   ;
 				LogicalDevice::Queue         Queue              ;
 				Pipeline::Cache::Handle      PipelineCache      ;
 				EFormat                      ImageFormat        ;
 				V3::RenderPass::Handle       RenderPass         ;
 				Memory::AllocationCallbacks* Allocator          ;
-				uint32                       MinimumFrameBuffers;
-				uint32                       FrameBufferCount   ;
+				ui32                         MinimumFrameBuffers;
+				ui32                         FrameBufferCount   ;
 				Extent2D                     FrameSize          ;
 				ESampleCount                 MSAA_Samples       ;
 			};
@@ -142,7 +141,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features);
 
-			void GenerateMipMaps(Image& _image, EFormat _format, uint32 _textureWidth, uint32 _textureHeight, uint32 _mipLevels);
+			void GenerateMipMaps(Image& _image, EFormat _format, ui32 _textureWidth, ui32 _textureHeight, ui32 _mipLevels);
 
 			void Start_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
 
@@ -153,9 +152,9 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window);
 
-			uint32 GetNumberOfFramebuffers();
+			ui32 GetNumberOfFramebuffers();
 
-			uint32 GetMinimumFramebufferCount();
+			ui32 GetMinimumFramebufferCount();
 
 			using RenderCallback = void(*)(const CommandBuffer& _buffer, int _index);
 

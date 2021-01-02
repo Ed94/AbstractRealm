@@ -1,10 +1,16 @@
 // Parent Header
 #include "GPUVK_PayloadDeck.hpp"
 
+// Engine
+#include "Core/Memory/MemTracking.hpp"
+
+
 
 
 namespace HAL::GPU::Vulkan
 {
+	using namespace Core::Memory;
+
 	const CommandBuffer& CommandPool::RequestBuffer()
 	{
 		AllocateInfo info;
@@ -16,6 +22,8 @@ namespace HAL::GPU::Vulkan
 		CommandBuffer::Handle handle;
 		
 		Allocate(info, &handle);
+
+		// Allocations of buffers here are not tracked. They are freed automatically by the command pool on its destruction.
 
 		commandBuffers.push_back(CommandBuffer(GetEngagedDevice(), handle));
 
@@ -30,7 +38,7 @@ namespace HAL::GPU::Vulkan
 
 		CommandBuffer& buffer = commandBuffers.back();
 
-		result = Heap() Allocate(buffer);
+		result = Allocate(buffer);
 
 		if (result != EResult::Success) throw RuntimeError("Failed to allocate...");
 
@@ -93,13 +101,11 @@ namespace HAL::GPU::Vulkan
 
 
 
-
 	void PrepareDecks()
 	{
 		CommandPool::CreateInfo info {};
 
-		info.QueueFamilyIndex = GetGraphicsQueue().GetFamilyIndex();   // Hardcoding pool to graphics queue
-
+		info.QueueFamilyIndex = GetGraphicsQueue().GetFamilyIndex();   // Hard coding pool to graphics queue
 
 		// Only one set of pools for now since its single threaded
 
@@ -107,8 +113,7 @@ namespace HAL::GPU::Vulkan
 
 		GeneralPool = &CommandPools.back();
 		
-		Heap() GeneralPool->Create(GetEngagedDevice(), info);
-
+		GeneralPool->Create(GetEngagedDevice(), info); 
 
 		CommandPools.resize(CommandPools.size() + 1);
 
@@ -116,7 +121,7 @@ namespace HAL::GPU::Vulkan
 
 		info.Flags.Set(ECommandPoolCreateFlag::Transient);
 
-		Heap() TransientPool->Create(GetEngagedDevice(), info);
+		TransientPool->Create(GetEngagedDevice(), info);
 	}
 
 	const CommandBuffer& RecordOnGraphics()

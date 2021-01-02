@@ -113,7 +113,7 @@ namespace HAL::GPU::Vulkan
 			1, &barrier
 		);
 
-		Heap() EndRecordOnTransient(commandBuffer);
+		EndRecordOnTransient(commandBuffer);
 	}
 
 
@@ -220,7 +220,7 @@ namespace HAL::GPU::Vulkan
 
 #pragma region VertexBuffer
 
-	EResult VertexBuffer::Create(ptr<void> data, uint32 _dataSize, uint32 _stride, VertexInputState& _stateInfo)
+	EResult VertexBuffer::Create(ptr<void> data, ui32 _dataSize, ui32 _stride, VertexInputState& _stateInfo)
 	{
 		EResult result = EResult::Incomplete;
 
@@ -234,15 +234,6 @@ namespace HAL::GPU::Vulkan
 		stagingBufferInfo.Size        = _dataSize;
 
 		stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
-
-		Heap()
-		/*result = stagingBuffer.CreateAndBind
-		(
-			GetEngagedDevice(),
-			stagingBufferInfo,
-			Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent), 
-			stagingBufferMemory
-		);*/
 
 		if (result != EResult::Success) return result;
 
@@ -259,15 +250,6 @@ namespace HAL::GPU::Vulkan
 
 		vertexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::VertexBuffer);
 
-		Heap()
-		/*result = buffer.CreateAndBind
-		(
-			GetEngagedDevice(),
-			vertexBufferInfo,
-			Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal),
-			memory
-		);*/
-
 		if (result != EResult::Success) return result;
 
 		Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = _dataSize;
@@ -278,7 +260,6 @@ namespace HAL::GPU::Vulkan
 
 		EndRecordOnTransient(commandBuffer);
 
-		Heap()
 		stagingBuffer.Destroy();
 		stagingBufferMemory.Free();
 
@@ -289,7 +270,7 @@ namespace HAL::GPU::Vulkan
 	{
 		buffer.Destroy();
 
-		//memory.Free();
+		memory->Free();
 	}
 
 #pragma endregion VertexBuffer

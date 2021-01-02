@@ -34,8 +34,6 @@
     <ClInclude Include="PAL\ThirdParty\Libraries\stb\stb_image.h" />
     <ClInclude Include="Renderer\Shader\VKTut\VKTut.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\_TutorialRelated.hpp" />
-    <ClInclude Include="Core\Dev\DebugExec\ImGui_StandaloneExample.hpp" />
-    <ClInclude Include="Core\Dev\DebugExec\ImGui_TestingGrounds.hpp" />
     <ClInclude Include="Core\Dev\Console.hpp" />
     <ClInclude Include="Core\Dev\Dev.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_Console.hpp" />
@@ -170,6 +168,7 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Resource.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Comms_Implementation.hpp" />
     <ClInclude Include="Core\Memory\MemTracking.hpp" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\magic_enum\include\magic_enum.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

@@ -17,21 +17,21 @@ namespace OSAL
 	{
 		MiliPeriod<SystemTimePeriod> Period;
 
-		float64 Precison;
+		f64 Precison;
 	};
 
 	struct SteadyTimeInfo
 	{
 		MiliPeriod<SteadyTimePeriod> Period;
 
-		float64 Precison;
+		f64 Precison;
 	};
 
 	struct HiighResTimeInfo
 	{
 		MiliPeriod<HighResTimePeriod> Period;
 
-		float64 Precison;
+		f64 Precison;
 	};
 
 
@@ -48,9 +48,9 @@ namespace OSAL
 
 	void GetClock_Accuracies()
 	{
-		SysTimeStatus    .Precison = float64(SysTimeStatus    .Period.num) / float64(SysTimeStatus    .Period.den);
-		SteadyTimeStatus .Precison = float64(SteadyTimeStatus .Period.num) / float64(SteadyTimeStatus .Period.den);
-		HighResTimeStatus.Precison = float64(HighResTimeStatus.Period.num) / float64(HighResTimeStatus.Period.den);
+		SysTimeStatus    .Precison = f64(SysTimeStatus    .Period.num) / f64(SysTimeStatus    .Period.den);
+		SteadyTimeStatus .Precison = f64(SteadyTimeStatus .Period.num) / f64(SteadyTimeStatus .Period.den);
+		HighResTimeStatus.Precison = f64(HighResTimeStatus.Period.num) / f64(HighResTimeStatus.Period.den);
 
 		CLog("System Time Accuracy         : " + ToString(SysTimeStatus    .Precison) + " milliseconds");
 		CLog("Steady Time Accuracy         : " + ToString(SteadyTimeStatus .Precison) + " milliseconds");
