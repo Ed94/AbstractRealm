@@ -61,7 +61,6 @@
     <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\LockLessMultiReadPipe.h" />
     <ClInclude Include="PAL\SAL\EnkiTS_SAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Comms.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Renderer.hpp" />
     <ClInclude Include="LAL\LAL_Declarations.hpp" />
     <ClInclude Include="LAL\LAL_Chrono.hpp" />
     <ClInclude Include="LAL\LAL_Containers.hpp" />
@@ -173,6 +172,7 @@
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.cpp" />
     <ClInclude Include="Meta\Meta.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Rendering.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -210,7 +210,6 @@
     <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
-    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Renderer.cpp" />
     <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="LAL\LAL_IO.cpp" />
     <ClCompile Include="PAL\HAL\HAL_Backend.cpp" />
@@ -225,6 +224,7 @@
     <ClCompile Include="Core\Memory\MemTracking.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.cpp" />
     <ClCompile Include="Meta\Meta.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Rendering.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="PAL\HAL\Vulkan\VaultedThermals\CMakeLists.txt" />

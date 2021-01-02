@@ -310,25 +310,30 @@ namespace HAL::GPU::Vulkan
 
 
 
-	Surface& Request_Surface(ptr<OSAL::Window> _window);
+	template<Meta::EGPU_Engage>
+	class Rendering_Maker;
 
-	void Retire_Surface(ptr<Surface> _surface);
+	template<>
+	class Rendering_Maker<Meta::EGPU_Engage::Single>
+	{
+	public:
 
-	Swapchain& Request_SwapChain(Surface& _surface, Surface::Format _formatDesired);
+		unbound Surface& Request_Surface(ptr<OSAL::Window> _window);
+		unbound void     Retire_Surface (ptr<Surface> _surface);
 
-	void Retire_Swapchain(ptr<Swapchain> _swapchain);
+		unbound Swapchain& Request_SwapChain(Surface& _surface, Surface::Format _formatDesired);
+		unbound void       Retire_SwapChain (ptr<Swapchain> _swapchain);
 
-	RenderContext& Request_RenderContext(Swapchain& _swapchain);
+		unbound RenderContext& Request_RenderContext(Swapchain& _swapchain);
+		unbound void           Retire_RenderContext(const ptr<RenderContext> _renderContext);
 
-	void Retire_RenderContext(const ptr<RenderContext> _renderContext);
+		unbound void SetSubmissionMode(ESubmissionType _submissionBehaviorDesired);
 
-	void Renderer_SetSubmissionMode(ESubmissionType _submissionBehaviorDesired);
+		unbound void Initalize();
+		unbound void Shutdown();
+		unbound void Present();
+		unbound void Update();
+	};
 
-	void Renderer_Shutdown();
-
-	void Renderer_Initalize();
-
-	void Renderer_Update();
-
-	void Renderer_Present();
+	using Rendering = Rendering_Maker<Meta::GPU_Engagement>;
 }

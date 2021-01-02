@@ -95,7 +95,7 @@ namespace HAL::GPU::Vulkan
 
 
 
-	void PrepareDecks()
+	void Deck_Maker<Meta::EGPU_Engage::Single>::Prepare()
 	{
 		CommandPool::CreateInfo info {};
 
@@ -118,17 +118,17 @@ namespace HAL::GPU::Vulkan
 		TransientPool->Create(GPU_Comms::GetEngagedDevice(), info);
 	}
 
-	const CommandBuffer& RecordOnGraphics()
+	const CommandBuffer& Deck_Maker<Meta::EGPU_Engage::Single>::RecordOnGraphics()
 	{
 		return GeneralPool->RequestBuffer();
 	}
 
-	const CommandBuffer& RecordOnTransient()
+	const CommandBuffer& Deck_Maker<Meta::EGPU_Engage::Single>::RecordOnTransient()
 	{
 		return TransientPool->BeginSingleTimeCommands(); 
 	}
 
-	ptr<CommandPool> RequestCommandPools(WordSize _numDesired)
+	ptr<CommandPool> Deck_Maker<Meta::EGPU_Engage::Single>::RequestCommandPools(WordSize _numDesired)
 	{
 		WordSize firstOfNewPools = CommandPools.size();
 
@@ -148,12 +148,12 @@ namespace HAL::GPU::Vulkan
 		return &CommandPools[firstOfNewPools];
 	}
 
-	void EndRecordOnTransient(const CommandBuffer& _buffer)
+	void Deck_Maker<Meta::EGPU_Engage::Single>::EndRecordOnTransient(const CommandBuffer& _buffer)
 	{
 		TransientPool->EndSingleTimeCommands(_buffer);
 	}
 
-	void WipeDecks()
+	void Deck_Maker<Meta::EGPU_Engage::Single>::Wipe()
 	{
 		for (auto& pool : CommandPools)
 		{

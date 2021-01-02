@@ -40,7 +40,7 @@ namespace HAL::GPU::Vulkan
 
 	void Image::TransitionLayout(EImageLayout _old, EImageLayout _new)
 	{
-		auto commandBuffer = RecordOnTransient();
+		auto commandBuffer = Deck::RecordOnTransient();
 
 		Image::Memory_Barrier barrier {};
 
@@ -114,7 +114,7 @@ namespace HAL::GPU::Vulkan
 			1, &barrier
 		);
 
-		EndRecordOnTransient(commandBuffer);
+		Deck::EndRecordOnTransient(commandBuffer);
 	}
 
 
@@ -258,11 +258,11 @@ namespace HAL::GPU::Vulkan
 
 		Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = _dataSize;
 
-		auto commandBuffer = RecordOnTransient();
+		auto commandBuffer = Deck::RecordOnTransient();
 
 		commandBuffer.CopyBuffer(stagingBuffer, buffer, 1, &copyInfo);
 
-		EndRecordOnTransient(commandBuffer);
+		Deck::EndRecordOnTransient(commandBuffer);
 
 		stagingBuffer.Destroy();
 		stagingBufferMemory.Free();

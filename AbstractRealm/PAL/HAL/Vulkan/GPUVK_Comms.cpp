@@ -398,7 +398,7 @@ namespace HAL::GPU::Vulkan
 		return AppGPU_Comms;
 	}
 
-	void GPU_Comms::AcquirePhysicalDevices()
+	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::AcquirePhysicalDevices()
 	{
 		EResult result = AppGPU_Comms.GetAvailablePhysicalDevices(PhysicalGPUs);
 
@@ -422,7 +422,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void GPU_Comms::Cease()
+	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::Cease()
 	{
 		if (Meta::Vulkan::Enable_LogError  ()) GPU_Messenger_Error  .Destroy();
 		if (Meta::Vulkan::Enable_LogWarning()) GPU_Messenger_Warning.Destroy();
@@ -443,7 +443,7 @@ namespace HAL::GPU::Vulkan
 		CLog("GPU communications ceased");
 	}
 
-	void GPU_Comms::Initialize(RoCStr _appName, Meta::AppVersion _version)
+	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::Initialize(RoCStr _appName, Meta::AppVersion _version)
 	{
 		AppInstance::AppInfo    spec       {};
 		AppInstance::CreateInfo createSpec {};
@@ -575,7 +575,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void GPU_Comms::EngageMostSuitableDevice()
+	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::EngageMostSuitableDevice()
 	{
 		CLog("Determining most suitable device to engage.");
 
@@ -633,7 +633,7 @@ namespace HAL::GPU::Vulkan
 		OSAL::Destroy_Window(testWindow);
 	}
 
-	void GPU_Comms::GenerateLogicalDevices()
+	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GenerateLogicalDevices()
 	{
 		LogicalGPUs.resize(PhysicalGPUs.size());
 
@@ -660,27 +660,27 @@ namespace HAL::GPU::Vulkan
 		CLog("Logical devices generated");
 	}
 
-	const LogicalDevice& GPU_Comms::GetEngagedDevice()
+	const LogicalDevice& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetEngagedDevice()
 	{
 		return dref(DeviceEngaged);
 	}
 
-	const PhysicalDevice& GPU_Comms::GetEngagedPhysicalGPU()
+	const PhysicalDevice& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetEngagedPhysicalGPU()
 	{
 		return DeviceEngaged->GetPhysicalDevice();
 	}
 
-	const LogicalDevice::Queue& GPU_Comms::GetGraphicsQueue()
+	const LogicalDevice::Queue& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetGraphicsQueue()
 	{
 		return DeviceEngaged->GetGraphicsQueue();
 	}
 
-	const LogicalDevice::Queue& GPU_Comms::GetComputeQueue()
+	const LogicalDevice::Queue& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetComputeQueue()
 	{
 		return DeviceEngaged->GetComputeQueue();
 	}
 
-	const LogicalDevice::Queue& GPU_Comms::GetTransferQueue()
+	const LogicalDevice::Queue& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetTransferQueue()
 	{
 		return DeviceEngaged->GetTransferQueue();
 	}
@@ -689,7 +689,7 @@ namespace HAL::GPU::Vulkan
 
 #pragma region Protected
 
-	void GPU_Comms::AquireSupportedValidationLayers()
+	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::AquireSupportedValidationLayers()
 	{
 		bool found = false;
 
@@ -788,7 +788,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	bool GPU_Comms::CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
+	bool GPU_Comms_Maker<Meta::EGPU_Engage::Single>::CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
 	{
 		WordSize layersFound = 0;
 
@@ -889,7 +889,7 @@ namespace HAL::GPU::Vulkan
 		return EBool::True;
 	}
 
-	void GPU_Comms::DetermineRequiredExtensions()
+	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::DetermineRequiredExtensions()
 	{
 		switch (OSAL::WindowingPlatform)
 		{
@@ -940,7 +940,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void GPU_Comms::SetupDebugMessenger()
+	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::SetupDebugMessenger()
 	{
 		Messenger::CreateInfo info{};
 

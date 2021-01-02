@@ -414,7 +414,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.hpp" />
-    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Renderer.hpp">
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Rendering.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -736,7 +736,7 @@
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Memory.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PayloadDeck.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.cpp" />
-    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Renderer.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Rendering.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Resources.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />

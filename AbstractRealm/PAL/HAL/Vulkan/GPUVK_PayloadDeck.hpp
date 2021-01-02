@@ -44,14 +44,27 @@ namespace HAL::GPU::Vulkan
 	};
 
 
+	template<Meta::EGPU_Engage>
+	class Deck_Maker;
 
-	void WipeDecks();
+	template<>
+	class Deck_Maker<Meta::EGPU_Engage::Single>
+	{
+	public:
 
-	void PrepareDecks();	
+		unbound void Prepare();
 
-	ptr<CommandPool> RequestCommandPools(WordSize _numDesired);
+		unbound void Wipe();
 
-	const CommandBuffer& RecordOnTransient();
 
-	void EndRecordOnTransient(const CommandBuffer& _buffer);
+		unbound ptr<CommandPool> RequestCommandPools(WordSize _numDesired);
+
+		unbound const CommandBuffer& RecordOnGraphics();
+
+		unbound const CommandBuffer& RecordOnTransient();
+
+		unbound void EndRecordOnTransient(const CommandBuffer& _buffer);
+	};
+
+	using Deck = Deck_Maker<Meta::GPU_Engagement>;
 }

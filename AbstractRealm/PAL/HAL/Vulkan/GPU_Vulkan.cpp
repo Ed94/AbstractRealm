@@ -8,11 +8,10 @@
 #include "_TutorialRelated.hpp"
 
 // Engine
-#include "Core/Memory/MemTracking.hpp"
 #include "HAL_Backend.hpp"
 #include "GPUVK_Comms.hpp"
 #include "GPUVK_PayloadDeck.hpp"
-#include "GPUVK_Renderer.hpp"
+#include "GPUVK_Rendering.hpp"
 
 
 #include "Dev/Console.hpp"
@@ -21,8 +20,6 @@
 
 	namespace HAL::GPU
 	{
-		using namespace Core::Memory;
-
 		namespace Vulkan
 		{
 			StaticData()
@@ -115,35 +112,35 @@
 
 			void Start_ClearColorDemo(ptr<OSAL::Window> _window)
 			{
-				ClearColor_Surface = getAddress(Request_Surface(_window));
+				ClearColor_Surface = getAddress(Rendering::Request_Surface(_window));
 
 				Surface::Format format;
 
 				format.Format = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				ClearColor_Swap = getAddress(Request_SwapChain(*ClearColor_Surface, format));
+				ClearColor_Swap = getAddress(Rendering::Request_SwapChain(*ClearColor_Surface, format));
 
-				ClearColor_Context = getAddress(Request_RenderContext(*ClearColor_Swap));
+				ClearColor_Context = getAddress(Rendering::Request_RenderContext(*ClearColor_Swap));
 			}
 
 			void Render()
 			{
-				Renderer_Update();
+				Rendering::Update();
 			}
 
 			void Present()
 			{
-				Renderer_Present();
+				Rendering::Present();
 			}
 
 			void Stop_ClearColorDemo()
 			{
 				CLog("Stopping Clear Color Demo...");
 
-				Retire_RenderContext(ClearColor_Context);
-				Retire_Swapchain    (ClearColor_Swap   );
-				Retire_Surface      (ClearColor_Surface);
+				Rendering::Retire_RenderContext(ClearColor_Context);
+				Rendering::Retire_SwapChain    (ClearColor_Swap   );
+				Rendering::Retire_Surface      (ClearColor_Surface);
 			}
 
 		#pragma region Staying
@@ -1113,10 +1110,8 @@
 
 				// Shader setup
 
-				using namespace Renderer::Shader;
-
-				auto triShader_VertCode = Core::IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Vert.spv");
-				auto triShader_FragCode = Core::IO::BufferFile(String(Paths::TriangleShader) + "TriangleShader_Frag.spv");
+				auto triShader_VertCode = Core::IO::BufferFile(String(Renderer::Shader::Paths::TriangleShader) + "TriangleShader_Vert.spv");
+				auto triShader_FragCode = Core::IO::BufferFile(String(Renderer::Shader::Paths::TriangleShader) + "TriangleShader_Frag.spv");
 
 				//TODO: FIGURE THIS OUT.
 				Bytecode_Buffer triShader_Vert_Bytecode(triShader_VertCode.begin(), triShader_VertCode.end());
@@ -1174,10 +1169,8 @@
 
 				// Shader setup
 
-				using namespace Renderer::Shader;
-
-				auto vertCode = Core::IO::BufferFile(String(Paths::VKTut) + "VKTut_V5_Vert.spv");
-				auto fragCode = Core::IO::BufferFile(String(Paths::VKTut) + "VKTut_V5_Frag.spv");
+				auto vertCode = Core::IO::BufferFile(String(Renderer::Shader::Paths::VKTut) + "VKTut_V5_Vert.spv");
+				auto fragCode = Core::IO::BufferFile(String(Renderer::Shader::Paths::VKTut) + "VKTut_V5_Frag.spv");
 
 				//TODO: FIGURE THIS OUT.
 				Bytecode_Buffer vertBytecode(vertCode.begin(), vertCode.end());
@@ -1441,12 +1434,12 @@
 
 				GPU_Comms::EngageMostSuitableDevice();
 
-				PrepareDecks();
+				Deck::Prepare();
 			}
 
 			void Cease_GPUComms()
 			{
-				WipeDecks();
+				Deck::Wipe();
 
 				GPU_Comms::Cease();	
 			}
@@ -1481,14 +1474,14 @@
 			{
 				CLog("Doing dirty renderer initialization, clean this up!");
 
-				Surface_Old = &Request_Surface(_window);
+				Surface_Old = &Rendering::Request_Surface(_window);
 
 				Surface::Format format;
 
 				format.Format     = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				auto& swapchain = Request_SwapChain(*Surface_Old, format); 
+				auto& swapchain = Rendering::Request_SwapChain(*Surface_Old, format); 
 
 				SwapChain_Old = &swapchain;
 
@@ -1732,9 +1725,9 @@
 
 					//if (Meta::Vulkan::EnableLayers) GPU_Messenger.Destroy();
 
-					Retire_Swapchain(SwapChain_Old);
+					Rendering::Retire_SwapChain(SwapChain_Old);
 
-					Retire_Surface(Surface_Old);
+					Rendering::Retire_Surface(Surface_Old);
 				//);
 			}
 		}

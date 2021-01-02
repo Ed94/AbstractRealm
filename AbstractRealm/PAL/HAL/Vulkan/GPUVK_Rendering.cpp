@@ -1,5 +1,5 @@
 // Parent Header
-#include "GPUVK_Renderer.hpp"
+#include "GPUVK_Rendering.hpp"
 #include "Meta/EngineInfo.hpp"
 
 
@@ -489,7 +489,7 @@ namespace HAL::GPU::Vulkan
 			presentSubmitStatus.Create(GPU_Comms::GetEngagedDevice(), semaphoreInfo);
 
 
-			ptr<CommandPool> pools = RequestCommandPools(1);
+			ptr<CommandPool> pools = Deck::RequestCommandPools(1);
 
 			commandPools.push_back(pools);
 
@@ -971,20 +971,20 @@ namespace HAL::GPU::Vulkan
 
 	Deque<Surface> Surfaces;
 
-	Deque<Swapchain> Swapchains;
+	Deque<Swapchain> SwapChains;
 
 	Deque<RenderContext> RenderContexts;
 
 
 
-	void Renderer_SetSubmissionMode(ESubmissionType _submissionBehaviorDesired)
+	void Rendering_Maker<Meta::EGPU_Engage::Single>::SetSubmissionMode(ESubmissionType _submissionBehaviorDesired)
 	{
 		SubmissionMode = _submissionBehaviorDesired;
 	}
 
-	void Renderer_Shutdown()
+	void Rendering_Maker<Meta::EGPU_Engage::Single>::Shutdown()
 	{
-		for (auto& swapchain : Swapchains)
+		for (auto& swapchain : SwapChains)
 		{
 			swapchain.Destroy(); 
 		}
@@ -1000,7 +1000,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	Surface& Request_Surface(ptr<OSAL::Window> _window)
+	Surface& Rendering_Maker<Meta::EGPU_Engage::Single>::Request_Surface(ptr<OSAL::Window> _window)
 	{
 		Surfaces.resize(Surfaces.size() + 1);
 
@@ -1016,20 +1016,20 @@ namespace HAL::GPU::Vulkan
 		return surface;
 	}
 
-	void Retire_Surface(ptr<Surface> _surface)
+	void Rendering_Maker<Meta::EGPU_Engage::Single>::Retire_Surface(ptr<Surface> _surface)
 	{
 		_surface->Destroy();
 
 		Surfaces.erase(find(Surfaces.begin(), Surfaces.end(), *_surface));
 	}
 
-	Swapchain& Request_SwapChain(Surface& _surface, Surface::Format _formatDesired)
+	Swapchain& Rendering_Maker<Meta::EGPU_Engage::Single>::Request_SwapChain(Surface& _surface, Surface::Format _formatDesired)
 	{
 		Swapchain::CreateInfo info;
 
-		Swapchains.resize(Swapchains.size() + 1);
+		SwapChains.resize(SwapChains.size() + 1);
 
-		Swapchain& swapchain = Swapchains.back();
+		Swapchain& swapchain = SwapChains.back();
 
 		EResult result = swapchain.Create(_surface, _formatDesired);
 
@@ -1041,14 +1041,14 @@ namespace HAL::GPU::Vulkan
 		return swapchain;
 	}
 
-	void Retire_Swapchain(ptr<Swapchain> _swapchain)
+	void Rendering_Maker<Meta::EGPU_Engage::Single>::Retire_SwapChain(ptr<Swapchain> _swapchain)
 	{
 		_swapchain->Destroy();
 
-		Swapchains.erase(find(Swapchains.begin(), Swapchains.end(), *_swapchain));
+		SwapChains.erase(find(SwapChains.begin(), SwapChains.end(), *_swapchain));
 	}
 
-	RenderContext& Request_RenderContext(Swapchain& _swapchain)
+	RenderContext& Rendering_Maker<Meta::EGPU_Engage::Single>::Request_RenderContext(Swapchain& _swapchain)
 	{
 		RenderContexts.resize(RenderContexts.size() + 1);
 
@@ -1059,18 +1059,18 @@ namespace HAL::GPU::Vulkan
 		return RenderContexts.back();
 	}
 
-	void Retire_RenderContext(ptr<RenderContext> _renderContext)
+	void Rendering_Maker<Meta::EGPU_Engage::Single>::Retire_RenderContext(ptr<RenderContext> _renderContext)
 	{
 		_renderContext->Destroy();
 
 		RenderContexts.erase(find(RenderContexts.begin(), RenderContexts.end(), *_renderContext));
 	}
 
-	void Renderer_Initalize()
+	void Rendering_Maker<Meta::EGPU_Engage::Single>::Initalize()
 	{
 	}
 
-	void Renderer_Update()
+	void Rendering_Maker<Meta::EGPU_Engage::Single>::Update()
 	{
 		for (auto& renderContext : RenderContexts)
 		{
@@ -1078,7 +1078,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void Renderer_Present()
+	void Rendering_Maker<Meta::EGPU_Engage::Single>::Present()
 	{
 		for (auto& renderContext : RenderContexts)
 		{
