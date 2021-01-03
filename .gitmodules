@@ -67,9 +67,3 @@
 [submodule "VaultedThermals"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/VaultedThermals
 	url = https://github.com/Ed94/VaultedThermals.git
-[submodule "glslang"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/glslang
-	url = https://github.com/KhronosGroup/glslang
-[submodule "shaderc"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/shaderc
-	url = https://github.com/google/shaderc
