@@ -70,6 +70,6 @@
 [submodule "glslang"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/glslang
 	url = https://github.com/KhronosGroup/glslang
-[submodule "AbstractRealm/PAL/ThirdParty/Libraries/shaderc"]
+[submodule "shaderc"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/shaderc
 	url = https://github.com/google/shaderc
