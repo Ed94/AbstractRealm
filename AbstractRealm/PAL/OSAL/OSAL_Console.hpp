@@ -42,7 +42,7 @@ namespace OSAL
 				SpecifyBitmaskable = sizeof(WORD)
 			};
 
-			using AttributeFlags = Bitmask<EAttributeFlag, WORD>;
+			using AttributeFlags = Bitfield<EAttributeFlag, WORD>;
 
 			struct EHandle
 			{

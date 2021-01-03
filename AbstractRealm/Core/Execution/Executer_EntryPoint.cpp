@@ -80,8 +80,6 @@ namespace Core::Execution
 
 	OSAL::ExitValT EntryPoint()
 	{
-		//Meta::
-
 		try
 		{
 			if (UseDebug())

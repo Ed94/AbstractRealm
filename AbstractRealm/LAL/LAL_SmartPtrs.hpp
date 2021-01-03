@@ -21,12 +21,12 @@ namespace LAL
 	template<typename Type, class... ArgumentsTypes>
 	UPtr<Type> MakeUPtr(ArgumentsTypes&&... _arguments)
 	{
-		return std::make_unique<Type>(_arguments);
+		return std::make_unique<Type>(_arguments...);
 	}
 
 	template<typename Type, class... ArgumentsTypes>
 	SPtr<Type> MakeSPtr(ArgumentsTypes&&... _arguments)
 	{
-		return std::make_shared<Type>(_arguments);
+		return std::make_shared<Type>(_arguments...);
 	}
 }

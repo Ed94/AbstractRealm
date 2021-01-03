@@ -1165,8 +1165,6 @@
 
 			StaticArray<ShaderModule, 2> Create_VKTut_Shaders()
 			{
-				using Bytecode_Buffer = DynamicArray<Bytecode>;
-
 				// Shader setup
 
 				auto vertCode = Core::IO::BufferFile(String(Renderer::Shader::Paths::VKTut) + "VKTut_V5_Vert.spv");

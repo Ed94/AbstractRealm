@@ -1,8 +1,8 @@
 /*
-Bitmask
+Bitfield
 
 A wrapper for bitmasks with support for specifying enum classes as bitmaskable types, and 
-ease of use functionality for manipulating the mask.
+ease of use functionality for manipulating the bitfield.
 */
 
 
@@ -79,25 +79,25 @@ namespace LAL
 		typename EnumType             ,
 		typename BitmaskRepresentation
 	>
-	struct Bitmask
+	struct Bitfield
 	{
 	private:
 		EnforceConstraint(Bitmaskable<EnumType>(), "EnumType must be of Bitmaskable type.");
 
-		using _ThisType = Bitmask<EnumType, BitmaskRepresentation>;
+		using _ThisType = Bitfield<EnumType, BitmaskRepresentation>;
 
 	public:
 
 		using Enum           = EnumType             ;
 		using Representation = BitmaskRepresentation;
 
-		Bitmask() : mask(0) {}
+		Bitfield() : mask(0) {}
 
-		Bitmask(Representation _mask) : mask(_mask)
+		Bitfield(Representation _mask) : mask(_mask)
 		{}
 
 		template<typename... BitTypes>
-		Bitmask(const BitTypes... _bits) : mask(0)
+		Bitfield(const BitTypes... _bits) : mask(0)
 		{
 			mask = (Representation(_bits) | ...);
 		}

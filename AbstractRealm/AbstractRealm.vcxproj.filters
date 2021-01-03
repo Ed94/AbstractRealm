@@ -173,6 +173,8 @@
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.cpp" />
     <ClInclude Include="Meta\Meta.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Rendering.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Shaders.hpp" />
+    <ClInclude Include="Renderer\Shader\Shader.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -225,6 +227,7 @@
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.cpp" />
     <ClCompile Include="Meta\Meta.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Rendering.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Shaders.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="PAL\HAL\Vulkan\VaultedThermals\CMakeLists.txt" />

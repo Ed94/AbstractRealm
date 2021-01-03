@@ -49,7 +49,7 @@ namespace Core::IO
 	
 
 	using OpenFlags = 
-		Bitmask<EOpenFlag, std::ios::openmode>;
+		Bitfield<EOpenFlag, std::ios::openmode>;
 
 
 

@@ -22,6 +22,8 @@ Defines the Vulkan API used with the GPU_HAL.
 	//#define VT_Open_Vault_4
 	#include "VaultedThermals.hpp"
 
+	#include "glslang/SPIRV/GlslangToSpv.h"
+
 #endif
 
 

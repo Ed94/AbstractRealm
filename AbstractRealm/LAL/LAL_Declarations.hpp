@@ -20,11 +20,11 @@ static
 #define eGlobal \
 extern
 
-// Creates a static duration stack variable.
-#define sGlobal \
-static
+//// Creates a static duration stack variable.
+//#define sGlobal \
+//static
 
-// Defines a static member function or variable that is not bound to an instance of a class.
+// Defines a static member function or variable that is not bound to an instance of a class, or a static duration variable.
 #define unbound \
 static
 

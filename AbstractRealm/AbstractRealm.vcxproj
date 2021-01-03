@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -100,7 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Include;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedThermals\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedThermals\include;$(ProjectDir)PAL\ThirdParty\Libraries\glslang\out\install\x64-Debug %28default%29\include;$(VULKAN_SDK)\Include</AdditionalIncludeDirectories>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>true</MinimalRebuild>
@@ -108,8 +108,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Debug\src;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>version.lib;wbemuuid.lib;vulkan-1.lib;glfw3.lib;shaderc_combined.lib;infowared.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Debug\src;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\lib;$(VULKAN_SDK)\Lib;$(ProjectDir)PAL\ThirdParty\Libraries\glslang\out\install\x64-Debug %28default%29\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>version.lib;wbemuuid.lib;vulkan-1.lib;glfw3.lib;shaderc_combined.lib;infowared.lib;glslangd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <HeapReserveSize>3145728 </HeapReserveSize>
@@ -422,6 +422,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Shaders.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPU_Vulkan.hpp">
       <SubType>
       </SubType>
@@ -653,6 +654,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Renderer\Shader\Shader.hpp" />
     <ClInclude Include="Renderer\Shader\TriangleShader\TriangleShader.hpp">
       <SubType>
       </SubType>
@@ -738,6 +740,7 @@
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Rendering.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Resources.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Shaders.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />
