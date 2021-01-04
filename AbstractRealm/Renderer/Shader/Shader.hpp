@@ -32,6 +32,6 @@ namespace Renderer::Shader
 
 		ELanguage language;
 
-		Path shaderPath;
+		DynamicArray<Path> source;
 	};
 }

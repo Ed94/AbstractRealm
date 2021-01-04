@@ -82,6 +82,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnabled>false</VcpkgEnabled>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -414,6 +417,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Pipeline.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Rendering.hpp">
       <SubType>
       </SubType>
@@ -738,6 +742,7 @@
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Memory.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PayloadDeck.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.cpp" />
+    <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Pipeline.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Rendering.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Resources.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Shaders.cpp" />

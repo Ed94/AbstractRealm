@@ -24,16 +24,26 @@ namespace HAL::GPU::Vulkan
 		CreateInfo info;
 	};
 
+	// Supports only vertex and fragment shader pair.
 	class BasicShader
 	{
+		using ShaderStage = Pipeline::ShaderStage::CreateInfo;
+
 	public:
-		 BasicShader();
+		 BasicShader(const Path& _vertShader, const Path& _fragShader);
 		~BasicShader();
+
+		void Create(const Path& _vertShader, const Path& _fragShader);
+
+		//void Destroy();
+
+		ptr<const ShaderStage> GetShaderStages() const;
 
 
 	protected:
 
-
+		ShaderModule shaderModules[2];
+		ShaderStage  shaderStages[2];   // One for vertex and for fragment.
 	};
 
 

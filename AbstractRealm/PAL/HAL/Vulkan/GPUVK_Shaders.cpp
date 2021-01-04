@@ -10,6 +10,86 @@
 
 namespace HAL::GPU::Vulkan
 {
+#pragma region BasicShader
+
+	BasicShader::BasicShader(const Path& _vertShader, const Path& _fragShader)
+	{
+		Create(_vertShader, _fragShader);
+	}
+
+	BasicShader::~BasicShader()
+	{
+	}
+
+	void BasicShader::Create(const Path& _vertShader, const Path& _fragShader)
+	{
+		EResult result;
+
+		ShaderModule::CreateInfo info;
+
+		SPIR_V::Bytecode_Buffer bytecode;
+
+
+		// Vertex
+
+		auto& vertexModule = shaderModules[0];
+		auto& vertexStage  = shaderStages [0];
+
+		glslang::InitializeProcess();
+
+		if (! SPIR_V::CompileGLSL(_vertShader, EShaderStageFlag::Vertex, bytecode))
+		{
+			throw RuntimeError("Failed to compile GLSL to SPIR-V");
+		}
+
+		info.CodeSize = bytecode.size();
+		info.Code     = bytecode.data();
+
+		if (vertexModule.Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
+		{
+			throw RuntimeError("Failed to create vertex shader module.");
+		}
+
+		bytecode.clear();
+
+		vertexStage.Module = vertexModule;
+		vertexStage.Stage  = EShaderStageFlag::Vertex;
+
+
+		// Fragment
+
+		auto& fragModule = shaderModules[1];
+		auto& fragStage  = shaderStages [1];
+
+		if (!SPIR_V::CompileGLSL(_vertShader, EShaderStageFlag::Fragment, bytecode))
+		{
+			throw RuntimeError("Failed to compile GLSL to SPIR-V");
+		}
+
+		info.CodeSize = bytecode.size();
+		info.Code     = bytecode.data();
+
+		if (fragModule.Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
+		{
+			throw RuntimeError("Failed to create fragment shader module.");
+		}
+
+		bytecode.clear();
+		
+		fragStage.Module = fragModule;
+		fragStage.Stage  = EShaderStageFlag::Fragment;
+
+
+		glslang::FinalizeProcess();
+	}
+
+	ptr<Pipeline::ShaderStage::CreateInfo> BasicShader::GetShaderStages()
+	{
+		return shaderStages;
+	}
+
+#pragma endregion BasicShader
+
 	namespace SPIR_V
 	{
 		BuiltInResource Hardcoded_Resource;

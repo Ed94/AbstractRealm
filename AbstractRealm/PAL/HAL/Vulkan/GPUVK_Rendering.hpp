@@ -108,6 +108,12 @@ namespace HAL::GPU::Vulkan
 		DynamicArray< ptr<ARenderable>> Renderables;
 
 		ptr<GraphicsPipeline> Pipeline;
+
+		//EPrimitiveTopology Topology;
+
+		//Bool PrimitiveRestartEnable;
+
+		//ptr<RenderContext> context;
 	};
 
 	class RenderPass : public V3::RenderPass
@@ -231,6 +237,8 @@ namespace HAL::GPU::Vulkan
 		EResult Create(Swapchain& _swapChain);
 
 		void Destroy();
+
+		const RenderPass& GetRenderPass() const;
 
 		void ProcessNextFrame();
 

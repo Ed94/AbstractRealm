@@ -570,7 +570,7 @@
 				auto binding = Vertex::GetBindingDescription();
 				auto attributes = Vertex::GetAttributeDescriptions();
 
-				vertexInputState_CreationSpec.VertexBindingDescriptionCount = 1;
+				vertexInputState_CreationSpec.BindingDescriptionCount = 1;
 				vertexInputState_CreationSpec.AttributeDescriptionCount = SCast<ui32>(attributes.size());
 
 				vertexInputState_CreationSpec.BindingDescriptions = &binding;
