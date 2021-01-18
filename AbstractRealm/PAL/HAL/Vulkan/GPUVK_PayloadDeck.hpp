@@ -23,6 +23,8 @@ namespace HAL::GPU::Vulkan
 
 		const AllocateInfo& GetAllocateInfo() const { return info; }
 
+		using Parent::BindVertexBuffers;
+
 	protected:
 		AllocateInfo info;
 	};

@@ -10,6 +10,10 @@ Last Modified: 5/18/2020
 
 
 
+#include "LAL.hpp"
+
+
+
 // Macros
 
 // Macro: EComplationIntention:
@@ -35,6 +39,8 @@ Macro version of the compilation intention.
 
 namespace Meta
 {
+	using namespace LAL;
+
 	// Enums
 
 	enum class BitAccuracy
@@ -72,6 +78,14 @@ namespace Meta
 	{
 		return _accuracy == _accuracyT ? true : false;
 	}
+
+	template<BitAccuracy _accuracy>
+	using Choose_FloatAccuracy =
+	ChooseEither
+	<Meta::Is<BitAccuracy::_32_Bit>(_accuracy),
+		f32, 
+		f64
+	>;
 
 	constexpr ECompilationIntention BuildType = Meta_BuildType;
 }

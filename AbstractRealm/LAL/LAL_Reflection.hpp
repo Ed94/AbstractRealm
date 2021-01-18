@@ -59,6 +59,9 @@ namespace LAL
 	// Type Signage
 
 	template<typename Type>
+	using IsClassType = std::is_class<Type>;
+
+	template<typename Type>
 	using IsEnumType = std::is_enum<Type>;
 
 	template<typename Type>
@@ -81,6 +84,12 @@ namespace LAL
 
 
 	// Functions
+
+	template<typename Type>
+	constexpr bool IsClass()
+	{
+		return IsClassType<Type>::value;
+	}
 
 	template<typename Type>
 	constexpr bool IsEnum()

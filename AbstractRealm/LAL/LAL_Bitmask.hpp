@@ -68,7 +68,7 @@ namespace LAL
 	/**
 	@brief Returns false if bitmaskable is false (Default case).
 	*/
-	constexpr Where<!IsBitmaskable<Enum>::value, 
+	constexpr Where<! IsBitmaskable<Enum>::value, 
 	bool> Bitmaskable() noexcept
 	{
 		return false;

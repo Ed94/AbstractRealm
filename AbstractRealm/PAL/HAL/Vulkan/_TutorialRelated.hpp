@@ -47,7 +47,7 @@ namespace HAL::GPU
 			alignas(16) glm::mat4 Projection;
 		};
 
-		struct Vertex
+		struct Vertex_WTexture
 		{
 			using AttributeDescription = Pipeline::VertexInputState::AttributeDescription;
 			using BindingDescription = Pipeline::VertexInputState::BindingDescription;
@@ -88,7 +88,7 @@ namespace HAL::GPU
 				posAttrib.Binding  = 0;
 				posAttrib.Location = 0;
 				posAttrib.Format   = EFormat::R32_G32_B32_SFloat;
-				posAttrib.Offset   = (ui32) OffsetOf(Vertex::Position);
+				posAttrib.Offset   = (ui32) OffsetOf(Vertex_WTexture::Position);
 
 				// Color Attributes
 
@@ -97,7 +97,7 @@ namespace HAL::GPU
 				colorAttrib.Binding  = 0;
 				colorAttrib.Location = 1;
 				colorAttrib.Format   = EFormat::R32_G32_B32_SFloat;
-				colorAttrib.Offset   = (ui32) OffsetOf(Vertex::Color);
+				colorAttrib.Offset   = (ui32) OffsetOf(Vertex_WTexture::Color);
 
 				// Texture Coordinate Attributes
 
@@ -106,7 +106,7 @@ namespace HAL::GPU
 				texCoordAttrib.Binding  = 0;
 				texCoordAttrib.Location = 2;
 				texCoordAttrib.Format   = EFormat::R32_G32_SFloat;
-				texCoordAttrib.Offset   = (ui32) OffsetOf(Vertex::TextureCoordinates);
+				texCoordAttrib.Offset   = (ui32) OffsetOf(Vertex_WTexture::TextureCoordinates);
 
 				return result;
 			}
@@ -116,7 +116,7 @@ namespace HAL::GPU
 				BindingDescription result{};
 
 				result.Binding   = 0;
-				result.Stride    = sizeof(Vertex);
+				result.Stride    = sizeof(Vertex_WTexture);
 				result.InputRate = EVertexInputRate::Vertex;
 
 				return result;
@@ -127,23 +127,23 @@ namespace HAL::GPU
 
 		//StaticData
 		//(
-			multiDefs const DynamicArray<Vertex> TriangleVerticies = 
+			multiDefs const DynamicArray<Vertex_WColor> TriangleVerticies = 
 			{
 				{
-					{ 0.0f, -0.5f      }, 
+					{ 0.0f, -0.5f, 0.0f}, 
 					{ 1.0f,  0.0f, 0.0f}
 				},
 				{
-					{ 0.5f, 0.5f      }, 
+					{ 0.5f, 0.5f, 0.0f}, 
 					{ 0.0f, 1.0f, 0.0f}
 				},
 				{
-					{-0.5f, 0.5f      }, 
+					{-0.5f, 0.5f, 0.0f}, 
 					{ 0.0f, 0.0f, 1.0f}
 				}
 			};
 
-			multiDefs const DynamicArray<Vertex> SquareVerticies =
+			multiDefs const DynamicArray<Vertex_WTexture> SquareVerticies =
 			{
 				{
 					{ -0.5f, -0.5f, 0.0f }, 
@@ -194,7 +194,7 @@ namespace HAL::GPU
 				4, 5, 6, 6, 7, 4
 			};
 
-			eGlobal DynamicArray<Vertex> ModelVerticies;
+			eGlobal DynamicArray<Vertex_WTexture> ModelVerticies;
 			eGlobal DynamicArray<ui32  > ModelIndicies ;
 
 			multiDefs const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
@@ -208,7 +208,7 @@ namespace HAL::GPU
 			eGlobal Buffer VertexBuffer_Old      ;
 			eGlobal Memory VertexBufferMemory;
 
-			eGlobal Buffer IndexBuffer      ;
+			eGlobal Buffer IndexBuffer_Old      ;
 			eGlobal Memory IndexBufferMemory;
 
 			eGlobal DynamicArray<Buffer> UniformBuffers      ;

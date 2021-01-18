@@ -24,12 +24,23 @@ namespace HAL::GPU::Vulkan
 		CreateInfo info;
 	};
 
-	// Supports only vertex and fragment shader pair.
-	class BasicShader
+	class AShader
 	{
-		using ShaderStage = Pipeline::ShaderStage::CreateInfo;
-
 	public:
+
+		using ShaderStageInfo = Pipeline::ShaderStage::CreateInfo;
+
+		~AShader() {};
+
+		virtual const DynamicArray<ShaderStageInfo>& GetShaderStageInfos() const = NULL;
+	};
+
+	// Supports only vertex and fragment shader pair.
+	class BasicShader : public AShader
+	{
+	public:
+
+		 BasicShader();
 		 BasicShader(const Path& _vertShader, const Path& _fragShader);
 		~BasicShader();
 
@@ -37,13 +48,13 @@ namespace HAL::GPU::Vulkan
 
 		//void Destroy();
 
-		ptr<const ShaderStage> GetShaderStages() const;
+		implem  const DynamicArray<ShaderStageInfo>& GetShaderStageInfos() const;
 
 
 	protected:
 
-		ShaderModule shaderModules[2];
-		ShaderStage  shaderStages[2];   // One for vertex and for fragment.
+		ShaderModule    shaderModules[2];
+		ShaderStageInfo shaderStageInfos[2];   // One for vertex and for fragment.
 	};
 
 
@@ -123,8 +134,6 @@ namespace HAL::GPU::Vulkan
 
 		// Compiles GLSL to SPIR-V Bytecode.
 		// Note this is hardcoded to only link one shader for now.
-		bool CompileGLSL(Path& _path, const EShaderStageFlag _type, Bytecode_Buffer& _bytecode);
+		bool CompileGLSL(const Path& _path, const EShaderStageFlag _type, Bytecode_Buffer& _bytecode);
 	}
-
-	
 }

@@ -74,7 +74,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Science;$(ProjectDir)Science\Math;$(ProjectDir)Science\Navigation;$(ProjectDir)Resource;$(ProjectDir)Resource\Mesh;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -396,6 +396,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\GPU_HAL_Resource.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.cpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PayloadDeck.hpp">
@@ -671,6 +672,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Resource\Resource_General.hpp" />
     <ClInclude Include="Resource\Mesh\Mesh_Primitives.hpp">
       <SubType>
       </SubType>
@@ -684,31 +686,31 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Simulation\Math\Constants.hpp">
+    <ClInclude Include="Science\Math\Constants.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Simulation\Math\Vec2D_F.hpp">
+    <ClInclude Include="Science\Math\Vec2D_F.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Simulation\Math\Vec2D_I.hpp">
+    <ClInclude Include="Science\Math\Vec2D_I.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Simulation\Math\Vector3D.hpp">
+    <ClInclude Include="Science\Math\Vector3D.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Simulation\Observer.hpp">
+    <ClInclude Include="Science\Observer.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Simulation\Space.hpp">
+    <ClInclude Include="Science\Space.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Simulation\Units.hpp">
+    <ClInclude Include="Science\Units.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -718,6 +720,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="PAL\HAL\Vulkan\GPUVK_Resources.tpp" />
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
   </ItemGroup>
   <ItemGroup>

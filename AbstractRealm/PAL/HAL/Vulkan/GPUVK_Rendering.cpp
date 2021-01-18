@@ -6,6 +6,28 @@
 
 namespace HAL::GPU::Vulkan
 {
+	void (*TestCallback)
+	(
+		int index,
+		const CommandBuffer& _buffer,
+		Framebuffer::Handle _frameBuffer,
+		ptr<const Swapchain> _swap,
+		RenderPass::BeginInfo _beginInfo
+	);
+
+	void SetTestCallback(void (*_recordToBuffers)
+	(
+		int index,
+		const CommandBuffer& _buffer,
+		Framebuffer::Handle _frameBuffer,
+		ptr<const Swapchain> _swap,
+		RenderPass::BeginInfo _beginInfo
+	)
+	)
+	{
+		TestCallback = _recordToBuffers;
+	}
+
 
 
 #pragma region Surface
@@ -369,7 +391,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult Swapchain::GenerateViews()
 	{
-		ImageView::CreateInfo viewInfo {};
+		ImageView::CreateInfo viewInfo;
 
 		viewInfo.Format   = info.ImageFormat         ;
 		viewInfo.ViewType = ImageView::EViewType::_2D;
@@ -558,6 +580,31 @@ namespace HAL::GPU::Vulkan
 
 		Fence::CreateInfo fenceInfo; fenceInfo.Flags.Set(EFenceCreateFlag::Signaled);
 
+		// Will always have at least one view context.
+		viewContexts.resize(1);
+
+		Viewport viewport;
+
+		const auto& swapExtent = _swapChain.GetExtent();
+
+		viewport.Height   = swapExtent.Height;
+		viewport.Width    = swapExtent.Width;
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		viewport.X        = 0;
+		viewport.Y        = 0;
+
+		viewContexts[0].SetViewport(viewport);
+
+		Rect2D scissor;
+
+		scissor.Offset.X = 0;
+		scissor.Offset.Y = 0;
+
+		scissor.Extent = swapExtent;
+
+		viewContexts[0].SetScissor(scissor);
+
 		return result;
 	}
 
@@ -575,6 +622,57 @@ namespace HAL::GPU::Vulkan
 		depthBuffer.memory.Free();
 
 		depthBuffer.view.Destroy();
+	}
+
+	void RenderContext::AddRenderable(ptr<ARenderable> _renderable)
+	{
+		// Check if existing group is compatible.
+		// Check if already in group
+		// If not compatible with an existing group, make a new group and / or graphics pipeline.
+
+		if (renderGroups.empty())
+		{
+			renderGroups.resize(1);
+
+			renderGroups.back().Pipeline = getAddress(Request_GraphicsPipeline(_renderable));
+
+			renderGroups.back().Renderables.push_back(_renderable);
+
+			return;
+		}
+		else
+		{
+			for (auto& renderGroup : renderGroups)
+			{
+				for (auto renderable : renderGroup.Renderables)
+				{
+					if (renderable == _renderable)
+					{
+						return;
+					}
+				}
+
+				if (renderGroup.Pipeline == getAddress(Request_GraphicsPipeline(_renderable)))
+				{
+					renderGroup.Renderables.push_back(_renderable);
+
+					return;
+				}
+			}
+
+			renderGroups.resize(renderGroups.size() + 1);
+
+			renderGroups.back().Pipeline = getAddress(Request_GraphicsPipeline(_renderable));
+
+			renderGroups.back().Renderables.push_back(_renderable);
+
+			return;
+		}
+	}
+
+	const RenderPass& RenderContext::GetRenderPass() const
+	{
+		return renderPass;
 	}
 
 	void RenderContext::ProcessNextFrame()
@@ -612,8 +710,10 @@ namespace HAL::GPU::Vulkan
 		// Set the current swap image fence to that of the frame queue fence.
 		swapsInFlight[currentSwap] = &frameRef.RenderingInFlight();
 
+		clearValues[0].Color = { 0.1f, 0.1f, 0.2f, 0.2f };
+
 		// Prep the ClearValue for the render pass...
-		switch (currentFrameBuffer)
+		/*switch (currentFrameBuffer)
 		{ 
 			case 0: clearValues[0].Color = { 1.0f, 0.0f, 0.0f, 1.0f }; break;
 			case 1: clearValues[0].Color = { 0.0f, 1.0f, 0.0f, 1.0f }; break;
@@ -624,7 +724,7 @@ namespace HAL::GPU::Vulkan
 
 				break;    
 			}
-		}
+		}*/
 
 		if (bufferDepth) 
 		{
@@ -647,6 +747,28 @@ namespace HAL::GPU::Vulkan
 			primaryBuffer.BeginRecord(cmdBeginInfo);
 
 			primaryBuffer.BeginRenderPass(beginInfo, ESubpassContents::Inline);
+
+			//TestCallback
+			//(currentSwap, primaryBuffer, beginInfo.Framebuffer, swapchain, beginInfo);
+
+			 //Renderables handled here..
+
+			for (auto& viewContext : viewContexts)
+			{
+				viewContext.Prepare(primaryBuffer);
+
+				for (auto& renderGroup : renderGroups)
+				{
+					primaryBuffer.BindPipeline(EPipelineBindPoint::Graphics, dref(renderGroup.Pipeline));
+
+					for (auto& renderable : renderGroup.Renderables)
+					{
+						renderable->RecordRender(primaryBuffer);
+					}
+				}
+
+				//viewContext.Render(primaryBuffer);
+			}
 
 			primaryBuffer.EndRenderPass();
 
@@ -757,6 +879,8 @@ namespace HAL::GPU::Vulkan
 			result = CreateFramebuffers();
 
 			if (result != EResult::Success) throw RuntimeError("Failed to recreate frame renderer in context.");
+
+			// Adjust view contexts to the new relative size of the swapchain.
 		}
 	}
 
@@ -900,12 +1024,12 @@ namespace HAL::GPU::Vulkan
 			depthAttachment.Samples = samples;
 
 			depthAttachment.LoadOp = shouldClear ? EAttachmentLoadOperation::Clear : EAttachmentLoadOperation::DontCare;
-			depthAttachment.StoreOp = EAttachmentStoreOperation::Store;
+			depthAttachment.StoreOp = EAttachmentStoreOperation::DontCare;
 
-			depthAttachment.StencilLoadOp = EAttachmentLoadOperation::Load;
-			depthAttachment.StencilStoreOp = EAttachmentStoreOperation::Store;
+			depthAttachment.StencilLoadOp  = EAttachmentLoadOperation::DontCare;
+			depthAttachment.StencilStoreOp = EAttachmentStoreOperation::DontCare;
 
-			depthAttachment.InitialLayout = EImageLayout::DepthStencil_AttachmentOptimal;
+			depthAttachment.InitialLayout = EImageLayout::Undefined;
 			depthAttachment.FinalLayout   = EImageLayout::DepthStencil_AttachmentOptimal;
 
 			attachments.push_back(depthAttachment);
@@ -928,18 +1052,30 @@ namespace HAL::GPU::Vulkan
 		subpass.PipelineBindPoint = EPipelineBindPoint::Graphics;
 
 		subpass.ColorAttachmentCount = 1;
-		subpass.ColorAttachments = &colorReference;
+		subpass.ColorAttachments     = &colorReference;
 
 		subpass.DepthStencilAttachment = bufferDepth ? &depthReference : nullptr;
 
 		info.AttachmentCount = SCast<ui32>(attachments.size());
-		info.Attachments = attachments.data();
+		info.Attachments     = attachments.data();
 
 		info.SubpassCount = 1;
-		info.Subpasses = &subpass;
+		info.Subpasses    = &subpass;
 
-		info.DependencyCount = 0;
-		info.Dependencies = nullptr;
+		RenderPass::SubpassDependency dependency;
+
+		dependency.SourceSubpass      = VK_SUBPASS_EXTERNAL;
+		dependency.DestinationSubpass = 0;
+
+		dependency.SourceStageMask.Set(EPipelineStageFlag::ColorAttachmentOutput);
+
+		dependency.SourceAccessMask = 0;
+
+		dependency.DestinationStageMask .Set(EPipelineStageFlag::ColorAttachmentOutput);
+		dependency.DestinationAccessMask.Set(EAccessFlag::ColorAttachmentWrite);
+
+		info.DependencyCount = 1;
+		info.Dependencies    = &dependency;
 
 		EResult result = renderPass.Create(GPU_Comms::GetEngagedDevice(), info);
 
@@ -964,7 +1100,108 @@ namespace HAL::GPU::Vulkan
 		return result;
 	}
 
+	GraphicsPipeline& RenderContext::Request_GraphicsPipeline(ptr<ARenderable> _renderable)
+	{
+		// Check if existing pipeline meets criteria
+
+		// If criteria not met, create a new pipeline.
+
+		if (graphicsPipelines.empty())
+		{
+			graphicsPipelines.resize(1);
+
+			graphicsPipelines.back().Create
+			(
+				renderPass, 
+				_renderable->GetShader(), 
+				_renderable->GetVertexAttributes(), 
+				_renderable->GetVertexBindings(), 
+				bufferDepth
+			);
+
+			return graphicsPipelines.back();
+		}
+		else
+		{
+			for (auto& graphicsPipeline : graphicsPipelines)
+			{
+				if 
+				(
+					_renderable->GetShader()->GetShaderStageInfos().data() == graphicsPipeline.GetShaderStages()                           &&
+					_renderable->GetVertexAttributes()             .data() == graphicsPipeline.GetVertexInputState().AttributeDescriptions &&
+					_renderable->GetVertexBindings()               .data() == graphicsPipeline.GetVertexInputState().BindingDescriptions
+				)
+				{
+					return graphicsPipeline;
+				}
+			}
+
+			graphicsPipelines.resize(graphicsPipelines.size() + 1);
+
+			graphicsPipelines.back().Create
+			(
+				renderPass, 
+				_renderable->GetShader(), 
+				_renderable->GetVertexAttributes(), 
+				_renderable->GetVertexBindings(), 
+				true
+			);
+
+			return graphicsPipelines.back();
+		}
+	}
+
 #pragma endregion RenderContext
+
+
+
+#pragma region ViewContext
+
+	ViewContext::ViewContext()
+	{
+		//viewport.Height = 
+	}
+
+	ViewContext::~ViewContext()
+	{
+	}
+
+	void ViewContext::SetViewport(const Viewport& _viewport)
+	{
+		viewport = _viewport;
+	}
+
+	void ViewContext::SetScissor(const Rect2D& _scissor)
+	{
+		scissor = _scissor;
+	}
+
+	//
+
+	void ViewContext::Prepare(const CommandBuffer& _commandbuffer)
+	{
+		_commandbuffer.SetViewport(viewport);
+		_commandbuffer.SetScissor(scissor);
+	}
+
+	void ViewContext::Render(const CommandBuffer& _commandBuffer)
+	{
+	}
+
+	void ViewContext::SetupScissor()
+	{
+	}
+
+	void ViewContext::SetupViewport()
+	{
+	}
+
+	void ViewContext::SetupView()
+	{
+	}
+
+#pragma endregion ViewContext
+
 
 
 	ESubmissionType SubmissionMode = ESubmissionType::Individual;

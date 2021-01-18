@@ -30,23 +30,29 @@ namespace HAL::GPU::Vulkan
 
 #pragma region GraphicsPipeline
 
-	void GraphicsPipeline::Create(const RenderContext& _renderContext, const BasicShader& _shader, bool UseVertexInput, Bool Enable_Depth)
+	void GraphicsPipeline::Create
+	(
+		const RenderPass&                         _renderPass       , 
+		      ptr<const AShader>                  _shader              , 
+		      DynamicArray<AttributeDescription>& _attributeDescriptions,
+		      DynamicArray<BindingDescription  >& _bindingDescriptions  ,
+		      Bool                                _enableDepthClamp
+	)
 	{
-		// Need a renderable object first...
-		VertexInputState::CreateInfo vertexInputStateInfo;
+		// Vertex Input State
 
-		vertexInputStateInfo.BindingDescriptionCount = 0;   
-		vertexInputStateInfo.BindingDescriptions     = nullptr;   
+		vertexInputStateInfo.BindingDescriptionCount = _bindingDescriptions.size();   
+		vertexInputStateInfo.BindingDescriptions     = _bindingDescriptions.data();   
 
-		vertexInputStateInfo.AttributeDescriptionCount = 0; 
-		vertexInputStateInfo.AttributeDescription      = nullptr;
+		vertexInputStateInfo.AttributeDescriptionCount = _attributeDescriptions.size(); 
+		vertexInputStateInfo.AttributeDescriptions     = _attributeDescriptions.data();
 
-		InputAssemblyState::CreateInfo inputAssemblyStateInfo;
+		// Input Assembly State
 
 		inputAssemblyStateInfo.Topology               = EPrimitiveTopology::TriangleList;
 		inputAssemblyStateInfo.PrimitiveRestartEnable = EBool::False;
 
-		ViewportState::CreateInfo viewportStateInfo;
+		// Viewport State
 
 		// Hardcoded for now to 1...
 
@@ -55,7 +61,7 @@ namespace HAL::GPU::Vulkan
 		viewportStateInfo.ScissorCount  = 1;
 		viewportStateInfo.Scissors      = nullptr;
 
-		MultiSampleState::CreateInfo multisampleStateInfo;
+		// Multisample State
 
 		multisampleStateInfo.RasterizationSamples  = ESampleCount::_1;
 		multisampleStateInfo.EnableSampleShading   = EBool::False;
@@ -63,10 +69,10 @@ namespace HAL::GPU::Vulkan
 		multisampleStateInfo.EnableAlphaToCoverage = EBool::False;
 		multisampleStateInfo.EnableAlphaToOne      = EBool::False;
 
-		DepthStencilState::CreateInfo depthStencilStateInfo;
+		// Depth Stencil State
 
-		depthStencilStateInfo.DepthTestEnable       = Enable_Depth;
-		depthStencilStateInfo.DepthWriteEnable      = Enable_Depth;
+		depthStencilStateInfo.DepthTestEnable       = _enableDepthClamp;
+		depthStencilStateInfo.DepthWriteEnable      = _enableDepthClamp;
 		depthStencilStateInfo.DepthCompareOp        = ECompareOperation::Less;
 		depthStencilStateInfo.DepthBoundsTestEnable = EBool::False;
 
@@ -83,7 +89,7 @@ namespace HAL::GPU::Vulkan
 		depthStencilStateInfo.MinDepthBounds = 0;
 		depthStencilStateInfo.MaxDepthBounds = 0;
 
-		ColorBlendState::AttachmentState colorBlendAttachmentState;
+		// Color Blend Attachment State
 
 		colorBlendAttachmentState.EnableBlend                  = EBool::False;
 		colorBlendAttachmentState.Source_ColorBlendFactor      = EBlendFactor::Zero;
@@ -101,7 +107,7 @@ namespace HAL::GPU::Vulkan
 			EColorComponentFlag::A
 		);
 
-		ColorBlendState::CreateInfo colorBlendStateInfo;
+		// Color Blend State
 
 		colorBlendStateInfo.EnableLogicOperations = EBool::False;
 		colorBlendStateInfo.LogicOperation        = ELogicOperation::Copy;
@@ -112,10 +118,10 @@ namespace HAL::GPU::Vulkan
 		colorBlendStateInfo.BlendConstants[2]     = 0.0f;
 		colorBlendStateInfo.BlendConstants[3]     = 0.0f;
 
-		RasterizationState::CreateInfo rasterizationStateInfo;
+		// Rasterization State
 
-		rasterizationStateInfo.EnableDepthClamp = Enable_Depth;
-		rasterizationStateInfo.PolygonMode      = EPolygonMode::Fill;
+		rasterizationStateInfo.EnableDepthClamp = _enableDepthClamp;
+		rasterizationStateInfo.PolygonMode      = EPolygonMode::Line;
 
 		rasterizationStateInfo.CullMode.Set(ECullModeFlag::Back);
 
@@ -127,21 +133,33 @@ namespace HAL::GPU::Vulkan
 		rasterizationStateInfo.DepthBiasSlopeFactor    = 0;
 		rasterizationStateInfo.LineWidth               = 1.0f;
 
+		// Dynamic States
+
 		// Hardcoded to viewport and scissor for now (although almost if not all 3d rendered objects will need these.
-		StaticArray<EDynamicState, 2> enabledDynamicStates = 
+		enabledDynamicStates = 
 		{ 
 			EDynamicState::Viewport, 
 			EDynamicState::Scissor 
 		};
 
-		DynamicState::CreateInfo dynamicStateInfo;
-
 		dynamicStateInfo.StateCount = enabledDynamicStates.size();
 		dynamicStateInfo.States     = enabledDynamicStates.data();
 
+		// Layout
 
-		info.StageCount         = 2;   // BasicSahder only has 2 shader stages.
-		info.Stages             = _shader.GetShaderStages();
+		Layout::CreateInfo layoutInfo;
+
+
+
+		if (layout.Create(GPU_Comms::GetEngagedDevice(), layoutInfo) != EResult::Success)
+		{
+			throw RuntimeError("Could not create pipeline layout.");
+		}
+
+
+
+		info.StageCount         = _shader->GetShaderStageInfos().size();   // BasicSahder only has 2 shader stages.
+		info.Stages             = _shader->GetShaderStageInfos().data();
 		info.VertexInputState   = getAddress(vertexInputStateInfo);
 		info.InputAssemblyState = getAddress(inputAssemblyStateInfo);
 		info.TessellationState  = nullptr;   // None for now...
@@ -151,17 +169,36 @@ namespace HAL::GPU::Vulkan
 		info.ColorBlendState    = getAddress(colorBlendStateInfo);
 		info.RasterizationState = getAddress(rasterizationStateInfo);
 		info.DynamicState       = getAddress(dynamicStateInfo);
-		info.Layout             = Null<Layout::Handle>;
-		info.RenderPass         = _renderContext.GetRenderPass();
+		info.Layout             = layout;
+		info.RenderPass         = _renderPass;
 		info.Subpass            = 0;   // Why?
 		info.BasePipelineHandle = Null<Handle>;
 		info.BasePipelineIndex  = 0;
 
-		if (Parent::Create(GPU_Comms::GetEngagedDevice(), cache, info) != EResult::Success)
+		if (Parent::Create(GPU_Comms::GetEngagedDevice(), GPU_Pipeline::Request_Cache(), info) != EResult::Success)
 		{
 			throw RuntimeError("Could not create graphics pipeline.");
 		}
 	}
 
+	ptr<const GraphicsPipeline::ShaderStage::CreateInfo> GraphicsPipeline::GetShaderStages() const
+	{
+		return info.Stages;
+	}
+
+	const GraphicsPipeline::VertexInputState::CreateInfo& GraphicsPipeline::GetVertexInputState() const
+	{
+		return vertexInputStateInfo;
+	}
+
 #pragma endregion GraphicsPipeline
+
+#pragma region GPU_Pipeline
+
+const PipelineCache& GPU_Pipeline::Request_Cache()
+{
+	return cache;
+}
+
+#pragma endregion GPU_Pipeline
 }

@@ -4,11 +4,6 @@
     <ClInclude Include="LAL\LAL.hpp" />
     <ClInclude Include="Core\Execution\Executer.hpp" />
     <ClInclude Include="Core\Memory\MemTypes.hpp" />
-    <ClInclude Include="Simulation\Math\Vector3D.hpp" />
-    <ClInclude Include="Simulation\Math\Vec2D_I.hpp" />
-    <ClInclude Include="Simulation\Math\Vec2D_F.hpp" />
-    <ClInclude Include="Simulation\Units.hpp" />
-    <ClInclude Include="Simulation\Math\Constants.hpp" />
     <ClInclude Include="PAL\HAL\Audio_HAL.hpp" />
     <ClInclude Include="PAL\SAL\GLFW_SAL.hpp" />
     <ClInclude Include="PAL\SAL\GLM_SAL.hpp" />
@@ -145,8 +140,6 @@
     <ClInclude Include="Renderer\Window.hpp" />
     <ClInclude Include="Renderer\Display.hpp" />
     <ClInclude Include="Renderer\Camera.hpp" />
-    <ClInclude Include="Simulation\Observer.hpp" />
-    <ClInclude Include="Simulation\Space.hpp" />
     <ClInclude Include="Core\Events\EventMngr.hpp" />
     <ClInclude Include="Core\Objects\ObjectMngr.hpp" />
     <ClInclude Include="Core\Objects\Object.hpp" />
@@ -176,9 +169,19 @@
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Shaders.hpp" />
     <ClInclude Include="Renderer\Shader\Shader.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Pipeline.hpp" />
+    <ClInclude Include="PAL\HAL\GPU_HAL_Resource.hpp" />
+    <ClInclude Include="Resource\Resource_General.hpp" />
+    <ClInclude Include="Science\Math\Constants.hpp" />
+    <ClInclude Include="Science\Math\Vec2D_F.hpp" />
+    <ClInclude Include="Science\Math\Vec2D_I.hpp" />
+    <ClInclude Include="Science\Math\Vector3D.hpp" />
+    <ClInclude Include="Science\Observer.hpp" />
+    <ClInclude Include="Science\Space.hpp" />
+    <ClInclude Include="Science\Units.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
+    <None Include="PAL\HAL\Vulkan\GPUVK_Resources.tpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PAL\HAL\HAL.cpp" />

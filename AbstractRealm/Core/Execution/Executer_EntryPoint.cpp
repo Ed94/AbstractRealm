@@ -125,7 +125,7 @@ namespace Core::Execution
 
 			OSAL::SetWindow_SizeChangeCallback(StaticData::EngineWindow, WindowSizeChanged);
 
-			windowSpec.WindowTitle = "Clear Color Demo";
+			windowSpec.WindowTitle = "Triangle Demo";
 
 			DemoWindow = OSAL::Create_Window(windowSpec);
 
@@ -133,7 +133,7 @@ namespace Core::Execution
 
 			HAL::GPU::Default_InitializeRenderer(StaticData::EngineWindow);
 
-			HAL::GPU::Vulkan::Start_ClearColorDemo(DemoWindow);
+			HAL::GPU::Vulkan::Start_TriangleDemo(DemoWindow);
 
 			Imgui::Initialize(StaticData::EngineWindow);
 
@@ -147,7 +147,7 @@ namespace Core::Execution
 
 			Imgui::Deinitialize();
 
-			HAL::GPU::Vulkan::Stop_ClearColorDemo();
+			HAL::GPU::Vulkan::Stop_TriangleDemo();
 
 			HAL::GPU::Default_DeinitializeRenderer(StaticData::EngineWindow);
 

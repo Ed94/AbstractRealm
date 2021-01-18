@@ -12,11 +12,11 @@ Think about: Should I just make these templated? (That way there is one class de
 
 
 
-#include "Simulation/Units.hpp"
+#include "Science/Units.hpp"
 
 
 
-namespace Sim::Math
+namespace Sci::Math
 {
 	/*
 	2-Dimensional Vector

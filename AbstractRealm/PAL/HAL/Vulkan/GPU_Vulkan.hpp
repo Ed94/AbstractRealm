@@ -86,11 +86,11 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 		#pragma region Temp
 
-			void Start_ClearColorDemo(ptr<OSAL::Window> _window);
+			void Start_TriangleDemo(ptr<OSAL::Window> _window);
 
 			void Render();
 
-			void Stop_ClearColorDemo();
+			void Stop_TriangleDemo();
 
 			void Present();
 
