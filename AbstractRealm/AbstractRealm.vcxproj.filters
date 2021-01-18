@@ -67,7 +67,6 @@
     <ClInclude Include="LAL\LAL_Thread.hpp" />
     <ClInclude Include="LAL\LAL_Casting.hpp" />
     <ClInclude Include="LAL\LAL_Cpp_STL.hpp" />
-    <ClInclude Include="LAL\LAL_Bitmask.hpp" />
     <ClInclude Include="LAL\LAL_CharacterTypes.hpp" />
     <ClInclude Include="LAL\LAL_FundamentalLimits.hpp" />
     <ClInclude Include="LAL\LAL_FundamentalTypes.hpp" />
@@ -178,6 +177,7 @@
     <ClInclude Include="Science\Observer.hpp" />
     <ClInclude Include="Science\Space.hpp" />
     <ClInclude Include="Science\Units.hpp" />
+    <ClInclude Include="LAL\LAL_Bitfield.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />

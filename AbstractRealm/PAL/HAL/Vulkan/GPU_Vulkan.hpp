@@ -27,15 +27,15 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 
 
-#if VulkanAPI_Interface == VaultedThermals_Interface
+#if VulkanAPI_Interface == VaultedVulkan_Interface
 
 	namespace HAL::GPU
 	{
 		namespace Vulkan
 		{
-			using namespace VT        ;
-			using namespace VT::V3    ;
-			using namespace VT::SPIR_V;
+			using namespace VV        ;
+			using namespace VV::V3    ;
+			using namespace VV::SPIR_V;
 
 			using namespace LAL ;
 			using namespace Meta;

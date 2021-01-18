@@ -534,7 +534,7 @@ namespace HAL::GPU::Vulkan
 		region.ImageExtent.Height = _height;
 		region.ImageExtent.Depth  = 1;
 
-		buffer.CopyBufferToImage(stagingBuffer, image, VT::Corridors::EImageLayout::TransferDestination_Optimal, 1, &region);
+		buffer.CopyBufferToImage(stagingBuffer, image, EImageLayout::TransferDestination_Optimal, 1, &region);
 
 		Deck::EndRecordOnTransient(buffer);
 

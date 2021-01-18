@@ -16,7 +16,7 @@
 
 #include "Dev/Console.hpp"
 
-#if VulkanAPI_Interface == VaultedThermals_Interface
+#if VulkanAPI_Interface == VaultedVulkan_Interface
 
 	namespace HAL::GPU
 	{
@@ -279,7 +279,7 @@
 				region.ImageExtent.Height = _height;
 				region.ImageExtent.Depth  = 1      ;
 
-				commandBuffer.CopyBufferToImage(_buffer, _image, VT::Corridors::EImageLayout::TransferDestination_Optimal, 1, &region);
+				commandBuffer.CopyBufferToImage(_buffer, _image, EImageLayout::TransferDestination_Optimal, 1, &region);
 				
 				SingleTimeCommandPool.EndSingleTimeCommands(commandBuffer);
 			}

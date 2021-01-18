@@ -110,9 +110,9 @@ namespace HAL::GPU::Vulkan
 		using LinkerUnit      = glslang::TProgram;
 		using BuiltInResource = TBuiltInResource;
 
-		using VT::SPIR_V::Bytecode_Buffer;
+		using VV::SPIR_V::Bytecode_Buffer;
 
-		using MessageFlags = VT::V0::Bitfield<EMessageFlag, ui32>;
+		using MessageFlags = VV::V0::Bitfield<EMessageFlag, ui32>;
 
 		
 
