@@ -44,6 +44,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <VCToolsVersion>14.28.29333</VCToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -51,6 +52,7 @@
     <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <VCToolsVersion>14.28.29333</VCToolsVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -75,6 +77,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Science;$(ProjectDir)Science\Math;$(ProjectDir)Science\Navigation;$(ProjectDir)Resource;$(ProjectDir)Resource\Mesh;$(IncludePath)</IncludePath>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -104,10 +107,12 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedVulkan\include;$(VULKAN_SDK)\Include</AdditionalIncludeDirectories>
-      <SuppressStartupBanner>false</SuppressStartupBanner>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>true</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,6 +161,10 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -623,22 +632,22 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\SAL\ImGui_SAL.hpp" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\LockLessMultiReadPipe.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imconfig.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui_internal.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_rectpack.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_textedit.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_truetype.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\Library.hpp">
+    <ClInclude Include="PAL\SAL\Libraries\enkiTS\src\LockLessMultiReadPipe.h" />
+    <ClInclude Include="PAL\SAL\Libraries\enkiTS\src\TaskScheduler.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\examples\imgui_impl_glfw.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\examples\imgui_impl_vulkan.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imconfig.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imgui.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imgui_internal.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imstb_rectpack.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imstb_textedit.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imstb_truetype.h" />
+    <ClInclude Include="PAL\SAL\Libraries\Library.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\ThirdParty\Libraries\magic_enum\include\magic_enum.hpp" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\stb\stb_image.h" />
+    <ClInclude Include="PAL\SAL\Libraries\magic_enum\include\magic_enum.hpp" />
+    <ClInclude Include="PAL\SAL\Libraries\stb\stb_image.h" />
     <ClInclude Include="Renderer\Camera.hpp">
       <SubType>
       </SubType>
@@ -763,13 +772,13 @@
     <ClCompile Include="PAL\OSAL\OSAL_Windowing.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
     <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_demo.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_draw.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\enkiTS\src\TaskScheduler.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\imgui.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\imgui_demo.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Resource\Mesh\Mesh_Primitives.cpp" />
     <ClCompile Include="Resource\Texture\Texture.cpp" />

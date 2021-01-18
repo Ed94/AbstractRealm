@@ -16,7 +16,6 @@
     <ClInclude Include="Meta\EngineInfo.hpp" />
     <ClInclude Include="Meta\Specification.hpp" />
     <ClInclude Include="Meta\Config\Overrides.hpp" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\Library.hpp" />
     <ClInclude Include="PAL\PAL.hpp" />
     <ClInclude Include="PAL\HAL\HAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\Vulkan_API.hpp" />
@@ -26,7 +25,6 @@
     <ClInclude Include="Meta\Config\HAL_Config.hpp" />
     <ClInclude Include="Meta\Config\OSAL_Config.hpp" />
     <ClInclude Include="PAL\HAL\GPU_HAL_CoreDefs.hpp" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\stb\stb_image.h" />
     <ClInclude Include="Renderer\Shader\VKTut\VKTut.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\_TutorialRelated.hpp" />
     <ClInclude Include="Core\Dev\Console.hpp" />
@@ -35,14 +33,6 @@
     <ClInclude Include="PAL\OSAL\OSAL_Backend.hpp" />
     <ClInclude Include="PAL\HAL\HAL_Backend.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_EntryPoint.hpp" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imconfig.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui_internal.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_rectpack.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_textedit.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imstb_truetype.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.h" />
     <ClInclude Include="User\User.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_Platform.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_Threading.hpp" />
@@ -52,8 +42,6 @@
     <ClInclude Include="Core\Execution\Cycler.hpp" />
     <ClInclude Include="Core\Execution\MasterExecution.hpp" />
     <ClInclude Include="Core\Concurrency\CyclerPool.hpp" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\LockLessMultiReadPipe.h" />
     <ClInclude Include="PAL\SAL\EnkiTS_SAL.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Comms.hpp" />
     <ClInclude Include="LAL\LAL_Declarations.hpp" />
@@ -159,7 +147,6 @@
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Resource.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\VaultedThermals\include\VaultedThermals\VTGPU_Comms_Implementation.hpp" />
     <ClInclude Include="Core\Memory\MemTracking.hpp" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\magic_enum\include\magic_enum.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PhysicalDevice.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.cpp" />
@@ -178,6 +165,19 @@
     <ClInclude Include="Science\Space.hpp" />
     <ClInclude Include="Science\Units.hpp" />
     <ClInclude Include="LAL\LAL_Bitfield.hpp" />
+    <ClInclude Include="PAL\SAL\Libraries\enkiTS\src\LockLessMultiReadPipe.h" />
+    <ClInclude Include="PAL\SAL\Libraries\enkiTS\src\TaskScheduler.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\examples\imgui_impl_glfw.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\examples\imgui_impl_vulkan.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imconfig.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imgui.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imgui_internal.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imstb_rectpack.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imstb_textedit.h" />
+    <ClInclude Include="PAL\SAL\Libraries\imgui\imstb_truetype.h" />
+    <ClInclude Include="PAL\SAL\Libraries\magic_enum\include\magic_enum.hpp" />
+    <ClInclude Include="PAL\SAL\Libraries\stb\stb_image.h" />
+    <ClInclude Include="PAL\SAL\Libraries\Library.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
@@ -200,12 +200,6 @@
     <ClCompile Include="PAL\OSAL\OSAL_Console.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Backend.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_EntryPoint.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_demo.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_draw.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Threading.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Timing.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Windowing.cpp" />
@@ -214,7 +208,6 @@
     <ClCompile Include="Core\Execution\MasterExecution.cpp" />
     <ClCompile Include="Core\Execution\Executer_EntryPoint.cpp" />
     <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
     <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="LAL\LAL_IO.cpp" />
@@ -233,6 +226,13 @@
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Rendering.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Shaders.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Pipeline.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\enkiTS\src\TaskScheduler.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\imgui.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\imgui_demo.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="PAL\SAL\Libraries\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="PAL\HAL\Vulkan\VaultedThermals\CMakeLists.txt" />

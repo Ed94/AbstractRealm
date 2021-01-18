@@ -35,7 +35,7 @@ namespace SAL::GLFW
 
 	using namespace LAL;
 	using namespace OSAL;
-	using namespace VT;
+	using namespace VV;
 
 
 
