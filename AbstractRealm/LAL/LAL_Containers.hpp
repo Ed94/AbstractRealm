@@ -28,6 +28,6 @@ namespace LAL
 	template<typename KeyType, typename ValueType>
 	using Map = std::map<KeyType, ValueType>;
 
-	template<typename Type, WordSize NumberOfElements>
+	template<typename Type, uDM NumberOfElements>
 	using StaticArray = std::array<Type, NumberOfElements>;
 }

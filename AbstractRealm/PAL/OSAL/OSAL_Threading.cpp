@@ -6,7 +6,7 @@
 namespace OSAL
 {
 	StaticData()
-		ui32 NumberOfLogicalCores;
+		u32 NumberOfLogicalCores;
 		
 
 	
@@ -19,14 +19,14 @@ namespace OSAL
 			threads.resize(NumberOfLogicalCores - 1);
 		}
 
-		void ThreadManager::DecommissionThread(WordSize _handle)
+		void ThreadManager::DecommissionThread(uDM _handle)
 		{
 			threads.at(_handle - 1).join();
 		}
 
-		WordSize ThreadManager::GetNumOfActiveThreads()
+		uDM ThreadManager::GetNumOfActiveThreads()
 		{
-			WordSize num = 0;
+			uDM num = 0;
 
 			for (; num < threads.size(); num++)
 			{
@@ -46,9 +46,9 @@ namespace OSAL
 
 	void GenerateThreads() { Backend::ThreadPool().GenerateThreads(); }
 
-	WordSize GetNumOfActiveThreads() { return Backend::StaticData::ThreadPool.GetNumOfActiveThreads(); }
+	uDM GetNumOfActiveThreads() { return Backend::StaticData::ThreadPool.GetNumOfActiveThreads(); }
 
-	void DecommissionThread(WordSize _handle) 
+	void DecommissionThread(uDM _handle) 
 	{
 		Backend::StaticData::ThreadPool.DecommissionThread(_handle); 
 	}
@@ -65,7 +65,7 @@ namespace OSAL
 		CLog(String("Number of Logical Cores: " + std::to_string(NumberOfLogicalCores)));
 	}
 
-	ui32 GetNumberOfLogicalCores()
+	u32 GetNumberOfLogicalCores()
 	{
 		return NumberOfLogicalCores;
 	}

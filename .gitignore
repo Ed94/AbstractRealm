@@ -373,3 +373,4 @@ FodyWeavers.xsd
 AbstractRealm/AbstractRealm.srctrlprj
 AbstractRealm/AbstractRealm.srctrlbm
 AbstractRealm/AbstractRealm.srctrldb
+AbstractRealm/GPU_Vulkan.cpp.PVS-Studio.cfg

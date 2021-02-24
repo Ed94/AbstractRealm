@@ -112,7 +112,7 @@ namespace HAL::GPU::Vulkan
 		colorBlendStateInfo.EnableLogicOperations = EBool::False;
 		colorBlendStateInfo.LogicOperation        = ELogicOperation::Copy;
 		colorBlendStateInfo.AttachmentCount       = 1;
-		colorBlendStateInfo.Attachments           = getAddress(colorBlendAttachmentState);
+		colorBlendStateInfo.Attachments           = getPtr(colorBlendAttachmentState);
 		colorBlendStateInfo.BlendConstants[0]     = 0.0f;
 		colorBlendStateInfo.BlendConstants[1]     = 0.0f;
 		colorBlendStateInfo.BlendConstants[2]     = 0.0f;
@@ -160,15 +160,15 @@ namespace HAL::GPU::Vulkan
 
 		info.StageCount         = _shader->GetShaderStageInfos().size();   // BasicSahder only has 2 shader stages.
 		info.Stages             = _shader->GetShaderStageInfos().data();
-		info.VertexInputState   = getAddress(vertexInputStateInfo);
-		info.InputAssemblyState = getAddress(inputAssemblyStateInfo);
+		info.VertexInputState   = getPtr(vertexInputStateInfo);
+		info.InputAssemblyState = getPtr(inputAssemblyStateInfo);
 		info.TessellationState  = nullptr;   // None for now...
-		info.ViewportState      = getAddress(viewportStateInfo);
-		info.MultisampleState   = getAddress(multisampleStateInfo);
-		info.DepthStencilState  = getAddress(depthStencilStateInfo);
-		info.ColorBlendState    = getAddress(colorBlendStateInfo);
-		info.RasterizationState = getAddress(rasterizationStateInfo);
-		info.DynamicState       = getAddress(dynamicStateInfo);
+		info.ViewportState      = getPtr(viewportStateInfo);
+		info.MultisampleState   = getPtr(multisampleStateInfo);
+		info.DepthStencilState  = getPtr(depthStencilStateInfo);
+		info.ColorBlendState    = getPtr(colorBlendStateInfo);
+		info.RasterizationState = getPtr(rasterizationStateInfo);
+		info.DynamicState       = getPtr(dynamicStateInfo);
 		info.Layout             = layout;
 		info.RenderPass         = _renderPass;
 		info.Subpass            = 0;   // Why?
@@ -199,6 +199,10 @@ const PipelineCache& GPU_Pipeline::Request_Cache()
 {
 	return cache;
 }
+
+// Protected
+
+PipelineCache GPU_Pipeline::cache;
 
 #pragma endregion GPU_Pipeline
 }

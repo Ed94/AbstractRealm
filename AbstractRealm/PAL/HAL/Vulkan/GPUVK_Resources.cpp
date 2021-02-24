@@ -38,7 +38,7 @@ namespace HAL::GPU::Vulkan
 		return info.Format;
 	}
 
-	ui32 Image::GetMipmapLevels() const
+	u32 Image::GetMipmapLevels() const
 	{
 		return info.MipmapLevels;
 	}
@@ -235,7 +235,7 @@ namespace HAL::GPU::Vulkan
 		return image.GetFormat();
 	}
 
-	ui32 ImagePackage::GetMipmapLevels() const
+	u32 ImagePackage::GetMipmapLevels() const
 	{
 		return image.GetMipmapLevels();
 	}
@@ -443,11 +443,11 @@ namespace HAL::GPU::Vulkan
 
 	// Public
 
-	EResult TextureImage::Create(ptr<const uI8> _imageData, ui32 _width, ui32 _height)
+	EResult TextureImage::Create(ptr<const u8> _imageData, u32 _width, u32 _height)
 	{
 		DeviceSize imageSize = _width * _height * 4;
 
-		ui32 mipmapLevels = SCast<ui32>(std::floor(std::log2(std::max<ui32>(_width, _height)))) + 1;
+		u32 mipmapLevels = SCast<u32>(std::floor(std::log2(std::max<u32>(_width, _height)))) + 1;
 
 		Buffer stagingBuffer;
 
@@ -483,8 +483,8 @@ namespace HAL::GPU::Vulkan
 		Image::CreateInfo info;
 
 		info.ImageType     = EImageType::_2D       ;
-		info.Extent.Width  = SCast<ui32>(_width );
-		info.Extent.Height = SCast<ui32>(_height);
+		info.Extent.Width  = SCast<u32>(_width );
+		info.Extent.Height = SCast<u32>(_height);
 		info.Extent.Depth  = 1                     ;
 		info.MipmapLevels  = mipmapLevels            ;
 		info.ArrayLayers   = 1                     ;
@@ -637,8 +637,8 @@ namespace HAL::GPU::Vulkan
 		barrier.SubresourceRange.LayerCount     = 1;
 		barrier.SubresourceRange.LevelCount     = 1;
 
-		si32 mipWidth  = GetExtent().Width ;
-		si32 mipHeight = GetExtent().Height;
+		s32 mipWidth  = GetExtent().Width ;
+		s32 mipHeight = GetExtent().Height;
 
 		for (uint32_t index = 1; index < GetMipmapLevels(); index++)
 		{
@@ -728,6 +728,12 @@ namespace HAL::GPU::Vulkan
 #pragma endregion TextureImage
 
 #pragma region GPU_Resources
+
+	//DynamicArray< DescriptorPool> GPU_Resources_Maker<Meta::EGPU_Engage::Single>::descriptorPools;
+
+	//DynamicArray< DescriptorSetLayout> GPU_Resources_Maker<Meta::EGPU_Engage::Single>::descriptorSetLayouts;
+
+	//DynamicArray< DescriptorSet> GPU_Resources_Maker<Meta::EGPU_Engage::Single>::descriptorSets;
 
 	DynamicArray< SPtr<ARenderable>> GPU_Resources_Maker<Meta::EGPU_Engage::Single>::renderables;
 

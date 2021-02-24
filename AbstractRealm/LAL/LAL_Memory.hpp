@@ -92,13 +92,13 @@ namespace LAL
 	Address operator
 	*/
 	template<typename Type>
-	auto getAddress(Type& _obj)
+	auto getPtr(Type& _obj)
 	{
 		return &_obj;
 	}
 
 	template<typename FunctionType>
-	auto getFuncAddress(FunctionType& /*_obj*/)
+	auto getFnPtr(FunctionType& /*_obj*/)
 	{
 		return NULL;
 	}
@@ -110,9 +110,9 @@ namespace LAL
 
 	// Clang-CL does not like window's offsetof macro.
 	template <typename StructType, typename StructMemberType>
-	constexpr WordSize TOffsetOf(StructMemberType StructType::* _member)
+	constexpr uDM TOffsetOf(StructMemberType StructType::* _member)
 	{
-		return reinterpret_cast<WordSize>(getAddress((ptr<StructType>(0)->*_member)));
+		return reinterpret_cast<uDM>(getPtr((ptr<StructType>(0)->*_member)));
 	}
 
 	#define OffsetOf(_MEMBEER) TOffsetOf(&_MEMBEER);

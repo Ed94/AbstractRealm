@@ -78,15 +78,15 @@ namespace Resource
 	using LinearGrey_NoA = TGreyscale_NoAlpha<GreyscaleValue>;
 	using LinearGrey     = TGreyscale        <GreyscaleValue>;
 
-	using Greyscale_8  = TGreyscale<uI8 >;
-	using Greyscale_16 = TGreyscale<uI16>;
-	using Greyscale_32 = TGreyscale<uI32>;
-	using Greyscale_64 = TGreyscale<uI64>;
+	using Greyscale_8  = TGreyscale<u8 >;
+	using Greyscale_16 = TGreyscale<u16>;
+	using Greyscale_32 = TGreyscale<u32>;
+	using Greyscale_64 = TGreyscale<u64>;
 
-	using Greyscale_NoA_8  = TGreyscale_NoAlpha<uI8 >;
-	using Greyscale_NoA_16 = TGreyscale_NoAlpha<uI16>;
-	using Greyscale_NoA_32 = TGreyscale_NoAlpha<uI32>;
-	using Greyscale_NoA_64 = TGreyscale_NoAlpha<uI64>;
+	using Greyscale_NoA_8  = TGreyscale_NoAlpha<u8 >;
+	using Greyscale_NoA_16 = TGreyscale_NoAlpha<u16>;
+	using Greyscale_NoA_32 = TGreyscale_NoAlpha<u32>;
+	using Greyscale_NoA_64 = TGreyscale_NoAlpha<u64>;
 
 	using Greyscale     = Greyscale_8    ;
 	using Greyscale_NoA = Greyscale_NoA_8;
@@ -94,15 +94,15 @@ namespace Resource
 	using LinearColor     = TColor        <ColorValue>;
 	using LinearColor_NoA = TColor_NoAlpha<ColorValue>;
 
-	using Color_8  = TColor<uI8 >;
-	using Color_16 = TColor<uI16>;
-	using Color_32 = TColor<uI32>;
-	using Color_64 = TColor<uI64>;
+	using Color_8  = TColor<u8 >;
+	using Color_16 = TColor<u16>;
+	using Color_32 = TColor<u32>;
+	using Color_64 = TColor<u64>;
 
-	using Color_NoA_8  = TColor<uI8 >;
-	using Color_NoA_16 = TColor<uI16>;
-	using Color_NoA_32 = TColor<uI32>;
-	using Color_NoA_64 = TColor<uI64>;
+	using Color_NoA_8  = TColor<u8 >;
+	using Color_NoA_16 = TColor<u16>;
+	using Color_NoA_32 = TColor<u32>;
+	using Color_NoA_64 = TColor<u64>;
 
 	using Color = Color_8;
 

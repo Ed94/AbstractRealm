@@ -31,17 +31,17 @@ namespace LAL
 	// Strict
 
 	// Signed
-	using sI8  = signed           char;
-	using sI16 = signed short     int ;
-	using sI32 = signed long      int ;
-	using sI64 = signed long long int ;
+	using s8  = signed           char;
+	using s16 = signed short     int ;
+	using s32 = signed long      int ;
+	using s64 = signed long long int ;
 
 	// Unsigned
 
-	using uI8  = unsigned            char;
-	using uI16 = unsigned short      int ;
-	using uI32 = unsigned long       int ;
-	using uI64 = unsigned long long  int ;
+	using u8  = unsigned            char;
+	using u16 = unsigned short      int ;
+	using u32 = unsigned long       int ;
+	using u64 = unsigned long long  int ;
 
 	// Floats
 
@@ -57,14 +57,14 @@ namespace LAL
 	template<typename Type>
 	constexpr bool IsInt()
 	{
-		return IsSameType<Type, sI8 >() || 
-			   IsSameType<Type, sI16>() || 
-			   IsSameType<Type, sI32>() || 
-			   IsSameType<Type, sI64>() ||
-			   IsSameType<Type, uI8 >() ||
-			   IsSameType<Type, uI16>() ||
-			   IsSameType<Type, uI32>() ||
-			   IsSameType<Type, uI64>()   ;
+		return IsSameType<Type, s8 >() || 
+			   IsSameType<Type, s16>() || 
+			   IsSameType<Type, s32>() || 
+			   IsSameType<Type, s64>() ||
+			   IsSameType<Type, u8 >() ||
+			   IsSameType<Type, u16>() ||
+			   IsSameType<Type, u32>() ||
+			   IsSameType<Type, u64>()   ;
 	}
 
 	template<typename Type>
@@ -76,9 +76,9 @@ namespace LAL
 
 	// Literals
 
-	constexpr uI16 operator"" _uI16 (unsigned long long _uI16)
+	constexpr u16 operator"" _uI16 (unsigned long long _uI16)
 	{
-		return uI16(_uI16);
+		return u16(_uI16);
 	}
 
 	constexpr short operator"" _s (unsigned long long _s)

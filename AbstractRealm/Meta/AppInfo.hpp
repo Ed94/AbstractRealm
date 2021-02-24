@@ -20,6 +20,6 @@ namespace Meta
 
 	struct AppVersion
 	{
-		const uI32 Major, Minor, Patch;
+		const u32 Major, Minor, Patch;
 	};
 }

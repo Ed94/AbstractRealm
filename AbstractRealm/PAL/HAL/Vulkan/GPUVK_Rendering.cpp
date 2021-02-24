@@ -191,8 +191,8 @@ namespace HAL::GPU::Vulkan
 
 			Extent2D actualExtent;
 
-			actualExtent.Width  = SCast<ui32>(frameBufferSize.Width );
-			actualExtent.Height = SCast<ui32>(frameBufferSize.Height);
+			actualExtent.Width  = SCast<u32>(frameBufferSize.Width );
+			actualExtent.Height = SCast<u32>(frameBufferSize.Height);
 
 			actualExtent.Width  = std::clamp(actualExtent.Width , _surface.GetCapabilities().MinImageExtent.Width , _surface.GetCapabilities().MaxImageExtent.Width );
 			actualExtent.Height = std::clamp(actualExtent.Height, _surface.GetCapabilities().MinImageExtent.Height, _surface.GetCapabilities().MaxImageExtent.Height);
@@ -252,7 +252,7 @@ namespace HAL::GPU::Vulkan
 		return info.ImageFormat;
 	}
 
-	ui32 Swapchain::GetMinimumImageCount() const
+	u32 Swapchain::GetMinimumImageCount() const
 	{
 		return info.MinImageCount;
 	}
@@ -353,8 +353,8 @@ namespace HAL::GPU::Vulkan
 
 			Extent2D actualExtent;
 
-			actualExtent.Width  = SCast<ui32>(frameBufferSize.Width );
-			actualExtent.Height = SCast<ui32>(frameBufferSize.Height);
+			actualExtent.Width  = SCast<u32>(frameBufferSize.Width );
+			actualExtent.Height = SCast<u32>(frameBufferSize.Height);
 
 			actualExtent.Width  = std::clamp(actualExtent.Width , surface->GetCapabilities().MinImageExtent.Width , surface->GetCapabilities().MaxImageExtent.Width );
 			actualExtent.Height = std::clamp(actualExtent.Height, surface->GetCapabilities().MinImageExtent.Height, surface->GetCapabilities().MaxImageExtent.Height);
@@ -467,7 +467,7 @@ namespace HAL::GPU::Vulkan
 		return Parent::Create(_device, _info, _allocator);
 	}
 
-	ui32 RenderPass::GetAttachmentCount() const { return info.AttachmentCount; }
+	u32 RenderPass::GetAttachmentCount() const { return info.AttachmentCount; }
 
 #pragma endregion
 
@@ -563,11 +563,11 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
-		maxFramesInFlight = SCast<ui32>(frameBuffers.size() - 1);
+		maxFramesInFlight = SCast<u32>(frameBuffers.size() - 1);
 
 		frameRefs.resize(maxFramesInFlight);
 
-		for (WordSize index = 0; index < frameRefs.size(); index++)
+		for (uDM index = 0; index < frameRefs.size(); index++)
 		{
 			frameRefs[index].Prepare();
 		}
@@ -634,7 +634,7 @@ namespace HAL::GPU::Vulkan
 		{
 			renderGroups.resize(1);
 
-			renderGroups.back().Pipeline = getAddress(Request_GraphicsPipeline(_renderable));
+			renderGroups.back().Pipeline = getPtr(Request_GraphicsPipeline(_renderable));
 
 			renderGroups.back().Renderables.push_back(_renderable);
 
@@ -652,7 +652,7 @@ namespace HAL::GPU::Vulkan
 					}
 				}
 
-				if (renderGroup.Pipeline == getAddress(Request_GraphicsPipeline(_renderable)))
+				if (renderGroup.Pipeline == getPtr(Request_GraphicsPipeline(_renderable)))
 				{
 					renderGroup.Renderables.push_back(_renderable);
 
@@ -662,7 +662,7 @@ namespace HAL::GPU::Vulkan
 
 			renderGroups.resize(renderGroups.size() + 1);
 
-			renderGroups.back().Pipeline = getAddress(Request_GraphicsPipeline(_renderable));
+			renderGroups.back().Pipeline = getPtr(Request_GraphicsPipeline(_renderable));
 
 			renderGroups.back().Renderables.push_back(_renderable);
 
@@ -964,7 +964,7 @@ namespace HAL::GPU::Vulkan
 		Framebuffer::CreateInfo info;
 
 		info.RenderPass      = renderPass;
-		info.AttachmentCount = SCast<ui32>(viewHandles.size());
+		info.AttachmentCount = SCast<u32>(viewHandles.size());
 		info.Attachments     = viewHandles.data();
 		info.Width           = swapchain->GetExtent().Width;
 		info.Height          = swapchain->GetExtent().Height;
@@ -981,7 +981,7 @@ namespace HAL::GPU::Vulkan
 
 		auto& swapImageViews = swapchain->GetImageViews();
 
-		for (WordSize index = 0; index < frameBuffers.size(); index++)
+		for (uDM index = 0; index < frameBuffers.size(); index++)
 		{
 			viewHandles[0] = swapImageViews[index];
 
@@ -1056,7 +1056,7 @@ namespace HAL::GPU::Vulkan
 
 		subpass.DepthStencilAttachment = bufferDepth ? &depthReference : nullptr;
 
-		info.AttachmentCount = SCast<ui32>(attachments.size());
+		info.AttachmentCount = SCast<u32>(attachments.size());
 		info.Attachments     = attachments.data();
 
 		info.SubpassCount = 1;
@@ -1095,7 +1095,7 @@ namespace HAL::GPU::Vulkan
 			beginInfo.ClearValues = clearValues.data();
 		}
 
-		beginInfo.ClearValueCount = SCast<ui32>(clearValues.size());
+		beginInfo.ClearValueCount = SCast<u32>(clearValues.size());
 
 		return result;
 	}

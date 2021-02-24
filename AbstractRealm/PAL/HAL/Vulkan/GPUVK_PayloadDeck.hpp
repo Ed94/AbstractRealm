@@ -59,7 +59,7 @@ namespace HAL::GPU::Vulkan
 		unbound void Wipe();
 
 
-		unbound ptr<CommandPool> RequestCommandPools(WordSize _numDesired);
+		unbound ptr<CommandPool> RequestCommandPools(uDM _numDesired);
 
 		unbound const CommandBuffer& RecordOnGraphics();
 

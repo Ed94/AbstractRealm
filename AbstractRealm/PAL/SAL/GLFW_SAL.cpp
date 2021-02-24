@@ -54,9 +54,9 @@ namespace SAL::GLFW
 
 	// Vulkan Related
 
-	CStrArray GetRequiredVulkanAppExtensions(ui32& _extensionCount)
+	CStrArray GetRequiredVulkanAppExtensions(u32& _extensionCount)
 	{
-		return glfwGetRequiredInstanceExtensions(getAddress(_extensionCount));
+		return glfwGetRequiredInstanceExtensions(getPtr(RCast<uint32_t&, u32&>(_extensionCount)));
 	}
 
 	void WaitForEvents()

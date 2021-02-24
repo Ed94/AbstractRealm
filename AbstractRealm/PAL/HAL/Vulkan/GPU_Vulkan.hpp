@@ -69,7 +69,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 				V3::LogicalDevice::Handle    LogicalDevice      ;
 				ui32                         QueueFamilyIndex   ;
 				LogicalDevice::Queue         Queue              ;
-				Pipeline::Cache::Handle      PipelineCache      ;
+				V3::Pipeline::Cache::Handle  PipelineCache      ;
 				EFormat                      ImageFormat        ;
 				V3::RenderPass::Handle       RenderPass         ;
 				Memory::AllocationCallbacks* Allocator          ;
@@ -141,7 +141,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features);
 
-			void GenerateMipMaps(Image& _image, EFormat _format, ui32 _textureWidth, ui32 _textureHeight, ui32 _mipLevels);
+			void GenerateMipMaps(Image& _image, EFormat _format, u32 _textureWidth, u32 _textureHeight, u32 _mipLevels);
 
 			void Start_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
 
@@ -152,9 +152,9 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window);
 
-			ui32 GetNumberOfFramebuffers();
+			u32 GetNumberOfFramebuffers();
 
-			ui32 GetMinimumFramebufferCount();
+			u32 GetMinimumFramebufferCount();
 
 			using RenderCallback = void(*)(const CommandBuffer& _buffer, int _index);
 

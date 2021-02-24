@@ -20,7 +20,7 @@ namespace OSAL
 
 		String CPU_Vendor   ;
 		String CPU_Model    ;
-		uI64 CPU_Frequency;
+		u64 CPU_Frequency;
 
 		MemoryInfo Memory;
 
@@ -49,7 +49,7 @@ namespace OSAL
 		auto displays = iware::system::displays();
 		auto configs = iware::system::available_display_configurations();
 
-		WordSize displayIndex = 0;
+		uDM displayIndex = 0;
 
 		for (auto& display : displays)
 		{
@@ -81,7 +81,7 @@ namespace OSAL
 			displayIndex++;
 		}
 
-		MainDisplay = getAddress(Displays[0]);
+		MainDisplay = getPtr(Displays[0]);
 
 		CLog("CPU Information:"); 
 		CLog(String("Vendor: ") + CPU_Vendor);

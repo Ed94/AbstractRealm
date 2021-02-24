@@ -71,7 +71,7 @@ namespace HAL::GPU::Vulkan
 
 		EFormat GetFormat() const;
 
-		ui32 GetMinimumImageCount() const;
+		u32 GetMinimumImageCount() const;
 
 		bool QuerySurfaceChanges();
 
@@ -91,7 +91,7 @@ namespace HAL::GPU::Vulkan
 
 		ptr<Surface> surface;
 
-		ui32 SupportedImageCount;
+		u32 SupportedImageCount;
 
 		Meta::EGPU_PresentMode presentationMode = Meta::GPU_PresentationPref();
 
@@ -123,7 +123,7 @@ namespace HAL::GPU::Vulkan
 
 		EResult Create(const LogicalDevice& _device, CreateInfo& _info, const Memory::AllocationCallbacks& _allocator);
 
-		ui32 GetAttachmentCount() const;
+		u32 GetAttachmentCount() const;
 
 	protected:
 
@@ -137,7 +137,7 @@ namespace HAL::GPU::Vulkan
 			DynamicArray<AttachmentReference> Resolves     ;
 			DynamicArray<AttachmentReference> DepthStencils;
 
-			DynamicArray<ui32> Preserves;
+			DynamicArray<u32> Preserves;
 		};
 
 		CreateInfo info;
@@ -212,7 +212,7 @@ namespace HAL::GPU::Vulkan
 		//Deque<RenderPass> renderPasses;
 
 		// Thread Count
-		WordSize threadsAssigned;
+		uDM threadsAssigned;
 	};
 
 	struct RenderGroup
@@ -257,9 +257,9 @@ namespace HAL::GPU::Vulkan
 		bool processingFrame = false;
 
 		ui32 currentFrameBuffer = 0 ,    // Current frame to process
-			   previousFrame    ,    // Previously processed frame
-			   currentSwap      ,    // Currently rendered frame to present.
-			   maxFramesInFlight ;   // Maximum number of frames to process at the same time.
+			 previousFrame    ,    // Previously processed frame
+			 currentSwap      ,    // Currently rendered frame to present.
+			 maxFramesInFlight ;   // Maximum number of frames to process at the same time.
 
 		DynamicArray<Framebuffer> frameBuffers;   // TODO: use frame reference?
 
@@ -298,6 +298,12 @@ namespace HAL::GPU::Vulkan
 		DynamicArray<GraphicsPipeline> graphicsPipelines;
 
 		DynamicArray<RenderGroup> renderGroups;
+
+		// Resource stuff....
+
+		//DynamicArray<DescriptorPool> descriptorPool;
+
+		//DynamicArray<DescriptorSet> descriptorSets;
 	};
 
 	class ViewContext

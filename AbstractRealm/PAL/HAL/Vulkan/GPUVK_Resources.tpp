@@ -68,22 +68,30 @@ namespace HAL::GPU::Vulkan
 	}
 
 	template<typename VertexType>
-	ptr< const AShader> TPrimitiveRenderable<VertexType>::GetShader() const
+	ptr<const AShader> TPrimitiveRenderable<VertexType>::GetShader() const
 	{
 		return shader;
+	}
+
+	template<typename VertexType>
+	ptr<const DescriptorSetLayout> TPrimitiveRenderable<VertexType>::GetDescriptorsLayout() const
+	{
+		return nullptr;
 	}
 
 #pragma endregion PrimitiveRenderable	
 
 #pragma region ModelRenderable
 
+	// Public
+
 	template<typename VertexType>
 	void TModelRenderable<VertexType>::Create
 	(
 		const DynamicArray<VertexType>& _verticies, 
-		const DynamicArray<ui32> _indicies, 
-		ptr<const uI8> _textureData,
-		ui32 _width, ui32 _height,
+		const DynamicArray<u32> _indicies, 
+		ptr<const u8> _textureData,
+		u32 _width, u32 _height,
 		ptr<const AShader> _shader
 	)
 	{
@@ -94,6 +102,10 @@ namespace HAL::GPU::Vulkan
 		textureImage.Create(_textureData, _width, _height);
 
 		shader = _shader;
+
+		CreateDescriptors();
+
+		CreateDescriptorsLayout();
 	}
 
 	template<typename VertexType>
@@ -154,6 +166,26 @@ namespace HAL::GPU::Vulkan
 	ptr< const AShader> TModelRenderable<VertexType>::GetShader() const
 	{
 		return shader;
+	}
+
+	template<typename VertexType>
+	ptr<const DescriptorSetLayout> TModelRenderable<VertexType>::GetDescriptorsLayout() const
+	{
+		return descrptorsLayout;
+	}
+
+	// Private
+
+	template<typename VertexType>
+	void TModelRenderable<VertexType>::CreateDescriptors()
+	{
+
+	}
+
+	template<typename VertexType>
+	void TModelRenderable<VertexType>::CreateDescriptorsLayout()
+	{
+
 	}
 
 #pragma endregion ModelRenderable

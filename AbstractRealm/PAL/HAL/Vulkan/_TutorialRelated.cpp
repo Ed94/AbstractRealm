@@ -16,7 +16,7 @@ namespace HAL::GPU::Vulkan
 		// Public
 
 		DynamicArray<Vertex_WTexture> ModelVerticies;
-		DynamicArray<ui32> ModelIndicies ;
+		DynamicArray<u32> ModelIndicies ;
 
 		// TODO: Make the GPU hal agnostic to this.
 
@@ -71,7 +71,7 @@ namespace HAL::GPU::Vulkan
 				vertex.Color = { 1.0f, 1.0f, 1.0f };
 
 				ModelVerticies.push_back(vertex);
-				ModelIndicies.push_back(SCast<ui32>(ModelIndicies.size()));
+				ModelIndicies.push_back(SCast<u32>(ModelIndicies.size()));
 			}
 		}
 	}

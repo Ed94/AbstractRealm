@@ -62,7 +62,7 @@ namespace HAL::GPU::Vulkan
 			throw RuntimeError("Failed to compile GLSL to SPIR-V");
 		}
 
-		info.CodeSize = bytecode.size() * sizeof(ui32);
+		info.CodeSize = bytecode.size() * sizeof(u32);
 		info.Code     = bytecode.data();
 
 		if (vertexModule.Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
@@ -86,7 +86,7 @@ namespace HAL::GPU::Vulkan
 			throw RuntimeError("Failed to compile GLSL to SPIR-V");
 		}
 
-		info.CodeSize = bytecode.size() * sizeof(ui32);
+		info.CodeSize = bytecode.size() * sizeof(u32);
 		info.Code     = bytecode.data();
 
 		if (fragModule.Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
@@ -280,8 +280,8 @@ namespace HAL::GPU::Vulkan
 
 			shader->setStrings(strings, numShaders);
 
-			if (! shader->parse(getAddress(Hardcoded_Resource), 100, false, 
-				//(EShMessages)ui32(messageOptions)))
+			if (! shader->parse(getPtr(Hardcoded_Resource), 100, false, 
+				//(EShMessages)u32(messageOptions)))
 				messages))
 			{
 				CLog_Error(String(shader->getInfoLog()));
@@ -292,7 +292,7 @@ namespace HAL::GPU::Vulkan
 
 			linker->addShader(shader.get());
 
-			if (! linker->link( (EShMessages)ui32(messageOptions)))
+			if (! linker->link( (EShMessages)u32(messageOptions)))
 			{
 				CLog_Error(String(shader->getInfoLog()));
 				CLog_Error(String(shader->getInfoDebugLog()));

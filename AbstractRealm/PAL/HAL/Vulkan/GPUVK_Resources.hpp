@@ -45,7 +45,7 @@ namespace HAL::GPU::Vulkan
 
 		EFormat GetFormat() const;
 
-		ui32 GetMipmapLevels() const;
+		u32 GetMipmapLevels() const;
 
 		bool HasStencilComponent() const;
 
@@ -111,7 +111,7 @@ namespace HAL::GPU::Vulkan
 
 		EFormat GetFormat() const;
 
-		ui32 GetMipmapLevels() const;
+		u32 GetMipmapLevels() const;
 
 		Image      image ;
 		Memory     memory;
@@ -159,14 +159,14 @@ namespace HAL::GPU::Vulkan
 		Memory     memory      ;
 		DeviceSize memoryOffset;
 
-		DynamicArray<ui32> indices;
+		DynamicArray<u32> indices;
 	};
 
 	class TextureImage : public ImagePackage
 	{
 	public:
 
-		EResult Create(ptr<const uI8> _imageData, ui32 _width, ui32 _height);
+		EResult Create(ptr<const u8> _imageData, u32 _width, u32 _height);
 
 		void Destroy();
 
@@ -255,7 +255,7 @@ namespace HAL::GPU::Vulkan
 			posAttrib.Location = 0;
 			posAttrib.Format   = EFormat::R32_G32_B32_SFloat;
 			//posAttrib.Format   = EFormat::R32_G32_SFloat;
-			posAttrib.Offset   = (ui32) OffsetOf(Vertex_WColor::Position);
+			posAttrib.Offset   = (u32) OffsetOf(Vertex_WColor::Position);
 
 			// Color Attributes
 
@@ -264,7 +264,7 @@ namespace HAL::GPU::Vulkan
 			colorAttrib.Binding  = 0;
 			colorAttrib.Location = 1;
 			colorAttrib.Format   = EFormat::R32_G32_B32_SFloat;
-			colorAttrib.Offset   = (ui32) OffsetOf(Vertex_WColor::Color);
+			colorAttrib.Offset   = (u32) OffsetOf(Vertex_WColor::Color);
 
 			// Texture Coordinate Attributes
 
@@ -273,7 +273,7 @@ namespace HAL::GPU::Vulkan
 			texCoordAttrib.Binding  = 0;
 			texCoordAttrib.Location = 2;
 			texCoordAttrib.Format   = EFormat::R32_G32_SFloat;
-			texCoordAttrib.Offset   = (ui32) OffsetOf(Vertex::TextureCoordinates);*/
+			texCoordAttrib.Offset   = (u32) OffsetOf(Vertex::TextureCoordinates);*/
 
 			return result;
 		}
@@ -307,7 +307,9 @@ namespace HAL::GPU::Vulkan
 
 		virtual DynamicArray<BindingDescription>& GetVertexBindings() const = NULL;
 
-		virtual ptr< const AShader> GetShader() const = NULL;
+		virtual ptr<const AShader> GetShader() const = NULL;
+
+		virtual ptr<const DescriptorSetLayout> GetDescriptorsLayout() const = NULL;
 	};
 
 	
@@ -323,13 +325,15 @@ namespace HAL::GPU::Vulkan
 
 		void Create(const DynamicArray<VertexType>& _verticies, ptr<const AShader> _shader);
 
-		implem void RecordRender(const CommandBuffer& _commandBuffer);
+		void RecordRender(const CommandBuffer& _commandBuffer) override;
 
-		implem DynamicArray<AttributeDescription>& GetVertexAttributes() const;
+		DynamicArray<AttributeDescription>& GetVertexAttributes() const override;
 
-		implem DynamicArray<BindingDescription>& GetVertexBindings() const;
+		DynamicArray<BindingDescription>& GetVertexBindings() const override;
 
-		implem ptr< const AShader> GetShader() const;
+		ptr<const AShader> GetShader() const override;
+
+		ptr<const DescriptorSetLayout> GetDescriptorsLayout() const override;
 
 	protected:
 
@@ -352,27 +356,37 @@ namespace HAL::GPU::Vulkan
 		void Create
 		(
 			const DynamicArray<VertexType>& _verticies, 
-			const DynamicArray<ui32> _indicies,
-			ptr<const uI8> _textureData,
-			ui32 _width, ui32 _height,
+			const DynamicArray<u32> _indicies,
+			ptr<const u8> _textureData,
+			u32 _width, u32 _height,
 			ptr<const AShader> _shader
 		);
 
-		implem void RecordRender(const CommandBuffer& _commandBuffer);
+		void RecordRender(const CommandBuffer& _commandBuffer) override;
 
-		implem DynamicArray<AttributeDescription>& GetVertexAttributes() const;
+		DynamicArray<AttributeDescription>& GetVertexAttributes() const override;
 
-		implem DynamicArray<BindingDescription>& GetVertexBindings() const;
+		DynamicArray<BindingDescription>& GetVertexBindings() const override;
 
-		implem ptr< const AShader> GetShader() const;
+		ptr<const AShader> GetShader() const override;
+
+		ptr<const DescriptorSetLayout> GetDescriptorsLayout() const override;
 
 	protected:
+
+		void CreateDescriptors();
+
+		void CreateDescriptorsLayout();
 
 		VertexBuffer vertBuffer;
 
 		IndexBuffer indexBuffer;
 
 		TextureImage textureImage;
+
+		DynamicArray< ptr<const DescriptorSet>> descriptors;
+												
+		ptr<const DescriptorSetLayout> descriptorsLayout;
 
 		ptr<const AShader> shader;
 	};
@@ -390,6 +404,7 @@ namespace HAL::GPU::Vulkan
 	class GPU_Resources_Maker<Meta::EGPU_Engage::Single>
 	{
 	public:
+
 		template<typename VertexType>
 		unbound Where< VulkanVertex<VertexType>(), ptr<ARenderable> > 
 		Request_Renderable(const DynamicArray<VertexType>& _verticies, ptr<const AShader> _shader)
@@ -408,9 +423,9 @@ namespace HAL::GPU::Vulkan
 		Request_Renderable
 		(
 			const DynamicArray<VertexType>& _verticies, 
-			const DynamicArray<ui32> _indicies, 
-			ptr<const uI8> _textureData,
-			ui32 _width, ui32 _height,
+			const DynamicArray<u32> _indicies, 
+			ptr<const u8> _textureData,
+			u32 _width, u32 _height,
 			ptr<const AShader> _shader
 		)
 		{
@@ -423,9 +438,35 @@ namespace HAL::GPU::Vulkan
 			return renderables.back().get();
 		}
 
-		
+		//// Just doing a raw one for now...
+		//unbound ptr<DescriptorPool> Request_DescriptorPool()
+		//{
+		//	descriptorPools.push_back(DescriptorPool());
+
+		//	return getPtr(descriptorPools.back());
+		//}
+
+		//unbound ptr<DescriptorSetLayout> Request_DescriptorSetLayout()
+		//{
+
+		//}
+
+		//unbound ptr<DescriptorSet> Request_DescriptorSet()
+		//{
+
+		//}
+
+
 
 	private:
+
+		//unbound DescriptorPool descriptorPool;
+
+	/*	unbound DynamicArray<DescriptorPool> descriptorPools;
+
+		unbound DynamicArray<DescriptorSetLayout> descriptorSetLayouts;
+
+		unbound DynamicArray<DescriptorSet> descriptorSets;*/
 
 		unbound DynamicArray< SPtr<ARenderable> > renderables;
 	};

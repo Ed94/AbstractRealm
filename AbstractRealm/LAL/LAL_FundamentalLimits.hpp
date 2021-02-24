@@ -19,22 +19,22 @@ namespace LAL
 	template<typename Type>
 	using NumLimits = std::numeric_limits<Type>;
 
-	constexpr sI8 SInt8Min  = NumLimits<sI8>::min();
-	constexpr sI8 SInt8Max  = NumLimits<sI8>::max();
+	constexpr s8 SInt8Min  = NumLimits<s8>::min();
+	constexpr s8 SInt8Max  = NumLimits<s8>::max();
 
-	constexpr sI16 SInt16Max = NumLimits<sI16>::min();
-	constexpr sI16 SInt16Min = NumLimits<sI16>::max();
+	constexpr s16 SInt16Max = NumLimits<s16>::min();
+	constexpr s16 SInt16Min = NumLimits<s16>::max();
 
-	constexpr sI32 SInt32Min = NumLimits<sI32>::min();
-	constexpr sI32 SInt32Max = NumLimits<sI32>::max();
+	constexpr s32 SInt32Min = NumLimits<s32>::min();
+	constexpr s32 SInt32Max = NumLimits<s32>::max();
 
-	constexpr sI64 SInt64Min = NumLimits<sI64>::min();
-	constexpr sI64 SInt64Max = NumLimits<sI64>::max();
+	constexpr s64 SInt64Min = NumLimits<s64>::min();
+	constexpr s64 SInt64Max = NumLimits<s64>::max();
 
-	constexpr uI8  UInt8Max  = NumLimits<uI8 >::max();
-	constexpr uI16 UInt16Max = NumLimits<uI16>::max();
-	constexpr uI32 UInt32Max = NumLimits<uI32>::max();
-	constexpr uI64 UInt64Max = NumLimits<uI64>::max();
+	constexpr u8  UInt8Max  = NumLimits<u8 >::max();
+	constexpr u16 UInt16Max = NumLimits<u16>::max();
+	constexpr u32 UInt32Max = NumLimits<u32>::max();
+	constexpr u64 UInt64Max = NumLimits<u64>::max();
 
 	constexpr f32 Float32_Min      = NumLimits<f32>::min          ()             ;
 	constexpr f32 Float32_MinNeg   = NumLimits<f32>::min          () * f32(-1.0f);
@@ -57,7 +57,7 @@ namespace LAL
 	constexpr f64 Float64_QNaN     = NumLimits<f64>::quiet_NaN    ()            ;
 	constexpr f64 Float64_SNaN     = NumLimits<f64>::signaling_NaN()            ;
 
-	constexpr f32 Float64_NanoAccuracy = 0.000000001F;
-	constexpr f32 Float64_HighAccuracy = 0.00001F    ;
-	constexpr f32 Float64_LowAccuracy  = 0.001F      ;
+	constexpr f64 Float64_NanoAccuracy = 0.000000001F;
+	constexpr f64 Float64_HighAccuracy = 0.00001F    ;
+	constexpr f64 Float64_LowAccuracy  = 0.001F      ;
 }

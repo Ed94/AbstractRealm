@@ -78,6 +78,9 @@ namespace HAL::GPU::Vulkan
 	protected:
 
 
+		unbound DynamicArray<Pipeline::Layout> layouts;
+
+
 		unbound PipelineCache cache;
 	};
 	

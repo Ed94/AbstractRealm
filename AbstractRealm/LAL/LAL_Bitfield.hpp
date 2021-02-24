@@ -61,7 +61,7 @@ namespace LAL
 	constexpr Where<IsBitmaskable<Enum>::value, 
 	bool> Bitmaskable() noexcept
 	{
-		return static_cast<WordSize>(Enum::SpecifyBitmaskable) > WordSize(0) ? true : false;
+		return static_cast<uDM>(Enum::SpecifyBitmaskable) > uDM(0) ? true : false;
 	}
 
 	template <typename Enum> 
@@ -79,6 +79,9 @@ namespace LAL
 		typename EnumType             ,
 		typename BitmaskRepresentation
 	>
+	/**
+	A wrapper object for bitfields that allows for typesafe bitmask operations.
+	*/
 	class Bitfield
 	{
 	private:

@@ -25,8 +25,8 @@ namespace Dev
 	StaticData()
 	//(
 		// Windows uses short instead of unsigned short for rect...
-		sI16 ConsoleWidth  = 160;   //140;
-		sI16 ConsoleHeight = 118;   //50 ;
+		s16 ConsoleWidth  = 160;   //140;
+		s16 ConsoleHeight = 118;   //50 ;
 
 		using CharBuffer = ConsoleChar[1024][1024];
 
@@ -36,8 +36,8 @@ namespace Dev
 		ConsoleRect ConsoleSize =
 		{
 			0, 0,
-			sI16(ConsoleWidth  - 1),   // Width
-			sI16(ConsoleHeight - 1)    // Height	
+			s16(ConsoleWidth  - 1),   // Width
+			s16(ConsoleHeight - 1)    // Height	
 		};
 
 		ConsoleExtent ConsoleBufferSize = { ConsoleWidth, ConsoleHeight };
@@ -46,7 +46,7 @@ namespace Dev
 
 		StaticArray<OS_Handle, 2> ConsoleBuffers;
 
-		DynamicArray<ConsoleChar> ConsoleCharBuffer(uI32(ConsoleHeight) * uI32(ConsoleWidth));
+		DynamicArray<ConsoleChar> ConsoleCharBuffer(u32(ConsoleHeight) * u32(ConsoleWidth));
 
 		ConsoleExtent ConsoleCharBufferSize = { ConsoleWidth, ConsoleHeight };
 		ConsoleExtent ConsoleCharPos        = { 0           , 0             };
@@ -55,17 +55,17 @@ namespace Dev
 		ConsoleRect ConsoleWriteArea =
 		{
 			0, 0,
-			sI16(ConsoleWidth  - 1),   // Width
-			sI16(ConsoleHeight - 1)    // Height	
+			s16(ConsoleWidth  - 1),   // Width
+			s16(ConsoleHeight - 1)    // Height	
 		};
 
 		OS_Handle FrontBuffer = ConsoleBuffers[0],
 			      BackBuffer  = ConsoleBuffers[1] ;
 
-		uI16 DevLogLineEnd = ConsoleHeight - 6;
-		uI16 StatusStart   = ConsoleHeight - 5;
+		u16 DevLogLineEnd = ConsoleHeight - 6;
+		u16 StatusStart   = ConsoleHeight - 5;
 
-		uI16 StatusColumnWidth = ConsoleWidth / 4;
+		u16 StatusColumnWidth = ConsoleWidth / 4;
 
 		StaticArray<StaticArray<StringStream, 4>, 4> StatusStreams;
 
@@ -95,9 +95,9 @@ namespace Dev
 
 	void ClearBuffer()
 	{
-		for (uI16 y = 0; y < ConsoleHeight; ++y)
+		for (u16 y = 0; y < ConsoleHeight; ++y)
 		{
-			for (uI16 x = 0; x < ConsoleWidth; ++x)
+			for (u16 x = 0; x < ConsoleWidth; ++x)
 			{
 				ConsoleCharBuffer[y * ConsoleWidth  + x].Char.UnicodeChar = ' ';
 				ConsoleCharBuffer[y * ConsoleHeight + x].Attributes       = 0  ;
@@ -111,7 +111,7 @@ namespace Dev
 	{
 		if (!Meta::UseDebug()) return;
 
-		static uI16 linePos = 3;
+		static u16 linePos = 3;
 
 		if (linePos == StatusStart + 1 )
 		{
@@ -124,14 +124,14 @@ namespace Dev
 
 		StringStream dateSig; dateSig << "[" << put_time(&dateSnapshot, "%F %I:%M:%S %p") << "] ";
 
-		WordSize lineLength = dateSig.str().size() + _info.size();
+		uDM lineLength = dateSig.str().size() + _info.size();
 
 		DevLogFileOut 
 			<< dateSig.str()
 			<< _info 
 			<< endl;
 
-		if (lineLength > WordSize(ConsoleWidth))
+		if (lineLength > uDM(ConsoleWidth))
 		{
 			DevLogStream 
 				<< dateSig.str()
@@ -146,7 +146,7 @@ namespace Dev
 
 			DevLogStream.str(String());
 
-			WordSize pos = 0, endPos = ConsoleWidth;
+			uDM pos = 0, endPos = ConsoleWidth;
 
 			while (!_info.empty())
 			{
@@ -174,7 +174,7 @@ namespace Dev
 
 				DevLogStream.str(String());
 
-				if (_info.length() < WordSize(ConsoleWidth))
+				if (_info.length() < uDM(ConsoleWidth))
 				{
 					_info.erase(0, _info.length());
 				}
@@ -217,7 +217,7 @@ namespace Dev
 	{
 		if (!Meta::UseDebug()) return;
 
-		static uI16 linePos = 4;
+		static u16 linePos = 4;
 
 		if (linePos == StatusStart + 1)
 		{
@@ -230,7 +230,7 @@ namespace Dev
 
 		StringStream dateSig; dateSig << "[" << put_time(&dateSnapshot, "%F %I:%M:%S %p") << "] Error:  ";
 
-		WordSize lineLength = dateSig.str().size() + _info.size();
+		uDM lineLength = dateSig.str().size() + _info.size();
 
 		DevLogFileOut
 			<< dateSig.str()
@@ -238,7 +238,7 @@ namespace Dev
 			<< _info
 			<< endl;
 
-		if (lineLength > WordSize(ConsoleWidth))
+		if (lineLength > uDM(ConsoleWidth))
 		{
 			DevLogStream
 				<< dateSig.str()
@@ -253,7 +253,7 @@ namespace Dev
 
 			DevLogStream.str(String());
 
-			WordSize pos = 0, endPos = ConsoleWidth;
+			uDM pos = 0, endPos = ConsoleWidth;
 
 			while (!_info.empty())
 			{
@@ -281,7 +281,7 @@ namespace Dev
 
 				DevLogStream.str(String());
 
-				if (_info.length() < WordSize(ConsoleWidth))
+				if (_info.length() < uDM(ConsoleWidth))
 				{
 					_info.erase(0, _info.length());
 				}
@@ -482,15 +482,15 @@ namespace Dev
 		// Read from File up to buffer allows
 
 		// Status Update
-		for  (WordSize y = 0; y < 4; y++)
+		for  (uDM y = 0; y < 4; y++)
 		{
-			for (WordSize x = 0; x < 4; x++)
+			for (uDM x = 0; x < 4; x++)
 			{
 				String str = StatusStreams[y][x].str();
 
-				for (WordSize index = 0; index < str.size(); index++)
+				for (uDM index = 0; index < str.size(); index++)
 				{
-					WordSize col = index + StatusColumnWidth * x;
+					uDM col = index + StatusColumnWidth * x;
 
 					/*ConsoleCharBuffer.data()[y + StatusStart + 1 ][col].Char.UnicodeChar = str.at(index);
 
@@ -544,7 +544,7 @@ namespace Dev
 
 		//auto error = GetLastError();
 
-		SetConsoleCursorPosition (ConsoleOutput, {0, sI16(ConsoleBufferSize.Y + 1)});
+		SetConsoleCursorPosition (ConsoleOutput, {0, s16(ConsoleBufferSize.Y + 1)});
 		
 		Console_UpdateBuffer();
 
@@ -615,7 +615,7 @@ namespace Dev
 
 	void Load_DevLogStream_LogFeed()
 	{
-		for (uI16 line = 3; line < DevLogLineEnd; line++)
+		for (u16 line = 3; line < DevLogLineEnd; line++)
 		{
 			DevLogStream.str(std::string());
 
@@ -660,7 +660,7 @@ namespace Dev
 
 		WriteTo_Buffer(StatusStart + 1, ConslAttribFlags(EConslAttribFlag::Foreground_Red, EConslAttribFlag::Foreground_Intensity));
 
-		for (uI16 line = StatusStart + 2; line < ConsoleHeight; line++)
+		for (u16 line = StatusStart + 2; line < ConsoleHeight; line++)
 		{
 			DevLogStream.str(std::string());
 
@@ -759,13 +759,13 @@ namespace Dev
 	{
 		auto str = DevLogStream.str();
 
-		for (WordSize index = 0; index < str.size(); index++)
+		for (uDM index = 0; index < str.size(); index++)
 		{
 			/*ConsoleCharBuffer[_line][index].Char.UnicodeChar = str.at(index);
 			ConsoleCharBuffer[_line][index].Attributes       = _flags       ;*/
 
-			ConsoleCharBuffer[_line * uI32(ConsoleWidth) + index].Char.UnicodeChar = str.at(index);
-			ConsoleCharBuffer[_line * uI32(ConsoleWidth) + index].Attributes       = _flags       ;
+			ConsoleCharBuffer[_line * u32(ConsoleWidth) + index].Char.UnicodeChar = str.at(index);
+			ConsoleCharBuffer[_line * u32(ConsoleWidth) + index].Attributes       = _flags       ;
 		}
 	}
 
@@ -775,9 +775,9 @@ namespace Dev
 
 		_row = StatusStart + _row + 1;
 
-		for (WordSize index = 0; index < str.size(); index++)
+		for (uDM index = 0; index < str.size(); index++)
 		{
-			WordSize col = index + StatusColumnWidth * _col;
+			uDM col = index + StatusColumnWidth * _col;
 
 			/*ConsoleCharBuffer[_row][col].Char.UnicodeChar = str.at(index);
 			ConsoleCharBuffer[_row][col].Attributes       = WORD(_flags);*/

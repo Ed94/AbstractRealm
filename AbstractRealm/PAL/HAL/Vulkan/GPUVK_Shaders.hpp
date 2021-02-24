@@ -48,7 +48,7 @@ namespace HAL::GPU::Vulkan
 
 		//void Destroy();
 
-		implem  const DynamicArray<ShaderStageInfo>& GetShaderStageInfos() const;
+		const DynamicArray<ShaderStageInfo>& GetShaderStageInfos() const override;
 
 
 	protected:
@@ -103,7 +103,7 @@ namespace HAL::GPU::Vulkan
 			HLSL_DX9_Compatible   = EShMsgHlslDX9Compatible   ,  // enable HLSL DX9 compatible mode (for samplers and semantics)
 			BuiltinSymbolTable    = EShMsgBuiltinSymbolTable  ,  // print the builtin symbol table
 
-			VT_SpecifyBitmaskable
+			VV_SpecifyBitmaskable
 		};
 
 		using ShaderUnit      = glslang::TShader;
@@ -112,7 +112,7 @@ namespace HAL::GPU::Vulkan
 
 		using VV::SPIR_V::Bytecode_Buffer;
 
-		using MessageFlags = VV::V0::Bitfield<EMessageFlag, ui32>;
+		using MessageFlags = VV::V0::Bitfield<EMessageFlag, u32>;
 
 		
 
