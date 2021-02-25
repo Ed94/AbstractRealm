@@ -36,6 +36,7 @@ namespace HAL::GPU::Vulkan
 		      ptr<const AShader>                  _shader              , 
 		      DynamicArray<AttributeDescription>& _attributeDescriptions,
 		      DynamicArray<BindingDescription  >& _bindingDescriptions  ,
+			  ptr<const DescriptorSetLayout>  _descriptorSetLayout,   // one for now.
 		      Bool                                _enableDepthClamp
 	)
 	{
@@ -147,8 +148,13 @@ namespace HAL::GPU::Vulkan
 
 		// Layout
 
-		Layout::CreateInfo layoutInfo;
+		//Layout::CreateInfo layoutInfo;
 
+		//layoutInfo.SetLayoutCount = RCast<ui32>(_descriptorSetLayouts.size());  // hardcoded for now.
+		layoutInfo.SetLayoutCount = 1;  
+		layoutInfo.SetLayouts     = *_descriptorSetLayout;
+		layoutInfo.PushConstantRangeCount = 0;
+		layoutInfo.PushConstantRanges = nullptr;
 
 
 		if (layout.Create(GPU_Comms::GetEngagedDevice(), layoutInfo) != EResult::Success)
@@ -190,6 +196,16 @@ namespace HAL::GPU::Vulkan
 	{
 		return vertexInputStateInfo;
 	}
+
+	const GraphicsPipeline::Layout& GraphicsPipeline::GetLayout() const
+	{
+		return layout;
+	}
+
+	/*const DescriptorSetLayout& GraphicsPipeline::GetDescriptorSetLayout() const
+	{
+		return layoutInfo.SetLayouts;
+	}*/
 
 #pragma endregion GraphicsPipeline
 

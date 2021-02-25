@@ -40,7 +40,7 @@
 				V3::Pipeline::Cache PipelineCache_Old;   // Implement.
 
 				Pipeline::Layout::DescriptorSet DescriptorSetLayout_Old;
-				Pipeline::Layout                PipelineLayout;
+				Pipeline::Layout                PipelineLayout_Old;
 
 				V3::DescriptorPool DescriptorPool_Old;
 
@@ -72,9 +72,9 @@
 
 				// Related to Rendering State Tracking
 
-				bool     FramebufferResized = false;
-				uDM CurrentFrame       = 0;
-				s32     MaxFramesInFlight  = 2;
+				bool FramebufferResized = false;
+				uDM  CurrentFrame       = 0;
+				s32  MaxFramesInFlight  = 2;
 				
 				// Not Sure
 
@@ -134,41 +134,41 @@
 				format.Format     = EFormat::B8_G8_R8_A8_UNormalized;
 				format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-				TriangleDemo_Swap = getPtr(Rendering::Request_SwapChain(*TriangleDemo_Surface, format));
-
+				TriangleDemo_Swap    = getPtr(Rendering::Request_SwapChain    (*TriangleDemo_Surface, format));
 				TriangleDemo_Context = getPtr(Rendering::Request_RenderContext(*TriangleDemo_Swap));
 
-				TriangleDemo_Shader.Create
+			/*	TriangleDemo_Shader.Create
 				(
 					String(Renderer::Shader::Paths::TriangleShader) + "TriangleShader.vert",
 					String(Renderer::Shader::Paths::TriangleShader) + "TriangleShader.frag"
-				);
+				);*/
 
 				ModelWTxtur_Shader.Create
 				(
 					String(Renderer::Shader::Paths::VKTut) + "VertexShaderV5.vert",
-					String(Renderer::Shader::Paths::VKTut) + "FragmentShaderV5.frag"
+					String(Renderer::Shader::Paths::VKTut) + "FragmentShaderV5.frag",
+					sizeof(UniformBufferObject)
 				);
 
-				TriangleDemo_Renderable = GPU_Resources::Request_Renderable(TriangleVerticies, getPtr(TriangleDemo_Shader));
+				//TriangleDemo_Renderable = GPU_Resources::Request_Renderable(TriangleVerticies, getPtr(TriangleDemo_Shader));
 
 				//LoadModel(VikingRoom_ModelPath);
 
-				//ModelWTxtur_TxtImage = stbi_load(VikingRoom_TexturePath.c_str(), &Model_TxtWidth, &Model_TxtHeight, &Model_TxtChannels, STBI_rgb_alpha);
+				ModelWTxtur_TxtImage = stbi_load(VikingRoom_TexturePath.c_str(), &Model_TxtWidth, &Model_TxtHeight, &Model_TxtChannels, STBI_rgb_alpha);
 
-				/*ModelWTexur_Renderable = GPU_Resources::Request_Renderable
+				ModelWTexur_Renderable = GPU_Resources::Request_Renderable
 				(
 					ModelVerticies,
 					ModelIndicies,
 					ModelWTxtur_TxtImage, Model_TxtWidth, Model_TxtHeight,
 					getPtr(ModelWTxtur_Shader)
-				);*/
+				);
 
-				//TriangleDemo_Context->AddRenderable(ModelWTexur_Renderable);
+				TriangleDemo_Context->AddRenderable(ModelWTexur_Renderable);
 
 				//TriangleDemo_Context->AddRenderable(TriangleDemo_Renderable);
 
-				//AddTestCallback();
+				AddTestCallback();
 			}
 
 			void Render()
@@ -244,7 +244,7 @@
 					}
 
 					GraphicsPipeline_Old.Destroy(); 
-					PipelineLayout      .Destroy(); 
+					PipelineLayout_Old      .Destroy(); 
 					RenderPass_Old      .Destroy(); 
 
 					for (uDM index = 0; index < SwapChain_Old->GetImageViews().size(); index++)
@@ -334,7 +334,7 @@
 				CommandBuffers_Old[index].BindDescriptorSets
 				(
 					EPipelineBindPoint::Graphics,
-					PipelineLayout,
+					PipelineLayout_Old,
 					0,
 					1,
 					DescriptorSets[index]
@@ -410,7 +410,7 @@
 				_buffer.BindDescriptorSets
 				(
 					EPipelineBindPoint::Graphics,
-					PipelineLayout,
+					PipelineLayout_Old,
 					0,
 					1,
 					DescriptorSets[index]
@@ -572,7 +572,7 @@
 					DescriptorSet::ImageInfo imageInfo{};
 
 					imageInfo.ImageLayout = EImageLayout::Shader_ReadonlyOptimal;
-					imageInfo.ImageView   = TextureImageView        ;
+					imageInfo.ImageView   = TextureImageView;
 					imageInfo.Sampler     = TextureSampler;
 
 
@@ -600,7 +600,7 @@
 					descriptorWrites[1].ImageInfo       = &imageInfo; // Optional
 					descriptorWrites[1].TexelBufferView = nullptr   ; // Optional
 
-					DescriptorSets[0].Update(SCast<u32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
+					DescriptorSets[index].Update(SCast<u32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
 				}
 			}
 
@@ -632,7 +632,7 @@
 				Pipeline::Layout::DescriptorSet::CreateInfo layoutInfo;
 
 				layoutInfo.BindingCount = SCast<u32>(bindings.size());
-				layoutInfo.Bindings = bindings.data();
+				layoutInfo.Bindings     = bindings.data();
 
 				//DescriptorSetLayout_Old.Assign(GPU_Comms::GetEngagedDevice(), layoutInfo);
 
@@ -706,7 +706,7 @@
 				vertexInputState_CreationSpec.BindingDescriptionCount = 1;
 				vertexInputState_CreationSpec.AttributeDescriptionCount = SCast<u32>(attributes.size());
 
-				vertexInputState_CreationSpec.BindingDescriptions = &binding;
+				vertexInputState_CreationSpec.BindingDescriptions = &binding[0];
 				vertexInputState_CreationSpec.AttributeDescriptions = attributes.data();
 
 				Pipeline::InputAssemblyState::CreateInfo inputAssembly_CreationSpec{};
@@ -830,7 +830,7 @@
 				pipelineLayout_CreationSpec.PushConstantRanges     = nullptr            ;
 
 				EResult piplineLayout_CreationResult = 
-					PipelineLayout.Create(GPU_Comms::GetEngagedDevice(), pipelineLayout_CreationSpec);
+					PipelineLayout_Old.Create(GPU_Comms::GetEngagedDevice(), pipelineLayout_CreationSpec);
 
 				if (piplineLayout_CreationResult != EResult::Success)
 				{
@@ -852,7 +852,7 @@
 				pipelineInfo.DynamicState       = nullptr                       ;   // Optional
 				pipelineInfo.TessellationState = nullptr;
 
-				pipelineInfo.Layout = PipelineLayout;
+				pipelineInfo.Layout = PipelineLayout_Old;
 
 				pipelineInfo.RenderPass = RenderPass_Old;
 				pipelineInfo.Subpass    = 0          ;
@@ -1192,17 +1192,17 @@
 					EImageTiling::Optimal, 
 					Image::UsageFlags(EImageUsage::TransferDestination, EImageUsage::Sampled, EImageUsage::TransferSource), 
 					Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal),
-					TextureImage, 
+					TextureImage_Old, 
 					TextureImageMemory
 				);
 
-				//TransitionImageLayout(TextureImage, EFormat::R8_G8_B8_A8_UNormalized, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal, MipMapLevels);
+				//TransitionImageLayout(TextureImage_Old, EFormat::R8_G8_B8_A8_UNormalized, EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal, MipMapLevels);
 
-				TextureImage.TransitionLayout(EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal);
+				TextureImage_Old.TransitionLayout(EImageLayout::Undefined, EImageLayout::TransferDestination_Optimal);
 
-				CopyBufferToImage(stagingBuffer, TextureImage, SCast<u32>(textureWidth), SCast<u32>(textureHeight));
+				CopyBufferToImage(stagingBuffer, TextureImage_Old, SCast<u32>(textureWidth), SCast<u32>(textureHeight));
 
-				GenerateMipMaps(TextureImage, EFormat::R8_G8_B8_A8_UNormalized, textureWidth, textureHeight, MipMapLevels);
+				GenerateMipMaps(TextureImage_Old, EFormat::R8_G8_B8_A8_UNormalized, textureWidth, textureHeight, MipMapLevels);
 
 				stagingBuffer.Destroy(); 
 				stagingBufferMemory.Free();
@@ -1553,6 +1553,8 @@
 				const void* address = &ubo;
 
 				UniformBuffersMemory[_currentImage].WriteToGPU(0, sizeof(ubo), 0, address);
+
+				ModelWTexur_Renderable->UpdateUniforms(address, sizeof(ubo));
 			}
 
 			// GPU_HAL
@@ -1661,19 +1663,22 @@
 				// Ported
 				CreateIndexBuffer();
 
+				// Ported
 				CreateUniformBuffers();
 
 				// Ported
 				CreateTextureImage(VikingRoom_TexturePath.c_str()); 
 
 				// Ported
-				TextureImageView = CreateImageView(TextureImage, EFormat::R8_G8_B8_A8_UNormalized, Image::AspectFlags(EImageAspect::Color), MipMapLevels);
+				TextureImageView = CreateImageView(TextureImage_Old, EFormat::R8_G8_B8_A8_UNormalized, Image::AspectFlags(EImageAspect::Color), MipMapLevels);
 
 				// Ported
 				CreateTextureSampler();
 
+				// ported
 				CreateDescriptorPool();
 
+				// ported
 				CreateDescriptorSets();
 
 				// Ported
@@ -1718,17 +1723,22 @@
 					shader.Destroy();
 				}
 
+				// Ported
 				CreateColorResources();
 
+				// Ported
 				CreateDepthResources();
 
 				// Ported
 				CreateFrameBuffers();
 
+				// Ported
 				CreateUniformBuffers();
 
+				// Ported
 				CreateDescriptorPool();
 
+				// Ported
 				CreateDescriptorSets();
 			}
 
@@ -1849,7 +1859,7 @@
 				//(
 					TextureSampler    .Destroy(); 
 					TextureImageView  .Destroy(); 
-					TextureImage      .Destroy(); 
+					TextureImage_Old      .Destroy(); 
 					TextureImageMemory.Free   (); 
 
 					DescriptorSetLayout_Old.Destroy();
@@ -1877,8 +1887,7 @@
 					//if (Meta::Vulkan::EnableLayers) GPU_Messenger.Destroy();
 
 					Rendering::Retire_SwapChain(SwapChain_Old);
-
-					Rendering::Retire_Surface(Surface_Old);
+					Rendering::Retire_Surface  (Surface_Old);
 				//);
 			}
 		}

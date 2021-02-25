@@ -30,9 +30,11 @@ namespace HAL::GPU::Vulkan
 	{
 	}
 
-	BasicShader::BasicShader(const Path& _vertShader, const Path& _fragShader)
+	BasicShader::BasicShader(const Path& _vertShader, const Path& _fragShader, DeviceSize _uniformSize)
 	{
 		Create(_vertShader, _fragShader);
+
+		uboSize = _uniformSize;
 	}
 
 	BasicShader::~BasicShader()
@@ -46,9 +48,6 @@ namespace HAL::GPU::Vulkan
 		ShaderModule::CreateInfo info;
 
 		SPIR_V::Bytecode_Buffer bytecode;
-
-		
-
 
 		// Vertex
 
@@ -101,6 +100,13 @@ namespace HAL::GPU::Vulkan
 
 
 		glslang::FinalizeProcess();
+	}
+
+	void BasicShader::Create(const Path& _vertShader, const Path& _fragShader, DeviceSize _size)
+	{
+		Create(_vertShader, _fragShader);
+
+		uboSize = _size;
 	}
 
 	using ShaderStageInfo = BasicShader::ShaderStageInfo;

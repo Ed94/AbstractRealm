@@ -38,12 +38,17 @@ namespace HAL::GPU::Vulkan
 			      ptr<const AShader>                  _shader               , 
 			      DynamicArray<AttributeDescription>& _attributeDescriptions, 
 				  DynamicArray<BindingDescription  >& _bindingDescriptions  ,
+			      ptr<const DescriptorSetLayout>      _descriptorSetLayout,
 			      Bool                                _enableDepthClamp
 		);
 
 		ptr<const ShaderStage::CreateInfo> GetShaderStages() const;
 
 		const VertexInputState::CreateInfo& GetVertexInputState() const;
+
+		const Layout& GetLayout() const;
+
+		//const DescriptorSetLayout& GetDescriptorSetLayout() const;
 
 	protected:
 

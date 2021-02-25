@@ -17,6 +17,7 @@ C++ Standard Library
 #include <fstream>
 #include <functional>
 #include <iostream>
+#include <iterator>
 #include <limits>
 #include <map>
 #include <memory>

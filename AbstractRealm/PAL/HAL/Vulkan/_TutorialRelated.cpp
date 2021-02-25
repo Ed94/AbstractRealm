@@ -29,7 +29,7 @@ namespace HAL::GPU::Vulkan
 		DynamicArray<Buffer> UniformBuffers      ;
 		DynamicArray<Memory> UniformBuffersMemory;
 
-		Image     TextureImage      ;
+		Image     TextureImage_Old      ;
 		Memory    TextureImageMemory;
 		ImageView TextureImageView  ;
 		Sampler   TextureSampler    ;

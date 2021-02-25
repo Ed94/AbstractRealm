@@ -53,6 +53,7 @@ namespace HAL::GPU
 			using BindingDescription = Pipeline::VertexInputState::BindingDescription;
 
 			using VertexAttributes = StaticArray<AttributeDescription, 3>;
+			using VertexBindings   = StaticArray<BindingDescription, 1>;
 
 
 			struct PositionT
@@ -111,13 +112,13 @@ namespace HAL::GPU
 				return result;
 			}
 
-			static constexpr BindingDescription GetBindingDescription()
+			static constexpr VertexBindings GetBindingDescription()
 			{
-				BindingDescription result{};
+				VertexBindings result {};
 
-				result.Binding   = 0;
-				result.Stride    = sizeof(Vertex_WTexture);
-				result.InputRate = EVertexInputRate::Vertex;
+				result[0].Binding   = 0;
+				result[0].Stride    = sizeof(Vertex_WTexture);
+				result[0].InputRate = EVertexInputRate::Vertex;
 
 				return result;
 			}
@@ -214,7 +215,7 @@ namespace HAL::GPU
 			eGlobal DynamicArray<Buffer> UniformBuffers      ;
 			eGlobal DynamicArray<Memory> UniformBuffersMemory;
 
-			eGlobal Image     TextureImage      ;
+			eGlobal Image     TextureImage_Old      ;
 			eGlobal Memory    TextureImageMemory;
 			eGlobal ImageView TextureImageView  ;
 			eGlobal Sampler   TextureSampler    ;

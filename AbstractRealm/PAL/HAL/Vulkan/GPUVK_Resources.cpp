@@ -11,6 +11,31 @@
 
 namespace HAL::GPU::Vulkan
 {
+#pragma region Buffer
+
+	EResult Buffer::Create(const CreateInfo& _info)
+	{
+		info = _info;
+
+		return Parent::Create(_info);
+	}
+
+	EResult Buffer::Create(const LogicalDevice& _device, const CreateInfo& _info)
+	{
+		info = _info;
+
+		return Parent::Create(_device, _info);
+	}
+
+	EResult Buffer::Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator)
+	{
+		info = _info;
+
+		return Parent::Create(_device, _info, _allocator);
+	}
+
+#pragma endregion Buffer
+
 #pragma region Image
 
 	EResult Image::Create(const LogicalDevice& _device, const CreateInfo& _info)
@@ -437,6 +462,11 @@ namespace HAL::GPU::Vulkan
 		return buffer;
 	}
 
+	ui32 IndexBuffer::GetSize() const
+	{
+		return indices.size();
+	}
+
 #pragma endregion IndexBuffer
 
 #pragma region TextureImage
@@ -725,7 +755,87 @@ namespace HAL::GPU::Vulkan
 		Deck::EndRecordOnTransient(commandBuffer);
 	}
 
+	const ImageView& TextureImage::GetView() const
+	{
+		return imageView;
+	}
+
+	const Sampler& TextureImage::GetSampler() const
+	{
+		return sampler;
+	}
+
 #pragma endregion TextureImage
+
+#pragma region UniformBuffer
+
+	EResult UniformBuffer::Create(DeviceSize _bufferSize)
+	{
+		Buffer::CreateInfo uniformBufferInfo;
+
+		uniformBufferInfo.Size = _bufferSize;
+
+		uniformBufferInfo.Usage.Set(EBufferUsage::UniformBuffer);
+
+		uniformBufferInfo.SharingMode = ESharingMode::Exclusive;
+
+		EResult result = buffer.Create(GPU_Comms::GetEngagedDevice(), uniformBufferInfo);
+
+		if (result != EResult::Success)
+		{
+			throw RuntimeError("Failed to create uniform buffer.");
+		}
+
+		Memory::AllocateInfo allocInfo;
+
+		auto& memReq = buffer.GetMemoryRequirements();
+
+		allocInfo.AllocationSize = memReq.Size;
+
+		allocInfo.MemoryTypeIndex =
+			buffer.GetDevice().GetPhysicalDevice().FindMemoryType
+			(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
+
+		result = memory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
+
+		if (result != EResult::Success)
+		{
+			throw RuntimeError("Failed to create uniform buffer memory.");
+		}
+
+		buffer.BindMemory(memory, Memory::ZeroOffset);
+
+		if (result != EResult::Success)
+		{
+			throw RuntimeError("Failed to bind uniform buffer memory.");
+		}
+
+		return result;
+	}
+
+	void UniformBuffer::Destroy()
+	{
+		buffer.Destroy();
+
+		memory.Free();
+	}
+
+	void UniformBuffer::Write(ptr<const void> _data)
+	{
+		memory.WriteToGPU(0, buffer.GetSize(), 0, _data);
+	}
+
+	const Buffer& UniformBuffer::GetBuffer() const
+	{
+		return buffer;
+	}
+
+	const Memory& UniformBuffer::GetMemory() const
+	{
+		return memory;
+	}
+
+#pragma endregion UniformBuffer
 
 #pragma region GPU_Resources
 

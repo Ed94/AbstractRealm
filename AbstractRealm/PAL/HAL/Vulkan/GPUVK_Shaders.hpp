@@ -33,6 +33,8 @@ namespace HAL::GPU::Vulkan
 		~AShader() {};
 
 		virtual const DynamicArray<ShaderStageInfo>& GetShaderStageInfos() const = NULL;
+
+		virtual DeviceSize GetUniformSize() const = NULL;
 	};
 
 	// Supports only vertex and fragment shader pair.
@@ -41,20 +43,29 @@ namespace HAL::GPU::Vulkan
 	public:
 
 		 BasicShader();
-		 BasicShader(const Path& _vertShader, const Path& _fragShader);
+		 BasicShader(const Path& _vertShader, const Path& _fragShader, DeviceSize _uniformSize);
 		~BasicShader();
 
+		 // Mitigating stuff...
+		 
+
 		void Create(const Path& _vertShader, const Path& _fragShader);
+
+		void Create(const Path& _vertShader, const Path& _fragShader, DeviceSize _uniformSize);
 
 		//void Destroy();
 
 		const DynamicArray<ShaderStageInfo>& GetShaderStageInfos() const override;
+
+		virtual DeviceSize GetUniformSize() const override { return uboSize; }
 
 
 	protected:
 
 		ShaderModule    shaderModules[2];
 		ShaderStageInfo shaderStageInfos[2];   // One for vertex and for fragment.
+
+		DeviceSize uboSize = 0;
 	};
 
 

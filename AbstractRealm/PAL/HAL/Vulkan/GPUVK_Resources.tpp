@@ -103,14 +103,14 @@ namespace HAL::GPU::Vulkan
 
 		shader = _shader;
 
-		CreateDescriptors();
-
 		CreateDescriptorsLayout();
 	}
 
 	template<typename VertexType>
-	void TModelRenderable<VertexType>::RecordRender(const CommandBuffer& _commandBuffer)
+	void TModelRenderable<VertexType>::RecordRender(u32 _index, const CommandBuffer& _commandBuffer, const PipelineLayout& _pipelineLayout)
 	{
+		uniformBuffers[_index].Write(uniformData.data());
+
 		unbound DynamicArray<Buffer::Handle> handles;
 
 		if (handles.empty())
@@ -120,12 +120,29 @@ namespace HAL::GPU::Vulkan
 			handles.push_back(handle);
 		}
 
-		//_commandBuffer.BindVertexBuffers(0, 1, handles.data());
+		DeviceSize offsets = 0;
 
-		//_commandBuffer.Draw(0, 3, 0, 1)
+		_commandBuffer.BindVertexBuffers(0, 1, handles.data(), &offsets);
 
-		// use index drawing...
+		_commandBuffer.BindIndexBuffer(indexBuffer.GetBuffer(), 0, EIndexType::uInt32);
 
+		_commandBuffer.BindDescriptorSets
+		(
+			EPipelineBindPoint::Graphics,
+			_pipelineLayout,
+			0,
+			1,
+			descriptors[_index]
+		);
+
+		_commandBuffer.DrawIndexed
+		(
+			SCast<ui32>(indexBuffer.GetSize()),
+			1,
+			0,
+			0,
+			0
+		);
 	}
 
 	template<typename VertexType>
@@ -171,21 +188,125 @@ namespace HAL::GPU::Vulkan
 	template<typename VertexType>
 	ptr<const DescriptorSetLayout> TModelRenderable<VertexType>::GetDescriptorsLayout() const
 	{
-		return descrptorsLayout;
+		return &descriptorsLayout;
+	}
+
+	template<typename VertexType>
+	void TModelRenderable<VertexType>::CreateDescriptorSets(u32 _count, const DescriptorPool& _descriptorPool)
+	{
+		uniformBuffers.resize(_count);
+
+		for (auto& uniformBuffer : uniformBuffers)
+		{
+			uniformBuffer.Create(shader->GetUniformSize());
+		}
+
+		DynamicArray<DescriptorSetLayout::Handle> layouts (_count, descriptorsLayout);
+
+		DescriptorPool::AllocateInfo allocInfo;
+
+		allocInfo.DescriptorPool     = _descriptorPool;
+		allocInfo.DescriptorSetCount = _count;
+		allocInfo.SetLayouts         = layouts.data();
+
+		if (_descriptorPool.Allocate(allocInfo, descriptors) != EResult::Success)
+		{
+			throw RuntimeError("Failed to allocate descriptor sets.");
+		}
+
+		for (uDM index = 0; index < _count; index++)
+		{
+			DescriptorSet::BufferInfo bufferInfo;
+
+			auto& buffer = uniformBuffers[index].GetBuffer();
+
+			bufferInfo.Buffer = buffer;
+			bufferInfo.Offset = 0      ;
+			bufferInfo.Range  = buffer.GetSize();
+
+
+			DescriptorSet::ImageInfo imageInfo{};
+
+			imageInfo.ImageLayout = EImageLayout::Shader_ReadonlyOptimal;
+			imageInfo.ImageView   = textureImage.GetView();
+			imageInfo.Sampler     = textureImage.GetSampler();
+
+
+			StaticArray<DescriptorSet::Write, 2> descriptorWrites;
+
+			descriptorWrites[0].DstSet          = descriptors[index];
+			descriptorWrites[0].DstBinding      = 0                    ;
+			descriptorWrites[0].DstArrayElement = 0                    ;
+
+			descriptorWrites[0].DescriptorType  = EDescriptorType::UniformBuffer;
+			descriptorWrites[0].DescriptorCount = 1                             ;
+
+			descriptorWrites[0].BufferInfo      = &bufferInfo;
+			descriptorWrites[0].ImageInfo       = nullptr    ; // Optional
+			descriptorWrites[0].TexelBufferView = nullptr    ; // Optional
+
+			descriptorWrites[1].DstSet          = descriptors[index]          ;
+			descriptorWrites[1].DstBinding      = 1                              ;
+			descriptorWrites[1].DstArrayElement = 0                              ;
+
+			descriptorWrites[1].DescriptorType  = EDescriptorType::CombinedImageSampler;
+			descriptorWrites[1].DescriptorCount = 1                                    ;
+
+			descriptorWrites[1].BufferInfo      = nullptr   ;
+			descriptorWrites[1].ImageInfo       = &imageInfo; // Optional
+			descriptorWrites[1].TexelBufferView = nullptr   ; // Optional
+
+			descriptors[index].Update(SCast<u32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
+		}
+	}
+
+	template<typename VertexType>
+	void TModelRenderable<VertexType>::UpdateUniforms(ptr<const void> _data, DeviceSize _size)
+	{
+		uniformData.reserve(_size);
+
+		ptr<const Byte> _dataBytes = RCast<const Byte>(_data);
+
+		auto endAddress = _dataBytes + _size;
+
+		std::copy(_dataBytes, endAddress, back_inserter(uniformData));
 	}
 
 	// Private
 
 	template<typename VertexType>
-	void TModelRenderable<VertexType>::CreateDescriptors()
-	{
-
-	}
-
-	template<typename VertexType>
 	void TModelRenderable<VertexType>::CreateDescriptorsLayout()
 	{
+		DescriptorSetLayout::Binding uboLayoutBinding;
 
+		uboLayoutBinding.BindingID = 0;
+		uboLayoutBinding.Type      = EDescriptorType::UniformBuffer;
+		uboLayoutBinding.Count     = 1;
+
+		uboLayoutBinding.StageFlags = EShaderStageFlag::Vertex;
+
+		uboLayoutBinding.ImmutableSamplers = nullptr;
+
+		DescriptorSetLayout::Binding samplerLayoutBinding;
+
+		samplerLayoutBinding.BindingID = 1;
+		samplerLayoutBinding.Count     = 1;
+		samplerLayoutBinding.Type      = EDescriptorType::CombinedImageSampler;
+
+		samplerLayoutBinding.ImmutableSamplers = nullptr;
+
+		samplerLayoutBinding.StageFlags.Set(EShaderStageFlag::Fragment);
+
+		StaticArray<DescriptorSetLayout::Binding, 2> bindings = 
+		{ uboLayoutBinding, samplerLayoutBinding };
+
+		DescriptorSetLayout::CreateInfo layoutInfo;
+
+		layoutInfo.BindingCount = SCast<ui32>(bindings.size());
+		layoutInfo.Bindings     = bindings.data();
+
+		if (descriptorsLayout.Create(GPU_Comms::GetEngagedDevice(), layoutInfo) != EResult::Success)
+			throw RuntimeError("Failed to create descriptor set layout.");
 	}
 
 #pragma endregion ModelRenderable

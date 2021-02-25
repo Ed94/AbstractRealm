@@ -248,6 +248,8 @@ namespace HAL::GPU::Vulkan
 
 		EResult CreateRenderPass();
 
+		EResult CreateDescriptorPool();
+
 		void CheckContext();
 
 		GraphicsPipeline& Request_GraphicsPipeline(ptr<ARenderable> _renderable);
@@ -301,9 +303,11 @@ namespace HAL::GPU::Vulkan
 
 		// Resource stuff....
 
+		DescriptorPool descriptorPool;
+
 		//DynamicArray<DescriptorPool> descriptorPool;
 
-		//DynamicArray<DescriptorSet> descriptorSets;
+		DynamicArray<DescriptorSet> descriptorSets;
 	};
 
 	class ViewContext

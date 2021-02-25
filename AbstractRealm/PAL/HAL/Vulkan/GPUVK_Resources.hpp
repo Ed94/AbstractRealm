@@ -26,6 +26,14 @@ namespace HAL::GPU::Vulkan
 			Parent::Buffer(_device, _allocator)
 		{}
 
+		EResult Create(const CreateInfo& _info);
+
+		EResult Create(const LogicalDevice& _device, const CreateInfo& _info);
+
+		EResult Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator);
+
+		DeviceSize GetSize() const { return info.Size; }
+
 	protected:
 
 		CreateInfo info;
@@ -153,6 +161,8 @@ namespace HAL::GPU::Vulkan
 
 		const Buffer& GetBuffer() const;
 
+		ui32 GetSize() const; 
+
 	protected:
 
 		Buffer     buffer      ;
@@ -170,6 +180,10 @@ namespace HAL::GPU::Vulkan
 
 		void Destroy();
 
+		const ImageView& GetView() const;
+
+		const Sampler& GetSampler() const;
+
 	protected:
 
 		void CreateImageView();
@@ -181,6 +195,26 @@ namespace HAL::GPU::Vulkan
 		ImageView imageView;
 
 		Sampler sampler;
+	};
+
+	class UniformBuffer
+	{
+	public:
+
+		EResult Create(DeviceSize _bufferSize);
+
+		void Destroy();
+
+		void Write(ptr<const void> _data);
+
+		const Buffer& GetBuffer() const;
+
+		const Memory& GetMemory() const;
+
+	protected:
+
+		Buffer buffer;
+		Memory memory;
 	};
 
 
@@ -301,7 +335,7 @@ namespace HAL::GPU::Vulkan
 
 		~ARenderable() {};
 
-		virtual void RecordRender(const CommandBuffer& _commandBuffer) = NULL;
+		virtual void RecordRender(u32 _index, const CommandBuffer& _commandBuffer, const PipelineLayout& _pipelineLayout) = NULL;
 
 		virtual DynamicArray<AttributeDescription>& GetVertexAttributes() const = NULL;
 
@@ -310,6 +344,10 @@ namespace HAL::GPU::Vulkan
 		virtual ptr<const AShader> GetShader() const = NULL;
 
 		virtual ptr<const DescriptorSetLayout> GetDescriptorsLayout() const = NULL;
+
+		virtual void CreateDescriptorSets(u32 _count, const DescriptorPool& _descriptorPool) = NULL;
+
+		virtual void UpdateUniforms(ptr<const void> _data, DeviceSize _size) = NULL;
 	};
 
 	
@@ -356,13 +394,13 @@ namespace HAL::GPU::Vulkan
 		void Create
 		(
 			const DynamicArray<VertexType>& _verticies, 
-			const DynamicArray<u32> _indicies,
-			ptr<const u8> _textureData,
+			const DynamicArray<u32>         _indicies,
+			ptr<const u8>                   _textureData,
 			u32 _width, u32 _height,
 			ptr<const AShader> _shader
 		);
 
-		void RecordRender(const CommandBuffer& _commandBuffer) override;
+		void RecordRender(u32 _index, const CommandBuffer& _commandBuffer, const PipelineLayout& _pipelineLayout) override;
 
 		DynamicArray<AttributeDescription>& GetVertexAttributes() const override;
 
@@ -372,9 +410,12 @@ namespace HAL::GPU::Vulkan
 
 		ptr<const DescriptorSetLayout> GetDescriptorsLayout() const override;
 
-	protected:
+		void CreateDescriptorSets(u32 _count, const DescriptorPool& _descriptorPool) override;
 
-		void CreateDescriptors();
+		void UpdateUniforms(ptr<const void> _data, DeviceSize _size) override;
+		
+
+	protected:
 
 		void CreateDescriptorsLayout();
 
@@ -382,11 +423,17 @@ namespace HAL::GPU::Vulkan
 
 		IndexBuffer indexBuffer;
 
+		DynamicArray<Byte> uniformData;
+
+		DynamicArray<UniformBuffer> uniformBuffers;
+
 		TextureImage textureImage;
 
-		DynamicArray< ptr<const DescriptorSet>> descriptors;
+		DynamicArray<DescriptorSet> descriptors;
 												
-		ptr<const DescriptorSetLayout> descriptorsLayout;
+		//ptr<const DescriptorSetLayout> descriptorsLayout;
+
+		DescriptorSetLayout descriptorsLayout;
 
 		ptr<const AShader> shader;
 	};

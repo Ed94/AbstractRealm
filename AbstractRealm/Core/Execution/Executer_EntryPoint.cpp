@@ -125,15 +125,15 @@ namespace Core::Execution
 
 			OSAL::SetWindow_SizeChangeCallback(StaticData::EngineWindow, WindowSizeChanged);
 
-			//windowSpec.WindowTitle = "Triangle Demo";
+			windowSpec.WindowTitle = "Modular Renderable Demo";
 
-			//DemoWindow = OSAL::Create_Window(windowSpec);
+			DemoWindow = OSAL::Create_Window(windowSpec);
 
-			//OSAL::SetWindow_SizeChangeCallback(DemoWindow, WindowSizeChanged);
+			OSAL::SetWindow_SizeChangeCallback(DemoWindow, WindowSizeChanged);
 
 			HAL::GPU::Default_InitializeRenderer(StaticData::EngineWindow);
 
-			//HAL::GPU::Vulkan::Start_TriangleDemo(DemoWindow);
+			HAL::GPU::Vulkan::Start_TriangleDemo(DemoWindow);
 
 			Imgui::Initialize(StaticData::EngineWindow);
 
@@ -147,7 +147,7 @@ namespace Core::Execution
 
 			Imgui::Deinitialize();
 
-			//HAL::GPU::Vulkan::Stop_TriangleDemo();
+			HAL::GPU::Vulkan::Stop_TriangleDemo();
 
 			HAL::GPU::Default_DeinitializeRenderer(StaticData::EngineWindow);
 

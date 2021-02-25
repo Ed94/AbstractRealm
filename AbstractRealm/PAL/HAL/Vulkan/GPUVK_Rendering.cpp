@@ -563,6 +563,10 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
+		result = CreateDescriptorPool();
+
+		if (result != EResult::Success) return result;
+
 		maxFramesInFlight = SCast<u32>(frameBuffers.size() - 1);
 
 		frameRefs.resize(maxFramesInFlight);
@@ -626,9 +630,7 @@ namespace HAL::GPU::Vulkan
 
 	void RenderContext::AddRenderable(ptr<ARenderable> _renderable)
 	{
-		// Check if existing group is compatible.
-		// Check if already in group
-		// If not compatible with an existing group, make a new group and / or graphics pipeline.
+		_renderable->CreateDescriptorSets(swapchain->GetImageViews().size(), descriptorPool);
 
 		if (renderGroups.empty())
 		{
@@ -710,11 +712,10 @@ namespace HAL::GPU::Vulkan
 		// Set the current swap image fence to that of the frame queue fence.
 		swapsInFlight[currentSwap] = &frameRef.RenderingInFlight();
 
-		clearValues[0].Color = { 0.1f, 0.1f, 0.2f, 0.2f };
+		clearValues[0].Color = { 0.0f, 0.0f, 0.0f, 0.1f };
 
-		// Prep the ClearValue for the render pass...
 		/*switch (currentFrameBuffer)
-		{ 
+		{
 			case 0: clearValues[0].Color = { 1.0f, 0.0f, 0.0f, 1.0f }; break;
 			case 1: clearValues[0].Color = { 0.0f, 1.0f, 0.0f, 1.0f }; break;
 			case 2: clearValues[0].Color = { 0.0f, 0.0f, 1.0f, 1.0f }; break;
@@ -722,17 +723,19 @@ namespace HAL::GPU::Vulkan
 			{
 				clearValues[0].Color = { 1.0f,0.0f,0.0f, 1.0f };
 
-				break;    
+				break;
 			}
 		}*/
 
 		if (bufferDepth) 
 		{
-			clearValues[1].DepthStencil.Depth   = 1.0f;
-			clearValues[1].DepthStencil.Stencil = 0   ;
+			clearValues[1].DepthStencil = { 1.0f, 0 };
+
+			//clearValues[1].DepthStencil.Depth   = 1.0f;
+			//clearValues[1].DepthStencil.Stencil = 0   ;
 		}
 
-		beginInfo.Framebuffer = frameBuffers[currentSwap];
+		beginInfo.Framebuffer = (Framebuffer::Handle)(frameBuffers[currentSwap].operator Framebuffer::Handle&());
 
 		if (!Meta::UseConcurrency())
 		{
@@ -763,11 +766,9 @@ namespace HAL::GPU::Vulkan
 
 					for (auto& renderable : renderGroup.Renderables)
 					{
-						renderable->RecordRender(primaryBuffer);
+						renderable->RecordRender(currentFrameBuffer, primaryBuffer, renderGroup.Pipeline->GetLayout());
 					}
 				}
-
-				//viewContext.Render(primaryBuffer);
 			}
 
 			primaryBuffer.EndRenderPass();
@@ -784,7 +785,7 @@ namespace HAL::GPU::Vulkan
 			submitInfo.WaitDstStageMask   = &waitStage                    ;
 
 			submitInfo.CommandBufferCount = 1                                  ;
-			submitInfo.CommandBuffers     = frameRef.Request_PrimaryCmdBuffer();
+			submitInfo.CommandBuffers     = primaryBuffer;
 
 			// Let the presentation queue know that it can submit itself when render commands are finished in the queue.
 			submitInfo.SignalSemaphoreCount = 1;
@@ -829,8 +830,10 @@ namespace HAL::GPU::Vulkan
 		
 		swapchainsToSubmit.push_back(swapchain->operator const Swapchain::Handle&());
 
+		Swapchain::Handle swapChains[] = { *swapchain };
+
 		presentInfo.SwapchainCount = 1;
-		presentInfo.Swapchains     = *swapchain;
+		presentInfo.Swapchains     = swapChains;
 		presentInfo.ImageIndices   = &currentSwap;
 
 		presentInfo.Results = nullptr;
@@ -1100,6 +1103,32 @@ namespace HAL::GPU::Vulkan
 		return result;
 	}
 
+	EResult RenderContext::CreateDescriptorPool()
+	{
+		// This is currently hardcoded for the V5 Vert Shader...
+		// Descriptor pools must be created based on the requirements of a render group's descriptor layout.
+		// The descriptor layout must provide information on the bindings defined for the layout.
+
+		StaticArray<V3::DescriptorPool::Size, 2> poolSizes{};
+
+		poolSizes[0].Type = EDescriptorType::UniformBuffer;
+		poolSizes[0].Count = SCast<u32>(swapchain->GetImages().size());
+
+		poolSizes[1].Type = EDescriptorType::Sampler;
+		poolSizes[1].Count = SCast<u32>(swapchain->GetImages().size());
+
+		V3::DescriptorPool::CreateInfo poolInfo{};
+
+		poolInfo.PoolSizeCount = SCast<u32>(poolSizes.size());
+		poolInfo.PoolSizes = poolSizes.data();
+
+		poolInfo.MaxSets = SCast<u32>(swapchain->GetImages().size());
+
+		EResult result = descriptorPool.Create(GPU_Comms::GetEngagedDevice(), poolInfo);
+
+		return result;
+	}
+
 	GraphicsPipeline& RenderContext::Request_GraphicsPipeline(ptr<ARenderable> _renderable)
 	{
 		// Check if existing pipeline meets criteria
@@ -1115,7 +1144,8 @@ namespace HAL::GPU::Vulkan
 				renderPass, 
 				_renderable->GetShader(), 
 				_renderable->GetVertexAttributes(), 
-				_renderable->GetVertexBindings(), 
+				_renderable->GetVertexBindings(),
+				_renderable->GetDescriptorsLayout(),
 				bufferDepth
 			);
 
@@ -1129,7 +1159,9 @@ namespace HAL::GPU::Vulkan
 				(
 					_renderable->GetShader()->GetShaderStageInfos().data() == graphicsPipeline.GetShaderStages()                           &&
 					_renderable->GetVertexAttributes()             .data() == graphicsPipeline.GetVertexInputState().AttributeDescriptions &&
-					_renderable->GetVertexBindings()               .data() == graphicsPipeline.GetVertexInputState().BindingDescriptions
+					_renderable->GetVertexBindings()               .data() == graphicsPipeline.GetVertexInputState().BindingDescriptions   
+					// Need to figure out a better check later.. I don't account for the layout...
+					//*_renderable->GetDescriptorsLayout()                   == graphicsPipeline.GetDescriptorSetLayout()
 				)
 				{
 					return graphicsPipeline;
@@ -1144,7 +1176,8 @@ namespace HAL::GPU::Vulkan
 				_renderable->GetShader(), 
 				_renderable->GetVertexAttributes(), 
 				_renderable->GetVertexBindings(), 
-				true
+				_renderable->GetDescriptorsLayout(),
+				bufferDepth
 			);
 
 			return graphicsPipelines.back();
