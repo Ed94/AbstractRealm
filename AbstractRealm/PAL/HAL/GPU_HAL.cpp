@@ -71,6 +71,10 @@ namespace HAL
 			{
 				switch (GPU_API())
 				{
+					case EGPUPlatformAPI::BGFX:
+					{
+
+					}
 					case EGPUPlatformAPI::Vulkan:
 					{
 						Initialize_GPUComms_Bind = Vulkan::Start_GPUComms;

@@ -21,7 +21,7 @@ Currently has GPU HAL related configuration
 
 // Macros
 
-#define Khronos_Vulkan_HPP        0   // Khronos's vulkan wrapper.
+#define Khronos_Vulkan_HPP      0   // Khronos's vulkan wrapper.
 #define VaultedVulkan_Interface 1   // Vaulted thermals interface.
 
 /*
@@ -48,6 +48,7 @@ namespace Meta
 	enum class EGPUPlatformAPI
 	{
 		No_API,
+		BGFX  ,
 		Vulkan,
 	};
 
@@ -92,6 +93,10 @@ namespace Meta
 	EGPU_FrameBuffering GPU_FrameBufferingPref();
 
 
+	namespace BGFX
+	{
+
+	}
 
 	namespace  Vulkan
 	{

@@ -399,6 +399,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\HAL\BGFX\BGFX_API.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.cpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PayloadDeck.hpp">
