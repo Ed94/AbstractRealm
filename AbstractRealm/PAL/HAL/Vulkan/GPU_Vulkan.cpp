@@ -168,7 +168,7 @@
 
 				//TriangleDemo_Context->AddRenderable(TriangleDemo_Renderable);
 
-				AddTestCallback();
+				//AddTestCallback();
 			}
 
 			void Render()
@@ -351,7 +351,7 @@
 
 				for (auto renderCallback : RenderCallbacks)
 				{
-					renderCallback(CommandBuffers_Old[index], index);
+					//renderCallback(CommandBuffers_Old[index], index);
 				}
 				
 				CommandBuffers_Old[index].EndRenderPass();
@@ -1625,12 +1625,13 @@
 				// Ported
 				CreateRenderPass();
 
+				// Ported
 				CreateDescriptorSetLayout();
 
 				// Ported
 				StaticArray<V3::ShaderModule, 2> shaders = Create_VKTut_Shaders();
 
-				//
+				// Ported
 				CreateGraphicsPipeline(shaders);
 
 				for (auto& shader : shaders)
@@ -1716,6 +1717,7 @@
 				// Ported
 				StaticArray<V3::ShaderModule, 2> shaders = Create_VKTut_Shaders();
 
+				// Ported
 				CreateGraphicsPipeline(shaders);
 
 				for (auto& shader : shaders)

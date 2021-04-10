@@ -284,7 +284,7 @@ namespace HAL::GPU::Vulkan
 
 		DynamicArray<ClearValue> clearValues;
 
-		bool shouldClear = true, bufferDepth = false;
+		bool shouldClear = true, bufferDepth = true;
 
 
 		// Proper render pass array...

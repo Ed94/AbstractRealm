@@ -263,11 +263,14 @@ namespace HAL::GPU::Vulkan
 	template<typename VertexType>
 	void TModelRenderable<VertexType>::UpdateUniforms(ptr<const void> _data, DeviceSize _size)
 	{
-		uniformData.reserve(_size);
+		if (uniformData.size() != _size)
+		{
+			uniformData.reserve(_size);
+		}
 
 		ptr<const Byte> _dataBytes = RCast<const Byte>(_data);
 
-		auto endAddress = _dataBytes + _size;
+		ptr<const Byte> endAddress = _dataBytes + _size;
 
 		std::copy(_dataBytes, endAddress, back_inserter(uniformData));
 	}

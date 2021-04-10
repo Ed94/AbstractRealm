@@ -69,6 +69,7 @@ namespace HAL::GPU::Vulkan
 		multisampleStateInfo.MinSampleShading      = 1.0f;
 		multisampleStateInfo.EnableAlphaToCoverage = EBool::False;
 		multisampleStateInfo.EnableAlphaToOne      = EBool::False;
+		multisampleStateInfo.SampleMask            = nullptr;
 
 		// Depth Stencil State
 
@@ -87,16 +88,21 @@ namespace HAL::GPU::Vulkan
 		depthStencilStateInfo.Front.Reference    = 0;
 		depthStencilStateInfo.Back               = depthStencilStateInfo.Front;
 
-		depthStencilStateInfo.MinDepthBounds = 0;
-		depthStencilStateInfo.MaxDepthBounds = 0;
+		StencilOperationState nullStencil {};
+
+		depthStencilStateInfo.Front = nullStencil;
+		depthStencilStateInfo.Back = nullStencil;
+
+		depthStencilStateInfo.MinDepthBounds = 0.0f;
+		depthStencilStateInfo.MaxDepthBounds = 1.0f;
 
 		// Color Blend Attachment State
 
 		colorBlendAttachmentState.EnableBlend                  = EBool::False;
-		colorBlendAttachmentState.Source_ColorBlendFactor      = EBlendFactor::Zero;
+		colorBlendAttachmentState.Source_ColorBlendFactor      = EBlendFactor::One;
 		colorBlendAttachmentState.Destination_ColorBlendFactor = EBlendFactor::Zero;
 		colorBlendAttachmentState.ColorOperation               = EBlendOperation::Add;
-		colorBlendAttachmentState.Source_AlphaBlendFactor      = EBlendFactor::Zero;
+		colorBlendAttachmentState.Source_AlphaBlendFactor      = EBlendFactor::One;
 		colorBlendAttachmentState.Destination_AlphaBlendFactor = EBlendFactor::Zero;
 		colorBlendAttachmentState.AlphaOperation               = EBlendOperation::Add;
 
@@ -122,16 +128,16 @@ namespace HAL::GPU::Vulkan
 		// Rasterization State
 
 		rasterizationStateInfo.EnableDepthClamp = _enableDepthClamp;
-		rasterizationStateInfo.PolygonMode      = EPolygonMode::Line;
+		rasterizationStateInfo.PolygonMode      = EPolygonMode::Fill;
 
 		rasterizationStateInfo.CullMode.Set(ECullModeFlag::Back);
 
-		rasterizationStateInfo.FrontFace       = EFrontFace::Clockwise;
+		rasterizationStateInfo.FrontFace       = EFrontFace::CounterClockwise;
 		rasterizationStateInfo.EnableDepthBias = EBool::False;
 
-		rasterizationStateInfo.DepthBiasConstantFactor = 0;
-		rasterizationStateInfo.DepthBiasClamp          = 0;
-		rasterizationStateInfo.DepthBiasSlopeFactor    = 0;
+		rasterizationStateInfo.DepthBiasConstantFactor = 0.0f;
+		rasterizationStateInfo.DepthBiasClamp          = 0.0f;
+		rasterizationStateInfo.DepthBiasSlopeFactor    = 0.0f;
 		rasterizationStateInfo.LineWidth               = 1.0f;
 
 		// Dynamic States
@@ -151,10 +157,10 @@ namespace HAL::GPU::Vulkan
 		//Layout::CreateInfo layoutInfo;
 
 		//layoutInfo.SetLayoutCount = RCast<ui32>(_descriptorSetLayouts.size());  // hardcoded for now.
-		layoutInfo.SetLayoutCount = 1;  
-		layoutInfo.SetLayouts     = *_descriptorSetLayout;
+		layoutInfo.SetLayoutCount         = 1;  
+		layoutInfo.SetLayouts             = *_descriptorSetLayout;
 		layoutInfo.PushConstantRangeCount = 0;
-		layoutInfo.PushConstantRanges = nullptr;
+		layoutInfo.PushConstantRanges     = nullptr;
 
 
 		if (layout.Create(GPU_Comms::GetEngagedDevice(), layoutInfo) != EResult::Success)
@@ -179,7 +185,7 @@ namespace HAL::GPU::Vulkan
 		info.RenderPass         = _renderPass;
 		info.Subpass            = 0;   // Why?
 		info.BasePipelineHandle = Null<Handle>;
-		info.BasePipelineIndex  = 0;
+		info.BasePipelineIndex  = -1;
 
 		if (Parent::Create(GPU_Comms::GetEngagedDevice(), GPU_Pipeline::Request_Cache(), info) != EResult::Success)
 		{

@@ -630,7 +630,7 @@ namespace HAL::GPU::Vulkan
 
 	void RenderContext::AddRenderable(ptr<ARenderable> _renderable)
 	{
-		_renderable->CreateDescriptorSets(swapchain->GetImageViews().size(), descriptorPool);
+		_renderable->CreateDescriptorSets(maxFramesInFlight, descriptorPool);
 
 		if (renderGroups.empty())
 		{
@@ -735,7 +735,7 @@ namespace HAL::GPU::Vulkan
 			//clearValues[1].DepthStencil.Stencil = 0   ;
 		}
 
-		beginInfo.Framebuffer = (Framebuffer::Handle)(frameBuffers[currentSwap].operator Framebuffer::Handle&());
+		beginInfo.Framebuffer = frameBuffers[currentSwap].operator Framebuffer::Handle&();
 
 		if (!Meta::UseConcurrency())
 		{
@@ -889,7 +889,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult RenderContext::CreateDepthBuffer()
 	{
-		Image::CreateInfo imgInfo {};
+		Image::CreateInfo imgInfo;
 
 		imgInfo.ImageType = EImageType::_2D;
 
@@ -936,13 +936,16 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
-		depthBuffer.image.TransitionLayout(EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal);
-
-		ImageView::CreateInfo viewInfo {};
+		ImageView::CreateInfo viewInfo;
 
 		viewInfo.Image    = depthBuffer.image;
 		viewInfo.Format   = imgInfo.Format;
 		viewInfo.ViewType = ImageView::EViewType::_2D;
+
+		viewInfo.Components.R = EComponentSwizzle::Identitity;
+		viewInfo.Components.G = EComponentSwizzle::Identitity;
+		viewInfo.Components.B = EComponentSwizzle::Identitity;
+		viewInfo.Components.A = EComponentSwizzle::Identitity;
 
 		viewInfo.SubresourceRange.AspectMask.Set(EImageAspect::Depth);   // TODO: Make sure this is ok for later (stencil...)
 
@@ -952,6 +955,8 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
 		result = depthBuffer.view.Create(GPU_Comms::GetEngagedDevice(), viewInfo);
+
+		depthBuffer.image.TransitionLayout(EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal);
 
 		return result;
 	}
@@ -998,8 +1003,6 @@ namespace HAL::GPU::Vulkan
 
 	EResult RenderContext::CreateRenderPass()
 	{
-		RenderPass::CreateInfo info {};
-
 		DynamicArray<RenderPass::AttachmentDescription> attachments;
 
 		RenderPass::AttachmentDescription colorAttachment;
@@ -1008,7 +1011,8 @@ namespace HAL::GPU::Vulkan
 		colorAttachment.Format  = swapchain->GetFormat();
 		colorAttachment.Samples = samples;
 
-		colorAttachment.LoadOp  = shouldClear ? EAttachmentLoadOperation::Clear : EAttachmentLoadOperation::DontCare;
+		//colorAttachment.LoadOp  = shouldClear ? EAttachmentLoadOperation::Clear : EAttachmentLoadOperation::DontCare;
+		colorAttachment.LoadOp  = EAttachmentLoadOperation::Clear;
 		colorAttachment.StoreOp = EAttachmentStoreOperation::Store;
 
 		colorAttachment.StencilLoadOp  = EAttachmentLoadOperation::DontCare;
@@ -1026,7 +1030,8 @@ namespace HAL::GPU::Vulkan
 			depthAttachment.Format = depthBuffer.GetFormat();
 			depthAttachment.Samples = samples;
 
-			depthAttachment.LoadOp = shouldClear ? EAttachmentLoadOperation::Clear : EAttachmentLoadOperation::DontCare;
+			//depthAttachment.LoadOp = shouldClear ? EAttachmentLoadOperation::Clear : EAttachmentLoadOperation::DontCare;
+			depthAttachment.LoadOp = EAttachmentLoadOperation::Clear;
 			depthAttachment.StoreOp = EAttachmentStoreOperation::DontCare;
 
 			depthAttachment.StencilLoadOp  = EAttachmentLoadOperation::DontCare;
@@ -1050,6 +1055,29 @@ namespace HAL::GPU::Vulkan
 			depthReference.Layout     = EImageLayout::DepthStencil_AttachmentOptimal;
 		}
 
+
+		RenderPass::AttachmentDescription colorAttachmentResolve;
+
+		colorAttachmentResolve.Format = swapchain->GetFormat();
+
+		colorAttachmentResolve.Samples = samples;
+
+		colorAttachmentResolve.LoadOp  = EAttachmentLoadOperation ::DontCare;
+		colorAttachmentResolve.StoreOp = EAttachmentStoreOperation::Store   ;
+
+		colorAttachmentResolve.StencilLoadOp  = EAttachmentLoadOperation ::DontCare;
+		colorAttachmentResolve.StencilStoreOp = EAttachmentStoreOperation::DontCare;
+
+		colorAttachmentResolve.InitialLayout = EImageLayout::Undefined        ;
+		colorAttachmentResolve.FinalLayout   = EImageLayout::PresentSource_KHR;
+
+		RenderPass::AttachmentReference colorAttachmentResolveRef;
+
+		colorAttachmentResolveRef.Attachment = 2;
+
+		colorAttachmentResolveRef.Layout = EImageLayout::PresentSource_KHR;
+
+
 		RenderPass::SubpassDescription subpass;
 
 		subpass.PipelineBindPoint = EPipelineBindPoint::Graphics;
@@ -1058,6 +1086,8 @@ namespace HAL::GPU::Vulkan
 		subpass.ColorAttachments     = &colorReference;
 
 		subpass.DepthStencilAttachment = bufferDepth ? &depthReference : nullptr;
+
+		RenderPass::CreateInfo info;
 
 		info.AttachmentCount = SCast<u32>(attachments.size());
 		info.Attachments     = attachments.data();
@@ -1096,9 +1126,9 @@ namespace HAL::GPU::Vulkan
 			clearValues.resize(renderPass.GetAttachmentCount());
 
 			beginInfo.ClearValues = clearValues.data();
-		}
 
-		beginInfo.ClearValueCount = SCast<u32>(clearValues.size());
+			beginInfo.ClearValueCount = SCast<u32>(clearValues.size());
+		}
 
 		return result;
 	}
