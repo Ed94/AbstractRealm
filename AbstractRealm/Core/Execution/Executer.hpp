@@ -83,10 +83,10 @@ namespace Core::Execution
 	public:
 		unbound constexpr EExecutionType Type = EExecutionType::Primitive;
 
-		implem void Bind(Function<FN_Type> _task);
+		virtual void Bind(Function<FN_Type> _task) ;
 
-		implem void Execute();
-		//implem void Execute(Duration64 _deltaTime);
+		void Execute() override;
+		//void Execute(Duration64 _deltaTime) override;
 
 		operator ptr<AExecuter>()
 		{
@@ -106,8 +106,8 @@ namespace Core::Execution
 		template<typename FN_Type>
 		void Add(Function<FN_Type> _routine);
 
-		implem void Execute();
-		//implem void Execute(Duration64 _deltaTime);
+		void Execute() override;
+		//void Execute(Duration64 _deltaTime) override;
 
 	protected:
 		void ToggleIdle();

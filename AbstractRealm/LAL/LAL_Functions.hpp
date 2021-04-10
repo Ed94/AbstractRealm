@@ -25,6 +25,8 @@ namespace LAL
 	template<class FunctionType>
 	using Function = std::function<FunctionType>;
 
+	/*template<class Type>
+	using ref = std::ref<Type>;*/
 
 	template<class ReferenceType>
 	using WRef = std::reference_wrapper<ReferenceType>;

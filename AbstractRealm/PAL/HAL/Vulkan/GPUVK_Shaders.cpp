@@ -10,11 +10,31 @@
 
 namespace HAL::GPU::Vulkan
 {
+#pragma region ShaderModule
+
+	ShaderModule::ShaderModule()
+	{
+
+	}
+
+	ShaderModule::~ShaderModule()
+	{
+
+	}
+
+#pragma endregion ShaderModule
+
 #pragma region BasicShader
 
-	BasicShader::BasicShader(const Path& _vertShader, const Path& _fragShader)
+	BasicShader::BasicShader()
+	{
+	}
+
+	BasicShader::BasicShader(const Path& _vertShader, const Path& _fragShader, DeviceSize _uniformSize)
 	{
 		Create(_vertShader, _fragShader);
+
+		uboSize = _uniformSize;
 	}
 
 	BasicShader::~BasicShader()
@@ -29,11 +49,10 @@ namespace HAL::GPU::Vulkan
 
 		SPIR_V::Bytecode_Buffer bytecode;
 
-
 		// Vertex
 
-		auto& vertexModule = shaderModules[0];
-		auto& vertexStage  = shaderStages [0];
+		auto& vertexModule = shaderModules    [0];
+		auto& vertexStage  = shaderStageInfos [0];
 
 		glslang::InitializeProcess();
 
@@ -42,7 +61,7 @@ namespace HAL::GPU::Vulkan
 			throw RuntimeError("Failed to compile GLSL to SPIR-V");
 		}
 
-		info.CodeSize = bytecode.size();
+		info.CodeSize = bytecode.size() * sizeof(u32);
 		info.Code     = bytecode.data();
 
 		if (vertexModule.Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
@@ -58,15 +77,15 @@ namespace HAL::GPU::Vulkan
 
 		// Fragment
 
-		auto& fragModule = shaderModules[1];
-		auto& fragStage  = shaderStages [1];
+		auto& fragModule = shaderModules   [1];
+		auto& fragStage  = shaderStageInfos[1];
 
-		if (!SPIR_V::CompileGLSL(_vertShader, EShaderStageFlag::Fragment, bytecode))
+		if (!SPIR_V::CompileGLSL(_fragShader, EShaderStageFlag::Fragment, bytecode))
 		{
 			throw RuntimeError("Failed to compile GLSL to SPIR-V");
 		}
 
-		info.CodeSize = bytecode.size();
+		info.CodeSize = bytecode.size() * sizeof(u32);
 		info.Code     = bytecode.data();
 
 		if (fragModule.Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
@@ -83,9 +102,24 @@ namespace HAL::GPU::Vulkan
 		glslang::FinalizeProcess();
 	}
 
-	ptr<Pipeline::ShaderStage::CreateInfo> BasicShader::GetShaderStages()
+	void BasicShader::Create(const Path& _vertShader, const Path& _fragShader, DeviceSize _size)
 	{
-		return shaderStages;
+		Create(_vertShader, _fragShader);
+
+		uboSize = _size;
+	}
+
+	using ShaderStageInfo = BasicShader::ShaderStageInfo;
+
+	const DynamicArray<ShaderStageInfo>& BasicShader::GetShaderStageInfos() const
+	{
+		unbound DynamicArray<ShaderStageInfo> shaderStagesExport =
+		{
+			shaderStageInfos[0],
+			shaderStageInfos[1]
+		};
+
+		return shaderStagesExport;
 	}
 
 #pragma endregion BasicShader
@@ -232,9 +266,13 @@ namespace HAL::GPU::Vulkan
 
 			auto shaderCode = Core::IO::BufferFile(_path);
 
+			shaderCode.push_back('\0');
+
 			MessageFlags messageOptions;
 
 			messageOptions.Set(EMessageFlag::SPIRV_Rules, EMessageFlag::VulkanRules);
+
+			EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
 
 			EStage stage = GetStageType(_type);
 
@@ -248,7 +286,9 @@ namespace HAL::GPU::Vulkan
 
 			shader->setStrings(strings, numShaders);
 
-			if (! shader->parse(getAddress(Hardcoded_Resource), 100, false, (EShMessages)ui32(messageOptions)))
+			if (! shader->parse(getPtr(Hardcoded_Resource), 100, false, 
+				//(EShMessages)u32(messageOptions)))
+				messages))
 			{
 				CLog_Error(String(shader->getInfoLog()));
 				CLog_Error(String(shader->getInfoDebugLog()));
@@ -258,7 +298,7 @@ namespace HAL::GPU::Vulkan
 
 			linker->addShader(shader.get());
 
-			if (! linker->link( (EShMessages)ui32(messageOptions)))
+			if (! linker->link( (EShMessages)u32(messageOptions)))
 			{
 				CLog_Error(String(shader->getInfoLog()));
 				CLog_Error(String(shader->getInfoDebugLog()));

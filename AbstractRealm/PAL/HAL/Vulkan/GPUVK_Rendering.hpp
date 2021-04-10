@@ -7,6 +7,7 @@
 
 #include "GPUVK_Memory.hpp"
 #include "GPUVK_Resources.hpp"
+#include "GPUVK_Pipeline.hpp"
 #include "LAL.hpp"
 #include "OSAL.hpp"
 
@@ -15,6 +16,11 @@
 namespace HAL::GPU::Vulkan
 {
 	using namespace LAL;
+
+
+	// Forwards
+
+	class ViewContext;
 
 
 
@@ -65,7 +71,7 @@ namespace HAL::GPU::Vulkan
 
 		EFormat GetFormat() const;
 
-		ui32 GetMinimumImageCount() const;
+		u32 GetMinimumImageCount() const;
 
 		bool QuerySurfaceChanges();
 
@@ -85,7 +91,7 @@ namespace HAL::GPU::Vulkan
 
 		ptr<Surface> surface;
 
-		ui32 SupportedImageCount;
+		u32 SupportedImageCount;
 
 		Meta::EGPU_PresentMode presentationMode = Meta::GPU_PresentationPref();
 
@@ -93,27 +99,6 @@ namespace HAL::GPU::Vulkan
 
 		DynamicArray<Image    > images    ;
 		DynamicArray<ImageView> imageViews;
-	};
-
-	class ARenderable
-	{
-	public:
-		~ARenderable();
-
-		virtual void RecordRender(const CommandBuffer& _commandBuffer);
-	};
-
-	struct RenderGroup
-	{
-		DynamicArray< ptr<ARenderable>> Renderables;
-
-		ptr<GraphicsPipeline> Pipeline;
-
-		//EPrimitiveTopology Topology;
-
-		//Bool PrimitiveRestartEnable;
-
-		//ptr<RenderContext> context;
 	};
 
 	class RenderPass : public V3::RenderPass
@@ -138,7 +123,7 @@ namespace HAL::GPU::Vulkan
 
 		EResult Create(const LogicalDevice& _device, CreateInfo& _info, const Memory::AllocationCallbacks& _allocator);
 
-		ui32 GetAttachmentCount() const;
+		u32 GetAttachmentCount() const;
 
 	protected:
 
@@ -152,7 +137,7 @@ namespace HAL::GPU::Vulkan
 			DynamicArray<AttachmentReference> Resolves     ;
 			DynamicArray<AttachmentReference> DepthStencils;
 
-			DynamicArray<ui32> Preserves;
+			DynamicArray<u32> Preserves;
 		};
 
 		CreateInfo info;
@@ -208,11 +193,11 @@ namespace HAL::GPU::Vulkan
 
 	private:
 
-		DynamicArray<ptr<CommandPool>> commandPools;   // 1 Per working thread for the frame.
+		DynamicArray< ptr<CommandPool>> commandPools;   // 1 Per working thread for the frame.
  
 		ptr<const CommandBuffer> Primary_CmdBuffer;
 
-		DynamicArray<ptr<CommandBuffer>> Secondary_CmdBuffers;
+		DynamicArray< ptr<CommandBuffer>> Secondary_CmdBuffers;
 
 		// Fence Pool
 		//DynamicArray<Fence> fences;
@@ -227,7 +212,14 @@ namespace HAL::GPU::Vulkan
 		//Deque<RenderPass> renderPasses;
 
 		// Thread Count
-		WordSize threadsAssigned;
+		uDM threadsAssigned;
+	};
+
+	struct RenderGroup
+	{
+		DynamicArray< ptr<ARenderable>> Renderables;
+
+		ptr<GraphicsPipeline> Pipeline;
 	};
 
 	class RenderContext
@@ -237,6 +229,8 @@ namespace HAL::GPU::Vulkan
 		EResult Create(Swapchain& _swapChain);
 
 		void Destroy();
+
+		void AddRenderable(ptr<ARenderable> _renderable);
 
 		const RenderPass& GetRenderPass() const;
 
@@ -254,18 +248,20 @@ namespace HAL::GPU::Vulkan
 
 		EResult CreateRenderPass();
 
+		EResult CreateDescriptorPool();
+
 		void CheckContext();
+
+		GraphicsPipeline& Request_GraphicsPipeline(ptr<ARenderable> _renderable);
 
 		ptr<Swapchain> swapchain;
 
 		bool processingFrame = false;
 
 		ui32 currentFrameBuffer = 0 ,    // Current frame to process
-			   previousFrame    ,    // Previously processed frame
-			   currentSwap      ,    // Currently rendered frame to present.
-			   maxFramesInFlight ;   // Maximum number of frames to process at the same time.
-
-		DynamicArray<RenderGroup> renderGroups;
+			 previousFrame    ,    // Previously processed frame
+			 currentSwap      ,    // Currently rendered frame to present.
+			 maxFramesInFlight ;   // Maximum number of frames to process at the same time.
 
 		DynamicArray<Framebuffer> frameBuffers;   // TODO: use frame reference?
 
@@ -273,7 +269,7 @@ namespace HAL::GPU::Vulkan
 
 		Semaphore presentSubmitStatus;
 
-		DynamicArray<ptr<Fence>> swapsInFlight;
+		DynamicArray< ptr<Fence>> swapsInFlight;
 
 
 		// Render pass object (To be used later)
@@ -294,16 +290,53 @@ namespace HAL::GPU::Vulkan
 		// Proper render pass array...
 
 		DynamicArray<RenderPass> RenderPasses;
+
+		// Proper ViewContexts
+
+		DynamicArray<ViewContext> viewContexts;
+
+		// New stuff...
+
+		DynamicArray<GraphicsPipeline> graphicsPipelines;
+
+		DynamicArray<RenderGroup> renderGroups;
+
+		// Resource stuff....
+
+		DescriptorPool descriptorPool;
+
+		//DynamicArray<DescriptorPool> descriptorPool;
+
+		DynamicArray<DescriptorSet> descriptorSets;
 	};
 
-	class PrimitiveRenderable : public ARenderable
+	class ViewContext
 	{
 	public:
 
-		implem void RecordRender();
+		 ViewContext();
+		~ViewContext();
+
+		void SetViewport(const Viewport& _viewport);
+
+		void SetScissor(const Rect2D& _scissor);
+
+		// 
+
+		void Prepare(const CommandBuffer& _commandBuffer);
+
+		void Render(const CommandBuffer& _commandbuffer);
+
+		void SetupScissor();
+
+		void SetupViewport();
+
+		void SetupView();
 
 	protected:
-		VertexBuffer vertBuffer;
+
+		Viewport viewport;
+		Rect2D   scissor;
 	};
 
 
@@ -344,4 +377,14 @@ namespace HAL::GPU::Vulkan
 	};
 
 	using Rendering = Rendering_Maker<Meta::GPU_Engagement>;
+
+	void SetTestCallback(void (*_recordToBuffers)
+	(
+		int index,
+		const CommandBuffer& _buffer,
+		Framebuffer::Handle _frameBuffer,
+		ptr<const Swapchain> _swap,
+		RenderPass::BeginInfo _beginInfo
+	)
+	);
 }

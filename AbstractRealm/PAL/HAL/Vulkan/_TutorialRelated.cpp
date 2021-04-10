@@ -15,21 +15,21 @@ namespace HAL::GPU::Vulkan
 
 		// Public
 
-		DynamicArray<Vertex> ModelVerticies;
-		DynamicArray<ui32> ModelIndicies ;
+		DynamicArray<Vertex_WTexture> ModelVerticies;
+		DynamicArray<u32> ModelIndicies ;
 
 		// TODO: Make the GPU hal agnostic to this.
 
 		Buffer VertexBuffer_Old      ;
 		Memory VertexBufferMemory;
 
-		Buffer IndexBuffer      ;
+		Buffer IndexBuffer_Old      ;
 		Memory IndexBufferMemory;
 
 		DynamicArray<Buffer> UniformBuffers      ;
 		DynamicArray<Memory> UniformBuffersMemory;
 
-		Image     TextureImage      ;
+		Image     TextureImage_Old      ;
 		Memory    TextureImageMemory;
 		ImageView TextureImageView  ;
 		Sampler   TextureSampler    ;
@@ -53,7 +53,7 @@ namespace HAL::GPU::Vulkan
 		{
 			for (const auto& index : shape.mesh.indices)
 			{
-				Vertex vertex{};
+				Vertex_WTexture vertex{};
 
 				vertex.Position =
 				{
@@ -71,7 +71,7 @@ namespace HAL::GPU::Vulkan
 				vertex.Color = { 1.0f, 1.0f, 1.0f };
 
 				ModelVerticies.push_back(vertex);
-				ModelIndicies.push_back(SCast<ui32>(ModelIndicies.size()));
+				ModelIndicies.push_back(SCast<u32>(ModelIndicies.size()));
 			}
 		}
 	}

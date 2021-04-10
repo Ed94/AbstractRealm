@@ -9,5 +9,8 @@
 
 namespace Meta
 {
-	constexpr BitAccuracy Default_VertexAccuracy = BitAccuracy::_32_Bit;
+	constexpr BitAccuracy Greyscale_LinearAccuracy  = BitAccuracy::_32_Bit;
+	constexpr BitAccuracy ColorValue_LinearAccuracy = BitAccuracy::_32_Bit;
+
+	constexpr BitAccuracy VertexValue_Accuracy = BitAccuracy::_32_Bit;
 }

@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -103,15 +103,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedThermals\include;$(VULKAN_SDK)\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\backends;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedVulkan\include;$(VULKAN_SDK)\Include</AdditionalIncludeDirectories>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\imgui;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Debug\src;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\lib;$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Debug\src;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\lib;$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>version.lib;wbemuuid.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;infowared.lib;glslangd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
@@ -127,7 +127,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>echo F|xcopy "$(ProjectDir)PAL\ThirdParty\SDKs\LunarG_VulkanTools\Bin\glslc.exe" "$(TargetDir)Engine\ThirdParty\Tools\glslc.exe" /y /s /i </Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -250,10 +251,12 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="LAL\LAL_Bitfield.hpp" />
     <ClInclude Include="LAL\LAL_Chrono.hpp">
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="LAL\LAL_Iterator.hpp" />
     <ClInclude Include="LAL\LAL_Thread.hpp">
       <SubType>
       </SubType>
@@ -624,8 +627,8 @@
     <ClInclude Include="PAL\SAL\ImGui_SAL.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\LockLessMultiReadPipe.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_vulkan.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imconfig.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imgui_internal.h" />
@@ -718,6 +721,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="PAL\HAL\Vulkan\GPUVK_Resources.tpp" />
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -761,11 +765,12 @@
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
     <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_glfw.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\examples\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_vulkan.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_demo.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_tables.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Resource\Mesh\Mesh_Primitives.cpp" />

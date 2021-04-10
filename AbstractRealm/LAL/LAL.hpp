@@ -20,7 +20,7 @@ standard c++.
 #include "LAL_Cpp_STL.hpp"
 #include "LAL_Algorithms.hpp"
 #include "LAL_Ambiguous.hpp"
-#include "LAL_Bitmask.hpp"
+#include "LAL_Bitfield.hpp"
 #include "LAL_Casting.hpp"
 #include "LAL_CharacterTypes.hpp"
 #include "LAL_CallEnforcer.hpp"

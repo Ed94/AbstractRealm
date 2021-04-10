@@ -3,7 +3,7 @@
 
 #include "GPUVK_Comms.hpp"
 
-#include "GPUVK_Rendering.hpp"
+//#include "GPUVK_Rendering.hpp"
 #include "GPUVK_Shaders.hpp"
 
 
@@ -14,12 +14,10 @@ namespace HAL::GPU::Vulkan
 		using Parent = V3::Pipeline::Cache;
 
 	public:
-		 //PipelineCache();
-		//~PipelineCache();
 
 		void Create();
 
-	private:
+	protected:
 
 		CreateInfo info;
 	};
@@ -30,20 +28,65 @@ namespace HAL::GPU::Vulkan
 		using Parent = V3::GraphicsPipeline;
 
 	public:
-		 //GraphicsPipeline();
-		//~GraphicsPipeline();
+		
+		using AttributeDescription = Pipeline::VertexInputState::AttributeDescription;
+		using BindingDescription   = Pipeline::VertexInputState::BindingDescription;
 
-		void Create(const RenderContext& _renderContext, const BasicShader& _shader, bool UseVertexInput, Bool Enable_DepthClamp);
+		void Create
+		(
+			const RenderPass&                         _renderContext        , 
+			      ptr<const AShader>                  _shader               , 
+			      DynamicArray<AttributeDescription>& _attributeDescriptions, 
+				  DynamicArray<BindingDescription  >& _bindingDescriptions  ,
+			      ptr<const DescriptorSetLayout>      _descriptorSetLayout,
+			      Bool                                _enableDepthClamp
+		);
 
-	private:
+		ptr<const ShaderStage::CreateInfo> GetShaderStages() const;
+
+		const VertexInputState::CreateInfo& GetVertexInputState() const;
+
+		const Layout& GetLayout() const;
+
+		//const DescriptorSetLayout& GetDescriptorSetLayout() const;
+
+	protected:
+
+		VertexInputState  ::CreateInfo      vertexInputStateInfo;
+		InputAssemblyState::CreateInfo      inputAssemblyStateInfo;
+		ViewportState     ::CreateInfo      viewportStateInfo;
+		MultiSampleState  ::CreateInfo      multisampleStateInfo;
+		DepthStencilState ::CreateInfo      depthStencilStateInfo;
+		ColorBlendState   ::AttachmentState colorBlendAttachmentState;
+		ColorBlendState   ::CreateInfo      colorBlendStateInfo;
+		RasterizationState::CreateInfo      rasterizationStateInfo;
+		DynamicArray<EDynamicState>         enabledDynamicStates;
+		DynamicState      ::CreateInfo      dynamicStateInfo;
+		Layout            ::CreateInfo      layoutInfo;
 
 		CreateInfo info;   // Should this be kept?
-
-		PipelineCache cache;
 
 		DescriptorSetLayout descriptorSetLayout;
 
 		Layout layout;
+	};
+
+
+	class GPU_Pipeline
+	{
+
+	public:
+
+		unbound const PipelineCache& Request_Cache();
+
+
+	protected:
+
+
+		unbound DynamicArray<Pipeline::Layout> layouts;
+
+
+		unbound PipelineCache cache;
 	};
 	
 }

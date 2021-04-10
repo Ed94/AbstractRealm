@@ -6,6 +6,28 @@
 
 namespace HAL::GPU::Vulkan
 {
+	void (*TestCallback)
+	(
+		int index,
+		const CommandBuffer& _buffer,
+		Framebuffer::Handle _frameBuffer,
+		ptr<const Swapchain> _swap,
+		RenderPass::BeginInfo _beginInfo
+	);
+
+	void SetTestCallback(void (*_recordToBuffers)
+	(
+		int index,
+		const CommandBuffer& _buffer,
+		Framebuffer::Handle _frameBuffer,
+		ptr<const Swapchain> _swap,
+		RenderPass::BeginInfo _beginInfo
+	)
+	)
+	{
+		TestCallback = _recordToBuffers;
+	}
+
 
 
 #pragma region Surface
@@ -169,8 +191,8 @@ namespace HAL::GPU::Vulkan
 
 			Extent2D actualExtent;
 
-			actualExtent.Width  = SCast<ui32>(frameBufferSize.Width );
-			actualExtent.Height = SCast<ui32>(frameBufferSize.Height);
+			actualExtent.Width  = SCast<u32>(frameBufferSize.Width );
+			actualExtent.Height = SCast<u32>(frameBufferSize.Height);
 
 			actualExtent.Width  = std::clamp(actualExtent.Width , _surface.GetCapabilities().MinImageExtent.Width , _surface.GetCapabilities().MaxImageExtent.Width );
 			actualExtent.Height = std::clamp(actualExtent.Height, _surface.GetCapabilities().MinImageExtent.Height, _surface.GetCapabilities().MaxImageExtent.Height);
@@ -230,7 +252,7 @@ namespace HAL::GPU::Vulkan
 		return info.ImageFormat;
 	}
 
-	ui32 Swapchain::GetMinimumImageCount() const
+	u32 Swapchain::GetMinimumImageCount() const
 	{
 		return info.MinImageCount;
 	}
@@ -331,8 +353,8 @@ namespace HAL::GPU::Vulkan
 
 			Extent2D actualExtent;
 
-			actualExtent.Width  = SCast<ui32>(frameBufferSize.Width );
-			actualExtent.Height = SCast<ui32>(frameBufferSize.Height);
+			actualExtent.Width  = SCast<u32>(frameBufferSize.Width );
+			actualExtent.Height = SCast<u32>(frameBufferSize.Height);
 
 			actualExtent.Width  = std::clamp(actualExtent.Width , surface->GetCapabilities().MinImageExtent.Width , surface->GetCapabilities().MaxImageExtent.Width );
 			actualExtent.Height = std::clamp(actualExtent.Height, surface->GetCapabilities().MinImageExtent.Height, surface->GetCapabilities().MaxImageExtent.Height);
@@ -369,7 +391,7 @@ namespace HAL::GPU::Vulkan
 
 	EResult Swapchain::GenerateViews()
 	{
-		ImageView::CreateInfo viewInfo {};
+		ImageView::CreateInfo viewInfo;
 
 		viewInfo.Format   = info.ImageFormat         ;
 		viewInfo.ViewType = ImageView::EViewType::_2D;
@@ -445,7 +467,7 @@ namespace HAL::GPU::Vulkan
 		return Parent::Create(_device, _info, _allocator);
 	}
 
-	ui32 RenderPass::GetAttachmentCount() const { return info.AttachmentCount; }
+	u32 RenderPass::GetAttachmentCount() const { return info.AttachmentCount; }
 
 #pragma endregion
 
@@ -541,11 +563,15 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
-		maxFramesInFlight = SCast<ui32>(frameBuffers.size() - 1);
+		result = CreateDescriptorPool();
+
+		if (result != EResult::Success) return result;
+
+		maxFramesInFlight = SCast<u32>(frameBuffers.size() - 1);
 
 		frameRefs.resize(maxFramesInFlight);
 
-		for (WordSize index = 0; index < frameRefs.size(); index++)
+		for (uDM index = 0; index < frameRefs.size(); index++)
 		{
 			frameRefs[index].Prepare();
 		}
@@ -557,6 +583,31 @@ namespace HAL::GPU::Vulkan
 		swapsInFlight.resize(frameBuffers.size());	
 
 		Fence::CreateInfo fenceInfo; fenceInfo.Flags.Set(EFenceCreateFlag::Signaled);
+
+		// Will always have at least one view context.
+		viewContexts.resize(1);
+
+		Viewport viewport;
+
+		const auto& swapExtent = _swapChain.GetExtent();
+
+		viewport.Height   = swapExtent.Height;
+		viewport.Width    = swapExtent.Width;
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		viewport.X        = 0;
+		viewport.Y        = 0;
+
+		viewContexts[0].SetViewport(viewport);
+
+		Rect2D scissor;
+
+		scissor.Offset.X = 0;
+		scissor.Offset.Y = 0;
+
+		scissor.Extent = swapExtent;
+
+		viewContexts[0].SetScissor(scissor);
 
 		return result;
 	}
@@ -575,6 +626,55 @@ namespace HAL::GPU::Vulkan
 		depthBuffer.memory.Free();
 
 		depthBuffer.view.Destroy();
+	}
+
+	void RenderContext::AddRenderable(ptr<ARenderable> _renderable)
+	{
+		_renderable->CreateDescriptorSets(maxFramesInFlight, descriptorPool);
+
+		if (renderGroups.empty())
+		{
+			renderGroups.resize(1);
+
+			renderGroups.back().Pipeline = getPtr(Request_GraphicsPipeline(_renderable));
+
+			renderGroups.back().Renderables.push_back(_renderable);
+
+			return;
+		}
+		else
+		{
+			for (auto& renderGroup : renderGroups)
+			{
+				for (auto renderable : renderGroup.Renderables)
+				{
+					if (renderable == _renderable)
+					{
+						return;
+					}
+				}
+
+				if (renderGroup.Pipeline == getPtr(Request_GraphicsPipeline(_renderable)))
+				{
+					renderGroup.Renderables.push_back(_renderable);
+
+					return;
+				}
+			}
+
+			renderGroups.resize(renderGroups.size() + 1);
+
+			renderGroups.back().Pipeline = getPtr(Request_GraphicsPipeline(_renderable));
+
+			renderGroups.back().Renderables.push_back(_renderable);
+
+			return;
+		}
+	}
+
+	const RenderPass& RenderContext::GetRenderPass() const
+	{
+		return renderPass;
 	}
 
 	void RenderContext::ProcessNextFrame()
@@ -612,9 +712,10 @@ namespace HAL::GPU::Vulkan
 		// Set the current swap image fence to that of the frame queue fence.
 		swapsInFlight[currentSwap] = &frameRef.RenderingInFlight();
 
-		// Prep the ClearValue for the render pass...
-		switch (currentFrameBuffer)
-		{ 
+		clearValues[0].Color = { 0.0f, 0.0f, 0.0f, 0.1f };
+
+		/*switch (currentFrameBuffer)
+		{
 			case 0: clearValues[0].Color = { 1.0f, 0.0f, 0.0f, 1.0f }; break;
 			case 1: clearValues[0].Color = { 0.0f, 1.0f, 0.0f, 1.0f }; break;
 			case 2: clearValues[0].Color = { 0.0f, 0.0f, 1.0f, 1.0f }; break;
@@ -622,17 +723,19 @@ namespace HAL::GPU::Vulkan
 			{
 				clearValues[0].Color = { 1.0f,0.0f,0.0f, 1.0f };
 
-				break;    
+				break;
 			}
-		}
+		}*/
 
 		if (bufferDepth) 
 		{
-			clearValues[1].DepthStencil.Depth   = 1.0f;
-			clearValues[1].DepthStencil.Stencil = 0   ;
+			clearValues[1].DepthStencil = { 1.0f, 0 };
+
+			//clearValues[1].DepthStencil.Depth   = 1.0f;
+			//clearValues[1].DepthStencil.Stencil = 0   ;
 		}
 
-		beginInfo.Framebuffer = frameBuffers[currentSwap];
+		beginInfo.Framebuffer = frameBuffers[currentSwap].operator Framebuffer::Handle&();
 
 		if (!Meta::UseConcurrency())
 		{
@@ -648,6 +751,26 @@ namespace HAL::GPU::Vulkan
 
 			primaryBuffer.BeginRenderPass(beginInfo, ESubpassContents::Inline);
 
+			//TestCallback
+			//(currentSwap, primaryBuffer, beginInfo.Framebuffer, swapchain, beginInfo);
+
+			 //Renderables handled here..
+
+			for (auto& viewContext : viewContexts)
+			{
+				viewContext.Prepare(primaryBuffer);
+
+				for (auto& renderGroup : renderGroups)
+				{
+					primaryBuffer.BindPipeline(EPipelineBindPoint::Graphics, dref(renderGroup.Pipeline));
+
+					for (auto& renderable : renderGroup.Renderables)
+					{
+						renderable->RecordRender(currentFrameBuffer, primaryBuffer, renderGroup.Pipeline->GetLayout());
+					}
+				}
+			}
+
 			primaryBuffer.EndRenderPass();
 
 			primaryBuffer.EndRecord();
@@ -662,7 +785,7 @@ namespace HAL::GPU::Vulkan
 			submitInfo.WaitDstStageMask   = &waitStage                    ;
 
 			submitInfo.CommandBufferCount = 1                                  ;
-			submitInfo.CommandBuffers     = frameRef.Request_PrimaryCmdBuffer();
+			submitInfo.CommandBuffers     = primaryBuffer;
 
 			// Let the presentation queue know that it can submit itself when render commands are finished in the queue.
 			submitInfo.SignalSemaphoreCount = 1;
@@ -707,8 +830,10 @@ namespace HAL::GPU::Vulkan
 		
 		swapchainsToSubmit.push_back(swapchain->operator const Swapchain::Handle&());
 
+		Swapchain::Handle swapChains[] = { *swapchain };
+
 		presentInfo.SwapchainCount = 1;
-		presentInfo.Swapchains     = *swapchain;
+		presentInfo.Swapchains     = swapChains;
 		presentInfo.ImageIndices   = &currentSwap;
 
 		presentInfo.Results = nullptr;
@@ -757,12 +882,14 @@ namespace HAL::GPU::Vulkan
 			result = CreateFramebuffers();
 
 			if (result != EResult::Success) throw RuntimeError("Failed to recreate frame renderer in context.");
+
+			// Adjust view contexts to the new relative size of the swapchain.
 		}
 	}
 
 	EResult RenderContext::CreateDepthBuffer()
 	{
-		Image::CreateInfo imgInfo {};
+		Image::CreateInfo imgInfo;
 
 		imgInfo.ImageType = EImageType::_2D;
 
@@ -809,13 +936,16 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
-		depthBuffer.image.TransitionLayout(EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal);
-
-		ImageView::CreateInfo viewInfo {};
+		ImageView::CreateInfo viewInfo;
 
 		viewInfo.Image    = depthBuffer.image;
 		viewInfo.Format   = imgInfo.Format;
 		viewInfo.ViewType = ImageView::EViewType::_2D;
+
+		viewInfo.Components.R = EComponentSwizzle::Identitity;
+		viewInfo.Components.G = EComponentSwizzle::Identitity;
+		viewInfo.Components.B = EComponentSwizzle::Identitity;
+		viewInfo.Components.A = EComponentSwizzle::Identitity;
 
 		viewInfo.SubresourceRange.AspectMask.Set(EImageAspect::Depth);   // TODO: Make sure this is ok for later (stencil...)
 
@@ -825,6 +955,8 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
 		result = depthBuffer.view.Create(GPU_Comms::GetEngagedDevice(), viewInfo);
+
+		depthBuffer.image.TransitionLayout(EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal);
 
 		return result;
 	}
@@ -840,7 +972,7 @@ namespace HAL::GPU::Vulkan
 		Framebuffer::CreateInfo info;
 
 		info.RenderPass      = renderPass;
-		info.AttachmentCount = SCast<ui32>(viewHandles.size());
+		info.AttachmentCount = SCast<u32>(viewHandles.size());
 		info.Attachments     = viewHandles.data();
 		info.Width           = swapchain->GetExtent().Width;
 		info.Height          = swapchain->GetExtent().Height;
@@ -857,7 +989,7 @@ namespace HAL::GPU::Vulkan
 
 		auto& swapImageViews = swapchain->GetImageViews();
 
-		for (WordSize index = 0; index < frameBuffers.size(); index++)
+		for (uDM index = 0; index < frameBuffers.size(); index++)
 		{
 			viewHandles[0] = swapImageViews[index];
 
@@ -871,8 +1003,6 @@ namespace HAL::GPU::Vulkan
 
 	EResult RenderContext::CreateRenderPass()
 	{
-		RenderPass::CreateInfo info {};
-
 		DynamicArray<RenderPass::AttachmentDescription> attachments;
 
 		RenderPass::AttachmentDescription colorAttachment;
@@ -881,7 +1011,8 @@ namespace HAL::GPU::Vulkan
 		colorAttachment.Format  = swapchain->GetFormat();
 		colorAttachment.Samples = samples;
 
-		colorAttachment.LoadOp  = shouldClear ? EAttachmentLoadOperation::Clear : EAttachmentLoadOperation::DontCare;
+		//colorAttachment.LoadOp  = shouldClear ? EAttachmentLoadOperation::Clear : EAttachmentLoadOperation::DontCare;
+		colorAttachment.LoadOp  = EAttachmentLoadOperation::Clear;
 		colorAttachment.StoreOp = EAttachmentStoreOperation::Store;
 
 		colorAttachment.StencilLoadOp  = EAttachmentLoadOperation::DontCare;
@@ -899,13 +1030,14 @@ namespace HAL::GPU::Vulkan
 			depthAttachment.Format = depthBuffer.GetFormat();
 			depthAttachment.Samples = samples;
 
-			depthAttachment.LoadOp = shouldClear ? EAttachmentLoadOperation::Clear : EAttachmentLoadOperation::DontCare;
-			depthAttachment.StoreOp = EAttachmentStoreOperation::Store;
+			//depthAttachment.LoadOp = shouldClear ? EAttachmentLoadOperation::Clear : EAttachmentLoadOperation::DontCare;
+			depthAttachment.LoadOp = EAttachmentLoadOperation::Clear;
+			depthAttachment.StoreOp = EAttachmentStoreOperation::DontCare;
 
-			depthAttachment.StencilLoadOp = EAttachmentLoadOperation::Load;
-			depthAttachment.StencilStoreOp = EAttachmentStoreOperation::Store;
+			depthAttachment.StencilLoadOp  = EAttachmentLoadOperation::DontCare;
+			depthAttachment.StencilStoreOp = EAttachmentStoreOperation::DontCare;
 
-			depthAttachment.InitialLayout = EImageLayout::DepthStencil_AttachmentOptimal;
+			depthAttachment.InitialLayout = EImageLayout::Undefined;
 			depthAttachment.FinalLayout   = EImageLayout::DepthStencil_AttachmentOptimal;
 
 			attachments.push_back(depthAttachment);
@@ -923,23 +1055,60 @@ namespace HAL::GPU::Vulkan
 			depthReference.Layout     = EImageLayout::DepthStencil_AttachmentOptimal;
 		}
 
+
+		RenderPass::AttachmentDescription colorAttachmentResolve;
+
+		colorAttachmentResolve.Format = swapchain->GetFormat();
+
+		colorAttachmentResolve.Samples = samples;
+
+		colorAttachmentResolve.LoadOp  = EAttachmentLoadOperation ::DontCare;
+		colorAttachmentResolve.StoreOp = EAttachmentStoreOperation::Store   ;
+
+		colorAttachmentResolve.StencilLoadOp  = EAttachmentLoadOperation ::DontCare;
+		colorAttachmentResolve.StencilStoreOp = EAttachmentStoreOperation::DontCare;
+
+		colorAttachmentResolve.InitialLayout = EImageLayout::Undefined        ;
+		colorAttachmentResolve.FinalLayout   = EImageLayout::PresentSource_KHR;
+
+		RenderPass::AttachmentReference colorAttachmentResolveRef;
+
+		colorAttachmentResolveRef.Attachment = 2;
+
+		colorAttachmentResolveRef.Layout = EImageLayout::PresentSource_KHR;
+
+
 		RenderPass::SubpassDescription subpass;
 
 		subpass.PipelineBindPoint = EPipelineBindPoint::Graphics;
 
 		subpass.ColorAttachmentCount = 1;
-		subpass.ColorAttachments = &colorReference;
+		subpass.ColorAttachments     = &colorReference;
 
 		subpass.DepthStencilAttachment = bufferDepth ? &depthReference : nullptr;
 
-		info.AttachmentCount = SCast<ui32>(attachments.size());
-		info.Attachments = attachments.data();
+		RenderPass::CreateInfo info;
+
+		info.AttachmentCount = SCast<u32>(attachments.size());
+		info.Attachments     = attachments.data();
 
 		info.SubpassCount = 1;
-		info.Subpasses = &subpass;
+		info.Subpasses    = &subpass;
 
-		info.DependencyCount = 0;
-		info.Dependencies = nullptr;
+		RenderPass::SubpassDependency dependency;
+
+		dependency.SourceSubpass      = VK_SUBPASS_EXTERNAL;
+		dependency.DestinationSubpass = 0;
+
+		dependency.SourceStageMask.Set(EPipelineStageFlag::ColorAttachmentOutput);
+
+		dependency.SourceAccessMask = 0;
+
+		dependency.DestinationStageMask .Set(EPipelineStageFlag::ColorAttachmentOutput);
+		dependency.DestinationAccessMask.Set(EAccessFlag::ColorAttachmentWrite);
+
+		info.DependencyCount = 1;
+		info.Dependencies    = &dependency;
 
 		EResult result = renderPass.Create(GPU_Comms::GetEngagedDevice(), info);
 
@@ -957,14 +1126,145 @@ namespace HAL::GPU::Vulkan
 			clearValues.resize(renderPass.GetAttachmentCount());
 
 			beginInfo.ClearValues = clearValues.data();
-		}
 
-		beginInfo.ClearValueCount = SCast<ui32>(clearValues.size());
+			beginInfo.ClearValueCount = SCast<u32>(clearValues.size());
+		}
 
 		return result;
 	}
 
+	EResult RenderContext::CreateDescriptorPool()
+	{
+		// This is currently hardcoded for the V5 Vert Shader...
+		// Descriptor pools must be created based on the requirements of a render group's descriptor layout.
+		// The descriptor layout must provide information on the bindings defined for the layout.
+
+		StaticArray<V3::DescriptorPool::Size, 2> poolSizes{};
+
+		poolSizes[0].Type = EDescriptorType::UniformBuffer;
+		poolSizes[0].Count = SCast<u32>(swapchain->GetImages().size());
+
+		poolSizes[1].Type = EDescriptorType::Sampler;
+		poolSizes[1].Count = SCast<u32>(swapchain->GetImages().size());
+
+		V3::DescriptorPool::CreateInfo poolInfo{};
+
+		poolInfo.PoolSizeCount = SCast<u32>(poolSizes.size());
+		poolInfo.PoolSizes = poolSizes.data();
+
+		poolInfo.MaxSets = SCast<u32>(swapchain->GetImages().size());
+
+		EResult result = descriptorPool.Create(GPU_Comms::GetEngagedDevice(), poolInfo);
+
+		return result;
+	}
+
+	GraphicsPipeline& RenderContext::Request_GraphicsPipeline(ptr<ARenderable> _renderable)
+	{
+		// Check if existing pipeline meets criteria
+
+		// If criteria not met, create a new pipeline.
+
+		if (graphicsPipelines.empty())
+		{
+			graphicsPipelines.resize(1);
+
+			graphicsPipelines.back().Create
+			(
+				renderPass, 
+				_renderable->GetShader(), 
+				_renderable->GetVertexAttributes(), 
+				_renderable->GetVertexBindings(),
+				_renderable->GetDescriptorsLayout(),
+				bufferDepth
+			);
+
+			return graphicsPipelines.back();
+		}
+		else
+		{
+			for (auto& graphicsPipeline : graphicsPipelines)
+			{
+				if 
+				(
+					_renderable->GetShader()->GetShaderStageInfos().data() == graphicsPipeline.GetShaderStages()                           &&
+					_renderable->GetVertexAttributes()             .data() == graphicsPipeline.GetVertexInputState().AttributeDescriptions &&
+					_renderable->GetVertexBindings()               .data() == graphicsPipeline.GetVertexInputState().BindingDescriptions   
+					// Need to figure out a better check later.. I don't account for the layout...
+					//*_renderable->GetDescriptorsLayout()                   == graphicsPipeline.GetDescriptorSetLayout()
+				)
+				{
+					return graphicsPipeline;
+				}
+			}
+
+			graphicsPipelines.resize(graphicsPipelines.size() + 1);
+
+			graphicsPipelines.back().Create
+			(
+				renderPass, 
+				_renderable->GetShader(), 
+				_renderable->GetVertexAttributes(), 
+				_renderable->GetVertexBindings(), 
+				_renderable->GetDescriptorsLayout(),
+				bufferDepth
+			);
+
+			return graphicsPipelines.back();
+		}
+	}
+
 #pragma endregion RenderContext
+
+
+
+#pragma region ViewContext
+
+	ViewContext::ViewContext()
+	{
+		//viewport.Height = 
+	}
+
+	ViewContext::~ViewContext()
+	{
+	}
+
+	void ViewContext::SetViewport(const Viewport& _viewport)
+	{
+		viewport = _viewport;
+	}
+
+	void ViewContext::SetScissor(const Rect2D& _scissor)
+	{
+		scissor = _scissor;
+	}
+
+	//
+
+	void ViewContext::Prepare(const CommandBuffer& _commandbuffer)
+	{
+		_commandbuffer.SetViewport(viewport);
+		_commandbuffer.SetScissor(scissor);
+	}
+
+	void ViewContext::Render(const CommandBuffer& _commandBuffer)
+	{
+	}
+
+	void ViewContext::SetupScissor()
+	{
+	}
+
+	void ViewContext::SetupViewport()
+	{
+	}
+
+	void ViewContext::SetupView()
+	{
+	}
+
+#pragma endregion ViewContext
+
 
 
 	ESubmissionType SubmissionMode = ESubmissionType::Individual;

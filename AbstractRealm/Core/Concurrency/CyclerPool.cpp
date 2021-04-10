@@ -15,7 +15,7 @@ namespace Core::Concurrency
 		{}
 
 		CyclerT  Cycler;
-		WordSize Thread;
+		uDM Thread;
 	};
 
 
@@ -25,7 +25,7 @@ namespace Core::Concurrency
 		DynamicArray<Unit> Pool;
 
 		bool Initiated   = false;
-		uI16 ActiveUnits = 0    ;
+		u16 ActiveUnits = 0    ;
 
 
 
@@ -38,12 +38,12 @@ namespace Core::Concurrency
 		ActiveUnits++;
 	}
 
-	const Cycler& CyclerPool::GetCycler(uI16 _unit)
+	const Cycler& CyclerPool::GetCycler(u16 _unit)
 	{
 		return Pool[_unit].Cycler;
 	}
 
-	uI16 CyclerPool::GetNumUnits()
+	u16 CyclerPool::GetNumUnits()
 	{
 		return ActiveUnits;
 	}
@@ -65,7 +65,7 @@ namespace Core::Concurrency
 
 	bool CyclerPool::RequestShutdown()
 	{		
-		for (uI16 unitIndex = 0; unitIndex < ActiveUnits; unitIndex++)
+		for (u16 unitIndex = 0; unitIndex < ActiveUnits; unitIndex++)
 		{
 			Pool[unitIndex].Cycler.Lapse();
 

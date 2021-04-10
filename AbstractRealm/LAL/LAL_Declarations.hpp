@@ -32,8 +32,8 @@ static
 // Member Specialization
 
 // Alias for virtual in the context of a derived class implementing a virtual member.
-#define implem \
-virtual
+//#define implem
+//virtual
 
 
 // Inlines

@@ -32,14 +32,14 @@ namespace Meta
 			// TODO: I needed to inverse the result of use debug. I have no idea why...
 			bool EnableLayers = true;
 
-			bool Enable_API_Dump = false;
+			bool Enable_API_Dump   = false;
 			bool Enable_FPSMonitor = true;
 			bool Enable_Validation = true;
 
 			bool Enable_LogVerbose = false;
-			bool Enable_LogInfo = true;
+			bool Enable_LogInfo    = true;
 			bool Enable_LogWarning = true;
-			bool Enable_LogError = true;
+			bool Enable_LogError   = true;
 		}
 
 

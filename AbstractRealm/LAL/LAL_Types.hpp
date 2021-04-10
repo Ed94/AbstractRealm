@@ -18,9 +18,9 @@ namespace LAL
 {
 	// Data
 
-	using Byte     = std::byte     ;
+	using Byte = std::byte;
 
-	using WordSize = std::size_t   ;   // Defined according to the target processor's pointer arithmetic capabilities (Not memory capabilities).
+	using uDM = std::size_t;   // Defined according to the target processor's pointer arithmetic capabilities (Not memory capabilities).
 
 	using PtrDiff  = std::ptrdiff_t;
 	using sIntPtr  = std::intptr_t ;

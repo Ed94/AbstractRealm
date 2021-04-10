@@ -24,26 +24,48 @@ namespace HAL::GPU::Vulkan
 		CreateInfo info;
 	};
 
-	// Supports only vertex and fragment shader pair.
-	class BasicShader
+	class AShader
 	{
-		using ShaderStage = Pipeline::ShaderStage::CreateInfo;
-
 	public:
-		 BasicShader(const Path& _vertShader, const Path& _fragShader);
+
+		using ShaderStageInfo = Pipeline::ShaderStage::CreateInfo;
+
+		~AShader() {};
+
+		virtual const DynamicArray<ShaderStageInfo>& GetShaderStageInfos() const = NULL;
+
+		virtual DeviceSize GetUniformSize() const = NULL;
+	};
+
+	// Supports only vertex and fragment shader pair.
+	class BasicShader : public AShader
+	{
+	public:
+
+		 BasicShader();
+		 BasicShader(const Path& _vertShader, const Path& _fragShader, DeviceSize _uniformSize);
 		~BasicShader();
+
+		 // Mitigating stuff...
+		 
 
 		void Create(const Path& _vertShader, const Path& _fragShader);
 
+		void Create(const Path& _vertShader, const Path& _fragShader, DeviceSize _uniformSize);
+
 		//void Destroy();
 
-		ptr<const ShaderStage> GetShaderStages() const;
+		const DynamicArray<ShaderStageInfo>& GetShaderStageInfos() const override;
+
+		virtual DeviceSize GetUniformSize() const override { return uboSize; }
 
 
 	protected:
 
-		ShaderModule shaderModules[2];
-		ShaderStage  shaderStages[2];   // One for vertex and for fragment.
+		ShaderModule    shaderModules[2];
+		ShaderStageInfo shaderStageInfos[2];   // One for vertex and for fragment.
+
+		DeviceSize uboSize = 0;
 	};
 
 
@@ -92,16 +114,16 @@ namespace HAL::GPU::Vulkan
 			HLSL_DX9_Compatible   = EShMsgHlslDX9Compatible   ,  // enable HLSL DX9 compatible mode (for samplers and semantics)
 			BuiltinSymbolTable    = EShMsgBuiltinSymbolTable  ,  // print the builtin symbol table
 
-			VT_SpecifyBitmaskable
+			VV_SpecifyBitmaskable
 		};
 
 		using ShaderUnit      = glslang::TShader;
 		using LinkerUnit      = glslang::TProgram;
 		using BuiltInResource = TBuiltInResource;
 
-		using VT::SPIR_V::Bytecode_Buffer;
+		using VV::SPIR_V::Bytecode_Buffer;
 
-		using MessageFlags = VT::V0::Bitfield<EMessageFlag, ui32>;
+		using MessageFlags = VV::V0::Bitfield<EMessageFlag, u32>;
 
 		
 
@@ -123,8 +145,6 @@ namespace HAL::GPU::Vulkan
 
 		// Compiles GLSL to SPIR-V Bytecode.
 		// Note this is hardcoded to only link one shader for now.
-		bool CompileGLSL(Path& _path, const EShaderStageFlag _type, Bytecode_Buffer& _bytecode);
+		bool CompileGLSL(const Path& _path, const EShaderStageFlag _type, Bytecode_Buffer& _bytecode);
 	}
-
-	
 }

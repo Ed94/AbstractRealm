@@ -59,7 +59,7 @@ namespace Core::Execution
 
 			if (Concurrency::CyclerPool::GetNumUnits() > 0)
 			{
-				for (uI16 row = 1, col = 0, cycleIndex = 0; cycleIndex < CyclerPool::GetNumUnits(); cycleIndex++)
+				for (u16 row = 1, col = 0, cycleIndex = 0; cycleIndex < CyclerPool::GetNumUnits(); cycleIndex++)
 				{
 					Dev::CLog_Status("Thread 1  Delta: " + ToString(CyclerPool::GetCycler(cycleIndex).GetDeltaTime().count()), row++, col);
 

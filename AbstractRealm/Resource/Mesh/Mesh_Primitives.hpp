@@ -6,6 +6,8 @@
 
 #include "Meta/Config/Resource_Config.hpp"
 
+#include "Resource/Resource_General.hpp"
+
 
 
 namespace Resource::Mesh
@@ -13,29 +15,9 @@ namespace Resource::Mesh
 	using namespace LAL;
 	using namespace Meta;
 
-
-	template<BitAccuracy _accuracy> 
-	using Choose_Accuracy = 
-		ChooseEither<Meta::Is<BitAccuracy::_32_Bit>(_accuracy),
-			f32, f64>;
-
-	using DefaultValue = Choose_Accuracy<Meta::Default_VertexAccuracy>;
-
 	namespace _2D
 	{
-		template<typename Value>
-		struct TVertex
-		{
-			TVertex() : X(0.0f), Y(0.0f) {}
-
-			TVertex(Value _x, Value _y) :
-				X(_x), Y(_y)
-			{}
-
-			Value X, Y;
-		};
-
-		using Vertex = TVertex<DefaultValue>;
+		using namespace Resource::_2D;
 
 		struct Triangle
 		{
@@ -50,7 +32,7 @@ namespace Resource::Mesh
 
 		struct Square
 		{
-			Square(DefaultValue _x, DefaultValue _y) :
+			Square(VertexValue _x, VertexValue _y) :
 				V1(-_x,  _y),
 				V2( _x,  _y),
 				V3(-_x, -_y),
@@ -65,17 +47,7 @@ namespace Resource::Mesh
 
 	namespace _3D
 	{
-		template<typename Value>
-		struct TVertex
-		{
-			TVertex(Value _x, Value _y, Value _z) :
-				X(_x), Y(_y), Z(_z)
-			{}
-
-			Value X, Y, Z;
-		};
-
-		using Vertex = TVertex<DefaultValue>;
+		using namespace Resource::_3D;
 
 		struct Triangle
 		{
@@ -90,7 +62,7 @@ namespace Resource::Mesh
 
 		struct Square
 		{
-			Square(DefaultValue _x, DefaultValue _y) :
+			Square(VertexValue _x, VertexValue _y) :
 				V1(-_x,  _y, 0.0f),
 				V2( _x,  _y, 0.0f),
 				V3(-_x, -_y, 0.0f),

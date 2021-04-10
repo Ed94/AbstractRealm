@@ -168,11 +168,11 @@ namespace HAL::GPU::Vulkan
 
 	bool LogicalDevice::ExtensionsEnabled(DynamicArray<RoCStr> _extensions)
 	{
-		WordSize extensionsLeft = _extensions.size();
+		uDM extensionsLeft = _extensions.size();
 
 		for (auto& enabledExtension : _extensions)
 		{
-			WordSize index = 0;
+			uDM index = 0;
 
 			for (auto& extension : _extensions)
 			{
@@ -267,7 +267,7 @@ namespace HAL::GPU::Vulkan
 	{
 		// Queue Family Assignment
 
-		ui32 familyIndex = 0;
+		u32 familyIndex = 0;
 
 		for (auto& queueFamily : physicalDevice->GetAvailableQueueFamilies())
 		{
@@ -283,7 +283,7 @@ namespace HAL::GPU::Vulkan
 			{
 				queueFamilyInfos.push_back(queueInfo);
 
-				family.Info = getAddress(queueFamilyInfos.back());
+				family.Info = getPtr(queueFamilyInfos.back());
 
 				family.Assignment = EQueueFlag::Graphics;
 
@@ -294,7 +294,7 @@ namespace HAL::GPU::Vulkan
 			{
 				queueFamilyInfos.push_back(queueInfo);
 
-				family.Info = getAddress(queueFamilyInfos.back());
+				family.Info = getPtr(queueFamilyInfos.back());
 
 				family.Assignment = EQueueFlag::Compute;
 
@@ -305,7 +305,7 @@ namespace HAL::GPU::Vulkan
 			{
 				queueFamilyInfos.push_back(queueInfo);
 
-				family.Info = getAddress(queueFamilyInfos.back());
+				family.Info = getPtr(queueFamilyInfos.back());
 
 				family.Assignment = EQueueFlag::Transfer;
 
@@ -315,9 +315,9 @@ namespace HAL::GPU::Vulkan
 			familyIndex++;
 		}
 
-		for (WordSize index = 0; index < queueFamilyInfos.size(); index++)
+		for (uDM index = 0; index < queueFamilyInfos.size(); index++)
 		{
-			queueFamilyInfos[index].QueuePriorities = getAddress(queueFamilies[index].Priority);	
+			queueFamilyInfos[index].QueuePriorities = getPtr(queueFamilies[index].Priority);	
 
 			switch (queueFamilies[index].Assignment)
 			{
@@ -348,7 +348,7 @@ namespace HAL::GPU::Vulkan
 			}
 		}
 
-		info.QueueCreateInfoCount = SCast<ui32>(queueFamilyInfos.size());
+		info.QueueCreateInfoCount = SCast<u32>(queueFamilyInfos.size());
 		info.QueueCreateInfos     = queueFamilyInfos.data()               ;
 	}
 
@@ -370,7 +370,7 @@ namespace HAL::GPU::Vulkan
 			}			
 		}
 
-		info.EnabledExtensionCount = SCast<ui32>(extensionsEnabled.size());
+		info.EnabledExtensionCount = SCast<u32>(extensionsEnabled.size());
 		info.EnabledExtensionNames = extensionsEnabled.data()               ;
 	}
 
@@ -378,7 +378,7 @@ namespace HAL::GPU::Vulkan
 	{
 		if (Meta::Vulkan::EnableLayers())
 		{
-			info.EnabledLayerCount = SCast<ui32>(DesiredLayers.size());
+			info.EnabledLayerCount = SCast<u32>(DesiredLayers.size());
 			info.EnabledLayerNames = DesiredLayers.data();
 		}
 		else
@@ -501,18 +501,18 @@ namespace HAL::GPU::Vulkan
 
 		spec.API_Version = EAPI_Version::_1_0;
 
-		createSpec.AppInfo = getAddress(spec);
+		createSpec.AppInfo = getPtr(spec);
 
 		DetermineRequiredExtensions();
 
-		createSpec.EnabledExtensionCount = SCast<ui32>(DesiredInstanceExts.size());
+		createSpec.EnabledExtensionCount = SCast<u32>(DesiredInstanceExts.size());
 		createSpec.EnabledExtensionNames = DesiredInstanceExts.data()               ;
 
 		DynamicArray<DebugUtils::Messenger::CreateInfo> debugInfos;
 
 		if (Meta::Vulkan::EnableLayers())
 		{
-			createSpec.EnabledLayerCount = SCast<ui32>(DesiredLayers.size());
+			createSpec.EnabledLayerCount = SCast<u32>(DesiredLayers.size());
 			createSpec.EnabledLayerNames = DesiredLayers.data();
 
 			SetupDebugMessenger();
@@ -617,7 +617,7 @@ namespace HAL::GPU::Vulkan
 
 			if (HasExtensions && PresentationSupport) 
 			{
-				DeviceEngaged = getAddress(device);
+				DeviceEngaged = getPtr(device);
 
 				CLog("Device engaged: " + DeviceEngaged->GetSig());
 			}
@@ -637,7 +637,7 @@ namespace HAL::GPU::Vulkan
 	{
 		LogicalGPUs.resize(PhysicalGPUs.size());
 
-		ui32 gpuIndex = 0;
+		u32 gpuIndex = 0;
 
 		for (auto& device : LogicalGPUs)
 		{
@@ -740,7 +740,7 @@ namespace HAL::GPU::Vulkan
 				Layer::Google_UniqueObjedcts
 			};
 
-			WordSize layersFound = 0;
+			uDM layersFound = 0;
 
 			for (auto validationLayerName : Fallback2Layers)
 			{
@@ -790,7 +790,7 @@ namespace HAL::GPU::Vulkan
 
 	bool GPU_Comms_Maker<Meta::EGPU_Engage::Single>::CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
 	{
-		WordSize layersFound = 0;
+		uDM layersFound = 0;
 
 		for (auto validationLayerName : _layersSpecified)
 		{
@@ -895,11 +895,11 @@ namespace HAL::GPU::Vulkan
 		{
 			case Meta::EWindowingPlatform::GLFW:
 			{
-				ui32 numExtensions;
+				u32 numExtensions = 0;
 
 				CStrArray extensions = CStrArray(SAL::GLFW::GetRequiredVulkanAppExtensions(numExtensions));
 
-				for (ui32 index = 0; index < numExtensions; index++)
+				for (u32 index = 0; index < numExtensions; index++)
 				{
 					if (std::find(DesiredInstanceExts.begin(), DesiredInstanceExts.end(), extensions[index]) == DesiredInstanceExts.end())
 					{

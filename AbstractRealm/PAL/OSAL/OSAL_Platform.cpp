@@ -20,9 +20,9 @@ namespace OSAL
 
 	struct OS_Version
 	{
-		ui32 Major;
-		ui32 Minor;
-		ui32 Patch;
+		u32 Major;
+		u32 Minor;
+		u32 Patch;
 
 		UINT32 Build;
 

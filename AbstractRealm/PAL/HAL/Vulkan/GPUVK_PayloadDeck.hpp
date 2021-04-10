@@ -23,6 +23,8 @@ namespace HAL::GPU::Vulkan
 
 		const AllocateInfo& GetAllocateInfo() const { return info; }
 
+		using Parent::BindVertexBuffers;
+
 	protected:
 		AllocateInfo info;
 	};
@@ -57,7 +59,7 @@ namespace HAL::GPU::Vulkan
 		unbound void Wipe();
 
 
-		unbound ptr<CommandPool> RequestCommandPools(WordSize _numDesired);
+		unbound ptr<CommandPool> RequestCommandPools(uDM _numDesired);
 
 		unbound const CommandBuffer& RecordOnGraphics();
 

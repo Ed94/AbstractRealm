@@ -22,13 +22,13 @@ Currently has GPU HAL related configuration
 // Macros
 
 #define Khronos_Vulkan_HPP        0   // Khronos's vulkan wrapper.
-#define VaultedThermals_Interface 1   // Vaulted thermals interface.
+#define VaultedVulkan_Interface 1   // Vaulted thermals interface.
 
 /*
 Determines which Vulkan library will be used to interface with the Vulkan API.
 */
 #define VulkanAPI_Interface \
-VaultedThermals_Interface
+VaultedVulkan_Interface
 
 
 

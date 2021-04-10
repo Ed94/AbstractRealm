@@ -14,6 +14,8 @@ namespace HAL::GPU::Vulkan
 		info.Level       = ECommandBufferLevel::Primary;
 
 		CommandBuffer::Handle newBuffer;
+
+		
 		
 		Allocate(info, &newBuffer);
 
@@ -128,9 +130,9 @@ namespace HAL::GPU::Vulkan
 		return TransientPool->BeginSingleTimeCommands(); 
 	}
 
-	ptr<CommandPool> Deck_Maker<Meta::EGPU_Engage::Single>::RequestCommandPools(WordSize _numDesired)
+	ptr<CommandPool> Deck_Maker<Meta::EGPU_Engage::Single>::RequestCommandPools(uDM _numDesired)
 	{
-		WordSize firstOfNewPools = CommandPools.size();
+		uDM firstOfNewPools = CommandPools.size();
 
 		CommandPools.resize(firstOfNewPools + _numDesired);
 

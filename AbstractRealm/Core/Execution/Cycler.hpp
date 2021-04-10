@@ -34,8 +34,8 @@ namespace Core::Execution
 		 Cycler();
 		~Cycler();
 
-		implem void        Initiate          ();
-		implem EReturnCode Initiate_withRCode();
+		void        Initiate          () override;
+		EReturnCode Initiate_withRCode() override;
 
 		void AssignInterval(Duration64 _interval);
 

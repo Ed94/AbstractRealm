@@ -30,18 +30,18 @@ namespace SAL::Imgui
 
 			HAL::GPU::Vulkan::RawRenderContext* RenderContext;
 
-			VT::V3::GraphicsPipeline GraphicsPipeline;
+			VV::V3::GraphicsPipeline GraphicsPipeline;
 
-			VT::V3::DescriptorPool DescriptorPool;
+			VV::V3::DescriptorPool DescriptorPool;
 
-			DynamicArray<VT::V3::Framebuffer> SwapChain_Framebuffers;
+			DynamicArray<VV::V3::Framebuffer> SwapChain_Framebuffers;
 
 
 		// Functions
 
 		void Vulkan_CreateDescriptorObjects()
 		{
-			using namespace VT::V3;
+			using namespace VV::V3;
 
 			DescriptorPool::Size pool_sizes[11];
 
@@ -62,7 +62,7 @@ namespace SAL::Imgui
 			info.Flags.Set(EDescriptorPoolCreateFlag::FreeDescriptorSet);
 
 			info.MaxSets       = 1000 *  ((int)(sizeof(pool_sizes)) / sizeof(*(pool_sizes)));   // TODO: Define this better
-			info.PoolSizeCount = (ui32)  ((int)(sizeof(pool_sizes)) / sizeof(*(pool_sizes)));
+			info.PoolSizeCount = (u32)  ((int)(sizeof(pool_sizes)) / sizeof(*(pool_sizes)));
 			info.PoolSizes     = pool_sizes;
 
 			HAL::GPU::Vulkan::RequestDescriptorPool(DescriptorPool, info);
@@ -70,7 +70,7 @@ namespace SAL::Imgui
 
 		void Vulkan_DebugCallback(VkResult _returnCode)
 		{
-			if (_returnCode != VkResult(VT::V3::EResult::Success))
+			if (_returnCode != VkResult(VV::V3::EResult::Success))
 			{
 				std::cerr << "Imgui Callback Error Code: " << int(_returnCode) << std::endl;
 

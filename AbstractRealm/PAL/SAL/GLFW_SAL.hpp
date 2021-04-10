@@ -35,7 +35,7 @@ namespace SAL::GLFW
 
 	using namespace LAL;
 	using namespace OSAL;
-	using namespace VT;
+	using namespace VV;
 
 
 
@@ -133,7 +133,7 @@ namespace SAL::GLFW
 
 	using CStrArray = ptr<const ptr<const char>>;
 
-	CStrArray GetRequiredVulkanAppExtensions(ui32& NumberOfExensions_Container);
+	CStrArray GetRequiredVulkanAppExtensions(u32& NumberOfExensions_Container);
 
 
 	// Platform

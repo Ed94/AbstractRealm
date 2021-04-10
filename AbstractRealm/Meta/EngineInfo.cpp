@@ -15,7 +15,7 @@ namespace Meta
 
 		bool UseConcurrency = false;
 
-		bool FixRenderRateToRefreshRate = false;
+		bool FixRenderRateToRefreshRate = true;
 	}
 
 

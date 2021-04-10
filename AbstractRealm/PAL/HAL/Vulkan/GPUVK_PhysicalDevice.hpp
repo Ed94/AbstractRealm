@@ -15,9 +15,9 @@ namespace HAL::GPU::Vulkan
 {
 	//Usings
 
-	using namespace VT;
-	using namespace VT::Corridors;
-	using namespace VT::V3;
+	using namespace VV;
+	using namespace VV::Corridors;
+	using namespace VV::V3;
 
 	using namespace LAL;
 

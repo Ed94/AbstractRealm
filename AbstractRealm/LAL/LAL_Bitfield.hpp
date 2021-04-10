@@ -1,7 +1,7 @@
 /*
 Bitfield
 
-A wrapper for bitmasks with support for specifying enum classes as bitmaskable types, and 
+A wrapper for bitfields with support for specifying enum classes as bitmaskable types, and 
 ease of use functionality for manipulating the bitfield.
 */
 
@@ -18,8 +18,8 @@ ease of use functionality for manipulating the bitfield.
 
 
 
-#ifndef BITMASK_DEFINED
-#define BITMASK_DEFINED
+#ifndef BITFIELD_DEFINED
+#define BITFIELD_DEFINED
 
 	/*template<typename Enum>
 	struct Bitmaskable
@@ -61,14 +61,14 @@ namespace LAL
 	constexpr Where<IsBitmaskable<Enum>::value, 
 	bool> Bitmaskable() noexcept
 	{
-		return static_cast<WordSize>(Enum::SpecifyBitmaskable) > WordSize(0) ? true : false;
+		return static_cast<uDM>(Enum::SpecifyBitmaskable) > uDM(0) ? true : false;
 	}
 
 	template <typename Enum> 
 	/**
 	@brief Returns false if bitmaskable is false (Default case).
 	*/
-	constexpr Where<!IsBitmaskable<Enum>::value, 
+	constexpr Where<! IsBitmaskable<Enum>::value, 
 	bool> Bitmaskable() noexcept
 	{
 		return false;
@@ -79,7 +79,10 @@ namespace LAL
 		typename EnumType             ,
 		typename BitmaskRepresentation
 	>
-	struct Bitfield
+	/**
+	A wrapper object for bitfields that allows for typesafe bitmask operations.
+	*/
+	class Bitfield
 	{
 	private:
 		EnforceConstraint(Bitmaskable<EnumType>(), "EnumType must be of Bitmaskable type.");

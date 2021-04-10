@@ -64,6 +64,9 @@
 [submodule "ggpo"]
 	path = AbstractRealm/PAL/ThirdParty/SDKs/ggpo
 	url = https://github.com/pond3r/ggpo.git
-[submodule "VaultedThermals"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/VaultedThermals
-	url = https://github.com/Ed94/VaultedThermals.git
+[submodule "VaultedVulkan"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/VaultedVulkan
+	url = https://github.com/Ed94/VaultedVulkan.git
+[submodule "AbstractRealm/PAL/ThirdParty/Libraries/bgfx"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/bgfx
+	url = https://github.com/bkaradzic/bgfx.git

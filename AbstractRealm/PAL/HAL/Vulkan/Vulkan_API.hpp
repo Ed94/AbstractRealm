@@ -17,10 +17,10 @@ Defines the Vulkan API used with the GPU_HAL.
 
 
 
-#if VulkanAPI_Interface == VaultedThermals_Interface
+#if VulkanAPI_Interface == VaultedVulkan_Interface
 
 	//#define VT_Open_Vault_4
-	#include "VaultedThermals.hpp"
+	#include "VaultedVulkan.hpp"
 
 	#include "glslang/SPIRV/GlslangToSpv.h"
 
