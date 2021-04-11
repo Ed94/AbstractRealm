@@ -712,9 +712,9 @@ namespace HAL::GPU::Vulkan
 		// Set the current swap image fence to that of the frame queue fence.
 		swapsInFlight[currentSwap] = &frameRef.RenderingInFlight();
 
-		clearValues[0].Color = { 0.0f, 0.0f, 0.0f, 0.1f };
+		clearValues[0].Color = { 0.6f, 0.47f, 0.39f, 0.1f };
 
-		switch (currentFrameBuffer)
+		/*switch (currentFrameBuffer)
 		{
 			case 0: clearValues[0].Color = { 1.0f, 0.0f, 0.0f, 1.0f }; break;
 			case 1: clearValues[0].Color = { 0.0f, 1.0f, 0.0f, 1.0f }; break;
@@ -725,14 +725,11 @@ namespace HAL::GPU::Vulkan
 
 				break;
 			}
-		}
+		}*/
 
 		if (bufferDepth) 
 		{
 			clearValues[1].DepthStencil = { 1.0f, 0 };
-
-			//clearValues[1].DepthStencil.Depth   = 1.0f;
-			//clearValues[1].DepthStencil.Stencil = 0   ;
 		}
 
 		beginInfo.Framebuffer = frameBuffers[currentSwap].operator Framebuffer::Handle&();

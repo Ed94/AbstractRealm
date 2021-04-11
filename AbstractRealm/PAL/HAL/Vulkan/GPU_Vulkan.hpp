@@ -86,11 +86,11 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 		#pragma region Temp
 
-			void Start_TriangleDemo(ptr<OSAL::Window> _window);
+			void Start_GPUVK_Demo(ptr<OSAL::Window> _window);
 
 			void Render();
 
-			void Stop_TriangleDemo();
+			void Stop_GPUVK_Demo();
 
 			void Present();
 
