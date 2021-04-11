@@ -15,5 +15,7 @@ namespace HAL::GPU::BGFX
 
 	void Start_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
 
+	void Setup_Window();
+
 	void Cease_GPUComms();
 }

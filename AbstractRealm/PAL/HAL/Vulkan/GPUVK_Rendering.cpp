@@ -630,7 +630,7 @@ namespace HAL::GPU::Vulkan
 
 	void RenderContext::AddRenderable(ptr<ARenderable> _renderable)
 	{
-		_renderable->CreateDescriptorSets(maxFramesInFlight, descriptorPool);
+		_renderable->CreateDescriptorSets(swapchain->GetImages().size(), descriptorPool);
 
 		if (renderGroups.empty())
 		{
@@ -714,7 +714,7 @@ namespace HAL::GPU::Vulkan
 
 		clearValues[0].Color = { 0.0f, 0.0f, 0.0f, 0.1f };
 
-		/*switch (currentFrameBuffer)
+		switch (currentFrameBuffer)
 		{
 			case 0: clearValues[0].Color = { 1.0f, 0.0f, 0.0f, 1.0f }; break;
 			case 1: clearValues[0].Color = { 0.0f, 1.0f, 0.0f, 1.0f }; break;
@@ -725,7 +725,7 @@ namespace HAL::GPU::Vulkan
 
 				break;
 			}
-		}*/
+		}
 
 		if (bufferDepth) 
 		{
@@ -736,6 +736,8 @@ namespace HAL::GPU::Vulkan
 		}
 
 		beginInfo.Framebuffer = frameBuffers[currentSwap].operator Framebuffer::Handle&();
+
+		beginInfo.RenderPass = renderPass;
 
 		if (!Meta::UseConcurrency())
 		{
@@ -755,6 +757,10 @@ namespace HAL::GPU::Vulkan
 			//(currentSwap, primaryBuffer, beginInfo.Framebuffer, swapchain, beginInfo);
 
 			 //Renderables handled here..
+
+			viewContexts[0].Prepare(primaryBuffer);
+
+			primaryBuffer.BindPipeline(EPipelineBindPoint::Graphics, dref(renderGroups[0].Pipeline));
 
 			for (auto& viewContext : viewContexts)
 			{

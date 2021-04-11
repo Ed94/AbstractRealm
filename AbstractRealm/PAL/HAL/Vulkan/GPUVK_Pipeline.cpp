@@ -57,10 +57,28 @@ namespace HAL::GPU::Vulkan
 
 		// Hardcoded for now to 1...
 
-		viewportStateInfo.ViewportCount = 1;
+	 	viewportStateInfo.ViewportCount = 1;
 		viewportStateInfo.Viewports     = nullptr;
 		viewportStateInfo.ScissorCount  = 1;
 		viewportStateInfo.Scissors      = nullptr;
+
+		//Viewport viewport{};
+
+		//auto swapExtent = swapch->GetExtent();
+
+		/*viewport.X = 0.0f;
+		viewport.Y = 0.0f;
+		viewport.Width = float(swapExtent.Width);
+		viewport.Height = float(swapExtent.Height);
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+
+		Rect2D scissor{};
+
+		scissor.Offset.X = 0;
+		scissor.Offset.Y = 0;
+
+		scissor.Extent = swapExtent;*/
 
 		// Multisample State
 

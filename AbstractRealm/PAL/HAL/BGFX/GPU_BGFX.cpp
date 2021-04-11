@@ -14,7 +14,11 @@ namespace HAL::GPU::BGFX
 	{
 		CLog("Initializing BGFX");
 
-		bgfx::init();
+		//bgfx::init();
+	}
+
+	void Setup_Window()
+	{
 	}
 
 	void Cease_GPUComms()

@@ -2,7 +2,7 @@
 
 
 #include "GPUVK_Memory.hpp"
-//#include "GPUVK_Renderer.hpp"
+//#include "GPUVK_Rendering.hpp"
 #include "GPUVK_Shaders.hpp"
 
 
@@ -161,7 +161,9 @@ namespace HAL::GPU::Vulkan
 
 		const Buffer& GetBuffer() const;
 
-		ui32 GetSize() const; 
+		ui32 GetBufferSize() const; 
+
+		u32 GetSize() const;
 
 	protected:
 
@@ -169,7 +171,7 @@ namespace HAL::GPU::Vulkan
 		Memory     memory      ;
 		DeviceSize memoryOffset;
 
-		DynamicArray<u32> indices;
+		u32 indices;
 	};
 
 	class TextureImage : public ImagePackage
@@ -251,7 +253,7 @@ namespace HAL::GPU::Vulkan
 		using AttributeDescription = Pipeline::VertexInputState::AttributeDescription;
 		using BindingDescription   = Pipeline::VertexInputState::BindingDescription;
 
-		using VertexAttributes = StaticArray<AttributeDescription, 2>;
+		using VertexAttributes = StaticArray<AttributeDescription, 3>;
 		using VertexBindings   = StaticArray<BindingDescription, 1>;
 
 		struct PositionT
@@ -269,12 +271,12 @@ namespace HAL::GPU::Vulkan
 
 		Color;
 
-		/*struct CoordT
+		struct CoordT
 		{
 			f32 X, Y;
 		}
 
-		TextureCoordinates;*/
+		TextureCoordinates;
 
 
 		static constexpr VertexAttributes GetAttributeDescriptions()
@@ -302,12 +304,12 @@ namespace HAL::GPU::Vulkan
 
 			// Texture Coordinate Attributes
 
-			/*AttributeDescription& texCoordAttrib = result.at(2);
+			AttributeDescription& texCoordAttrib = result.at(2);
 
 			texCoordAttrib.Binding  = 0;
 			texCoordAttrib.Location = 2;
 			texCoordAttrib.Format   = EFormat::R32_G32_SFloat;
-			texCoordAttrib.Offset   = (u32) OffsetOf(Vertex::TextureCoordinates);*/
+			texCoordAttrib.Offset   = (u32) OffsetOf(Vertex_WColor::TextureCoordinates);
 
 			return result;
 		}
@@ -325,6 +327,7 @@ namespace HAL::GPU::Vulkan
 	};
 
 
+	class Swapchain;
 
 	class ARenderable
 	{
@@ -346,6 +349,8 @@ namespace HAL::GPU::Vulkan
 		virtual ptr<const DescriptorSetLayout> GetDescriptorsLayout() const = NULL;
 
 		virtual void CreateDescriptorSets(u32 _count, const DescriptorPool& _descriptorPool) = NULL;
+
+		//virtual void CreateUniforms
 
 		virtual void UpdateUniforms(ptr<const void> _data, DeviceSize _size) = NULL;
 	};
@@ -411,6 +416,8 @@ namespace HAL::GPU::Vulkan
 		ptr<const DescriptorSetLayout> GetDescriptorsLayout() const override;
 
 		void CreateDescriptorSets(u32 _count, const DescriptorPool& _descriptorPool) override;
+
+		//void CreateUniforms()
 
 		void UpdateUniforms(ptr<const void> _data, DeviceSize _size) override;
 		

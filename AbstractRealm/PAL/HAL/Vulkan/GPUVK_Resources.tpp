@@ -104,13 +104,13 @@ namespace HAL::GPU::Vulkan
 		shader = _shader;
 
 		CreateDescriptorsLayout();
+
+		uniformData.resize(shader->GetUniformSize());
 	}
 
 	template<typename VertexType>
 	void TModelRenderable<VertexType>::RecordRender(u32 _index, const CommandBuffer& _commandBuffer, const PipelineLayout& _pipelineLayout)
 	{
-		uniformBuffers[_index].Write(uniformData.data());
-
 		unbound DynamicArray<Buffer::Handle> handles;
 
 		if (handles.empty())
@@ -126,6 +126,8 @@ namespace HAL::GPU::Vulkan
 
 		_commandBuffer.BindIndexBuffer(indexBuffer.GetBuffer(), 0, EIndexType::uInt32);
 
+		uniformBuffers[_index].Write(uniformData.data());
+
 		_commandBuffer.BindDescriptorSets
 		(
 			EPipelineBindPoint::Graphics,
@@ -137,7 +139,7 @@ namespace HAL::GPU::Vulkan
 
 		_commandBuffer.DrawIndexed
 		(
-			SCast<ui32>(indexBuffer.GetSize()),
+			SCast<u32>(indexBuffer.GetSize()),
 			1,
 			0,
 			0,
@@ -263,16 +265,11 @@ namespace HAL::GPU::Vulkan
 	template<typename VertexType>
 	void TModelRenderable<VertexType>::UpdateUniforms(ptr<const void> _data, DeviceSize _size)
 	{
-		if (uniformData.size() != _size)
-		{
-			uniformData.reserve(_size);
-		}
-
 		ptr<const Byte> _dataBytes = RCast<const Byte>(_data);
 
 		ptr<const Byte> endAddress = _dataBytes + _size;
 
-		std::copy(_dataBytes, endAddress, back_inserter(uniformData));
+		uniformData.assign(_dataBytes, endAddress);
 	}
 
 	// Private

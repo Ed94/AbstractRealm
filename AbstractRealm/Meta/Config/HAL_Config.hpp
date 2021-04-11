@@ -77,7 +77,7 @@ namespace Meta
 
 	// Compile-time
 
-	constexpr EGPUPlatformAPI Default_GPU_API = EGPUPlatformAPI::BGFX;
+	constexpr EGPUPlatformAPI Default_GPU_API = EGPUPlatformAPI::Vulkan;
 
 	constexpr EGPU_Engage GPU_Engagement = EGPU_Engage::Single;   // Currently only supports single.
 

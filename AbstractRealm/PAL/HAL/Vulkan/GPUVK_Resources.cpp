@@ -271,6 +271,8 @@ namespace HAL::GPU::Vulkan
 
 	EResult VertexBuffer::Create(ptr<const void> data, DeviceSize _dataSize, DeviceSize /*_stride*/)
 	{
+		DeviceSize bufferSize = sizeof(Vertex_WColor) * _dataSize;
+
 		EResult result = EResult::Incomplete;
 
 		Buffer stagingBuffer;
@@ -280,7 +282,7 @@ namespace HAL::GPU::Vulkan
 		Buffer::CreateInfo stagingBufferInfo;
 
 		stagingBufferInfo.SharingMode = ESharingMode::Exclusive;
-		stagingBufferInfo.Size        = _dataSize;
+		stagingBufferInfo.Size        = bufferSize;
 
 		stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
@@ -308,11 +310,11 @@ namespace HAL::GPU::Vulkan
 
 		Memory::MapFlags mapflags;
 
-		stagingBufferMemory.WriteToGPU(0, _dataSize, mapflags, data);
+		stagingBufferMemory.WriteToGPU(0, bufferSize, mapflags, data);
 
 		Buffer::CreateInfo vertexBufferInfo {};
 
-		vertexBufferInfo.Size        = _dataSize;
+		vertexBufferInfo.Size        = bufferSize;
 		vertexBufferInfo.SharingMode = ESharingMode::Exclusive;
 
 		vertexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::VertexBuffer);
@@ -339,7 +341,7 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
-		Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = _dataSize;
+		Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
 		auto commandBuffer = Deck::RecordOnTransient();
 
@@ -368,6 +370,10 @@ namespace HAL::GPU::Vulkan
 
 	EResult IndexBuffer::Create(ptr<const void> _data, DeviceSize _dataSize, DeviceSize /*_stride*/)
 	{
+		indices = _dataSize;
+
+		DeviceSize bufferSize = sizeof(u32) * _dataSize;
+
 		EResult result = EResult::Incomplete;
 
 		Buffer             stagingBuffer;
@@ -375,7 +381,7 @@ namespace HAL::GPU::Vulkan
 		Memory             stagingBufferMemory;
 
 		stagingBufferInfo.SharingMode = ESharingMode::Exclusive;
-		stagingBufferInfo.Size = _dataSize;
+		stagingBufferInfo.Size = bufferSize;
 
 		stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
@@ -405,12 +411,12 @@ namespace HAL::GPU::Vulkan
 
 		RoVoidPtr address = _data;
 
-		stagingBufferMemory.WriteToGPU(0, _dataSize, Memory::MapFlags(), address);
+		stagingBufferMemory.WriteToGPU(0, bufferSize, Memory::MapFlags(), address);
 
 		Buffer::CreateInfo indexBufferInfo{};
 
 		indexBufferInfo.SharingMode = ESharingMode::Exclusive;
-		indexBufferInfo.Size = _dataSize;
+		indexBufferInfo.Size = bufferSize;
 
 		indexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::IndexBuffer);
 
@@ -436,7 +442,7 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success) return result;
 
-		Buffer::CopyInfo copyInfo{}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = _dataSize;
+		Buffer::CopyInfo copyInfo{}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
 
 		auto commandBuffer = Deck::RecordOnTransient();
 
@@ -462,9 +468,14 @@ namespace HAL::GPU::Vulkan
 		return buffer;
 	}
 
-	ui32 IndexBuffer::GetSize() const
+	ui32 IndexBuffer::GetBufferSize() const
 	{
-		return indices.size();
+		return buffer.GetSize();
+	}
+
+	u32 IndexBuffer::GetSize() const
+	{
+		return indices;
 	}
 
 #pragma endregion IndexBuffer
@@ -568,14 +579,14 @@ namespace HAL::GPU::Vulkan
 
 		Deck::EndRecordOnTransient(buffer);
 
-		stagingBuffer.Destroy();
-		stagingBufferMemory.Free();
-
 		GenerateMipmaps();
 
 		CreateImageView();
 
 		CreateSampler();
+
+		stagingBuffer.Destroy();
+		stagingBufferMemory.Free();
 	}
 
 	void TextureImage::Destroy()

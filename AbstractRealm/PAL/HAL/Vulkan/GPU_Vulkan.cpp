@@ -187,6 +187,7 @@
 
 
 
+		
 
 				stbi_image_free(ModelWTxtur_TxtImage);
 
@@ -244,7 +245,7 @@
 					}
 
 					GraphicsPipeline_Old.Destroy(); 
-					PipelineLayout_Old      .Destroy(); 
+					PipelineLayout_Old  .Destroy(); 
 					RenderPass_Old      .Destroy(); 
 
 					for (uDM index = 0; index < SwapChain_Old->GetImageViews().size(); index++)
@@ -566,7 +567,7 @@
 
 					bufferInfo.Buffer = UniformBuffers[index]      ;
 					bufferInfo.Offset = 0                          ;
-					bufferInfo.Range  = sizeof(UniformBufferObject);
+					bufferInfo.Range  = UniformBuffers[index].GetSize();
 
 
 					DescriptorSet::ImageInfo imageInfo{};
@@ -1552,9 +1553,9 @@
 
 				const void* address = &ubo;
 
-				UniformBuffersMemory[_currentImage].WriteToGPU(0, sizeof(ubo), 0, address);
-
 				ModelWTexur_Renderable->UpdateUniforms(address, sizeof(ubo));
+
+				UniformBuffersMemory[_currentImage].WriteToGPU(0, sizeof(ubo), 0, address);
 			}
 
 			// GPU_HAL
@@ -1663,9 +1664,6 @@
 				CreateIndexBuffer();
 
 				// Ported
-				CreateUniformBuffers();
-
-				// Ported
 				CreateTextureImage(VikingRoom_TexturePath.c_str()); 
 
 				// Ported
@@ -1676,6 +1674,9 @@
 
 				// ported
 				CreateDescriptorPool();
+
+				// Ported
+				CreateUniformBuffers();
 
 				// ported
 				CreateDescriptorSets();
