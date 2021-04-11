@@ -1561,8 +1561,6 @@
 
 			void Start_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion)
 			{
-				CLog("Initializing GPU Communication");
-
 				GPU_Comms::Initialize(_applicationName, _applicationVersion);
 
 				GPU_Comms::AcquirePhysicalDevices();

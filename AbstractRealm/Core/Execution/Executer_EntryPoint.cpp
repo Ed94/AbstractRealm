@@ -103,57 +103,81 @@ namespace Core::Execution
 
 			HAL::LoadModule();
 
-			HAL::GPU::Initialize_GPUComms
-			(
-				String("Abstract Realm: MVP " + 
-				ToString(EEngineVersion::Major) + "." +
-				ToString(EEngineVersion::Minor) + "." +
-				ToString(EEngineVersion::Patch)).c_str(),
-				AppVer
-			);
+			// Temp situation due to not having a well fleshed out interface to the gpu hal backend.
+			switch (Meta::GPU_API())
+			{
+				case Meta::EGPUPlatformAPI::BGFX:
+				{
+					HAL::GPU::Initialize_GPUComms
+					(
+						String("Abstract Realm: MVP " +
+						ToString(EEngineVersion::Major) + "." +
+						ToString(EEngineVersion::Minor) + "." +
+						ToString(EEngineVersion::Patch)).c_str(),
+						AppVer
+					);
 
-			// Window
+					HAL::GPU::Cease_GPUComms();
 
-			WindowInfo windowSpec = {};
 
-			windowSpec.WindowTitle = "Abstract Realm"               ;
-			windowSpec.WindowSize  = WindowSize                     ;
-			windowSpec.Windowed    = OSAL::WindowInfo ::WindowedMode;
-			windowSpec.Resizable   = OSAL::WinBool::True            ;
+				} break;
 
-			StaticData::EngineWindow = OSAL::Create_Window(windowSpec);
+				case Meta::EGPUPlatformAPI::Vulkan:
+				{
+					HAL::GPU::Initialize_GPUComms
+					(
+						String("Abstract Realm: MVP " + 
+						ToString(EEngineVersion::Major) + "." +
+						ToString(EEngineVersion::Minor) + "." +
+						ToString(EEngineVersion::Patch)).c_str(),
+						AppVer
+					);
 
-			OSAL::SetWindow_SizeChangeCallback(StaticData::EngineWindow, WindowSizeChanged);
+					// Window
 
-			windowSpec.WindowTitle = "Modular Renderable Demo";
+					WindowInfo windowSpec = {};
 
-			DemoWindow = OSAL::Create_Window(windowSpec);
+					windowSpec.WindowTitle = "Abstract Realm"               ;
+					windowSpec.WindowSize  = WindowSize                     ;
+					windowSpec.Windowed    = OSAL::WindowInfo ::WindowedMode;
+					windowSpec.Resizable   = OSAL::WinBool::True            ;
 
-			OSAL::SetWindow_SizeChangeCallback(DemoWindow, WindowSizeChanged);
+					StaticData::EngineWindow = OSAL::Create_Window(windowSpec);
 
-			HAL::GPU::Default_InitializeRenderer(StaticData::EngineWindow);
+					OSAL::SetWindow_SizeChangeCallback(StaticData::EngineWindow, WindowSizeChanged);
 
-			HAL::GPU::Vulkan::Start_TriangleDemo(DemoWindow);
+					windowSpec.WindowTitle = "Modular Renderable Demo";
 
-			Imgui::Initialize(StaticData::EngineWindow);
+					DemoWindow = OSAL::Create_Window(windowSpec);
 
-			// Master execution
+					OSAL::SetWindow_SizeChangeCallback(DemoWindow, WindowSizeChanged);
 
-			Initialize_MasterCycler();
+					HAL::GPU::Default_InitializeRenderer(StaticData::EngineWindow);
 
-			Dev::Console_EnableAutoUpdate();
+					HAL::GPU::Vulkan::Start_TriangleDemo(DemoWindow);
 
-			// App closing
+					Imgui::Initialize(StaticData::EngineWindow);
 
-			Imgui::Deinitialize();
+					// Master execution
 
-			HAL::GPU::Vulkan::Stop_TriangleDemo();
+					Initialize_MasterCycler();
 
-			HAL::GPU::Default_DeinitializeRenderer(StaticData::EngineWindow);
+					Dev::Console_EnableAutoUpdate();
 
-			OSAL::Destroy_Window(StaticData::EngineWindow);
+					// App closing
 
-			HAL::GPU::Cease_GPUComms();
+					Imgui::Deinitialize();
+
+					HAL::GPU::Vulkan::Stop_TriangleDemo();
+
+					HAL::GPU::Default_DeinitializeRenderer(StaticData::EngineWindow);
+
+					OSAL::Destroy_Window(StaticData::EngineWindow);
+
+					HAL::GPU::Cease_GPUComms();
+
+				} break;
+			}
 
 			OSAL::Unload();
 

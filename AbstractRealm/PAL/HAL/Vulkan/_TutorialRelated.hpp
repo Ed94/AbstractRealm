@@ -16,7 +16,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include <tiny_obj_loader.h>
-#include "stb/stb_image.h"
+#include <stb/stb_image.h>
 
 
 #include "GPUVK_Resources.hpp"

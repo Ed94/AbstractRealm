@@ -85,17 +85,30 @@ namespace Core::Execution
 
 		if (renderPresentDelta >= renderPresentInterval)
 		{
-			Imgui::MakeFrame();
+			switch (GPU_API())
+			{
+				case Meta::EGPUPlatformAPI::BGFX:
+				{
+					
 
-			Imgui::Render();
+				} break;
+				
+				case Meta::EGPUPlatformAPI::Vulkan:
+				{
+					Imgui::MakeFrame();
 
-			HAL::GPU::Default_DrawFrame(EngineWindow());
+					Imgui::Render();
 
-			HAL::GPU::Vulkan::Render();
+					HAL::GPU::Default_DrawFrame(EngineWindow());
 
-			HAL::GPU::Vulkan::Present();
+					HAL::GPU::Vulkan::Render();
 
-			Imgui::Dirty_DoSurfaceStuff(EngineWindow());	
+					HAL::GPU::Vulkan::Present();
+
+					Imgui::Dirty_DoSurfaceStuff(EngineWindow());
+
+				} break;
+			}
 
 			renderPresentDelta = Duration64(0);
 		}

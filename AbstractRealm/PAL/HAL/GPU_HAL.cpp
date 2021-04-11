@@ -19,6 +19,8 @@ Note: For now this is going to be a big copy and paste to an extent from the tri
 #include "OSAL/OSAL_Platform.hpp"
 #include "HAL_Backend.hpp"
 
+#include "BGFX/GPU_BGFX.hpp"
+
 
 
 namespace HAL
@@ -73,8 +75,12 @@ namespace HAL
 				{
 					case EGPUPlatformAPI::BGFX:
 					{
+						Initialize_GPUComms_Bind = BGFX::Start_GPUComms;
 
-					}
+						Cease_GPUComms_Bind = BGFX::Cease_GPUComms;
+
+					} break;
+					
 					case EGPUPlatformAPI::Vulkan:
 					{
 						Initialize_GPUComms_Bind = Vulkan::Start_GPUComms;
@@ -95,15 +101,15 @@ namespace HAL
 
 						Default_ReinitializeRenderer_Bind = Vulkan::Default_ReinitializeRenderer;
 
-						CLog("Loaded platform bindings: Vulkan");
+					} break;
 
-						break;
-					}
 					case Meta::EGPUPlatformAPI::No_API:
 					{
 						throw RuntimeError("No API Selected.");
 					}
 				}
+
+				CLog("Loaded platform bindings: Vulkan");
 			}
 		}
 
@@ -123,6 +129,8 @@ namespace HAL
 
 		void Initialize_GPUComms(RoCStr _appName, AppVersion _version)
 		{
+			CLog("Initializing GPU Communication");
+
 			PlatformBackend::Initialize_GPUComms_Bind(_appName, _version);
 		}
 
