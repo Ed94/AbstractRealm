@@ -86,11 +86,11 @@
 				SetRenderContext();
 			}
 
-			DynamicArray<RenderCallback> RenderCallbacks;
+			//DynamicArray<RenderCallback> RenderCallbacks;
 
 			void AddRenderCallback(RenderCallback _renderCallback)
 			{
-				RenderCallbacks.push_back(_renderCallback);
+				GPUVKDemo_Context->AddRenderCallback(_renderCallback);
 			}
 
 			void UpdateUniformBuffers();

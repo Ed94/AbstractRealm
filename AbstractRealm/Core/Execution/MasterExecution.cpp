@@ -99,8 +99,6 @@ namespace Core::Execution
 
 					Imgui::Render();
 
-					//HAL::GPU::Default_DrawFrame(EngineWindow());
-
 					HAL::GPU::Vulkan::Render();
 
 					HAL::GPU::Vulkan::Present();

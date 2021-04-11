@@ -591,8 +591,8 @@ namespace HAL::GPU::Vulkan
 
 		const auto& swapExtent = _swapChain.GetExtent();
 
-		viewport.Height   = swapExtent.Height;
-		viewport.Width    = swapExtent.Width;
+		viewport.Height   = swapExtent.Height / 2;
+		viewport.Width    = swapExtent.Width / 2;
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 		viewport.X        = 0;
@@ -670,6 +670,11 @@ namespace HAL::GPU::Vulkan
 
 			return;
 		}
+	}
+
+	void RenderContext::AddRenderCallback(RenderCallback _callback)
+	{
+		renderCallbacks.push_back(_callback);
 	}
 
 	const RenderPass& RenderContext::GetRenderPass() const
@@ -759,6 +764,11 @@ namespace HAL::GPU::Vulkan
 
 			primaryBuffer.BindPipeline(EPipelineBindPoint::Graphics, dref(renderGroups[0].Pipeline));
 
+			for (auto renderCallback : renderCallbacks)
+			{
+				renderCallback(primaryBuffer, currentSwap);
+			}
+
 			for (auto& viewContext : viewContexts)
 			{
 				viewContext.Prepare(primaryBuffer);
@@ -773,6 +783,8 @@ namespace HAL::GPU::Vulkan
 					}
 				}
 			}
+
+			
 
 			primaryBuffer.EndRenderPass();
 

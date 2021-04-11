@@ -273,6 +273,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Manifest\Level.hpp" />
     <ClInclude Include="Manifest\States\BasicState.hpp">
       <SubType>
       </SubType>
@@ -618,6 +619,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\SAL\Gainput_SAL.hpp" />
     <ClInclude Include="PAL\SAL\GLFW_SAL.hpp">
       <SubType>
       </SubType>
@@ -646,6 +648,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Renderer\RenderContext.hpp" />
     <ClInclude Include="Renderer\Renderer.hpp">
       <SubType>
       </SubType>
@@ -765,6 +768,7 @@
     <ClCompile Include="PAL\OSAL\OSAL_Threading.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Timing.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Windowing.cpp" />
+    <ClCompile Include="PAL\SAL\Gainput_SAL.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
     <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.cpp" />

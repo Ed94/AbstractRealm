@@ -220,7 +220,9 @@ namespace SAL::Imgui
 
 		ImGui::DockSpaceOverViewport();
 
-		ImGui::Begin("TestWidow");
+		ImGui::Begin("Object View");
+
+		//ImGui::GetWindowDrawList()->AddImage(/* Offscreen render info here */, , , , , );
 
 		ImGui::End();
 

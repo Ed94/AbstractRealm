@@ -222,6 +222,8 @@ namespace HAL::GPU::Vulkan
 		ptr<GraphicsPipeline> Pipeline;
 	};
 
+	using RenderCallback = void(*)(const CommandBuffer& _buffer, int _index);
+
 	class RenderContext
 	{
 	public:
@@ -231,6 +233,8 @@ namespace HAL::GPU::Vulkan
 		void Destroy();
 
 		void AddRenderable(ptr<ARenderable> _renderable);
+
+		void AddRenderCallback(RenderCallback _callback);
 
 		const RenderPass& GetRenderPass() const;
 
@@ -285,6 +289,9 @@ namespace HAL::GPU::Vulkan
 		DynamicArray<ClearValue> clearValues;
 
 		bool shouldClear = true, bufferDepth = true;
+
+
+		DynamicArray<RenderCallback> renderCallbacks;
 
 
 		// Proper render pass array...
