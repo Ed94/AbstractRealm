@@ -103,7 +103,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\backends;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedVulkan\include;$(ProjectDir)PAL\ThirdParty\Libraries\bimg\3rdparty;$(ProjectDir)PAL\ThirdParty\Libraries\bimg\include;$(ProjectDir)PAL\ThirdParty\Libraries\bx\3rdparty;$(ProjectDir)PAL\ThirdParty\Libraries\bx\include;$(ProjectDir)PAL\ThirdParty\Libraries\bgfx\3rdparty;$(ProjectDir)PAL\ThirdParty\Libraries\bgfx;$(ProjectDir)PAL\ThirdParty\Libraries\bgfx\include;$(VULKAN_SDK)\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\backends;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedVulkan\include;$(ProjectDir)PAL\ThirdParty\Libraries\bimg\3rdparty;$(ProjectDir)PAL\ThirdParty\Libraries\bimg\include;$(ProjectDir)PAL\ThirdParty\Libraries\bx\3rdparty;$(ProjectDir)PAL\ThirdParty\Libraries\bx\include;$(ProjectDir)PAL\ThirdParty\Libraries\bgfx\3rdparty;$(ProjectDir)PAL\ThirdParty\Libraries\bgfx;$(ProjectDir)PAL\ThirdParty\Libraries\bgfx\include;$(ProjectDir)PAL\ThirdParty\Libraries\cereal\include;C:\Projects\AbstractRealm\AbstractRealm\PAL\ThirdParty\Libraries\ctti\include;$(VULKAN_SDK)\Include;C:\Projects\AbstractRealm\AbstractRealm\PAL\ThirdParty\Libraries\nameof\include</AdditionalIncludeDirectories>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -239,6 +239,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Editor\DevUI\DebugUI.hpp" />
     <ClInclude Include="Editor\DevUI\DevUI.hpp">
       <SubType>
       </SubType>
@@ -256,6 +257,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="LAL\LAL_Enum.hpp" />
     <ClInclude Include="LAL\LAL_Iterator.hpp" />
     <ClInclude Include="LAL\LAL_Thread.hpp">
       <SubType>
@@ -727,6 +729,7 @@
   <ItemGroup>
     <None Include="PAL\HAL\Vulkan\GPUVK_Resources.tpp" />
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
+    <None Include="PAL\SAL\ImGui_SAL.tpp" />
     <None Include="PAL\ThirdParty\Libraries\bgfx\.build\projects\vs2017\bimg.vcxproj.user" />
   </ItemGroup>
   <ItemGroup>
@@ -768,6 +771,7 @@
     <ClCompile Include="PAL\OSAL\OSAL_Threading.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Timing.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Windowing.cpp" />
+    <ClCompile Include="PAL\PAL.cpp" />
     <ClCompile Include="PAL\SAL\Gainput_SAL.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
     <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />

@@ -49,7 +49,7 @@ namespace Core::Execution
 		OSAL::PollEvents();
 
 		unbound Duration64 consoleUpdateDelta(0), consoleUpdateInterval(1.0 / 30.0);
-		unbound Duration64 renderPresentDelta(0), renderPresentInterval = Meta::FixRenderRateToRefreshRate() ? Duration64(1.0 / OSAL::GetMainDisplay().RefreshRate) : Duration64(0.0);
+		unbound Duration64 renderPresentDelta(0), renderPresentInterval = Meta::FixRenderRateToRefreshRate() ? Duration64(1.0 / OSAL::Get_MainDisplay().RefreshRate) : Duration64(0.0);
 
 		if (consoleUpdateDelta >= consoleUpdateInterval)
 		{

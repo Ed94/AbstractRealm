@@ -76,3 +76,9 @@
 [submodule "bimg"]
 	path = AbstractRealm/PAL/Thirdparty/Libraries/bimg
 	url = https://github.com/bkaradzic/bimg
+[submodule "cereal"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/cereal
+	url = https://github.com/USCiLab/cereal
+[submodule "nameof"]
+	path = AbstractRealm/PAL/Thirdparty/Libraries/nameof
+	url = https://github.com/Neargye/nameof

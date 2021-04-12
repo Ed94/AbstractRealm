@@ -48,7 +48,12 @@ namespace OSAL
 		u64 VirtualAvail;
 	};
 
-	const DisplayInfo& GetMainDisplay();
+	const String& Get_CPUVendor();
+	const String& Get_CPUModel();
+	const u64 Get_CPUFrequency();
+	const MemoryInfo& Get_Memory();
+	const DynamicArray<DisplayInfo>& Get_Displays();
+	const DisplayInfo& Get_MainDisplay();
 
 	void Load_Hardware();
 }

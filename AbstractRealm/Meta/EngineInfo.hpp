@@ -127,7 +127,7 @@ namespace Meta
 
 	constexpr char EngineName[] = "Abstract Realm";
 
-	constexpr auto BuildType_Name = magic_enum::enum_name(BuildType);
+	constexpr auto BuildType_Name = nameOf(BuildType);
 
 
 	/*
@@ -177,4 +177,25 @@ namespace Meta
 	bool UseConcurrency();
 
 	bool FixRenderRateToRefreshRate();
+
+
+
+	namespace EngineInfo
+	{
+		template<typename Archive>
+		void Serialize(Archive& _archive)
+		{
+			_archive
+			(
+				EngineName,
+				BuildType_Name,
+				OperationalMode,
+				UseEditor(),
+				UseDebug(),
+				UseProfiling(),
+				UseConcurrency(),
+				FixRenderRateToRefreshRate()
+			);
+		}
+	}
 }

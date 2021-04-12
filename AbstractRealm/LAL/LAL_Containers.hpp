@@ -28,6 +28,9 @@ namespace LAL
 	template<typename KeyType, typename ValueType>
 	using Map = std::map<KeyType, ValueType>;
 
+	template<typename KeyType, typename ValueType>
+	using UnorderedMap = std::unordered_map<KeyType, ValueType>;
+
 	template<typename Type, uDM NumberOfElements>
 	using StaticArray = std::array<Type, NumberOfElements>;
 }

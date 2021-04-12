@@ -3,7 +3,6 @@
 
 
 
-
 namespace HAL::GPU::Vulkan
 {
 #pragma region PrimitiveRenderable

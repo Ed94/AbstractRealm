@@ -10,6 +10,7 @@ C++ STL Reflection
 
 
 #include "LAL_Cpp_STL.hpp"
+#include "nameof.hpp"
 
 
 
@@ -70,6 +71,11 @@ namespace LAL
 	template<typename Type>
 	using IsUnsignedType = std::is_unsigned<Type>;
 
+	// Composite Type Categories
+
+	template<typename Type>
+	using IsArithmeticType = std::is_arithmetic<Type>;
+
 	// Type Primary Categories
 
 	template<typename Type>
@@ -109,6 +115,8 @@ namespace LAL
 		return IsUnsignedType<Type>::value;
 	}
 
+	// Type Signage
+
 	template<typename Base, typename Derived>
 	constexpr bool IsOfClass()
 	{
@@ -125,6 +133,14 @@ namespace LAL
 	constexpr bool IsSameTypeCV()
 	{
 		return SameTypeCV<Type, TypeRef>::value;
+	}
+
+	// Composite Type Categories
+
+	template<typename Type> constexpr
+	bool IsArithmetic()
+	{
+		return IsArithmeticType<Type>::value;
 	}
 
 	// Type Primary Categories
@@ -146,4 +162,36 @@ namespace LAL
 	{
 		return T_IsFunctionPtr<Type>::value;
 	}
+
+	// String
+
+	template<typename Type> constexpr 
+	bool IsStringRelated()
+	{
+		using Raw = RawType<Type>;
+
+		return 
+			IsSameType<Raw, RoCStr    >() &&
+			IsSameType<Raw, String    >() &&
+			IsSameType<Raw, StringView>();
+	}
 }
+
+// NameOf
+
+// Obtains name of variable, function, macro.
+#define NameOf(...) \
+[]() constexpr noexcept \
+{                          \
+  ::std::void_t<decltype(__VA_ARGS__)>();                              \
+\
+  constexpr auto _name = ::nameof::detail::pretty_name(#__VA_ARGS__);  \
+\
+  static_assert(_name.size() > 0, "Expression does not have a name."); \
+\
+  constexpr auto _size   = _name.size();                                 \
+  constexpr auto _nameof = ::nameof::cstring<_size>{_name};            \
+\
+  return _nameof; \
+}	\
+() \

@@ -8,10 +8,25 @@
 #include "Console.hpp"
 
 
+#include "Meta/Config/CoreDev_Config.hpp"
+#include "Meta/Config/OSAL_Config.hpp"
+#include "Meta/Config/Resource_Config.hpp"
+#include "Meta/Config/Simulation_Config.hpp"
+
+#include "PAL/OSAL//OSAL_Hardware.hpp"
+#include "cereal/archives/json.hpp"
+#include "ctti/nameof.hpp"
+#include "ctti/name.hpp"
+#include "ctti/detailed_nameof.hpp"
+#include "nameof.hpp"
+
+
 
 namespace SAL::Imgui
 {
 	using namespace Core::Memory;
+
+	UnorderedMap<String, DynamicArray<WindowCallback>> WindowsQueued;
 
 	void CLog(String _info)
 	{
@@ -87,8 +102,6 @@ namespace SAL::Imgui
 		}
 	}
 
-
-
 	// Static Data
 
 	Imgui::IO* IO_Config;
@@ -104,6 +117,34 @@ namespace SAL::Imgui
 
 
 	// Functions
+
+	void Queue(RoCStr _windowName, WindowCallback _callback)
+	{
+		auto possibleWindow = WindowsQueued.find(String(_windowName));
+
+		if (possibleWindow != WindowsQueued.end())
+		{
+			possibleWindow->second.push_back(_callback);
+		}
+		else
+		{
+			auto callbacks = DynamicArray<WindowCallback>();
+
+			callbacks.push_back(_callback);
+
+			WindowsQueued.insert({_windowName, move(callbacks) });
+		}
+	}
+
+	void Dequeue(RoCStr _windowName, WindowCallback _callback)
+	{
+		auto possibleWindow = WindowsQueued.find(String(_windowName));
+
+		if (possibleWindow != WindowsQueued.end())
+		{
+			WindowsQueued.erase(possibleWindow);
+		}
+	}
 
 	void BindToPlatformAndRenderer(ptr<OSAL::Window> _window)
 	{
@@ -211,6 +252,96 @@ namespace SAL::Imgui
 		Imgui::SetupFonts();
 	}
 
+	void Text(RoCStr _cStr)
+	{
+		ImGui::Text(_cStr);
+	}
+
+	void Text(const StringView& _view)
+	{
+		ImGui::Text(_view.data());
+	}
+
+	void Text(const String& _string)
+	{
+		ImGui::Text(_string.c_str());
+	}
+
+	bool TreeNode(RoCStr _cStr)
+	{
+		return ImGui::TreeNode(_cStr);
+	}
+
+	bool TreeNode(const StringView& _view)
+	{
+		return ImGui::TreeNode(_view.data());
+	}
+
+	bool TreeNode(const String& _string)
+	{
+		return ImGui::TreeNode(_string.c_str());
+	}
+
+	bool CollapsingHeader(RoCStr _cStr)
+	{
+		return ImGui::CollapsingHeader(_cStr);
+	}
+
+	bool CollapsingHeader(const StringView& _view)
+	{
+		return ImGui::CollapsingHeader(_view.data());
+	}
+
+	bool CollapsingHeader(const String& _string)
+	{
+		return ImGui::CollapsingHeader(_string.c_str());
+	}
+
+	Table2C::Table2C() : 
+		name("Data Table"),
+		flags(ImGuiTableFlags_SizingFixedFit |ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)
+	{}
+
+	Table2C::Table2C(RoCStr _name) : 
+		name(_name)
+	{}
+
+	Table2C::Table2C(const String& _name) : 
+		name(_name)
+	{}
+
+	Table2C::Table2C(Flags _flags) : 
+		flags(_flags)
+	{}
+
+	Table2C::Table2C(RoCStr _name, Flags _flags) :
+		name(_name), flags(_flags)
+	{}
+
+	Table2C::Table2C(const String& _name, Flags _flags) :
+		name(_name), flags(_flags)
+	{}
+
+	bool Table2C::Record()
+	{
+		bool result = ImGui::BeginTable("Data Table", 2, ImGuiTableFlags_SizingFixedFit |ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders);
+
+		if (result)
+		{
+			ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+
+			ImGui::TableHeadersRow();
+		}
+
+		return result;	
+	}
+
+	void Table2C::EndRecord()
+	{
+		ImGui::EndTable();
+	}
+
 	void MakeFrame()
 	{
 		ImGui_ImplVulkan_NewFrame();
@@ -220,13 +351,29 @@ namespace SAL::Imgui
 
 		ImGui::DockSpaceOverViewport();
 
-		ImGui::Begin("Object View");
+		for (auto& entry : WindowsQueued)
+		{
+			ImGui::Begin(entry.first.c_str());
 
-		//ImGui::GetWindowDrawList()->AddImage(/* Offscreen render info here */, , , , , );
+			for (auto& callback : entry.second)
+			{
+				callback();
+			}
+
+			ImGui::End();
+		}
+
+	#define Args(_Entry) NameOf(_Entry).str(), _Entry
+
+		ImGui::Begin("Dev Debug");
+
+		
 
 		ImGui::End();
 
 		ImGui::ShowDemoWindow();
+
+	#undef Args
 	}
 
 	void SetupFonts()

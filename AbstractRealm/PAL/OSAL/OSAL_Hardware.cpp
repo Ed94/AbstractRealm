@@ -20,7 +20,7 @@ namespace OSAL
 
 		String CPU_Vendor   ;
 		String CPU_Model    ;
-		u64 CPU_Frequency;
+		u64    CPU_Frequency;
 
 		MemoryInfo Memory;
 
@@ -29,7 +29,32 @@ namespace OSAL
 		DisplayInfo* MainDisplay;
 
 
-	const DisplayInfo& GetMainDisplay()
+	const String& Get_CPUVendor()
+	{
+		return CPU_Vendor;
+	}
+
+	const String& Get_CPUModel()
+	{
+		return CPU_Model;
+	}
+
+	const u64 Get_CPUFrequency()
+	{
+		return CPU_Frequency;
+	}
+
+	const MemoryInfo& Get_Memory()
+	{
+		return Memory;
+	}
+
+	const DynamicArray<DisplayInfo>& Get_Displays()
+	{
+		return Displays;
+	}
+
+	const DisplayInfo& Get_MainDisplay()
 	{
 		return dref(MainDisplay);
 	}

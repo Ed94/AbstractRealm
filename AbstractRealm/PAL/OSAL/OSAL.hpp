@@ -33,4 +33,6 @@ namespace OSAL
 	Currently based of GLFW events (Since there are no other OS related events yet).
 	*/
 	void PollEvents();
+
+	void Record_EditorDevDebugUI();
 }

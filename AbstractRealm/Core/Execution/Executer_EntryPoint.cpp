@@ -12,6 +12,7 @@
 #include "MasterExecution.hpp"
 #include "Concurrency/CyclerPool.hpp"
 #include "ImGui_SAL.hpp"
+#include "PAL/PAL.hpp"
 
 
 
@@ -80,6 +81,8 @@ namespace Core::Execution
 
 	OSAL::ExitValT EntryPoint()
 	{
+		Meta::LoadModule();
+
 		try
 		{
 			if (UseDebug())
@@ -99,7 +102,7 @@ namespace Core::Execution
 
 			Dev::CLog("Core-Execution: Initiating");
 
-			OSAL::Load();
+			PAL::Load();
 
 			HAL::LoadModule();
 

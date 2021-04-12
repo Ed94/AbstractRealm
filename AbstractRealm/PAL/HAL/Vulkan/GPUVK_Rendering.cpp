@@ -591,8 +591,8 @@ namespace HAL::GPU::Vulkan
 
 		const auto& swapExtent = _swapChain.GetExtent();
 
-		viewport.Height   = swapExtent.Height / 2;
-		viewport.Width    = swapExtent.Width / 2;
+		viewport.Height   = swapExtent.Height / 6;
+		viewport.Width    = swapExtent.Width / 6;
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 		viewport.X        = 0;
@@ -717,7 +717,7 @@ namespace HAL::GPU::Vulkan
 		// Set the current swap image fence to that of the frame queue fence.
 		swapsInFlight[currentSwap] = &frameRef.RenderingInFlight();
 
-		clearValues[0].Color = { 0.6f, 0.47f, 0.39f, 0.1f };
+		clearValues[0].Color = { 0.13f, 0.13f, 0.13f, 0.1f };
 
 		/*switch (currentFrameBuffer)
 		{
@@ -755,11 +755,6 @@ namespace HAL::GPU::Vulkan
 
 			primaryBuffer.BeginRenderPass(beginInfo, ESubpassContents::Inline);
 
-			//TestCallback
-			//(currentSwap, primaryBuffer, beginInfo.Framebuffer, swapchain, beginInfo);
-
-			 //Renderables handled here..
-
 			viewContexts[0].Prepare(primaryBuffer);
 
 			primaryBuffer.BindPipeline(EPipelineBindPoint::Graphics, dref(renderGroups[0].Pipeline));
@@ -783,8 +778,6 @@ namespace HAL::GPU::Vulkan
 					}
 				}
 			}
-
-			
 
 			primaryBuffer.EndRenderPass();
 
