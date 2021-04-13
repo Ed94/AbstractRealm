@@ -67,9 +67,3 @@
 [submodule "VaultedVulkan"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/VaultedVulkan
 	url = https://github.com/Ed94/VaultedVulkan.git
-[submodule "AbstractRealm/PAL/ThirdParty/Libraries/bgfx"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/bgfx
-	url = https://github.com/bkaradzic/bgfx.git
-[submodule "AbstractRealm/PAL/Thirdparty/Libraries/bx"]
-	path = AbstractRealm/PAL/Thirdparty/Libraries/bx
-	url = https://github.com/bkaradzic/bx
