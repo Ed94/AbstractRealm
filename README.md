@@ -1,6 +1,8 @@
 # Abstract Realm
 A Real-Time Engine
 
+![Current State](https://i.imgur.com/6BUkzh2.gif)
+
 # Dependencies
 
 Vulkan. (Use the VULKAN_PATH env variable). You will also need the debug libs https://files.lunarg.com/.
