@@ -125,7 +125,7 @@ namespace Core::Execution
 	 */
 	OSAL::ExitValT EntryPoint();
 
-	ptr<OSAL::Window> EngineWindow();
+	//ptr<OSAL::Window> EngineWindow();
 }
 
 

@@ -102,6 +102,29 @@ namespace OSAL
 	constexpr auto OS_InvalidHandle = PlatformTypes::InvalidHandle;
 
 
+	using namespace LAL;
 
 	void Load_Platform();
+
+	const String& Get_OSName();
+
+	struct OS_Version
+	{
+		u32 Major;
+		u32 Minor;
+		u32 Patch;
+
+		UINT32 Build;
+
+		String Str() const
+		{
+			StringStream stream;
+
+			stream << Major << "." << Minor << "." << Patch << " Build: " << Build;
+
+			return stream.str();
+		}
+	};
+
+	const OS_Version& Get_OSVersion();
 }

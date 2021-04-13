@@ -171,7 +171,7 @@ namespace LAL
 		using Raw = RawType<Type>;
 
 		return 
-			IsSameType<Raw, RoCStr    >() &&
+			IsSameType<Type, RoCStr    >() &&
 			IsSameType<Raw, String    >() &&
 			IsSameType<Raw, StringView>();
 	}

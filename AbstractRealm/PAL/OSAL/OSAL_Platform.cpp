@@ -18,24 +18,6 @@ namespace OSAL
 
 	String OS_Name;
 
-	struct OS_Version
-	{
-		u32 Major;
-		u32 Minor;
-		u32 Patch;
-
-		UINT32 Build;
-
-		String Str()
-		{
-			StringStream stream; 
-
-			stream << Major << "." << Minor << "." << Patch << " Build: " << Build;
-
-			return stream.str();
-		}
-	};
-
 	OS_Version OS_Ver;
 
 	void Load_Platform()
@@ -51,4 +33,8 @@ namespace OSAL
 
 		CLog("OS: " + OS_Name + " Version: " + OS_Ver.Str());
 	}
+
+	const String& Get_OSName() { return OS_Name; }
+
+	const OS_Version& Get_OSVersion() { return OS_Ver; }
 }

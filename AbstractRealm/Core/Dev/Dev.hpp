@@ -11,6 +11,6 @@ namespace Dev
 {
 	// Functions
 
-	void LoadModule();
-	void UnloadModule();
+	void Load();
+	void Unload();
 }

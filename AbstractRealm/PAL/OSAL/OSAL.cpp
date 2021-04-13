@@ -7,6 +7,8 @@
 
 #include "OSAL_Backend.hpp"
 #include "OSAL_Hardware.hpp"
+#include "OSAL_Platform.hpp"
+#include "OSAL_Timing.hpp"
 
 
 
@@ -21,17 +23,17 @@ namespace OSAL
 
 		#define Args(_Entry) NameOf(_Entry).str(), _Entry
 
-		if (ImGui::TreeNode("OSAL"))
+		if (TreeNode("OSAL"))
 		{
-			if (ImGui::CollapsingHeader("Hardware"))
+			if (CollapsingHeader("Hardware"))
 			{
 				if (Table2C::Record())
 				{
 					if (Table2C::NestedTree("CPU"))
 					{
-						Table2C::Entry(Args(OSAL::Get_CPUVendor()));
-						Table2C::Entry(Args(OSAL::Get_CPUModel()));
-						Table2C::Entry(Args(OSAL::Get_CPUFrequency()));
+						Table2C::Entry("Vendor", OSAL::Get_CPUVendor());
+						Table2C::Entry("Model" , OSAL::Get_CPUModel());
+						Table2C::Entry("Frequency", OSAL::Get_CPUFrequency());
 
 						ImGui::TreePop();
 					}
@@ -70,6 +72,74 @@ namespace OSAL
 
 						ImGui::TreePop();
 					}
+
+					Table2C::EndRecord();
+				}
+			}
+
+			if (CollapsingHeader("Platform"))
+			{
+				if (Table2C::Record())
+				{
+					Table2C::Entry(Args(OSAL::OS));
+
+					Table2C::Entry("Full Name", OSAL::Get_OSName());
+
+					Table2C::Entry("Version", OSAL::Get_OSVersion().Str());
+
+					Table2C::EndRecord();
+				}
+			}
+
+			if (CollapsingHeader("Timing"))
+			{
+				if (Table2C::Record())
+				{
+					StringStream toString;
+					
+					toString << put_time(&GetExecutionStartDate(), "%F %I:%M:%S %p");
+
+					Table2C::Entry("Execution Start", toString.str());
+
+					toString.str(String());;
+
+					toString << put_time(&GetTime_Local(), "%F %I:%M:%S %p");
+
+					Table2C::Entry("Current Time (Local)", toString.str());
+
+					toString.str(String());;
+
+					toString << put_time(&GetTime_UTC(), "%F %I:%M:%S %p");
+
+					Table2C::Entry("Current Time (UTC)", toString.str());
+
+					auto sinceStart = std::chrono::duration_cast<Nanoseconds>(SystemClock::now().time_since_epoch()).count();
+
+					toString.str(String());;
+
+					toString << sinceStart;
+
+					Table2C::Entry("System Clock: Now", toString.str());
+
+					sinceStart = std::chrono::duration_cast<Nanoseconds>(SteadyClock::now().time_since_epoch()).count();
+
+					toString.str(String());;
+
+					toString << sinceStart;
+
+					Table2C::Entry("Steady Clock: Now", toString.str());
+
+					sinceStart = std::chrono::duration_cast<Nanoseconds>(HighResClock::now().time_since_epoch()).count();
+
+					toString.str(String());;
+
+					toString << sinceStart;
+
+					Table2C::Entry("High Resolution Clock: Now", toString.str());
+
+					Table2C::Entry("System Time Accuracy", ToString(Get_SystemTimeInfo().Precison) + " milliseconds");
+					Table2C::Entry("Steady Time Accuracy", ToString(Get_SteadyTimeInfo().Precison) + " milliseconds");
+					Table2C::Entry("High Resolution Time Accuracy", ToString(Get_HighResTimeInfo().Precison) + " milliseconds");
 
 					Table2C::EndRecord();
 				}
@@ -132,6 +202,7 @@ namespace OSAL
 			SAL::GLFW::PollEvents();
 		}
 	}
+
 
 
 	// Private

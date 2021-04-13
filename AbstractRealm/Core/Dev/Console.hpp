@@ -42,4 +42,6 @@ namespace Dev
 
 	void Console_EnableAutoUpdate();
 	void Console_DisableAutoUpdate();
+
+	void Console_Record_EditorDevDebugUI();
 }

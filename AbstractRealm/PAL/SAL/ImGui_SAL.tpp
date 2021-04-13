@@ -33,19 +33,19 @@ namespace SAL::Imgui
 
 		ImGui::TableNextColumn();
 
+		using RawType = RawType<TypeVal>;
+
 		if constexpr (IsStringRelated<TypeVal>())
 		{
-			if constexpr (IsOfClass<TypeVal, RoCStr>())
+			if constexpr (IsSameTypeCV<TypeVal, RoCStr>())
 			{
 				ImGui::Text(_value);
 			}
-
-			if constexpr (IsOfClass<TypeVal, String>())
+			else if constexpr (IsSameTypeCV<TypeVal, String>())
 			{
 				ImGui::Text(_value.c_str());
 			}
-
-			if constexpr (IsOfClass<TypeVal, StringView>())
+			else if constexpr (IsSameTypeCV<TypeVal, StringView>())
 			{
 				ImGui::Text(_value.data());
 			}

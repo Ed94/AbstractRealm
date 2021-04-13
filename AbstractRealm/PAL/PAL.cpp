@@ -5,6 +5,7 @@
 #include "ImGui_SAL.hpp"
 
 #include "OSAL.hpp"
+#include "HAL.hpp"
 
 
 namespace PAL
@@ -39,6 +40,8 @@ namespace PAL
 	void Load()
 	{
 		OSAL::Load();
+
+		HAL::LoadModule();
 
 		SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
 	}

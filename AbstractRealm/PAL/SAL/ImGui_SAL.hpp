@@ -55,6 +55,8 @@ namespace SAL::Imgui
 	bool TreeNode(const StringView& _view);
 	bool TreeNode(const String& _string);
 
+	using ImGui::TreePop;
+
 	bool CollapsingHeader(RoCStr _cStr);
 	bool CollapsingHeader(const StringView& _view);
 	bool CollapsingHeader(const String& _string);

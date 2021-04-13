@@ -27,7 +27,7 @@ namespace Meta
 
 		if (CollapsingHeader("Meta"))
 		{
-			if (ImGui::TreeNode("Config"))
+			if (TreeNode("Config"))
 			{
 				if (CollapsingHeader("Core Dev"))
 				{
@@ -40,7 +40,7 @@ namespace Meta
 					}
 				}
 
-				if (ImGui::CollapsingHeader("HAL"))
+				if (CollapsingHeader("HAL"))
 				{
 					if (Table2C::Record())
 					{
@@ -121,7 +121,7 @@ namespace Meta
 					}
 				}
 
-				ImGui::TreePop();
+				TreePop();
 			}
 
 			if (ImGui::TreeNode("Engine Info"))
@@ -129,6 +129,10 @@ namespace Meta
 				Table2C::Record();
 
 				Table2C::Entry(Args(EngineName));
+				Table2C::Entry("EngineVersion", 
+							   ToString(EEngineVersion::Major) + "." +
+							   ToString(EEngineVersion::Minor) + "." +
+							   ToString(EEngineVersion::Patch));
 				Table2C::Entry(Args(OperationalMode()));
 				Table2C::Entry(Args(UseEditor()));
 				Table2C::Entry(Args(UseDebug()));

@@ -9,35 +9,9 @@
 
 namespace OSAL
 {
-	template<typename Period> using NanoPeriod = std::ratio_multiply<Period, std::giga>;
-	template<typename Period> using MiliPeriod = std::ratio_multiply<Period, std::kilo>;
-
-
-	struct SystemTimeInfo
-	{
-		MiliPeriod<SystemTimePeriod> Period;
-
-		f64 Precison;
-	};
-
-	struct SteadyTimeInfo
-	{
-		MiliPeriod<SteadyTimePeriod> Period;
-
-		f64 Precison;
-	};
-
-	struct HiighResTimeInfo
-	{
-		MiliPeriod<HighResTimePeriod> Period;
-
-		f64 Precison;
-	};
-
-
-	SystemTimeInfo   SysTimeStatus    ;
-	SteadyTimeInfo   SteadyTimeStatus ;
-	HiighResTimeInfo HighResTimeStatus;
+	SystemTimeInfo  SysTimeStatus    ;
+	SteadyTimeInfo  SteadyTimeStatus ;
+	HighResTimeInfo HighResTimeStatus;
 
 	SysTimePoint EntryPoint_StartExecution;	
 	CalendarDate EntryPoint_StartDate;
@@ -55,6 +29,21 @@ namespace OSAL
 		CLog("System Time Accuracy         : " + ToString(SysTimeStatus    .Precison) + " milliseconds");
 		CLog("Steady Time Accuracy         : " + ToString(SteadyTimeStatus .Precison) + " milliseconds");
 		CLog("High Resolution Time Accuracy: " + ToString(HighResTimeStatus.Precison) + " milliseconds");
+	}
+
+	const SystemTimeInfo& Get_SystemTimeInfo()
+	{
+		return SysTimeStatus;
+	}
+
+	const SteadyTimeInfo& Get_SteadyTimeInfo()
+	{
+		return SteadyTimeStatus;
+	}
+
+	const HighResTimeInfo& Get_HighResTimeInfo()
+	{
+		return HighResTimeStatus;
 	}
 
 	const SysTimePoint& GetExecutionStart()

@@ -8,6 +8,8 @@
 #include "OSAL/OSAL_Console.hpp"
 #include "OSAL/OSAL_Timing.hpp"
 #include "IO/Basic_FileIO.hpp"
+#include "ImGui_SAL.hpp"
+#include <stdlib.h>
 
 
 
@@ -79,6 +81,7 @@ namespace Dev
 
 
 
+
 	// Forwards
 	void Load_DevLog_IOFileStream();
 	void Load_DevLogStream        ();
@@ -92,6 +95,45 @@ namespace Dev
 
 
 	// Public
+
+	void Console_Record_EditorDevDebugUI()
+	{
+		using namespace SAL::Imgui; 
+
+		#define Args(_Entry) NameOf(_Entry).str(), _Entry
+
+		if (TreeNode("Console"))
+		{
+			if (Table2C::Record())
+			{
+				Table2C::Entry("Console Title", "Abstract Realm: Dev Console");
+
+				Table2C::Entry("Console Size", ToString(ConsoleWidth) + String("x") + ToString(ConsoleHeight));
+
+				Table2C::Entry(Args(AutoUpdateConsole));
+
+				Table2C::Entry(Args(DevLogLineEnd));
+				Table2C::Entry(Args(StatusStart));
+				Table2C::Entry(Args(StatusColumnWidth));
+
+				StringStream dateStream;
+
+				auto dateSnapshot = OSAL::GetExecutionStartDate();
+
+				dateStream << put_time(&dateSnapshot, "%F_%I-%M-%S_%p");
+
+				String logstr = String(DevLogPath) + String("/") + String(DevLogName) + String("__") + dateStream.str() + String(".txt");
+
+				Table2C::Entry("Log File", logstr);
+
+				Table2C::EndRecord();
+			}
+
+			TreePop();
+		}
+
+		#undef Args
+	}
 
 	void ClearBuffer()
 	{

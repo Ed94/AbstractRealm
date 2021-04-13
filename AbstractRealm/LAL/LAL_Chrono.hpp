@@ -43,7 +43,8 @@ namespace LAL
 
 	using CalendarDate = std::tm;
 
+	using Seconds      = std::chrono::seconds;
 	using Microseconds = std::chrono::microseconds;
 	using Milliseconds = std::chrono::milliseconds;
-	using Miliseconds  = std::chrono::nanoseconds ;
+	using Nanoseconds  = std::chrono::nanoseconds ;
 }

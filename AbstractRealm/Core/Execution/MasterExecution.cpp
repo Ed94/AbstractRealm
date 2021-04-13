@@ -6,6 +6,7 @@
 #include "Cycler.hpp"
 #include "Concurrency/CyclerPool.hpp"
 #include "Meta/EngineInfo.hpp"
+#include "Renderer/Renderer.hpp"
 
 // When you have a proper UI module setup, setup it to bind to imgui instead.
 #include "ImGui_SAL.hpp"
@@ -23,6 +24,11 @@ namespace Core::Execution
 
 
 	void MainCycle();
+
+	const Cycler& Get_MasterCycler()
+	{
+		return MasterCycler;
+	}
 
 
 	void Initialize_MasterCycler()
@@ -49,7 +55,7 @@ namespace Core::Execution
 		OSAL::PollEvents();
 
 		unbound Duration64 consoleUpdateDelta(0), consoleUpdateInterval(1.0 / 30.0);
-		unbound Duration64 renderPresentDelta(0), renderPresentInterval = Meta::FixRenderRateToRefreshRate() ? Duration64(1.0 / OSAL::Get_MainDisplay().RefreshRate) : Duration64(0.0);
+		unbound Duration64 renderPresentDelta(0);
 
 		if (consoleUpdateDelta >= consoleUpdateInterval)
 		{
@@ -83,7 +89,7 @@ namespace Core::Execution
 			consoleUpdateDelta += MasterCycler.GetDeltaTime();
 		}
 
-		if (renderPresentDelta >= renderPresentInterval)
+		if (renderPresentDelta >= Renderer::Get_PresentInterval())
 		{
 			switch (GPU_API())
 			{
@@ -103,7 +109,7 @@ namespace Core::Execution
 
 					HAL::GPU::Vulkan::Present();
 
-					Imgui::Dirty_DoSurfaceStuff(EngineWindow());
+					Imgui::Dirty_DoSurfaceStuff(Renderer::EngineWindow());
 
 				} break;
 			}
@@ -115,7 +121,7 @@ namespace Core::Execution
 			renderPresentDelta += MasterCycler.GetDeltaTime();
 		}
 
-		if (OSAL::CanClose(EngineWindow()))
+		if (OSAL::CanClose(Renderer::EngineWindow()))
 		{
 			HAL::GPU::WaitFor_GPUIdle();
 
