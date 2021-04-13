@@ -13,7 +13,7 @@ namespace HAL
 {
 	void LoadModule()
 	{
-		CLog("Loading GPU HAL");
+		Log("Loading GPU HAL");
 
 		GPU::Load();
 	}
