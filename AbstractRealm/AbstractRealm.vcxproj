@@ -112,7 +112,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Debug\src;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\lib;$(ProjectDir)PAL\ThirdParty\Libraries\stb\x64\Debug;C:\Projects\AbstractRealm\AbstractRealm\PAL\ThirdParty\Libraries\bgfx\.build\win64_vs2017\bin;$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>version.lib;wbemuuid.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;infowared.lib;glslangd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;stb.lib;bimg_decodeDebug.lib;bimgDebug.lib;bxDebug.lib;bgfxDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;wbemuuid.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;infowared.lib;glslangd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;stb.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <HeapReserveSize>3145728 </HeapReserveSize>
