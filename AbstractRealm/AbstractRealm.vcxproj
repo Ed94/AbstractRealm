@@ -74,7 +74,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Renderer\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -103,7 +103,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\backends;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedVulkan\include;$(ProjectDir)PAL\ThirdParty\Libraries\bimg\3rdparty;$(ProjectDir)PAL\ThirdParty\Libraries\bimg\include;$(ProjectDir)PAL\ThirdParty\Libraries\bx\3rdparty;$(ProjectDir)PAL\ThirdParty\Libraries\bx\include;$(ProjectDir)PAL\ThirdParty\Libraries\bgfx\3rdparty;$(ProjectDir)PAL\ThirdParty\Libraries\bgfx;$(ProjectDir)PAL\ThirdParty\Libraries\bgfx\include;$(ProjectDir)PAL\ThirdParty\Libraries\cereal\include;$(ProjectDir)PAL\ThirdParty\Libraries\ctti\include;$(ProjectDir)PAL\ThirdParty\Libraries\nameof\include;$(VULKAN_SDK)\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\backends;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedVulkan\include;$(VULKAN_SDK)\Include</AdditionalIncludeDirectories>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -111,8 +111,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Debug\src;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\lib;$(ProjectDir)PAL\ThirdParty\Libraries\stb\x64\Debug;$(ProjectDir)PAL\ThirdParty\Libraries\bgfx\.build\win64_vs2017\bin;$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>version.lib;wbemuuid.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;infowared.lib;glslangd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;stb.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Debug\src;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\lib;$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>version.lib;wbemuuid.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;infowared.lib;glslangd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <HeapReserveSize>3145728 </HeapReserveSize>
@@ -187,7 +187,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Core.hpp" />
     <ClInclude Include="Core\Events\EventMngr.hpp">
       <SubType>
       </SubType>
@@ -240,12 +239,10 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Editor\DevUI\DebugUI.hpp" />
     <ClInclude Include="Editor\DevUI\DevUI.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Core\Dev\Log.hpp" />
     <ClInclude Include="Editor\Profiling\DevProfiler.hpp">
       <SubType>
       </SubType>
@@ -259,7 +256,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\LAL_Enum.hpp" />
     <ClInclude Include="LAL\LAL_Iterator.hpp" />
     <ClInclude Include="LAL\LAL_Thread.hpp">
       <SubType>
@@ -277,7 +273,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Manifest\Level.hpp" />
     <ClInclude Include="Manifest\States\BasicState.hpp">
       <SubType>
       </SubType>
@@ -405,7 +400,6 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\BGFX\BGFX_API.hpp" />
-    <ClInclude Include="PAL\HAL\BGFX\GPU_BGFX.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.cpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PayloadDeck.hpp">
@@ -623,7 +617,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\SAL\Gainput_SAL.hpp" />
     <ClInclude Include="PAL\SAL\GLFW_SAL.hpp">
       <SubType>
       </SubType>
@@ -648,11 +641,11 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\ThirdParty\Libraries\magic_enum\include\magic_enum.hpp" />
+    <ClInclude Include="PAL\ThirdParty\Libraries\stb\stb_image.h" />
     <ClInclude Include="Renderer\Camera.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Renderer\RenderContext.hpp" />
     <ClInclude Include="Renderer\Renderer.hpp">
       <SubType>
       </SubType>
@@ -731,13 +724,9 @@
   <ItemGroup>
     <None Include="PAL\HAL\Vulkan\GPUVK_Resources.tpp" />
     <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
-    <None Include="PAL\SAL\ImGui_SAL.tpp" />
-    <None Include="PAL\ThirdParty\Libraries\bgfx\.build\projects\vs2017\bimg.vcxproj.user" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
-    <ClCompile Include="Core\Core.cpp" />
-    <ClCompile Include="Core\Dev\Log.cpp" />
     <ClCompile Include="Core\Execution\Cycler.cpp" />
     <ClCompile Include="Core\Dev\Console.cpp" />
     <ClCompile Include="Core\Dev\Dev.cpp" />
@@ -751,7 +740,6 @@
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
     <ClCompile Include="Meta\Meta.cpp" />
-    <ClCompile Include="PAL\HAL\BGFX\GPU_BGFX.cpp" />
     <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL_Backend.cpp" />
@@ -775,8 +763,6 @@
     <ClCompile Include="PAL\OSAL\OSAL_Threading.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Timing.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Windowing.cpp" />
-    <ClCompile Include="PAL\PAL.cpp" />
-    <ClCompile Include="PAL\SAL\Gainput_SAL.cpp" />
     <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
     <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.cpp" />
