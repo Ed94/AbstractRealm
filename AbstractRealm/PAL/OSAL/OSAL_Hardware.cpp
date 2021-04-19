@@ -108,26 +108,26 @@ namespace OSAL
 
 		MainDisplay = getPtr(Displays[0]);
 
-		CLog("CPU Information:"); 
-		CLog(String("Vendor: ") + CPU_Vendor);
-		CLog("Model: " + CPU_Model);
-		CLog("Frequency: " + ToString(CPU_Frequency) + " Hz");
+		Log("CPU Information:"); 
+		Log(String("Vendor: ") + CPU_Vendor);
+		Log("Model: " + CPU_Model);
+		Log("Frequency: " + ToString(CPU_Frequency) + " Hz");
 
-		CLog("Memory Information: ");
+		Log("Memory Information: ");
 
-		CLog("Physical:");
-		CLog(String("Total    : ") + ToString(Memory.PhysicalTotal) + " Bytes");
-		CLog(String("Available: ") + ToString(Memory.PhysicalAvail) + " Bytes");
+		Log("Physical:");
+		Log(String("Total    : ") + ToString(Memory.PhysicalTotal) + " Bytes");
+		Log(String("Available: ") + ToString(Memory.PhysicalAvail) + " Bytes");
 
-		CLog("Virtual:");
-		CLog(String("Total    : ") + ToString(Memory.VirtualTotal) + " Bytes");
-		CLog(String("Available: ") + ToString(Memory.VirtualAvail) + " Bytes");
+		Log("Virtual:");
+		Log(String("Total    : ") + ToString(Memory.VirtualTotal) + " Bytes");
+		Log(String("Available: ") + ToString(Memory.VirtualAvail) + " Bytes");
 
-		CLog("Display Information");
+		Log("Display Information");
 
 		for (auto& display : Displays)
 		{
-			CLog
+			Log
 			(
 				String("ID: ") + ToString(display.ID) + 
 				String(" Native Resolution: ") + ToString(display.Width) + String("x") + ToString(display.Height) +

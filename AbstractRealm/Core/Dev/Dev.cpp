@@ -7,6 +7,7 @@
 #include "LAL.hpp"
 #include "Console.hpp"
 #include "ImGui_SAL.hpp"
+#include "Log.hpp"
 
 
 
@@ -37,6 +38,8 @@ namespace Dev
 		Load_DevConsole();
 
 		SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
+
+		Log::Queue_DebugUI();
 
 		CLog("Dev: Module loaded");
 	}

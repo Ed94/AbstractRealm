@@ -62,7 +62,7 @@ namespace OSAL
 		*/
 		NumberOfLogicalCores = Thread::hardware_concurrency(); 
 
-		CLog(String("Number of Logical Cores: " + std::to_string(NumberOfLogicalCores)));
+		Log(String("Number of Logical Cores: " + std::to_string(NumberOfLogicalCores)));
 	}
 
 	u32 GetNumberOfLogicalCores()

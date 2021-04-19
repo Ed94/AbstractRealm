@@ -28,6 +28,8 @@ namespace SAL::Imgui
 	using ImGui::GetIO          ;
 	using ImGui::Render         ;
 	using ImGui::StyleColorsDark;
+	using ImGui::BeginChild;
+	using ImGui::EndChild;
 
 	namespace PlatformBackend
 	{

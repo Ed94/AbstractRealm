@@ -29,6 +29,7 @@ namespace Meta
 		{
 			if (TreeNode("Config"))
 			{
+
 				if (CollapsingHeader("Core Dev"))
 				{
 					if (Table2C::Record())
@@ -110,10 +111,8 @@ namespace Meta
 				{
 					if (Table2C::Record())
 					{
-						Table2C::Entry(Args(DecN_UseHighAccuracy_Compare));
-						Table2C::Entry(Args(DecN_UseNanoAccuracy_Compare));
-						Table2C::Entry(Args(DecN_UseHighAccuracy_Unit));
-						Table2C::Entry(Args(DecN_UseNanoAccuracy_Unit));
+						Table2C::Entry(Args(DecN_CompareAccuracy));
+						Table2C::Entry(Args(DecN_UnitAccuracy));
 						Table2C::Entry(Args(IntN_Accuracy));
 						Table2C::Entry(Args(DecN_Accuracy));
 

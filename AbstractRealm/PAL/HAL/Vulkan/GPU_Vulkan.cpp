@@ -109,7 +109,7 @@
 
 			void Stop_GPUVK_Demo()
 			{
-				CLog("Stopping Clear Color Demo...");
+				Log("Stopping Clear Color Demo...");
 
 				stbi_image_free(ModelWTxtur_TxtImage);
 

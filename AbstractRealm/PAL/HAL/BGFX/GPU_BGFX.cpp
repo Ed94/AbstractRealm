@@ -12,7 +12,7 @@ namespace HAL::GPU::BGFX
 {
 	void Start_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion)
 	{
-		CLog("Initializing BGFX");
+		Log("Initializing BGFX");
 
 		//bgfx::init();
 	}
@@ -25,6 +25,6 @@ namespace HAL::GPU::BGFX
 	{
 		//bgfx::shutdown();
 
-		CLog("BGFX Shutdown");
+		Log("BGFX Shutdown");
 	}
 }

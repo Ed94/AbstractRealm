@@ -154,7 +154,7 @@ namespace OSAL
 			// Detach from console
 			result = FreeConsole();
 
-			if (result) CLog("Console destroyed");
+			if (result) Log("Console destroyed");
 
 			return result;
 		}

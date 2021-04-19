@@ -405,7 +405,7 @@ namespace HAL::GPU::Vulkan
 		if (result != EResult::Success)
 			throw RuntimeError("Failed to get the physical GPUs.");
 
-		CLog("Physical GPUs acquired:");
+		Log("Physical GPUs acquired:");
 
 		StringStream gpuHandle;
 
@@ -418,7 +418,7 @@ namespace HAL::GPU::Vulkan
 
 			gpuHandle << gpu;
 
-			CLog(gpu.GetProperties().Name + String(" Handle: ") + gpuHandle.str());
+			Log(gpu.GetProperties().Name + String(" Handle: ") + gpuHandle.str());
 		}
 	}
 
@@ -436,11 +436,11 @@ namespace HAL::GPU::Vulkan
 			device.Destroy(); 
 		}
 
-		CLog("Device disengaged and logical devices destroyed");
+		Log("Device disengaged and logical devices destroyed");
 
 		AppGPU_Comms.Destroy(); 
 		
-		CLog("GPU communications ceased");
+		Log("GPU communications ceased");
 	}
 
 	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::Initialize(RoCStr _appName, Meta::AppVersion _version)
@@ -452,13 +452,13 @@ namespace HAL::GPU::Vulkan
 
 		if (Meta::Vulkan::EnableLayers())
 		{
-			CLog("EnableLayers specified");
+			Log("EnableLayers specified");
 
-			CLog("Available layers: ");
+			Log("Available layers: ");
 
 			for (auto& layerAndExtensions : AppLayersAndExtensions)
 			{
-				CLog(layerAndExtensions.Layer.Name);
+				Log(layerAndExtensions.Layer.Name);
 			}
 
 			// In order to process receive layer messages, need the debugger.
@@ -468,14 +468,14 @@ namespace HAL::GPU::Vulkan
 			{
 				DesiredLayers.push_back(Layer::LunarG_API_Dump);
 
-				CLog("Layer Selected: LunarG API Dump");
+				Log("Layer Selected: LunarG API Dump");
 			}
 
 			if (Meta::Vulkan::Enable_FPSMonitor())
 			{
 				DesiredLayers.push_back(Layer::LunarG_Monitor);
 
-				CLog("Layer Selected: LunarG Monitor (FPS on window");
+				Log("Layer Selected: LunarG Monitor (FPS on window");
 			}
 
 			if (Meta::Vulkan::Enable_Validation())
@@ -535,7 +535,7 @@ namespace HAL::GPU::Vulkan
 		if (creationResult != EResult::Success) 
 			throw RuntimeError("Failed to create Vulkan app instance.");
 
-		CLog("Application handshake complete.");
+		Log("Application handshake complete.");
 
 		if (Meta::Vulkan::EnableLayers())
 		{
@@ -571,15 +571,15 @@ namespace HAL::GPU::Vulkan
 					throw RuntimeError("Failed to setup verbose debug messenger.");
 			}
 
-			CLog("Debug messenger created");
+			Log("Debug messenger created");
 		}
 	}
 
 	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::EngageMostSuitableDevice()
 	{
-		CLog("Determining most suitable device to engage.");
+		Log("Determining most suitable device to engage.");
 
-		CLog("Setting up a dummy test window and surface to evaluate devices...");
+		Log("Setting up a dummy test window and surface to evaluate devices...");
 
 		ptr<OSAL::Window> testWindow;
 
@@ -619,7 +619,7 @@ namespace HAL::GPU::Vulkan
 			{
 				DeviceEngaged = getPtr(device);
 
-				CLog("Device engaged: " + DeviceEngaged->GetSig());
+				Log("Device engaged: " + DeviceEngaged->GetSig());
 			}
 		}
 
@@ -657,7 +657,7 @@ namespace HAL::GPU::Vulkan
 			}
 		}
 
-		CLog("Logical devices generated");
+		Log("Logical devices generated");
 	}
 
 	const LogicalDevice& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetEngagedDevice()
@@ -701,7 +701,7 @@ namespace HAL::GPU::Vulkan
 			{
 				DesiredLayers.push_back(Layer::Khronos_Validation);
 
-				CLog("Validation Layer Enabled: Khronos");
+				Log("Validation Layer Enabled: Khronos");
 
 				found = true;
 
@@ -719,7 +719,7 @@ namespace HAL::GPU::Vulkan
 				{
 					DesiredLayers.push_back(Layer::LunarG_StandardValidation);
 
-					CLog("Validation Layer Enabled: LunarG Standard");
+					Log("Validation Layer Enabled: LunarG Standard");
 
 					found = true;
 
@@ -761,7 +761,7 @@ namespace HAL::GPU::Vulkan
 				{
 					DesiredLayers.push_back(validationLayerName);
 
-					CLog("Validation Layer Enabled: " + String(validationLayerName));
+					Log("Validation Layer Enabled: " + String(validationLayerName));
 				}
 
 				found = true;
@@ -778,7 +778,7 @@ namespace HAL::GPU::Vulkan
 				{
 					DesiredLayers.push_back(Layer::LunarG_CoreValidation);
 
-					CLog("Validation Layer Enabled: LunarG Core");
+					Log("Validation Layer Enabled: LunarG Core");
 
 					found = true;
 
@@ -831,7 +831,7 @@ namespace HAL::GPU::Vulkan
 
 		formattedMessage.append(": " + String(_callbackData.Message));
 
-		Dev::CLog(formattedMessage);
+		Log(formattedMessage);
 
 		return EBool::True;
 	}
@@ -850,7 +850,7 @@ namespace HAL::GPU::Vulkan
 
 		formattedMessage.append(": " + String(_callbackData.Message));
 
-		Dev::CLog(formattedMessage);
+		Log(formattedMessage);
 
 		return EBool::True;
 	}
@@ -867,7 +867,7 @@ namespace HAL::GPU::Vulkan
 		
 		formattedMessage.append(": " + String(_callbackData.Message));
 
-		Dev::CLog_Error(formattedMessage);
+		Log_Error(formattedMessage);
 
 		return EBool::True;
 	}
@@ -884,7 +884,7 @@ namespace HAL::GPU::Vulkan
 
 		formattedMessage.append(": " + String(_callbackData.Message));
 
-		Dev::CLog_Error(formattedMessage);
+		Log_Error(formattedMessage);
 
 		return EBool::True;
 	}
@@ -905,7 +905,7 @@ namespace HAL::GPU::Vulkan
 					{
 						DesiredInstanceExts.push_back(extensions[index]);
 
-						CLog("Added GLFW desired instance extension: " + String(extensions[index]));
+						Log("Added GLFW desired instance extension: " + String(extensions[index]));
 					}
 				}
 
@@ -916,12 +916,12 @@ namespace HAL::GPU::Vulkan
 				// A GPU must be available with ability to render to a surface.
 				DesiredInstanceExts.push_back(InstanceExt::Surface);
 
-				CLog("Added desired instance extension: " + String(InstanceExt::Surface));
+				Log("Added desired instance extension: " + String(InstanceExt::Surface));
 
 				// Surface OS platform extension.
 				DesiredInstanceExts.push_back(Surface::OS_Extension);
 
-				CLog("Added desired instance extension: " + String(Surface::OS_Extension));
+				Log("Added desired instance extension: " + String(Surface::OS_Extension));
 
 				break;
 			}
@@ -930,13 +930,13 @@ namespace HAL::GPU::Vulkan
 		// Engine needs swap chains.
 		DesiredDeviceExts.push_back(DeviceExt::Swapchain);
 
-		CLog("Added desired device extension: " + String(DeviceExt::Swapchain));
+		Log("Added desired device extension: " + String(DeviceExt::Swapchain));
 
 		if (Meta::Vulkan::EnableLayers())
 		{
 			DesiredInstanceExts.push_back(InstanceExt::DebugUtility);
 
-			CLog("Added desired instance extension: " + String(InstanceExt::DebugUtility));
+			Log("Added desired instance extension: " + String(InstanceExt::DebugUtility));
 		}
 	}
 

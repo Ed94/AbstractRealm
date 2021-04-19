@@ -46,13 +46,18 @@ BitAccuracy::_64_Bit
 
 namespace Meta
 {
+	enum class ECompareAccuracy
+	{
+		Low ,
+		High,
+		Nano
+	};
+
+
 	// Compile-time
 
-	constexpr bool DecN_UseHighAccuracy_Compare = true ;
-	constexpr bool DecN_UseNanoAccuracy_Compare = false;
-
-	constexpr bool DecN_UseHighAccuracy_Unit = true;
-	constexpr bool DecN_UseNanoAccuracy_Unit = false;
+	constexpr ECompareAccuracy DecN_CompareAccuracy = ECompareAccuracy::High;
+	constexpr ECompareAccuracy DecN_UnitAccuracy    = ECompareAccuracy::High;
 
 	constexpr BitAccuracy IntN_Accuracy = BitAccuracy::_64_Bit;
 	constexpr BitAccuracy DecN_Accuracy = BitAccuracy::_32_Bit;

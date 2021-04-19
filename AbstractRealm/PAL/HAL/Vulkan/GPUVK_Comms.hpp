@@ -7,6 +7,7 @@
 #include "LAL.hpp"
 #include "Meta/AppInfo.hpp"
 #include "Meta/Config/HAL_Config.hpp"
+#include "HAL_Backend.hpp"
 
 
 

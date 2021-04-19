@@ -95,7 +95,7 @@ namespace HAL
 
 						Default_ReinitializeRenderer_Bind = Vulkan::Default_ReinitializeRenderer;
 
-						CLog("Loaded platform bindings: Vulkan");
+						Log("Loaded platform bindings: Vulkan");
 
 						break;
 					}

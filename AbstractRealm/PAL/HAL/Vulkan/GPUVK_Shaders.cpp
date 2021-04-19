@@ -290,8 +290,8 @@ namespace HAL::GPU::Vulkan
 				//(EShMessages)u32(messageOptions)))
 				messages))
 			{
-				CLog_Error(String(shader->getInfoLog()));
-				CLog_Error(String(shader->getInfoDebugLog()));
+				Log_Error(String(shader->getInfoLog()));
+				Log_Error(String(shader->getInfoDebugLog()));
 
 				return false;
 			}
@@ -300,8 +300,8 @@ namespace HAL::GPU::Vulkan
 
 			if (! linker->link( (EShMessages)u32(messageOptions)))
 			{
-				CLog_Error(String(shader->getInfoLog()));
-				CLog_Error(String(shader->getInfoDebugLog()));
+				Log_Error(String(shader->getInfoLog()));
+				Log_Error(String(shader->getInfoDebugLog()));
 
 				return false;
 			}

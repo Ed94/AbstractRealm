@@ -155,7 +155,9 @@ namespace OSAL
 
 	void Load()
 	{
-		CLog("Loading Module...");
+		Load_Backend();
+
+		Log("Loading Module...");
 
 		Load_Hardware();
 
@@ -173,7 +175,7 @@ namespace OSAL
 			{
 				SAL::GLFW::Initalize();
 
-				CLog("Initialized windowing platform: GLFW");
+				Log("Initialized windowing platform: GLFW");
 				
 				break;
 			}
@@ -185,14 +187,15 @@ namespace OSAL
 		switch (WindowingPlatform)
 		{
 			case EWindowingPlatform::GLFW:
+
 			{
 				SAL::GLFW::Terminate();
 
-				CLog("Terminated windowing platform: GLFW");
+				Log("Terminated windowing platform: GLFW");
 			}
 		}
 
-		CLog("Unloaded module");
+		Log("Unloaded module");
 	}
 
 	void PollEvents()

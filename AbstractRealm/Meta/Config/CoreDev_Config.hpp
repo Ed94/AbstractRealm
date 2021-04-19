@@ -19,4 +19,19 @@ namespace Meta
 	constexpr bool UseCpp_Exceptions = true;
 
 	constexpr bool Enable_HeapTracking = true;
+
+	// Logging
+
+	enum class ELogToFileMode
+	{
+		Default	  ,   // Use default behavior specified by the log to file attributes in the Log class.
+		GlobalOnly,   // Only output the DevLog_#Data file.
+		Full          // Create a directory named by date, have a file for global and sub-logs.
+	};
+
+	constexpr bool LogToFile = true;
+
+	constexpr ELogToFileMode LogToFile_Mode = ELogToFileMode::GlobalOnly;
+
+	constexpr bool Dump_EngineStateJson_OnCrash = true;
 }

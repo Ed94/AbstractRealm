@@ -22,14 +22,17 @@ namespace Sci
 		return 
 			
 			LAL::IsOfClass<LAL::f32, DecN>() ? 
-
-			Meta::DecN_UseHighAccuracy_Compare ? LAL::Float32_HighAccuracy : LAL::Float32_LowAccuracy :
-			(
-				Meta::DecN_UseHighAccuracy_Compare ?
-					Meta::DecN_UseNanoAccuracy_Compare ? 
-						LAL::Float64_NanoAccuracy : LAL::Float64_HighAccuracy :
-				        LAL::Float64_LowAccuracy
-			);
+			// f32
+			Meta::DecN_CompareAccuracy == Meta::ECompareAccuracy::High ? 
+				LAL::Float32_HighAccuracy : 
+				LAL::Float32_LowAccuracy  :
+			// f64
+			Meta::DecN_CompareAccuracy == Meta::ECompareAccuracy::Nano ?
+					LAL::Float64_NanoAccuracy :
+			Meta::DecN_CompareAccuracy == Meta::ECompareAccuracy::High ? 
+					LAL::Float64_HighAccuracy :
+					LAL::Float64_LowAccuracy
+			;
 	}
 
 	constexpr
@@ -48,12 +51,17 @@ namespace Sci
 		return 
 			
 			LAL::IsOfClass<LAL::f32, DecN>() ? 
-			Meta::DecN_UseHighAccuracy_Unit ? LAL::Float32_HighAccuracy : LAL::Float32_LowAccuracy : 
-			(
-				Meta::DecN_UseHighAccuracy_Unit ? 
-				Meta::DecN_UseNanoAccuracy_Unit ? LAL::Float64_NanoAccuracy : LAL::Float64_HighAccuracy : 
-				                                  LAL::Float64_LowAccuracy
-			);
+			// f32
+			Meta::DecN_UnitAccuracy == Meta::ECompareAccuracy::High ?
+				LAL::Float32_HighAccuracy : 
+				LAL::Float32_LowAccuracy  : 
+			// f64
+			Meta::DecN_UnitAccuracy == Meta::ECompareAccuracy::Nano ? 
+				LAL::Float64_NanoAccuracy : 
+			Meta::DecN_UnitAccuracy == Meta::ECompareAccuracy::High ? 
+				LAL::Float64_HighAccuracy :
+				LAL::Float32_LowAccuracy
+			;
 	}
 
 	constexpr 

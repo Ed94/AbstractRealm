@@ -31,7 +31,7 @@ namespace OSAL
 		OS_Ver.Patch = osInfo.patch       ;
 		OS_Ver.Build = osInfo.build_number;
 
-		CLog("OS: " + OS_Name + " Version: " + OS_Ver.Str());
+		Log("OS: " + OS_Name + " Version: " + OS_Ver.Str());
 	}
 
 	const String& Get_OSName() { return OS_Name; }

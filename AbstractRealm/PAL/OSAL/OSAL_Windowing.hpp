@@ -96,7 +96,7 @@ namespace OSAL
 
 				StringStream ptrString; ptrString << window;
 
-				CLog("Window created with handle: " + ptrString.str() + "  Title: " + _windowCreationSpec.WindowTitle);
+				Log("Window created with handle: " + ptrString.str() + "  Title: " + _windowCreationSpec.WindowTitle);
 
 				return window;
 			}
@@ -112,7 +112,7 @@ namespace OSAL
 
 				StringStream ptrString; ptrString << _window;
 
-				CLog("Window: " + ptrString.str() + " destroyed");
+				Log("Window: " + ptrString.str() + " destroyed");
 			}
 
 			static void SetWindow_SizeChangeCallback(const ptr<Window> _window, WindowSize_Callback _callback)

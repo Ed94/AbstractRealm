@@ -10,5 +10,7 @@ namespace OSAL
 {
 	using namespace LAL;
 
-	void CLog(String _lineLog);
+	void Load_Backend();
+
+	void Log(String _lineLog);
 }

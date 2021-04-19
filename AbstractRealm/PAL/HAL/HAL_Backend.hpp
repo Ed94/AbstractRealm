@@ -17,18 +17,18 @@ namespace HAL
 
 	void Log(Severity _severity, String _info);
 
-	void CLog      (String _info);
-	void CLog_Error(String _info);
+	void Log      (String _info);
+	void Log_Error(String _info);
 	
 	namespace GPU
 	{
-		void CLog      (String _info);
-		void CLog_Error(String _info);
+		void Log      (String _info);
+		void Log_Error(String _info);
 
 		namespace Vulkan
 		{
-			void CLog      (String _info);
-			void CLog_Error(String _info);
+			void Log      (String _info);
+			void Log_Error(String _info);
 		}
 	}
 }

@@ -365,12 +365,6 @@ namespace SAL::Imgui
 
 	#define Args(_Entry) NameOf(_Entry).str(), _Entry
 
-		ImGui::Begin("Dev Debug");
-
-		
-
-		ImGui::End();
-
 		ImGui::ShowDemoWindow();
 
 	#undef Args

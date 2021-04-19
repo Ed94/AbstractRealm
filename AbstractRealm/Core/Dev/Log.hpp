@@ -2,6 +2,7 @@
 
 
 #include "LAL/LAL.hpp"
+//#include "OSAL/Timing.hpp"
 
 
 namespace Dev
@@ -18,25 +19,38 @@ namespace Dev
 	};
 
 
+	// Add Editor Log Output
+
 	class Log
 	{
 	public:
 
 		struct RecordEntry
 		{
-			RecordEntry(Severity _severity, String _message) :
-				severity(_severity), message(_message)
-			{}
+			RecordEntry(Severity _severity, String _category, String _message);
 
-			Severity severity;
-			String    message;
+			static uDM indexCounter;
+
+			uDM          index;
+			CalendarDate date;
+			Severity     severity;
+			String       category;
+			String       message;
 		};
+
+		Log();
 
 		Log(String _name);
 
-		void Record(Severity _severity, String& _message) const;
+		void Init(String _name);
 
-		static void GlobalRecord(Severity _severity, String& message);
+		void Record(Severity _severity, String _message) const;
+
+		static void Queue_DebugUI();
+
+		static void GlobalRecord(Severity _severity, String message);
+
+		static void Record_EditorDevDebugUI();
 
 	protected:
 
@@ -48,6 +62,6 @@ namespace Dev
 
 		static UnorderedMap<String, SubRecords> subLogs; 
 
-		static DynamicArray< RecordEntry > records;
+		static DynamicArray< UPtr<RecordEntry> > records;
 	};
 }
