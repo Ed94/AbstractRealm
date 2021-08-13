@@ -39,6 +39,7 @@ namespace HAL::GPU::Vulkan
 
 	BasicShader::~BasicShader()
 	{
+		Destroy();
 	}
 
 	void BasicShader::Create(const Path& _vertShader, const Path& _fragShader)
@@ -108,12 +109,20 @@ namespace HAL::GPU::Vulkan
 
 		uboSize = _size;
 	}
+	
+	void BasicShader::Destroy()
+	{
+		for (auto& shaderModule : shaderModules)
+		{
+			shaderModule.~ShaderModule();
+		}
+	}
 
 	using ShaderStageInfo = BasicShader::ShaderStageInfo;
 
 	const DynamicArray<ShaderStageInfo>& BasicShader::GetShaderStageInfos() const
 	{
-		unbound DynamicArray<ShaderStageInfo> shaderStagesExport =
+		static DynamicArray<ShaderStageInfo> shaderStagesExport =
 		{
 			shaderStageInfos[0],
 			shaderStageInfos[1]
@@ -253,9 +262,9 @@ namespace HAL::GPU::Vulkan
 
 		bool CompileGLSL(const Path& _path, const EShaderStageFlag _type, Bytecode_Buffer& _bytecode)
 		{
-			unbound constexpr auto numShaders = 1;
+			static constexpr auto numShaders = 1;
 
-			unbound bool doneOnce = false;
+			static bool doneOnce = false;
 
 			if (!doneOnce) 
 			{
@@ -264,7 +273,7 @@ namespace HAL::GPU::Vulkan
 				doneOnce = true;
 			}
 
-			auto shaderCode = Core::IO::BufferFile(_path);
+			auto shaderCode = IO::BufferFile(_path);
 
 			shaderCode.push_back('\0');
 

@@ -5,16 +5,25 @@
 
 // Engine
 #include "HAL_Backend.hpp"
-#include "GPU_HAL.hpp"
+#include "HAL_GPU.hpp"
 
 
 
 namespace HAL
 {
-	void LoadModule()
+	void Load()
 	{
+		Load_Backend();
+
+		Log("Loading module.");
+
 		Log("Loading GPU HAL");
 
 		GPU::Load();
+	}
+
+	void Unload()
+	{
+		Log("Unloading module.");
 	}
 }

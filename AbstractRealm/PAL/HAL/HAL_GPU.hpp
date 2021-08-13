@@ -16,7 +16,7 @@ GPU Hardware Abstraction Layer
 #include "LAL/LAL.hpp"
 #include "Meta/AppInfo.hpp"
 #include "Meta/Config/HAL_Config.hpp"
-#include "GPU_HAL_CoreDefs.hpp"
+#include "HAL_GPU_CoreDefs.hpp"
 #include "OSAL/OSAL.hpp"
 #include "HAL/Vulkan/GPU_Vulkan.hpp"
 
@@ -29,7 +29,7 @@ namespace HAL
 		// Using
 
 		using namespace LAL;
-		using namespace Core::Memory;
+		using namespace Memory;
 
 		using Meta::AppVersion;
 

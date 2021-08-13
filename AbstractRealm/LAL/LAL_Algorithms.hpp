@@ -8,7 +8,7 @@
 
 namespace LAL
 {
-	using std::find;	
+	using STL::find;	
 
-	using std::copy;
+	using STL::copy;
 }

@@ -9,6 +9,8 @@ Explicit Specifiers
 #pragma once
 
 
+#include "Meta/Config/CoreDev_Config.hpp"
+
 
 // Statics:
 
@@ -25,15 +27,15 @@ extern
 //static
 
 // Defines a static member function or variable that is not bound to an instance of a class, or a static duration variable.
-#define unbound \
-static
+//#define unbound \
+//static
 
 
 // Member Specialization
 
 // Alias for virtual in the context of a derived class implementing a virtual member.
-//#define implem
-//virtual
+#define implem \
+virtual
 
 
 // Inlines
@@ -44,6 +46,27 @@ inline
 
 // Alias for a constexpr intended to be used as an inline expansion.
 #define constInline 
+
+#ifdef						Meta_ForceInlineMode_EngineDiscretion
+
+	// Standard force inline define. See: https://en.wikipedia.org/wiki/Inline_function
+	#ifdef _MSC_VER
+							#define ForceInline __forceinline
+	#elif defined(__GNUC__)
+							#define ForceInline inline __attribute__((__always_inline__))
+	#elif defined(__CLANG__)
+	#if __has_attribute(__always_inline__)
+							#define ForceInline inline __attribute__((__always_inline__))
+	#else
+							#define ForceInline inline
+	#endif
+	#else
+							#define ForceInline inline
+	#endif
+#else
+							// Using compiler discretion.
+							#define ForceInline inline
+#endif
 
 
 // Namespaces
@@ -56,12 +79,14 @@ inline
 // Structs
 
 //Plain Old Data type
-#define POD \
-struct
+//#define POD \
+//struct
+template<typename Type> struct TPOD;
 
-// Bit-field type
-#define BitField \
-struct
+//// Bit-field type
+//#define BitField \
+//struct
+template<typename Type> struct TBitfield;
 
 
 #define EnforceConstraint(__CONSTRAINT, __REASON_MSG) \

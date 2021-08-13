@@ -23,11 +23,11 @@ namespace LAL
 	#endif
 		
 	template<class FunctionType>
-	using Function = std::function<FunctionType>;
+	using Function = STL::function<FunctionType>;
 
 	/*template<class Type>
 	using ref = std::ref<Type>;*/
 
 	template<class ReferenceType>
-	using WRef = std::reference_wrapper<ReferenceType>;
+	using WRef = STL::reference_wrapper<ReferenceType>;
 }

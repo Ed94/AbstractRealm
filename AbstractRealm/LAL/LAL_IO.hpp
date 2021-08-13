@@ -15,22 +15,22 @@
 
 namespace LAL
 {
-	using File_InputStream  = std::ifstream;
-	using File_OutputStream = std::ofstream;
+	using File_InputStream  = STL::ifstream;
+	using File_OutputStream = STL::ofstream;
 
-	using OStream       = std::ostream      ;
-	using OStringStream = std::ostringstream;
+	using OStream       = STL::ostream      ;
+	using OStringStream = STL::ostringstream;
 
-	using Path = std::filesystem::path;
+	using Path = STL::filesystem::path;
 
 
 
-	using std::cerr;
-	using std::cout;
-	using std::endl;
+	using STL::cerr;
+	using STL::cout;
+	using STL::endl;
 
-	using std::setfill;
-	using std::setw   ;
+	using STL::setfill;
+	using STL::setw   ;
 
 
 

@@ -9,20 +9,20 @@
 namespace HAL
 {
 	/*
-	Loads the HAL module.
+	Loads the HAL submodule.
 
 	Submodules that will be loaded:
 	Audio
-	GPU  
+	GPU
 	*/
-	void LoadModule();
+	void Load();
 
 	/*
-	Unloads the HAL module.
+	Unloads the HAL submodule.
 
 	Submodules that will be unloaded:
 	Audio
 	GPU
 	*/
-	void UnloadModule();
+	void Unload();
 }

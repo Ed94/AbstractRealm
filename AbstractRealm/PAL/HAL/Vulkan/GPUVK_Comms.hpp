@@ -75,6 +75,7 @@ namespace HAL::GPU::Vulkan
 	struct DebugUtils : public V3::DebugUtils
 	{
 		using Parent = V3::DebugUtils;
+		using Memory = Vulkan::Memory;
 
 		class Messenger : public Parent::Messenger
 		{
@@ -173,37 +174,37 @@ namespace HAL::GPU::Vulkan
 	{
 	public:
 
-		unbound const AppInstance& GetAppInstance();
+		static const AppInstance& GetAppInstance();
 
-		unbound void AcquirePhysicalDevices();
+		static void AcquirePhysicalDevices();
 
-		unbound void Cease();
+		static void Cease();
 
-		unbound void Initialize(RoCStr _appName, Meta::AppVersion _version);
+		static void Initialize(RoCStr _appName, Meta::AppVersion _version);
 
-		unbound void EngageMostSuitableDevice();
+		static void EngageMostSuitableDevice();
 
-		unbound void GenerateLogicalDevices();
+		static void GenerateLogicalDevices();
 
-		unbound const LogicalDevice& GetEngagedDevice();
+		static const LogicalDevice& GetEngagedDevice();
 
-		unbound const PhysicalDevice& GetEngagedPhysicalGPU();
+		static const PhysicalDevice& GetEngagedPhysicalGPU();
 
 		// Engaged queues. (Since only one device is engaged in design, these are easy references to its queues).
 
-		unbound const LogicalDevice::Queue& GetGraphicsQueue();   // Provides a reference to the engaged device's graphics queue.
-		unbound const LogicalDevice::Queue& GetComputeQueue ();   // Provides a reference to the engaged device's compute queue.
-		unbound const LogicalDevice::Queue& GetTransferQueue();   // Provides a reference to the engaged device's transfer queue.
+		static const LogicalDevice::Queue& GetGraphicsQueue();   // Provides a reference to the engaged device's graphics queue.
+		static const LogicalDevice::Queue& GetComputeQueue ();   // Provides a reference to the engaged device's compute queue.
+		static const LogicalDevice::Queue& GetTransferQueue();   // Provides a reference to the engaged device's transfer queue.
 
 	protected:
 
-		unbound void AquireSupportedValidationLayers();
+		static void AquireSupportedValidationLayers();
 
-		unbound bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified);
+		static bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified);
 
-		unbound void DetermineRequiredExtensions();
+		static void DetermineRequiredExtensions();
 
-		unbound void SetupDebugMessenger();
+		static void SetupDebugMessenger();
 	};
 
 	using GPU_Comms = GPU_Comms_Maker<Meta::GPU_Engagement>;

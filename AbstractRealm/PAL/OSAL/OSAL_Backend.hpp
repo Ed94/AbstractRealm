@@ -1,9 +1,7 @@
 #pragma once
 
 
-
-#include "LAL/LAL.hpp"
-
+#include "Meta.hpp"
 
 
 namespace OSAL
@@ -12,5 +10,5 @@ namespace OSAL
 
 	void Load_Backend();
 
-	void Log(String _lineLog);
+	Dev_Declare_LogAPI();
 }

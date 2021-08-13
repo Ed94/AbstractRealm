@@ -7,13 +7,15 @@
 #include "Concurrency/CyclerPool.hpp"
 #include "Meta/EngineInfo.hpp"
 #include "Renderer/Renderer.hpp"
+#include "HAL.hpp"
+#include "HAL/HAL_GPU.hpp"
 
 // When you have a proper UI module setup, setup it to bind to imgui instead.
-#include "ImGui_SAL.hpp"
+#include "SAL_ImGui.hpp"
 
 
 
-namespace Core::Execution
+namespace Execution
 {
 	using namespace Concurrency;
 	//using namespace Meta;
@@ -54,8 +56,8 @@ namespace Core::Execution
 
 		OSAL::PollEvents();
 
-		unbound Duration64 consoleUpdateDelta(0), consoleUpdateInterval(1.0 / 30.0);
-		unbound Duration64 renderPresentDelta(0);
+		static Duration64 consoleUpdateDelta(0), consoleUpdateInterval(1.0 / 30.0);
+		static Duration64 renderPresentDelta(0);
 
 		if (consoleUpdateDelta >= consoleUpdateInterval)
 		{
@@ -93,23 +95,25 @@ namespace Core::Execution
 		{
 			switch (GPU_API())
 			{
-				case Meta::EGPUPlatformAPI::BGFX:
+				case Meta::EGPUPlatformAPI:: BGFX :
 				{
 					
 
 				} break;
 				
-				case Meta::EGPUPlatformAPI::Vulkan:
+				case Meta::EGPUPlatformAPI:: Vulkan :
 				{
-					Imgui::MakeFrame();
+								Imgui ::MakeFrame();
+								Imgui ::Render();
+					HAL::GPU::	Vulkan::Render();
+					HAL::GPU::	Vulkan::Present();
+								Imgui ::Dirty_DoSurfaceStuff(Renderer::EngineWindow());
 
-					Imgui::Render();
+				} break;
 
-					HAL::GPU::Vulkan::Render();
+				case Meta::EGPUPlatformAPI::No_API :
+				{
 
-					HAL::GPU::Vulkan::Present();
-
-					Imgui::Dirty_DoSurfaceStuff(Renderer::EngineWindow());
 
 				} break;
 			}

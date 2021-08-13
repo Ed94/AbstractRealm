@@ -17,20 +17,20 @@
 namespace LAL
 {
 	template<typename Type>
-	using DynamicArray = std::vector<Type>;
+	using DynamicArray = STL::vector<Type>;
 
 	template<typename Type>
-	using Queue = std::queue<Type>;
+	using Queue = STL::queue<Type>;
 
 	template<typename Type>
-	using Deque = std::deque<Type>;
+	using Deque = STL::deque<Type>;
 
 	template<typename KeyType, typename ValueType>
-	using Map = std::map<KeyType, ValueType>;
+	using Map = STL::map<KeyType, ValueType>;
 
 	template<typename KeyType, typename ValueType>
-	using UnorderedMap = std::unordered_map<KeyType, ValueType>;
+	using UnorderedMap = STL::unordered_map<KeyType, ValueType>;
 
 	template<typename Type, uDM NumberOfElements>
-	using StaticArray = std::array<Type, NumberOfElements>;
+	using StaticArray = STL::array<Type, NumberOfElements>;
 }

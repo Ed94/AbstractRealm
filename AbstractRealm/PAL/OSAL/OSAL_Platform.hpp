@@ -6,27 +6,28 @@ Operating System Abstraction Layer: Platform Definitions
 #pragma once
 
 
-
-// Platform
-
-#ifdef _WIN32
-	// Windows
-	
-	//#include "targetver.h"
-	// Prevents the numeric limits error in LAL.
-	#define NOMINMAX
-	#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-	// Windows Header Files
-	#include <windows.h>
-	#include <corecrt_io.h>
-	#include <fcntl.h>
-
-#endif
-
 // Engine
-#include "LAL/LAL.hpp"
+#include "Meta/Meta.hpp"
 
+namespace C_API
+{
+	extern "C"
+	{
+	// Windows
+	#ifdef _WIN32
 
+		//#include "targetver.h"
+		// Prevents the numeric limits error in LAL.
+		#define NOMINMAX
+		#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+		// Windows Header Files
+		#include <windows.h>
+		#include <corecrt_io.h>
+		#include <fcntl.h>
+
+	#endif
+	}
+}
 
 namespace OSAL
 {
@@ -57,18 +58,24 @@ namespace OSAL
 
 	namespace PlatformBackend
 	{
+		using namespace C_API;
+
 		template<OSAL::EOS>
 		struct PlatformTypes_Maker;
 
 		template<>
 		struct PlatformTypes_Maker<EOS::Windows>
 		{
+			
+
 			using OS_AppHandle    = HINSTANCE;
 			using OS_Handle       = HANDLE   ;
 			using OS_WindowHandle = HWND     ;
 
 			using OS_CStr   = LPTSTR ;
 			using OS_RoCStr = LPCTSTR;
+
+			using HANDLE = HANDLE;
 
 			static OS_Handle InvalidHandle() { return INVALID_HANDLE_VALUE; };
 
@@ -114,7 +121,7 @@ namespace OSAL
 		u32 Minor;
 		u32 Patch;
 
-		UINT32 Build;
+		C_API::UINT32 Build;
 
 		String Str() const
 		{

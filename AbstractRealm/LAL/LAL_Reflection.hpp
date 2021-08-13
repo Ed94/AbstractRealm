@@ -3,54 +3,51 @@ C++ STL Reflection
 
 */
 
-
-
 #pragma once
 
-
-
 #include "LAL_Cpp_STL.hpp"
+#include "LAL_CharacterTypes.hpp"
+#include "LAL_String.hpp"
 #include "nameof.hpp"
-
 
 
 namespace LAL
 {
 	// Types
 
-	using TypeHash = std::size_t;
+	using TypeHash = STL::size_t;
 
-	using TypeData = std::type_info;
-
-	template<typename Type>
-	using RemovePtr = typename std::remove_pointer<Type>::type;
+	using TypeData = STL::type_info;
 
 	template<typename Type>
-	using RemoveCV = std::remove_cv_t<Type>;
+	using RemovePtr = typename STL::remove_pointer<Type>::type;
 
 	template<typename Type>
-	using RemoveRef = std::remove_reference_t<Type>;
+	using RemoveCV = STL::remove_cv_t<Type>;
+
+	template<typename Type>
+	using RemoveRef = STL::remove_reference_t<Type>;
 
 	template<typename Type>
 	using RawType = RemoveCV< RemoveRef<Type> >;
 
 	template<typename Type, typename TypeRef>
-	using SameTypeCV = std::is_same<Type, TypeRef>;
+	using SameTypeCV = STL::is_same<Type, TypeRef>;
 
 	template<typename Type, typename  TypeRef>
 	using SameType = SameTypeCV< RawType<Type>, RawType<Type> >;
 
 	template<typename Base, typename Derived>
-	using OfClass = std::is_base_of<Base, Derived>;
+	using OfClass = STL::is_base_of<Base, Derived>;
 
 	template<bool Constraint>
-	using ShouldBe = typename std::enable_if<Constraint>::type;
+	using ShouldBe = typename STL::enable_if<Constraint>::type;
 
 	template<bool Constraint, typename ReturnType>
-	using Where = typename std::enable_if<Constraint, ReturnType>::type;
+	using Where = typename STL::enable_if<Constraint, ReturnType>::type;
 
 	template<bool Constraint, typename ReturnTypeA, typename ReturnTypeB>
-	using ChooseEither = typename std::conditional<Constraint, ReturnTypeA, ReturnTypeB>::type;
+	using ChooseEither = typename STL::conditional<Constraint, ReturnTypeA, ReturnTypeB>::type;
 
 	// Types as constants
 
@@ -60,32 +57,32 @@ namespace LAL
 	// Type Signage
 
 	template<typename Type>
-	using IsClassType = std::is_class<Type>;
+	using IsClassType = STL::is_class<Type>;
 
 	template<typename Type>
-	using IsEnumType = std::is_enum<Type>;
+	using IsEnumType = STL::is_enum<Type>;
 
 	template<typename Type>
-	using IsSignedType = std::is_signed<Type>;
+	using IsSignedType = STL::is_signed<Type>;
 
 	template<typename Type>
-	using IsUnsignedType = std::is_unsigned<Type>;
+	using IsUnsignedType = STL::is_unsigned<Type>;
 
 	// Composite Type Categories
 
 	template<typename Type>
-	using IsArithmeticType = std::is_arithmetic<Type>;
+	using IsArithmeticType = STL::is_arithmetic<Type>;
 
 	// Type Primary Categories
 
 	template<typename Type>
-	using T_IsPointer= std::is_pointer<Type>;
+	using T_IsPointer = STL::is_pointer<Type>;
 
 	template<typename Type>
-	using T_IsFunction = std::is_function<Type>;
+	using T_IsFunction = STL::is_function<Type>;
 	
 	template<typename Type>
-	using T_IsFunctionPtr = std::bool_constant< T_IsPointer<Type>::value && T_IsFunction< RemovePtr<Type>>::value >;
+	using T_IsFunctionPtr = STL::bool_constant< T_IsPointer<Type>::value && T_IsFunction< RemovePtr<Type>>::value >;
 
 
 
@@ -172,8 +169,8 @@ namespace LAL
 
 		return 
 			IsSameType<Type, RoCStr    >() &&
-			IsSameType<Raw, String    >() &&
-			IsSameType<Raw, StringView>();
+			IsSameType<Raw , String    >() &&
+			IsSameType<Raw , StringView>();
 	}
 }
 

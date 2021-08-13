@@ -15,7 +15,7 @@
 
 
 
-namespace Core::Memory
+namespace Memory
 {
 	using namespace LAL;
 	using namespace Meta;
@@ -37,11 +37,11 @@ namespace Core::Memory
 		};
 		
 
-		unbound void ReportAllocation  (                    String _identifier, EModule _module);
-		unbound void ReportAllocation  (ptr<void> _address, String _identifier, EModule _module);
-		unbound void ReportDeallocation(                    String _identifier);
-		unbound void ReportDeallocation(ptr<void> _address                    );
+		static void ReportAllocation  (                    String _identifier, EModule _module);
+		static void ReportAllocation  (ptr<void> _address, String _identifier, EModule _module);
+		static void ReportDeallocation(                    String _identifier);
+		static void ReportDeallocation(ptr<void> _address                    );
 
-		unbound void PrintAllocations();
+		static void PrintAllocations();
 	};
 }

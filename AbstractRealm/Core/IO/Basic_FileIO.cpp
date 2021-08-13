@@ -3,7 +3,7 @@
 
 
 
-namespace Core::IO
+namespace IO
 {
 	// Public
 

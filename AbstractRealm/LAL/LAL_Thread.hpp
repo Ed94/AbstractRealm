@@ -8,5 +8,5 @@
 
 namespace LAL
 {
-	using Thread = std::thread;
+	using Thread = STL::thread;
 }

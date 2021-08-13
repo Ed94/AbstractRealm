@@ -8,17 +8,17 @@
 #include "Meta/Meta.hpp"
 #include "Meta/AppInfo.hpp"
 #include "HAL.hpp"
-#include "HAL/GPU_HAL.hpp"
+#include "HAL/HAL_GPU.hpp"
 #include "MasterExecution.hpp"
 #include "Concurrency/CyclerPool.hpp"
-#include "ImGui_SAL.hpp"
+#include "SAL_ImGui.hpp"
 #include "PAL/PAL.hpp"
 #include "Core.hpp"
 #include "Renderer/Renderer.hpp"
 
 
 
-namespace Core::Execution
+namespace Execution
 {
 	// Usings
 
@@ -41,23 +41,7 @@ namespace Core::Execution
 		ptr<Window> EngineWindow;
 	}
 
-	StaticData()
-
-		
-
-
-
-	// Private
-
-	void CLog(String _info)
-	{
-		Dev::CLog("Core-Execution: " + _info);
-	}
-
-	void CLog_Error(String _info)
-	{
-		Dev::CLog_Error("Core-Execution: " + _info);
-	}
+	Dev_Declare_Log(Execution);
 
 	
 
@@ -65,10 +49,14 @@ namespace Core::Execution
 
 	OSAL::ExitValT EntryPoint()
 	{
-		Meta::LoadModule();
-
+		#ifdef Meta_UseCpp_Exceptions
 		try
 		{
+		#endif
+			Meta::LoadModule();
+
+			SubLogger.Init();
+
 			if (UseDebug())
 			{
 				using namespace LAL;
@@ -82,16 +70,18 @@ namespace Core::Execution
 
 			Dev::Console_EnableAutoUpdate();
 
-			std::cout.precision(10);
+			// Set the floating-point precision to 10 places.
+			STL::cout.precision(10);
 
-			Dev::CLog("Core-Execution: Initiating");
+			Log("Initiating");
 
-			PAL::Load();
-
-			Core::Load();
+			PAL ::Module::Load();
+			Core::Module::Load();
 
 			Renderer::Load();
 
+			// Editor
+			// Later on set this to use its own window, and make sure the regular console is disabled while active.
 			Imgui::Initialize(Renderer::EngineWindow());
 
 			// Master execution
@@ -106,7 +96,8 @@ namespace Core::Execution
 
 			Renderer::Unload();	
 
-			OSAL::Unload();
+			Core::Module::Unload();
+			PAL ::Module::Unload();
 
 			if (UseDebug())
 			{
@@ -114,13 +105,15 @@ namespace Core::Execution
 
 				Dev::Unload();
 			}
+		#ifdef Meta_UseCpp_Exceptions
 		}
 		catch (std::exception e)
 		{
-			CLog_Error(e.what());
+			Log_Error(e.what());
 
 			Dev::Console_UpdateBuffer();
 		}
+		#endif
 
 		return OSAL::ExitValT(EExitCode::Success);
 	}
@@ -134,7 +127,7 @@ namespace OSAL
 {
 	OSAL::ExitValT EntryPoint()
 	{
-		return Core::Execution::EntryPoint();
+		return Execution::EntryPoint();
 	}
 }
 

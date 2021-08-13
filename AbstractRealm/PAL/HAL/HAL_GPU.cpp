@@ -10,7 +10,7 @@ Note: For now this is going to be a big copy and paste to an extent from the tri
 
 
 // Parent Header
-#include "GPU_HAL.hpp"
+#include "HAL_GPU.hpp"
 
 
 
@@ -113,12 +113,14 @@ namespace HAL
 
 		void Load()
 		{
+			Log("Loading module.");
+
 			PlatformBackend::Determine_PlatformBindings();
 		}
 
 		void Unload()
 		{
-			
+			Log("Unloading module.");
 		}
 
 		void Initialize_GPUComms(RoCStr _appName, AppVersion _version)

@@ -1,24 +1,26 @@
 #pragma once
 
-
-
 // Engine
+#include "LAL.hpp"
 #include "Cycler.hpp"
 
 
-
-namespace Core::Concurrency
+namespace Concurrency
 {
-	// Usings
+#pragma region Usings
 
+	using namespace LAL;
 	using namespace Execution;
 
+#pragma endregion Usings
 
 
-	// Structs
+#pragma region Structs
 
-	struct CyclerPool
+	class CyclerPool
 	{
+	public:
+
 		static void ActivateUnit();
 
 		static const Cycler& GetCycler(u16 _unit);
@@ -31,4 +33,6 @@ namespace Core::Concurrency
 
 		static bool RequestShutdown();
 	};
+
+#pragma endregion Structs
 }

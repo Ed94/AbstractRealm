@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -103,7 +103,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\backends;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedVulkan\include;$(ProjectDir)PAL\ThirdParty\Libraries\nameof\include;$(ProjectDir)PAL\ThirdParty\Libraries\cereal\include;$(ProjectDir)PAL\ThirdParty\Libraries\ctti\include;$(VULKAN_SDK)\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\;$(ProjectDir)PAL\ThirdParty\Libraries\EASTL\include;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\backends;$(ProjectDir)PAL\ThirdParty\Libraries\imgui\examples;$(ProjectDir)PAL\ThirdParty\Libraries\glm\;$(ProjectDir)PAL\ThirdParty\Libraries\glfw\include\;$(ProjectDir)PAL\ThirdParty\Libraries\magic_enum\include;$(ProjectDir)PAL\ThirdParty\Libraries\stb;$(ProjectDir)PAL\ThirdParty\Libraries\tinyobjloader;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\include\;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\infoware_generated;$(ProjectDir)PAL\ThirdParty\Libraries\VaultedVulkan\include;$(ProjectDir)PAL\ThirdParty\Libraries\nameof\include;$(ProjectDir)PAL\ThirdParty\Libraries\cereal\include;$(ProjectDir)PAL\ThirdParty\Libraries\ctti\include;$(VULKAN_SDK)\Include</AdditionalIncludeDirectories>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -179,6 +179,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Concurrency\Concurrency.hpp" />
     <ClInclude Include="Core\Concurrency\CyclerPool.hpp">
       <SubType>
       </SubType>
@@ -188,11 +189,14 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Core\Core.hpp" />
+    <ClInclude Include="Core\Core_Backend.hpp" />
     <ClInclude Include="Core\Dev\Log.hpp" />
     <ClInclude Include="Core\Events\EventMngr.hpp">
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Core\Events\Events.hpp" />
+    <ClInclude Include="ARealm.hpp" />
     <ClInclude Include="Core\Execution\Cycler.hpp">
       <SubType>
       </SubType>
@@ -209,6 +213,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Core\Execution\Execution.hpp" />
     <ClInclude Include="Core\Execution\MasterExecution.hpp">
       <SubType>
       </SubType>
@@ -246,6 +251,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Editor\Editor.hpp" />
     <ClInclude Include="Editor\Profiling\DevProfiler.hpp">
       <SubType>
       </SubType>
@@ -277,6 +283,8 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Manifest\Level.hpp" />
+    <ClInclude Include="Manifest\Manifest.hpp" />
     <ClInclude Include="Manifest\States\BasicState.hpp">
       <SubType>
       </SubType>
@@ -301,6 +309,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Meta\Config\LAL_Config.hpp" />
     <ClInclude Include="Meta\Config\OSAL_Config.hpp">
       <SubType>
       </SubType>
@@ -411,8 +420,8 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\GPU_HAL.hpp" />
-    <ClInclude Include="PAL\HAL\GPU_HAL_CoreDefs.hpp">
+    <ClInclude Include="PAL\HAL\HAL_GPU.hpp" />
+    <ClInclude Include="PAL\HAL\HAL_GPU_CoreDefs.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -618,21 +627,22 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\SAL\EnkiTS_SAL.hpp">
+    <ClInclude Include="PAL\PAL_Backend.hpp" />
+    <ClInclude Include="PAL\SAL\SAL_EnkiTS.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\SAL\GLFW_SAL.hpp">
+    <ClInclude Include="PAL\SAL\SAL_GLFW.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\SAL\GLM_SAL.hpp">
+    <ClInclude Include="PAL\SAL\SAL_Gainput.hpp" />
+    <ClInclude Include="PAL\SAL\SAL_GLM.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\SAL\ImGui_SAL.hpp" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\LockLessMultiReadPipe.h" />
-    <ClInclude Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.h" />
+    <ClInclude Include="PAL\SAL\SAL_ImGui.hpp" />
+    <ClInclude Include="PAL\SAL\SAL.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_vulkan.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imconfig.h" />
@@ -685,6 +695,8 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Resource\Model\Model.hpp" />
+    <ClInclude Include="Resource\Resource.hpp" />
+    <ClInclude Include="Resource\Resource_General.hpp" />
     <ClInclude Include="Resource\Sprite\Sprite.hpp">
       <SubType>
       </SubType>
@@ -713,11 +725,12 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Simulation\Simulation.hpp" />
     <ClInclude Include="Simulation\Space.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Simulation\Units.hpp">
+    <ClInclude Include="Simulation\Math\Units.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -728,11 +741,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\HAL\Vulkan\GPUVK_Resources.tpp" />
-    <None Include="PAL\SAL\GLFW_SAL_Implem.hpp" />
+    <None Include="PAL\SAL\SAL_GLFW.tpp" />
+    <None Include="PAL\SAL\SAL_ImGui.tpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Concurrency\Concurrency.cpp" />
     <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
     <ClCompile Include="Core\Core.cpp" />
+    <ClCompile Include="Core\Core_Backend.cpp" />
     <ClCompile Include="Core\Dev\Log.cpp" />
     <ClCompile Include="Core\Execution\Cycler.cpp" />
     <ClCompile Include="Core\Dev\Console.cpp" />
@@ -742,13 +758,14 @@
     <ClCompile Include="Core\Execution\PrimitiveExecuter_Implem.hpp" />
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
     <ClCompile Include="Core\Memory\MemTracking.cpp" />
+    <ClCompile Include="Editor\Editor.cpp" />
     <ClCompile Include="LAL\LAL_IO.cpp" />
     <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
     <ClCompile Include="Meta\Meta.cpp" />
     <ClCompile Include="PAL\HAL\BGFX\GPU_BGFX.cpp" />
-    <ClCompile Include="PAL\HAL\GPU_HAL.cpp" />
+    <ClCompile Include="PAL\HAL\HAL_GPU.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL_Backend.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\GPUVK_Comms.cpp" />
@@ -772,9 +789,10 @@
     <ClCompile Include="PAL\OSAL\OSAL_Timing.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Windowing.cpp" />
     <ClCompile Include="PAL\PAL.cpp" />
-    <ClCompile Include="PAL\SAL\GLFW_SAL.cpp" />
-    <ClCompile Include="PAL\SAL\ImGui_SAL.cpp" />
-    <ClCompile Include="PAL\ThirdParty\Libraries\enkiTS\src\TaskScheduler.cpp" />
+    <ClCompile Include="PAL\PAL_Backend.cpp" />
+    <ClCompile Include="PAL\SAL\SAL_GLFW.cpp" />
+    <ClCompile Include="PAL\SAL\SAL_ImGui.cpp" />
+    <ClCompile Include="PAL\SAL\SAL_Gainput.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_vulkan.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui.cpp" />

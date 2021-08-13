@@ -1,9 +1,6 @@
 #pragma once
 
 
-
-
-
 namespace Concurrency
 {
 	class ATaskPool

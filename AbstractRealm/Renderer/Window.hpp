@@ -13,7 +13,7 @@ namespace Renderer
 {
 	class Window
 	{
-		Window();
+		 Window();
 		~Window();
 
 

@@ -11,14 +11,9 @@ namespace HAL
 {
 	using namespace LAL;
 
-	void Log(String _info);
+	Dev_Declare_LogAPI();
 
-	using Dev::Severity;
-
-	void Log(Severity _severity, String _info);
-
-	void Log      (String _info);
-	void Log_Error(String _info);
+	void Load_Backend();
 	
 	namespace GPU
 	{

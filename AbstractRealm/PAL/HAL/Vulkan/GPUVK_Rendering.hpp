@@ -366,21 +366,21 @@ namespace HAL::GPU::Vulkan
 	{
 	public:
 
-		unbound Surface& Request_Surface(ptr<OSAL::Window> _window);
-		unbound void     Retire_Surface (ptr<Surface> _surface);
+		static Surface& Request_Surface(ptr<OSAL::Window> _window);
+		static void     Retire_Surface (ptr<Surface> _surface);
 
-		unbound Swapchain& Request_SwapChain(Surface& _surface, Surface::Format _formatDesired);
-		unbound void       Retire_SwapChain (ptr<Swapchain> _swapchain);
+		static Swapchain& Request_SwapChain(Surface& _surface, Surface::Format _formatDesired);
+		static void       Retire_SwapChain (ptr<Swapchain> _swapchain);
 
-		unbound RenderContext& Request_RenderContext(Swapchain& _swapchain);
-		unbound void           Retire_RenderContext(const ptr<RenderContext> _renderContext);
+		static RenderContext& Request_RenderContext(Swapchain& _swapchain);
+		static void           Retire_RenderContext(const ptr<RenderContext> _renderContext);
 
-		unbound void SetSubmissionMode(ESubmissionType _submissionBehaviorDesired);
+		static void SetSubmissionMode(ESubmissionType _submissionBehaviorDesired);
 
-		unbound void Initalize();
-		unbound void Shutdown();
-		unbound void Present();
-		unbound void Update();
+		static void Initalize();
+		static void Shutdown();
+		static void Present();
+		static void Update();
 	};
 
 	using Rendering = Rendering_Maker<Meta::GPU_Engagement>;

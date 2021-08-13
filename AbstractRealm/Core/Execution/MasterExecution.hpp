@@ -1,14 +1,9 @@
 #pragma once
 
 
-
-#include "Cycler.hpp"
-
-
-
-namespace Core::Execution
+namespace Execution
 {
-	const Cycler& Get_MasterCycler();
+	const class Cycler& Get_MasterCycler();
 
 	void Initialize_MasterCycler();
 }

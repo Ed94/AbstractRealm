@@ -17,9 +17,9 @@
 
 
 
-namespace Core::IO
+namespace IO
 {
-	using namespace Core::Memory;
+	using namespace Memory;
 
 	
 

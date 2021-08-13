@@ -9,15 +9,22 @@
 #include "Renderer/Shader/TriangleShader/TriangleShader.hpp"
 #include "Renderer/Shader/VKTut/VKTut.hpp"
 
-// Raw Libraries
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+namespace TP_API
+{
+	// Raw Libraries
+	#define GLM_FORCE_RADIANS
+	#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+	#include "glm/glm.hpp"
+	#include "glm/gtc/matrix_transform.hpp"
 
-#include <tiny_obj_loader.h>
-#include <stb/stb_image.h>
 
+}
+
+namespace C_API
+{
+	#include <tiny_obj_loader.h>
+	#include <stb/stb_image.h>
+}
 
 #include "GPUVK_Resources.hpp"
 
@@ -42,9 +49,9 @@ namespace HAL::GPU
 
 		struct UniformBufferObject
 		{
-			alignas(16) glm::mat4 ModelSpace;
-			alignas(16) glm::mat4 Viewport  ;
-			alignas(16) glm::mat4 Projection;
+			alignas(16) TP_API::glm::mat4 ModelSpace;
+			alignas(16) TP_API::glm::mat4 Viewport  ;
+			alignas(16) TP_API::glm::mat4 Projection;
 		};
 
 		struct Vertex_WTexture

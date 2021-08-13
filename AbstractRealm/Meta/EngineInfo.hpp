@@ -14,10 +14,6 @@ Last Modified: 5/19/2020
 #include "LAL/LAL.hpp"
 #include "Meta/Specification.hpp"
 
-// Thirdparty
-#include "magic_enum.hpp"
-
-
 
 namespace Meta
 {

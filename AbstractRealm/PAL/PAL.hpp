@@ -1,6 +1,8 @@
 /*
 Platform Abstraction Layer
 
+
+This should be the only include the rest of the engine should use for platform specific interfacing.
 */
 
 
@@ -9,13 +11,17 @@ Platform Abstraction Layer
 
 
 
-// Includes
-
 #include "HAL.hpp"
+#include "OSAL/OSAL.hpp"
+#include "SAL/SAL.hpp"
 
 
 
 namespace PAL
 {
-	void Load();
+	namespace Module
+	{
+		void Load();
+		void Unload();
+	}
 }

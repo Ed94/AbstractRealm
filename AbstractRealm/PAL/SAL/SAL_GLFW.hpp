@@ -3,9 +3,7 @@ GFLW Software Abstraction Layer
 */
 
 
-
 #pragma once
-
 
 
 // Includes
@@ -13,20 +11,28 @@ GFLW Software Abstraction Layer
 // Vulkan must be included before GLFW
 #include "HAL/Vulkan/Vulkan_API.hpp"
 
-// GLFW
-#ifdef _WIN32 
-	#ifndef GLFW_EXPOSE_NATIVE_WIN32
-	#define GLFW_EXPOSE_NATIVE_WIN32
-	#endif
-#endif
+namespace TP_API
+{	
+	using namespace C_API;
 
-#include "GLFW/glfw3.h"         // Main glfw header, must come first.
-#include "GLFW/glfw3native.h"   // Provides platform specific functionality.
+	//extern "C"
+	//{
+		#include "GLFW/glfw3.h"         // Main glfw header, must come first.
+
+	#ifdef _WIN32 
+
+		#ifndef GLFW_EXPOSE_NATIVE_WIN32
+		#define GLFW_EXPOSE_NATIVE_WIN32
+			#include "GLFW/glfw3native.h"   // Provides platform specific functionality.
+		#endif
+
+	#endif
+	//}
+}
 
 // Engine
 #include "LAL/LAL.hpp"
 #include "OSAL/OSAL_Platform.hpp"
-
 
 
 namespace SAL::GLFW
@@ -36,7 +42,6 @@ namespace SAL::GLFW
 	using namespace LAL;
 	using namespace OSAL;
 	using namespace VV;
-
 
 
 	// Enums
@@ -67,10 +72,10 @@ namespace SAL::GLFW
 
 	// Types
 
-	using Monitor = GLFWmonitor;
-	using Window  = GLFWwindow ;
+	using Monitor = TP_API::GLFWmonitor;
+	using Window  = TP_API::GLFWwindow ;
 
-	using WindowSize_Callback = GLFWwindowsizefun;
+	using WindowSize_Callback = TP_API::GLFWwindowsizefun;
 
 
 
@@ -90,16 +95,16 @@ namespace SAL::GLFW
 		typename AppInstanceHandle,
 		typename SurfaceHandle    ,
 
-		class EResult = VkResult
+		class EResult = C_API::VkResult
 	>
 	typename std::enable_if< 
-		sizeof(AppInstanceHandle) == sizeof(VkInstance  ) && 
-		sizeof(SurfaceHandle    ) == sizeof(VkSurfaceKHR)   , 
+		sizeof(AppInstanceHandle) == sizeof(C_API::VkInstance  ) && 
+		sizeof(SurfaceHandle    ) == sizeof(C_API::VkSurfaceKHR)   , 
 	EResult>::type CreateWindowSurface
 	(
 			  AppInstanceHandle      _appHandle, 
 			  Window*                _window   , 
-		const VkAllocationCallbacks* _allocator, 
+		const C_API::VkAllocationCallbacks* _allocator, 
 			  SurfaceHandle&         _surface
 	)
 	{
@@ -149,4 +154,4 @@ namespace SAL::GLFW
 
 
 // Implementation
-#include "GLFW_SAL_Implem.hpp"
+#include "SAL_GLFW.tpp"

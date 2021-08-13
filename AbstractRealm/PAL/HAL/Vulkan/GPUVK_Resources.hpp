@@ -338,6 +338,8 @@ namespace HAL::GPU::Vulkan
 
 		~ARenderable() {};
 
+		virtual void Destroy() = NULL;
+
 		virtual void RecordRender(u32 _index, const CommandBuffer& _commandBuffer, const PipelineLayout& _pipelineLayout) = NULL;
 
 		virtual DynamicArray<AttributeDescription>& GetVertexAttributes() const = NULL;
@@ -368,15 +370,21 @@ namespace HAL::GPU::Vulkan
 
 		void Create(const DynamicArray<VertexType>& _verticies, ptr<const AShader> _shader);
 
-		void RecordRender(const CommandBuffer& _commandBuffer) override;
+		void RecordRender(const CommandBuffer& _commandBuffer);
 
-		DynamicArray<AttributeDescription>& GetVertexAttributes() const override;
+#pragma region ARenderable
+		virtual void Destroy() override;
 
-		DynamicArray<BindingDescription>& GetVertexBindings() const override;
+		virtual void RecordRender(u32 _index, const CommandBuffer& _commandBuffer, const PipelineLayout& _pipelineLayout) override;
 
-		ptr<const AShader> GetShader() const override;
+		virtual DynamicArray<AttributeDescription>& GetVertexAttributes() const override;
 
-		ptr<const DescriptorSetLayout> GetDescriptorsLayout() const override;
+		virtual DynamicArray<BindingDescription>& GetVertexBindings() const override;
+
+		virtual ptr<const AShader> GetShader() const override;
+
+		virtual ptr<const DescriptorSetLayout> GetDescriptorsLayout() const override;
+#pragma endregion ARenderable
 
 	protected:
 
@@ -405,6 +413,9 @@ namespace HAL::GPU::Vulkan
 			ptr<const AShader> _shader
 		);
 
+#pragma region ARenderable
+		virtual void Destroy() override;
+
 		void RecordRender(u32 _index, const CommandBuffer& _commandBuffer, const PipelineLayout& _pipelineLayout) override;
 
 		DynamicArray<AttributeDescription>& GetVertexAttributes() const override;
@@ -420,7 +431,7 @@ namespace HAL::GPU::Vulkan
 		//void CreateUniforms()
 
 		void UpdateUniforms(ptr<const void> _data, DeviceSize _size) override;
-		
+#pragma endregion ARenderable
 
 	protected:
 
@@ -448,9 +459,6 @@ namespace HAL::GPU::Vulkan
 	//using ModelRenderable = TPrimitiveRenderable<Vertex_WTexture>;
 
 
-
-
-
 	template<Meta::EGPU_Engage>
 	class GPU_Resources_Maker;
 
@@ -460,7 +468,7 @@ namespace HAL::GPU::Vulkan
 	public:
 
 		template<typename VertexType>
-		unbound Where< VulkanVertex<VertexType>(), ptr<ARenderable> > 
+		static Where< VulkanVertex<VertexType>(), ptr<ARenderable> >
 		Request_Renderable(const DynamicArray<VertexType>& _verticies, ptr<const AShader> _shader)
 		{
 			SPtr< TPrimitiveRenderable<VertexType>> newRenderable = MakeSPtr< TPrimitiveRenderable<VertexType>>();
@@ -473,7 +481,7 @@ namespace HAL::GPU::Vulkan
 		}
 
 		template<typename VertexType>
-		unbound Where< VulkanVertex<VertexType>(), ptr<ARenderable> > 
+		static Where< VulkanVertex<VertexType>(), ptr<ARenderable> >
 		Request_Renderable
 		(
 			const DynamicArray<VertexType>& _verticies, 
@@ -492,20 +500,23 @@ namespace HAL::GPU::Vulkan
 			return renderables.back().get();
 		}
 
+		static 
+		void Clear();
+
 		//// Just doing a raw one for now...
-		//unbound ptr<DescriptorPool> Request_DescriptorPool()
+		//static ptr<DescriptorPool> Request_DescriptorPool()
 		//{
 		//	descriptorPools.push_back(DescriptorPool());
 
 		//	return getPtr(descriptorPools.back());
 		//}
 
-		//unbound ptr<DescriptorSetLayout> Request_DescriptorSetLayout()
+		//static ptr<DescriptorSetLayout> Request_DescriptorSetLayout()
 		//{
 
 		//}
 
-		//unbound ptr<DescriptorSet> Request_DescriptorSet()
+		//static ptr<DescriptorSet> Request_DescriptorSet()
 		//{
 
 		//}
@@ -514,20 +525,19 @@ namespace HAL::GPU::Vulkan
 
 	private:
 
-		//unbound DescriptorPool descriptorPool;
+		//static DescriptorPool descriptorPool;
 
-	/*	unbound DynamicArray<DescriptorPool> descriptorPools;
+	/*	static DynamicArray<DescriptorPool> descriptorPools;
 
-		unbound DynamicArray<DescriptorSetLayout> descriptorSetLayouts;
+		static DynamicArray<DescriptorSetLayout> descriptorSetLayouts;
 
-		unbound DynamicArray<DescriptorSet> descriptorSets;*/
+		static DynamicArray<DescriptorSet> descriptorSets;*/
 
-		unbound DynamicArray< SPtr<ARenderable> > renderables;
+		static DynamicArray< SPtr<ARenderable> > renderables;
 	};
 
 	using GPU_Resources = GPU_Resources_Maker<Meta::GPU_Engagement>;
 }
-
 
 
 // 	Template Implementation

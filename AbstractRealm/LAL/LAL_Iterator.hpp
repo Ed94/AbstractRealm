@@ -6,5 +6,5 @@
 
 namespace LAL
 {
-	using std::back_inserter;
+	using STL::back_inserter;
 }

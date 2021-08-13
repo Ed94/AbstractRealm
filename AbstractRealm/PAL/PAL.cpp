@@ -2,10 +2,15 @@
 #include "PAL.hpp"
 
 
-#include "ImGui_SAL.hpp"
+#include "PAL_Backend.hpp"
+
+#include "SAL_ImGui.hpp"
 
 #include "OSAL.hpp"
 #include "HAL.hpp"
+#include "Dev/Log.hpp"
+#include "LAL/LAL.hpp"
+
 
 
 namespace PAL
@@ -36,13 +41,28 @@ namespace PAL
 		}
 	}
 
-
-	void Load()
+	namespace Module
 	{
-		OSAL::Load();
+		void Load()
+		{
+			Load_Backend();
 
-		HAL::LoadModule();
+			Log("Loading module.");
 
-		SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
+			OSAL::Load();
+
+			HAL::Load();
+
+			SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
+		}
+
+		void Unload()
+		{
+			Log("Unloading module.");
+
+			OSAL::Unload();
+
+			HAL::Unload();
+		}
 	}
 }

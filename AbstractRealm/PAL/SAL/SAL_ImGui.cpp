@@ -1,10 +1,10 @@
 // Parent Header
-#include "ImGui_SAL.hpp"
+#include "SAL_ImGui.hpp"
 
 
 // Engine
 #include "Memory/MemTracking.hpp"
-#include "GPU_HAL.hpp"
+#include "HAL_GPU.hpp"
 #include "Console.hpp"
 
 
@@ -20,11 +20,15 @@
 #include "ctti/detailed_nameof.hpp"
 #include "nameof.hpp"
 
+#include "imgui/backends/imgui_impl_vulkan.h"	
+#include "imgui/backends/imgui_impl_glfw.h"
 
 
 namespace SAL::Imgui
 {
-	using namespace Core::Memory;
+	using namespace C_API;
+
+	using namespace Memory;
 
 	UnorderedMap<String, DynamicArray<WindowCallback>> WindowsQueued;
 
@@ -186,10 +190,10 @@ namespace SAL::Imgui
 				initSpec.QueueFamily     = RenderContext->Queue.GetFamilyIndex();
 				initSpec.Queue           = RenderContext->Queue                 ;
 				initSpec.PipelineCache   = RenderContext->PipelineCache         ;
-				initSpec.Allocator       = RenderContext->Allocator->operator const VkAllocationCallbacks*();
+				initSpec.Allocator       = RenderContext->Allocator->operator const C_API::VkAllocationCallbacks*();
 				initSpec.MinImageCount   = RenderContext->MinimumFrameBuffers   ;
 				initSpec.ImageCount      = RenderContext->FrameBufferCount      ;
-				initSpec.MSAASamples     = VkSampleCountFlagBits(RenderContext->MSAA_Samples);
+				initSpec.MSAASamples     = C_API::VkSampleCountFlagBits(RenderContext->MSAA_Samples);
 				initSpec.CheckVkResultFn = PlatformBackend::Vulkan_DebugCallback;
 
 				SetupGPU_Interface();

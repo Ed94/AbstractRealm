@@ -9,6 +9,8 @@ Contains type definitions for commonly used raw character types (such as raw cha
 #pragma once
 
 
+#include "LAL_Cpp_STL.hpp"
+
 
 namespace LAL
 {

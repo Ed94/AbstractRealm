@@ -2,22 +2,14 @@
 #include "Console.hpp"
 
 
-
 // Engine
-#include "Meta/EngineInfo.hpp"
-#include "OSAL/OSAL_Console.hpp"
-#include "OSAL/OSAL_Timing.hpp"
+#include "Core_Backend.hpp"
 #include "IO/Basic_FileIO.hpp"
-#include "ImGui_SAL.hpp"
-#include <stdlib.h>
-
 
 
 namespace Dev
 {
-	// Usings
-
-	using namespace LAL ;
+	using namespace C_API;
 	using namespace OSAL;
 
 	using OSAL::ConsoleChar;
@@ -120,7 +112,7 @@ namespace Dev
 
 				auto dateSnapshot = OSAL::GetExecutionStartDate();
 
-				dateStream << put_time(&dateSnapshot, "%F_%I-%M-%S_%p");
+				dateStream << PutTime(&dateSnapshot, "%F_%I-%M-%S_%p");
 
 				String logstr = String(DevLogPath) + String("/") + String(DevLogName) + String("__") + dateStream.str() + String(".txt");
 
@@ -164,7 +156,7 @@ namespace Dev
 
 		CalendarDate dateSnapshot = OSAL::GetTime_Local();
 
-		StringStream dateSig; dateSig << "[" << put_time(&dateSnapshot, "%F %I:%M:%S %p") << "] ";
+		StringStream dateSig; dateSig << "[" << PutTime(&dateSnapshot, "%F %I:%M:%S %p") << "] ";
 
 		uDM lineLength = dateSig.str().size() + _info.size();
 
@@ -270,7 +262,7 @@ namespace Dev
 
 		CalendarDate dateSnapshot = OSAL::GetTime_Local();
 
-		StringStream dateSig; dateSig << "[" << put_time(&dateSnapshot, "%F %I:%M:%S %p") << "] Error:  ";
+		StringStream dateSig; dateSig << "[" << PutTime(&dateSnapshot, "%F %I:%M:%S %p") << "] Error:  ";
 
 		uDM lineLength = dateSig.str().size() + _info.size();
 
@@ -612,7 +604,7 @@ namespace Dev
 
 		auto dateSnapshot = OSAL::GetExecutionStartDate();
 
-		dateStream << put_time(&dateSnapshot, "%F_%I-%M-%S_%p");
+		dateStream << PutTime(&dateSnapshot, "%F_%I-%M-%S_%p");
 
 		Path path = DevLogPath;
 
@@ -621,7 +613,7 @@ namespace Dev
 			Create_Directories(path);
 		}
 		
-		using namespace Core::IO;
+		using namespace IO;
 
 		bool openResult = OpenFile
 		(
@@ -752,7 +744,7 @@ namespace Dev
 			<< EEngineVersion::Patch << "    "
 			
 			<< "Dev Log: "
-			<< put_time(&OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p")
+			<< PutTime(&OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p")
 
 			<< setfill(' ') << setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
 
@@ -762,7 +754,7 @@ namespace Dev
 			<< EEngineVersion::Minor << "."
 			<< EEngineVersion::Patch << "    "
 
-			<< "Dev Log: " << put_time(&OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p") 
+			<< "Dev Log: " << PutTime(&OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p")
 
 			<< setfill(' ') << setw(ConsoleWidth - DevLogStream.str().size()) << ' ' << endl; 
 

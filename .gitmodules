@@ -73,3 +73,6 @@
 [submodule "nameof"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/nameof
 	url = https://github.com/Neargye/nameof
+[submodule "EASTL"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/EASTL
+	url = https://github.com/electronicarts/EASTL

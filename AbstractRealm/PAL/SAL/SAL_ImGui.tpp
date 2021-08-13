@@ -24,7 +24,7 @@ namespace SAL::Imgui
 	}
 
 	template<typename Type, typename TypeVal>
-	static void Table2C::Entry(Type _name, TypeVal _value)
+	void Table2C::Entry(Type _name, TypeVal _value)
 	{
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn();

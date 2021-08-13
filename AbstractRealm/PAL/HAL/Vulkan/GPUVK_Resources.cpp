@@ -587,6 +587,8 @@ namespace HAL::GPU::Vulkan
 
 		stagingBuffer.Destroy();
 		stagingBufferMemory.Free();
+
+		return EResult::Success;
 	}
 
 	void TextureImage::Destroy()
@@ -849,6 +851,14 @@ namespace HAL::GPU::Vulkan
 #pragma endregion UniformBuffer
 
 #pragma region GPU_Resources
+
+	void GPU_Resources_Maker<Meta::EGPU_Engage::Single>::Clear()
+	{
+		for (auto& renderable : renderables)
+		{
+			renderable->Destroy();
+		}
+	}
 
 	//DynamicArray< DescriptorPool> GPU_Resources_Maker<Meta::EGPU_Engage::Single>::descriptorPools;
 

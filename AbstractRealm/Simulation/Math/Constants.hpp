@@ -8,11 +8,11 @@
 
 
 
-#include "Simulation/Units.hpp"
+#include "Math/Units.hpp"
 
 
 
-namespace Sci
+namespace Math
 {
 	// Compile-Time
 
@@ -95,7 +95,7 @@ namespace Sci
 	}
 
 	constexpr
-	DecN Euluer()
+	DecN Euler()
 	{
 		return std::exp( DecN(1.0) );
 	}

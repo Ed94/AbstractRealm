@@ -77,16 +77,15 @@ namespace HAL::GPU::Vulkan
 
 	public:
 
-		unbound const PipelineCache& Request_Cache();
+		static const PipelineCache& Request_Cache();
 
 
 	protected:
 
 
-		unbound DynamicArray<Pipeline::Layout> layouts;
+		static DynamicArray<Pipeline::Layout> layouts;
 
 
-		unbound PipelineCache cache;
+		static PipelineCache cache;
 	};
-	
 }

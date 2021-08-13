@@ -1,18 +1,20 @@
 // Parent Header
 #include "_TutorialRelated.hpp"
 
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tiny_obj_loader.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
+namespace C_API
+{
+	#define TINYOBJLOADER_IMPLEMENTATION
+	#include <tiny_obj_loader.h>
 
+	#define STB_IMAGE_IMPLEMENTATION
+	#include "stb/stb_image.h"
+}
 
 
 namespace HAL::GPU::Vulkan
 {
-	StaticData()
-
+#pragma region StaticData
 		// Public
 
 		DynamicArray<Vertex_WTexture> ModelVerticies;
@@ -33,11 +35,14 @@ namespace HAL::GPU::Vulkan
 		Memory    TextureImageMemory;
 		ImageView TextureImageView  ;
 		Sampler   TextureSampler    ;
+#pragma region StaticData
 
 
 
 	void LoadModel(String _modelPath)
 	{
+		using namespace C_API;
+		
 		tinyobj::attrib_t attrib;
 
 		DynamicArray<tinyobj::shape_t> shapes;

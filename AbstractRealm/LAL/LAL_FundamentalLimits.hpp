@@ -17,7 +17,7 @@ Last Modified: 5/18/2020
 namespace LAL
 {
 	template<typename Type>
-	using NumLimits = std::numeric_limits<Type>;
+	using NumLimits = STL::numeric_limits<Type>;
 
 	constexpr s8 SInt8Min  = NumLimits<s8>::min();
 	constexpr s8 SInt8Max  = NumLimits<s8>::max();

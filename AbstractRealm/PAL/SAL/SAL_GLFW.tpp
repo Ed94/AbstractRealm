@@ -12,6 +12,8 @@ namespace SAL
 		template<typename ParameterType>
 		void SetWindowCreationParameter(EWindowCreationParameter _param, ParameterType _value)
 		{
+			using namespace TP_API;
+
 			glfwWindowHint(int(_param), int(_value));
 
 			return;

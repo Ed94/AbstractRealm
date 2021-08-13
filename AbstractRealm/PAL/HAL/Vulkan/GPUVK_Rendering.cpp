@@ -469,7 +469,7 @@ namespace HAL::GPU::Vulkan
 
 	u32 RenderPass::GetAttachmentCount() const { return info.AttachmentCount; }
 
-#pragma endregion
+#pragma endregion RenderPass
 
 #pragma region FrameReference
 
@@ -591,8 +591,8 @@ namespace HAL::GPU::Vulkan
 
 		const auto& swapExtent = _swapChain.GetExtent();
 
-		viewport.Height   = swapExtent.Height / 6;
-		viewport.Width    = swapExtent.Width / 6;
+		viewport.Height   = swapExtent.Height / 3;
+		viewport.Width    = swapExtent.Width / 3;
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 		viewport.X        = 0;

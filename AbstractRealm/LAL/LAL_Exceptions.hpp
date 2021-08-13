@@ -14,7 +14,7 @@
 
 namespace LAL
 {
-	using RuntimeError = std::runtime_error;
+	using RuntimeError = STL::runtime_error;
 
 
 
@@ -26,9 +26,9 @@ namespace LAL
 
 
 
-	class NotImplementedException : public std::logic_error
+	class NotImplementedException : public STL::logic_error
 	{
 	public:
-		NotImplementedException () : std::logic_error{ "Function not yet implemented." } {}
+		NotImplementedException () : STL::logic_error{ "Function not yet implemented." } {}
 	};
 }

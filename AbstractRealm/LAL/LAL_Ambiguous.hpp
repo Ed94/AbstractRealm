@@ -15,5 +15,5 @@
 namespace LAL
 {
 	template<typename Type>
-	using Maybe = std::optional<Type>;
+	using Maybe = STL::optional<Type>;
 }

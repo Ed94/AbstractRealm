@@ -54,18 +54,18 @@ namespace HAL::GPU::Vulkan
 	{
 	public:
 
-		unbound void Prepare();
+		static void Prepare();
 
-		unbound void Wipe();
+		static void Wipe();
 
 
-		unbound ptr<CommandPool> RequestCommandPools(uDM _numDesired);
+		static ptr<CommandPool> RequestCommandPools(uDM _numDesired);
 
-		unbound const CommandBuffer& RecordOnGraphics();
+		static const CommandBuffer& RecordOnGraphics();
 
-		unbound const CommandBuffer& RecordOnTransient();
+		static const CommandBuffer& RecordOnTransient();
 
-		unbound void EndRecordOnTransient(const CommandBuffer& _buffer);
+		static void EndRecordOnTransient(const CommandBuffer& _buffer);
 	};
 
 	using Deck = Deck_Maker<Meta::GPU_Engagement>;

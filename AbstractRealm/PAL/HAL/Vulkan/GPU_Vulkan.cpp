@@ -113,6 +113,8 @@
 
 				stbi_image_free(ModelWTxtur_TxtImage);
 
+				ModelWTxtur_Shader.Destroy();
+
 				Rendering::Retire_RenderContext(GPUVKDemo_Context);
 				Rendering::Retire_SwapChain    (GPUVKDemo_Swap   );
 				Rendering::Retire_Surface      (GPUVKDemo_Surface);
@@ -151,6 +153,8 @@
 
 			void UpdateUniformBuffers()
 			{
+				using namespace TP_API;
+
 				static auto startTime = std::chrono::high_resolution_clock::now();
 
 				auto currentTime = std::chrono::high_resolution_clock::now();
@@ -191,6 +195,8 @@
 			void Cease_GPUComms()
 			{
 				Deck::Wipe();
+
+				GPU_Resources::Clear();
 
 				GPU_Comms::Cease();	
 			}

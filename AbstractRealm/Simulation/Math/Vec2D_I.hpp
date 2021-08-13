@@ -14,11 +14,11 @@ Reference: https://github.com/godotengine/godot/blob/master/core/math/vector2.h
 
 
 
-#include "Science/Units.hpp"
+#include "Math/Units.hpp"
 
 
 
-namespace Sci::Math
+namespace Math
 {
 	/*
 		2-Dimensional Vector

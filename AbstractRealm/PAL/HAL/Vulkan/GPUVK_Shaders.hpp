@@ -32,6 +32,8 @@ namespace HAL::GPU::Vulkan
 
 		~AShader() {};
 
+
+
 		virtual const DynamicArray<ShaderStageInfo>& GetShaderStageInfos() const = NULL;
 
 		virtual DeviceSize GetUniformSize() const = NULL;
@@ -52,6 +54,8 @@ namespace HAL::GPU::Vulkan
 		void Create(const Path& _vertShader, const Path& _fragShader);
 
 		void Create(const Path& _vertShader, const Path& _fragShader, DeviceSize _uniformSize);
+
+		void Destroy();
 
 		//void Destroy();
 

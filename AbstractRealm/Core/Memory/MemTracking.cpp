@@ -7,10 +7,9 @@
 #include "Meta/Config/CoreDev_Config.hpp"
 
 // Magic Enum
-#include "magic_enum.hpp"
 
 
-namespace Core::Memory
+namespace Memory
 {
 	StaticData()
 
@@ -62,8 +61,6 @@ namespace Core::Memory
 
 	void Heap::PrintAllocations()
 	{
-		using namespace magic_enum;
-
 		if constexpr (Meta::Enable_HeapTracking)
 		{
 			if (!AllocationsReported.empty())
@@ -78,7 +75,7 @@ namespace Core::Memory
 
 					Dev::CLog("Identifier: " + entry->second.Identifier                 );
 					Dev::CLog("Address   : " + addressString.str()                      );
-					Dev::CLog("Module    : " + String(enum_name(entry->second.Module  )));
+					Dev::CLog("Module    : " + String(nameOf(entry->second.Module  )));
 				}
 			}
 
@@ -89,7 +86,7 @@ namespace Core::Memory
 				for (auto entry = AllocationsReported_NoAddress.begin(); entry != AllocationsReported_NoAddress.end(); entry++)
 				{
 					Dev::CLog("Identifier: " + entry->first                             );
-					Dev::CLog("Module    : " + String(enum_name(entry->second.Module))  );
+					Dev::CLog("Module    : " + String(nameOf(entry->second.Module))  );
 				}
 			}
 		}

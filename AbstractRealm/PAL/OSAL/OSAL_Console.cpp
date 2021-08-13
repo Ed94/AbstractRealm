@@ -11,7 +11,7 @@ namespace OSAL
 {
 	namespace PlatformBackend
 	{
-		using namespace Core::Memory;
+		using namespace Memory;
 
 		//template<>
 		bool ConsoleAPI_Maker<EOS::Windows>::Bind_IOBuffersTo_OSIO()

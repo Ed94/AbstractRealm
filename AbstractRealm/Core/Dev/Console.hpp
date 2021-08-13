@@ -1,27 +1,23 @@
 #pragma once
 
 
-
 #include "LAL.hpp"
-
 
 
 namespace Dev
 {
-	// Usings
+	// Alias
 
 	using namespace LAL;
 
-
-
-	// Compile-Time
+	// CT
 
 	constexpr RoCStr DevLogPath = "Engine/Dev/Logs";
 	constexpr RoCStr DevLogName = "DevLog"         ;
 
 
 
-	// Functions
+	// Fn
 
 	/*class CLog
 	{

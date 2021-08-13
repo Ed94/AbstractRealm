@@ -1,5 +1,5 @@
 // Parent Header
-#include "GLFW_SAL.hpp"
+#include "SAL_GLFW.hpp"
 
 
 #include "Core/Memory/MemTracking.hpp"
@@ -7,7 +7,8 @@
 
 namespace SAL::GLFW
 {
-	using namespace Core::Memory;
+	using namespace TP_API;
+	using namespace Memory;
 
 	bool CanClose(const ptr<Window> _window)
 	{

@@ -1,19 +1,12 @@
 // Parent
 #include "Core.hpp"
 
-
-
-#include "ImGui_SAL.hpp"
-#include "MasterExecution.hpp"
-#include "LAL/LAL.hpp"
-
-
+#include "Core_Backend.hpp"
+#include "PAL.hpp"
 
 
 namespace Core
 {
-	using namespace LAL;
-
 	void Record_EditorDevDebugUI()
 	{
 		using namespace SAL::Imgui;
@@ -27,6 +20,8 @@ namespace Core
 
 			if (TreeNode("Dev"))
 			{
+				Dev::Record_EditorDevDebugUI();
+
 				TreePop();
 			}
 
@@ -38,8 +33,8 @@ namespace Core
 				{
 					if (Table2C::Record())
 					{
-						Table2C::Entry("Cycle", ToString(Get_MasterCycler().GetCycle()));
-						Table2C::Entry("Delta Time", ToString(Get_MasterCycler().GetDeltaTime().count()));
+						Table2C::Entry("Cycle"        , ToString(Get_MasterCycler().GetCycle()));
+						Table2C::Entry("Delta Time"   , ToString(Get_MasterCycler().GetDeltaTime().count()));
 						Table2C::Entry("Average Delta", ToString(Get_MasterCycler().GetAverageDelta().count()));
 
 						Table2C::EndRecord();
@@ -66,9 +61,25 @@ namespace Core
 		}
 	}
 
-
-	void Load()
+	
+	namespace Module
 	{
-		SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
+		void Load()
+		{
+			LoadBackend();
+
+			Log("Loading module.");
+
+			SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
+
+			Concurrency::Load();
+		}
+
+		void Unload()
+		{
+			Log("Loading module");
+
+			Concurrency::Unload();
+		}
 	}
 }

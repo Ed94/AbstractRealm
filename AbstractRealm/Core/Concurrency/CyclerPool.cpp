@@ -2,14 +2,18 @@
 #include "CyclerPool.hpp"
 
 
+#include "OSAL.hpp"
 
-namespace Core::Concurrency
+
+namespace Concurrency
 {
+	using Cycler = Execution::Cycler;
+
 	// Structs
 
 	struct Unit
 	{
-		using CyclerT = Cycler;
+		using CyclerT = Execution::Cycler;
 
 		Unit() : Cycler(), Thread(NULL)
 		{}
@@ -19,14 +23,12 @@ namespace Core::Concurrency
 	};
 
 
+	// Static Data
 
-	StaticData()
+	DynamicArray<Unit> Pool;
 
-		DynamicArray<Unit> Pool;
-
-		bool Initiated   = false;
-		u16 ActiveUnits = 0    ;
-
+	bool Initiated   = false;
+	u16  ActiveUnits = 0    ;
 
 
 	// Public
@@ -58,9 +60,10 @@ namespace Core::Concurrency
 	bool CyclerPool::IsShutdown()
 	{
 		return
-		Initiated = true ?
+		Initiated == true ?
 			ActiveUnits > 0 ? false : true : 
-		true;
+			true
+		;
 	}
 
 	bool CyclerPool::RequestShutdown()

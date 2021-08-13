@@ -15,7 +15,7 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 #include "Vulkan_API.hpp"
 
-#include "GPU_HAL_CoreDefs.hpp"
+#include "HAL_GPU_CoreDefs.hpp"
 #include "GPUVK_PayloadDeck.hpp"
 #include "Meta/AppInfo.hpp"
 #include "Meta/Config/HAL_Config.hpp"
@@ -37,8 +37,10 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 			using namespace VV::V3    ;
 			using namespace VV::SPIR_V;
 
+
 			using namespace LAL ;
 			using namespace Meta;
+
 
 			using LAL::DynamicArray;
 
@@ -64,6 +66,8 @@ Right now the implementation is heavily hard coded / procedural, this will chang
 
 			struct RawRenderContext : ARenderContext
 			{
+				using Memory = Vulkan::Memory;
+
 				AppInstance::Handle          ApplicationInstance;
 				V3::PhysicalDevice           PhysicalDevice     ;
 				V3::LogicalDevice::Handle    LogicalDevice      ;

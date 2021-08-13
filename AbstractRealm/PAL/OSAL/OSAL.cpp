@@ -2,7 +2,7 @@
 #include "OSAL.hpp"
 
 
-#include "ImGui_SAL.hpp"
+#include "SAL_ImGui.hpp"
 
 
 #include "OSAL_Backend.hpp"
@@ -97,19 +97,19 @@ namespace OSAL
 				{
 					StringStream toString;
 					
-					toString << put_time(&GetExecutionStartDate(), "%F %I:%M:%S %p");
+					toString << PutTime(&GetExecutionStartDate(), "%F %I:%M:%S %p");
 
 					Table2C::Entry("Execution Start", toString.str());
 
 					toString.str(String());;
 
-					toString << put_time(&GetTime_Local(), "%F %I:%M:%S %p");
+					toString << PutTime(&GetTime_Local(), "%F %I:%M:%S %p");
 
 					Table2C::Entry("Current Time (Local)", toString.str());
 
 					toString.str(String());;
 
-					toString << put_time(&GetTime_UTC(), "%F %I:%M:%S %p");
+					toString << PutTime(&GetTime_UTC(), "%F %I:%M:%S %p");
 
 					Table2C::Entry("Current Time (UTC)", toString.str());
 

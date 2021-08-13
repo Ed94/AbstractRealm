@@ -2,18 +2,13 @@
 #include "Dev.hpp"
 
 
-
 // Engine
-#include "LAL.hpp"
-#include "Console.hpp"
-#include "ImGui_SAL.hpp"
-#include "Log.hpp"
-
+#include "Core_Backend.hpp"
 
 
 namespace Dev
 {
-	// Usings
+	// Alias
 
 	using namespace LAL;
 
@@ -21,32 +16,39 @@ namespace Dev
 	{
 		using namespace SAL::Imgui;
 
-		if (CollapsingHeader("Dev"))
+		Console_Record_EditorDevDebugUI();
+
+		/*if (CollapsingHeader("Dev"))
 		{
-			Console_Record_EditorDevDebugUI();
-		}
+		}*/
 	}
 
 
+	// Fn
 
 	// Public
 
+	Dev_Declare_Log(Dev);
+	
 	void Load()
 	{
-		cout << "Dev: Load Module" << endl;
+		SubLogger.Init();
+
+		Log("Loading module.");
 
 		Load_DevConsole();
 
-		SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
+		//SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
 
-		Log::Queue_DebugUI();
+		Logger::Queue_DebugUI();
 
-		CLog("Dev: Module loaded");
+		Log("loaded.");
+
 	}
 
 	void Unload()
 	{
-		CLog("Dev: Unloading module...");
+		Log("Unloading module...");
 
 		Unload_DevConsole();
 	}

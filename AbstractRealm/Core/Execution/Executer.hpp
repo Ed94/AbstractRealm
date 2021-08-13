@@ -5,21 +5,13 @@ Last Modified: 5/18/2020
 */
 
 
-
 #pragma once
 
+#include "LAL.hpp"
+#include "OSAL/OSAL_Platform.hpp"
 
 
-// Engine
-#include "LAL/LAL.hpp"
-#include "Meta/EngineInfo.hpp"
-#include "OSAL/OSAL.hpp"
-#include "HAL/GPU_HAL.hpp"
-#include "Dev/Dev.hpp"
-
-
-
-namespace Core::Execution
+namespace Execution
 {
 	// Usings
 
@@ -81,7 +73,7 @@ namespace Core::Execution
 	class PrimitiveExecuter : AExecuter
 	{
 	public:
-		unbound constexpr EExecutionType Type = EExecutionType::Primitive;
+		static constexpr EExecutionType Type = EExecutionType::Primitive;
 
 		virtual void Bind(Function<FN_Type> _task) ;
 
@@ -101,7 +93,7 @@ namespace Core::Execution
 	class QueuedExecuter : AExecuter
 	{
 	public:
-		unbound constexpr EExecutionType Type = EExecutionType::Engine;
+		static constexpr EExecutionType Type = EExecutionType::Engine;
 
 		template<typename FN_Type>
 		void Add(Function<FN_Type> _routine);
@@ -126,6 +118,8 @@ namespace Core::Execution
 	OSAL::ExitValT EntryPoint();
 
 	//ptr<OSAL::Window> EngineWindow();
+
+	Dev_Declare_LogAPI();
 }
 
 
@@ -134,7 +128,7 @@ namespace Core::Execution
 // #include "PrimitiveExecuter_Implem.hpp"
 // TODO ^^ Why doesn't it work? (SEE GLFW FOR WORKING VER)
 
-namespace Core::Execution
+namespace Execution
 {
 	template<typename FN_Type>
 	void PrimitiveExecuter<FN_Type>::Bind(Function<FN_Type> _task)

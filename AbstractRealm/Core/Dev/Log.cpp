@@ -4,21 +4,21 @@
 
 #include "Console.hpp"
 #include "EngineInfo.hpp"
-#include "ImGui_SAL.hpp"
+#include "SAL_ImGui.hpp"
 #include "OSAL/OSAL_Timing.hpp"
 
 
 
 namespace Dev
 {
-	uDM Log::RecordEntry::indexCounter = 0;
+	uDM Logger::RecordEntry::indexCounter = 0;
 
-	UnorderedMap<String, Log::SubRecords> Log::subLogs;
+	UnorderedMap<String, Logger::SubRecords> Logger::subLogs;
 
-	DynamicArray< UPtr<Log::RecordEntry>> Log::records;
+	DynamicArray< UPtr<Logger::RecordEntry>> Logger::records;
 
 
-	Log::RecordEntry::RecordEntry(Severity _severity, String _category, String _message) :
+	Logger::RecordEntry::RecordEntry(ESeverity _severity, String _category, String _message) :
 		index(indexCounter++), 
 		date(OSAL::GetTime_Local() ), 
 		severity(_severity), 
@@ -27,36 +27,22 @@ namespace Dev
 	{}
 
 
-	Log::Log()
-	{
-	}
-
-	Log::Log(String _name) :
+	Logger::Logger(String _name) :
 		name(_name)
+	{}
+
+	void Logger::Init()
 	{
-		SubRecords newSubRecord;
-
-		subLogs.insert( { name, move(newSubRecord) } );
-
-		subRecordsRef = getPtr(subLogs.at(name));
-
-		Record(Severity::Info, String("Created Subrecords Log: ") + name);
-	}
-
-	void Log::Init(String _name)
-	{
-		name = _name;
-
 		SubRecords newSubRecord;
 
 		subLogs.insert({ name, move(newSubRecord) });
 
 		subRecordsRef = getPtr(subLogs.at(name));
 
-		Record(Severity::Info, String("Created Subrecords Log: ") + name);
+		Record(ESeverity::Info, String("Created Subrecords Log: ") + name);
 	}
 
-	void Log::Record(Severity _severity, String _message) const
+	void Logger::Record(ESeverity _severity, String _message) const
 	{
 		records.push_back(MakeUPtr<RecordEntry>(_severity, name, _message));
 
@@ -64,13 +50,13 @@ namespace Dev
 
 		switch (_severity)
 		{
-			case Severity::Info:
+			case ESeverity::Info:
 			{
 				CLog(name + ": " + _message);
 
 			} break;
 
-			case Severity::Error:
+			case ESeverity::Error:
 			{
 				CLog_Error(name + ": " + _message);
 
@@ -78,19 +64,19 @@ namespace Dev
 		}
 	}
 
-	void Log::GlobalRecord(Severity _severity, String _message)
+	void Logger::GlobalRecord(ESeverity _severity, String _message)
 	{
 		records.push_back(MakeUPtr<RecordEntry>(_severity, "Global", _message));
 
 		switch (_severity)
 		{
-			case Severity::Info:
+			case ESeverity::Info:
 			{
 				CLog(_message);
 
 			} break;
 
-			case Severity::Error:
+			case ESeverity::Error:
 			{
 				CLog_Error(_message);
 
@@ -98,19 +84,17 @@ namespace Dev
 		}
 	}
 
-	void Log::Queue_DebugUI()
+	void Logger::Queue_DebugUI()
 	{
-		SAL::Imgui::Queue("Dev Log", Log::Record_EditorDevDebugUI);
+		SAL::Imgui::Queue("Dev Log", Logger::Record_EditorDevDebugUI);
 	}
 
 
-	void Log::Record_EditorDevDebugUI()
+	void Logger::Record_EditorDevDebugUI()
 	{
 		using namespace SAL::Imgui;
-		using namespace LAL;
 
 		#define Args(_Entry) NameOf(_Entry).str(), _Entry
-
 
 		if (ImGui::BeginTabBar("Log Tabs"))
 		{
@@ -126,7 +110,7 @@ namespace Dev
 				{
 					dateSig.str(String());
 
-					dateSig << "[" << put_time(&record->date, "%F %I:%M:%S %p") << "] ";
+					dateSig << "[" << PutTime(&record->date, "%F %I:%M:%S %p") << "] ";
 
 					Text(String
 					(
@@ -153,7 +137,7 @@ namespace Dev
 					{
 						dateSig.str(String());
 
-						dateSig << "[" << put_time(&record->date, "%F %I:%M:%S %p") << "] ";
+						dateSig << "[" << PutTime(&record->date, "%F %I:%M:%S %p") << "] ";
 
 						Text(String
 						(

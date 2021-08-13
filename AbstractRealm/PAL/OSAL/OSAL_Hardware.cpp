@@ -12,21 +12,17 @@
 
 namespace OSAL
 {
-	
+#pragma region StaticData
+	String CPU_Vendor   ;
+	String CPU_Model    ;
+	u64    CPU_Frequency;
 
+	MemoryInfo Memory;
 
+	DynamicArray<DisplayInfo> Displays;
 
-	StaticData()
-
-		String CPU_Vendor   ;
-		String CPU_Model    ;
-		u64    CPU_Frequency;
-
-		MemoryInfo Memory;
-
-		DynamicArray<DisplayInfo> Displays;
-
-		DisplayInfo* MainDisplay;
+	DisplayInfo* MainDisplay;
+#pragma endregion StaticData
 
 
 	const String& Get_CPUVendor()
@@ -137,6 +133,5 @@ namespace OSAL
 				String(" Color Depth: " ) + ToString(display.ColorDepth )
 			);
 		}
-		
 	}
 }

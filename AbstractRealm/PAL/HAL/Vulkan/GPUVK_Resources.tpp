@@ -16,9 +16,21 @@ namespace HAL::GPU::Vulkan
 	}
 
 	template<typename VertexType>
+	void TPrimitiveRenderable<VertexType>::Destroy()
+	{
+		vertBuffer.Destroy();
+	}
+
+	template<typename VertexType>
+	void TPrimitiveRenderable<VertexType>::RecordRender(u32 _index, const CommandBuffer& _commandBuffer, const PipelineLayout& _pipelineLayout)
+	{
+		
+	}
+
+	template<typename VertexType>
 	void TPrimitiveRenderable<VertexType>::RecordRender(const CommandBuffer& _commandBuffer)
 	{
-		unbound DynamicArray<Buffer::Handle> handles;
+		static DynamicArray<Buffer::Handle> handles;
 
 		if (handles.empty())
 		{
@@ -36,7 +48,7 @@ namespace HAL::GPU::Vulkan
 	DynamicArray< Pipeline::VertexInputState::AttributeDescription>&
 	TPrimitiveRenderable<VertexType>::GetVertexAttributes() const
 	{
-		unbound DynamicArray<AttributeDescription> attributeDescriptions;
+		static DynamicArray<AttributeDescription> attributeDescriptions;
 
 		if (attributeDescriptions.size() == 0)
 		{
@@ -53,7 +65,7 @@ namespace HAL::GPU::Vulkan
 	DynamicArray< Pipeline::VertexInputState::BindingDescription>&
 	TPrimitiveRenderable<VertexType>::GetVertexBindings() const
 	{
-		unbound DynamicArray<BindingDescription> bindingDescriptions;
+		static DynamicArray<BindingDescription> bindingDescriptions;
 
 		if (bindingDescriptions.size() == 0)
 		{
@@ -108,9 +120,24 @@ namespace HAL::GPU::Vulkan
 	}
 
 	template<typename VertexType>
+	void TModelRenderable<VertexType>::Destroy()
+	{
+		vertBuffer.Destroy();
+		indexBuffer.Destroy();
+		textureImage.Destroy();
+
+		for (auto& uniformBuffer : uniformBuffers)
+		{
+			uniformBuffer.Destroy();
+		}
+
+		descriptorsLayout.Destroy();
+	}
+
+	template<typename VertexType>
 	void TModelRenderable<VertexType>::RecordRender(u32 _index, const CommandBuffer& _commandBuffer, const PipelineLayout& _pipelineLayout)
 	{
-		unbound DynamicArray<Buffer::Handle> handles;
+		static DynamicArray<Buffer::Handle> handles;
 
 		if (handles.empty())
 		{
@@ -150,7 +177,7 @@ namespace HAL::GPU::Vulkan
 	DynamicArray< Pipeline::VertexInputState::AttributeDescription>&
 	TModelRenderable<VertexType>::GetVertexAttributes() const
 	{
-		unbound DynamicArray<AttributeDescription> attributeDescriptions;
+		static DynamicArray<AttributeDescription> attributeDescriptions;
 
 		if (attributeDescriptions.size() == 0)
 		{
@@ -167,7 +194,7 @@ namespace HAL::GPU::Vulkan
 	DynamicArray< Pipeline::VertexInputState::BindingDescription>&
 	TModelRenderable<VertexType>::GetVertexBindings() const
 	{
-		unbound DynamicArray<BindingDescription> bindingDescriptions;
+		static DynamicArray<BindingDescription> bindingDescriptions;
 
 		if (bindingDescriptions.size() == 0)
 		{
