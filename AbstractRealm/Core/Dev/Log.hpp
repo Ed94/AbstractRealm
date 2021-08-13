@@ -42,7 +42,9 @@ namespace Dev
 
 		void Init();
 
-		void Record(ESeverity _severity, String _message) const;
+		void Record(ESeverity _severity, String _message);
+
+		static void GlobalInit();
 
 		static void Queue_DebugUI();
 
@@ -52,11 +54,15 @@ namespace Dev
 
 	protected:
 
+		File_OutputStream FileOut;
+
 		using SubRecords = DynamicArray< ptr<RecordEntry>>;
 
 		String name;
 
 		ptr<SubRecords> subRecordsRef;
+
+		static File_OutputStream globalFileOut;
 
 		static UnorderedMap<String, SubRecords> subLogs; 
 

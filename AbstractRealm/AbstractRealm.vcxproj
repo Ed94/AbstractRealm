@@ -99,7 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -275,6 +275,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="LAL\LAL_CharacterTypeOps.hpp" />
     <ClInclude Include="Manifest\Cosmos.hpp">
       <SubType>
       </SubType>
@@ -761,6 +762,7 @@
     <ClCompile Include="Editor\Editor.cpp" />
     <ClCompile Include="LAL\LAL_IO.cpp" />
     <ClCompile Include="LAL\LAL_Memory.cpp" />
+    <ClCompile Include="Meta\Config\CoreDev_Config.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
     <ClCompile Include="Meta\Meta.cpp" />

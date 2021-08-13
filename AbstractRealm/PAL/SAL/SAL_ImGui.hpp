@@ -61,8 +61,15 @@ namespace SAL::Imgui
 	bool CollapsingHeader(const StringView& _view);
 	bool CollapsingHeader(const String& _string);
 
+	class Table
+	{
+	public:
+
+		static void EndRecord();
+	};
+
 	// 2 Column Table (Name, Value)
-	class Table2C 
+	class Table2C : Table
 	{
 	public:
 
@@ -86,12 +93,38 @@ namespace SAL::Imgui
 		template<typename Type, typename TypeVal>
 		static void Entry(Type _name, TypeVal _value);
 
-		static void EndRecord();
+		using Table::EndRecord;
 
 	protected:
 
 		String name;
 		Flags  flags;
+	};
+
+	class Table4C : Table
+	{
+	public:
+
+		template<typename Type>
+		static bool Record(Type _nameC1, Type _nameC2, Type _nameC3, Type _nameC4);
+
+		template<typename TypeC1, typename TypeC2, typename TypeC3, typename TypeC4>
+		static void Entry(TypeC1 _valueC1, TypeC2 _valueC2, TypeC3 _valueC3, TypeC4 _valueC4);
+
+		using Table::EndRecord;
+	};
+
+	class Table5C : Table
+	{
+	public:
+
+		template<typename Type>
+		static bool Record(Type _nameC1, Type _nameC2, Type _nameC3, Type _nameC4, Type _nameC5);
+
+		template<typename TypeC1, typename TypeC2, typename TypeC3, typename TypeC4, typename TypeC5>
+		static void Entry(TypeC1 _valueC1, TypeC2 _valueC2, TypeC3 _valueC3, TypeC4 _valueC4, TypeC5 _valueC5);
+
+		using Table::EndRecord;
 	};
 }
 

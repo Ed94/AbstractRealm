@@ -20,6 +20,5 @@ namespace LAL
 	using CStr16 = wchar_t*;
 
 
-
 	constexpr auto CStrCompare = strcmp;
 }

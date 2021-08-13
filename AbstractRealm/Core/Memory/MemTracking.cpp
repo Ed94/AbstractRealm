@@ -25,7 +25,7 @@ namespace Memory
 
 	void Heap::ReportAllocation(String _identifier, EModule _module)
 	{
-		if constexpr (Meta::Enable_HeapTracking)
+		if (Meta::Enable_HeapTracking)
 		{
 			Allocation newAllocation(_identifier, _module);
 
@@ -35,7 +35,7 @@ namespace Memory
 
 	void Heap::ReportAllocation(ptr<void> _address, String _identifier, EModule _module)
 	{
-		if constexpr (Meta::Enable_HeapTracking)
+		if (Meta::Enable_HeapTracking)
 		{
 			Allocation newAllocation(_identifier, _module);
 
@@ -45,7 +45,7 @@ namespace Memory
 
 	void Heap::ReportDeallocation(String _identifier)
 	{
-		if constexpr (Meta::Enable_HeapTracking)
+		if (Meta::Enable_HeapTracking)
 		{
 			AllocationsReported_NoAddress.erase(_identifier);
 		}
@@ -53,7 +53,7 @@ namespace Memory
 
 	void Heap::ReportDeallocation(ptr<void> _address)
 	{
-		if constexpr (Meta::Enable_HeapTracking)
+		if (Meta::Enable_HeapTracking)
 		{
 			AllocationsReported.erase(_address);
 		}
@@ -61,7 +61,7 @@ namespace Memory
 
 	void Heap::PrintAllocations()
 	{
-		if constexpr (Meta::Enable_HeapTracking)
+		if (Meta::Enable_HeapTracking)
 		{
 			if (!AllocationsReported.empty())
 			{

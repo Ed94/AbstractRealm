@@ -326,6 +326,11 @@ namespace SAL::Imgui
 		name(_name), flags(_flags)
 	{}
 
+	void Table::EndRecord()
+	{
+		ImGui::EndTable();
+	}
+
 	bool Table2C::Record()
 	{
 		bool result = ImGui::BeginTable("Data Table", 2, ImGuiTableFlags_SizingFixedFit |ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders);
@@ -339,11 +344,6 @@ namespace SAL::Imgui
 		}
 
 		return result;	
-	}
-
-	void Table2C::EndRecord()
-	{
-		ImGui::EndTable();
 	}
 
 	void MakeFrame()

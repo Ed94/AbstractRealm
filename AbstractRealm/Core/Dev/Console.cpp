@@ -65,8 +65,8 @@ namespace Dev
 
 		StringStream DevLogStream;
 
-		File_OutputStream DevLogFileOut;
-		File_InputStream  DevLogFileIn ;
+		//File_OutputStream DevLogFileOut;
+		//File_InputStream  DevLogFileIn ;
 
 		bool AutoUpdateConsole = false;
 	//)
@@ -160,10 +160,10 @@ namespace Dev
 
 		uDM lineLength = dateSig.str().size() + _info.size();
 
-		DevLogFileOut 
-			<< dateSig.str()
-			<< _info 
-			<< endl;
+		//DevLogFileOut 
+		//	<< dateSig.str()
+		//	<< _info 
+		//	<< endl;
 
 		if (lineLength > uDM(ConsoleWidth))
 		{
@@ -198,7 +198,7 @@ namespace Dev
 
 				String sub = _info.substr(0, ConsoleWidth);
 
-				DevLogFileOut << sub << endl;
+	/*			DevLogFileOut << sub << endl;*/
 
 				WriteTo_Buffer
 				(
@@ -266,11 +266,11 @@ namespace Dev
 
 		uDM lineLength = dateSig.str().size() + _info.size();
 
-		DevLogFileOut
-			<< dateSig.str()
-			<< "\n"
-			<< _info
-			<< endl;
+		//DevLogFileOut
+		//	<< dateSig.str()
+		//	<< "\n"
+		//	<< _info
+		//	<< endl;
 
 		if (lineLength > uDM(ConsoleWidth))
 		{
@@ -305,7 +305,7 @@ namespace Dev
 
 				String sub = _info.substr(0, ConsoleWidth);
 
-				DevLogFileOut << sub << endl;
+		/*		DevLogFileOut << sub << endl;*/
 
 				WriteTo_Buffer
 				(
@@ -591,8 +591,8 @@ namespace Dev
 	{
 		CLog("Unloading dev console (there will be no logs after this)");
 
-		DevLogFileOut.close(); 
-		DevLogFileIn .close(); 
+		//DevLogFileOut.close(); 
+		//DevLogFileIn .close(); 
 	}
 
 
@@ -600,7 +600,7 @@ namespace Dev
 
 	void Load_DevLog_IOFileStream()
 	{
-		StringStream dateStream;
+		/*StringStream dateStream;
 
 		auto dateSnapshot = OSAL::GetExecutionStartDate();
 
@@ -637,7 +637,7 @@ namespace Dev
 		if (!openResult)
 		{
 			throw RuntimeError("Failed to open a dev log file...");
-		}
+		}*/
 	}
 
 	void Load_DevLogStream()
@@ -721,7 +721,7 @@ namespace Dev
 
 		DevLogStream << setfill('-') << setw(ConsoleWidth) << '-';
 
-		DevLogFileOut << setfill('-') << setw(ConsoleWidth) << '-' << endl;
+		//DevLogFileOut << setfill('-') << setw(ConsoleWidth) << '-' << endl;
 
 		WriteTo_Buffer
 		(
@@ -748,15 +748,15 @@ namespace Dev
 
 			<< setfill(' ') << setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
 
-		DevLogFileOut 
-			<< "Abstract Realm: MVP Build - "
-			<< EEngineVersion::Major << "."
-			<< EEngineVersion::Minor << "."
-			<< EEngineVersion::Patch << "    "
+		//DevLogFileOut 
+		//	<< "Abstract Realm: MVP Build - "
+		//	<< EEngineVersion::Major << "."
+		//	<< EEngineVersion::Minor << "."
+		//	<< EEngineVersion::Patch << "    "
 
-			<< "Dev Log: " << PutTime(&OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p")
+		//	<< "Dev Log: " << PutTime(&OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p")
 
-			<< setfill(' ') << setw(ConsoleWidth - DevLogStream.str().size()) << ' ' << endl; 
+		//	<< setfill(' ') << setw(ConsoleWidth - DevLogStream.str().size()) << ' ' << endl; 
 
 		WriteTo_Buffer
 		(
@@ -774,7 +774,7 @@ namespace Dev
 
 		DevLogStream << setfill('-') << setw(ConsoleWidth) << '-';
 
-		DevLogFileOut << setfill('-') << setw(ConsoleWidth) << '-' << endl;
+		//DevLogFileOut << setfill('-') << setw(ConsoleWidth) << '-' << endl;
 
 		WriteTo_Buffer
 		(

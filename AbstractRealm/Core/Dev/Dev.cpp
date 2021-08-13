@@ -32,6 +32,8 @@ namespace Dev
 	
 	void Load()
 	{
+		Logger::GlobalInit();
+
 		SubLogger.Init();
 
 		Log("Loading module.");

@@ -64,6 +64,7 @@ namespace Renderer
 					Table2C::Entry("Windowed", (Engine_WidnowSpec.Windowed == nullptr) ? "True" : "False");
 
 					Table2C::Entry(Args(Engine_WidnowSpec.Resizable));
+					Table2C::Entry("Resisable2", nameOf(Engine_WidnowSpec.Resizable).data());
 
 					#undef Args
 

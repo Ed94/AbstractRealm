@@ -18,9 +18,9 @@ namespace Meta
 	 * 
 	 * This would make using try-catch exceptions optional and there would be an alternative implementation...
 	 */
-	constexpr bool UseCpp_Exceptions = true;
+	constexpr bool UseCpp_Exceptions = false;
 
-	constexpr bool Enable_HeapTracking = true;
+	bool Enable_HeapTracking();
 
 	#define Meta_ForceInlineMode_EngineDiscretion
 
@@ -40,11 +40,11 @@ namespace Meta
 	// TODO: Make these runtime settable. (However whether or not they can be used or exist depends on build type.
 
 	// Will not build any log to file functionality. (Could be used to optimize build size).
-	constexpr bool LogToFile = true;
+	bool ShouldLogToFile();
 
 	// Can be loaded from config file, change affects next engine load.
-	constexpr ELogToFileMode LogToFile_Mode = ELogToFileMode::GlobalOnly;
+	ELogToFileMode LogToFile_Mode();
 
 	// Should the engine dump its state to json if it crashes?
-	constexpr bool Dump_EngineStateJson_OnCrash = false;
+	bool ShouldDump_EngineStateJson_OnCrash();
 }

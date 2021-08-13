@@ -22,9 +22,10 @@ namespace TP_API
 
 namespace C_API
 {
-	#include <tiny_obj_loader.h>
-	#include <stb/stb_image.h>
+
 }
+#include <tiny_obj_loader.h>
+	#include <stb/stb_image.h>
 
 #include "GPUVK_Resources.hpp"
 

@@ -23,6 +23,7 @@ standard c++.
 #include "LAL_Bitfield.hpp"
 #include "LAL_Casting.hpp"
 #include "LAL_CharacterTypes.hpp"
+#include "LAL_CharacterTypeOps.hpp"
 #include "LAL_CallEnforcer.hpp"
 #include "LAL_Declarations.hpp"
 #include "LAL_Enum.hpp"
