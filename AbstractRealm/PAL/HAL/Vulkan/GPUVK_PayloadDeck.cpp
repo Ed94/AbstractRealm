@@ -36,7 +36,8 @@ namespace HAL::GPU::Vulkan
 
 		result = Allocate(buffer);
 
-		if (result != EResult::Success) throw RuntimeError("Failed to allocate...");
+		if (result != EResult::Success) 
+			Exception::Fatal::Throw("Failed to allocate...");
 
 		CommandBuffer::BeginInfo beginInfo;
 
@@ -44,7 +45,8 @@ namespace HAL::GPU::Vulkan
 
 		result = buffer.BeginRecord(beginInfo);
 
-		if (result != EResult::Success) throw RuntimeError("Failed to begin recording...");
+		if (result != EResult::Success) 
+			Exception::Fatal::Throw("Failed to begin recording...");
 
 		return commandBuffers.back();
 	}
@@ -61,7 +63,8 @@ namespace HAL::GPU::Vulkan
 
 			auto vResult = buffer.EndRecord();
 
-			if (vResult != EResult::Success) throw RuntimeError("Failed to end buffer recording");
+			if (vResult != EResult::Success) 
+				Exception::Fatal::Throw("Failed to end buffer recording");
 
 			CommandBuffer::SubmitInfo submitInfo;
 
@@ -70,11 +73,13 @@ namespace HAL::GPU::Vulkan
 
 			vResult = GPU_Comms::GetGraphicsQueue().SubmitToQueue(1, submitInfo, Null<Fence::Handle>);
 
-			if (vResult != EResult::Success) throw RuntimeError("Failed to submit to queue.");
+			if (vResult != EResult::Success) 
+				Exception::Fatal::Throw("Failed to submit to queue.");
 
 			vResult = GPU_Comms::GetGraphicsQueue().WaitUntilIdle();
 
-			if (vResult != EResult::Success) throw RuntimeError("Failed to wait for queue to idle.");
+			if (vResult != EResult::Success)
+				Exception::Fatal::Throw("Failed to wait for queue to idle.");
 
 			Free(buffer);
 
@@ -82,19 +87,20 @@ namespace HAL::GPU::Vulkan
 		}
 		else
 		{
-			throw RuntimeError("Cannot find command buffer in tracked pool.");
+			Exception::Fatal::Throw("Cannot find command buffer in tracked pool.");
 		}
 	}
 
 
 
-	StaticData()
+#pragma region StaticData
 
 		Deque<CommandPool> CommandPools;
 
 		ptr<CommandPool> GeneralPool ;
 		ptr<CommandPool> TransientPool;
 
+#pragma endregion StaticData
 
 
 	void Deck_Maker<Meta::EGPU_Engage::Single>::Prepare()
@@ -144,7 +150,7 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success)
 		{
-			throw RuntimeError("Failed to create requested command pool.");
+			Exception::Fatal::Throw("Failed to create requested command pool.");
 		}
 
 		return &CommandPools[firstOfNewPools];

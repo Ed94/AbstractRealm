@@ -1,11 +1,6 @@
 #pragma once
 
 
-
-
-
-
-
 namespace Meta
 {
 	//#define Meta_UseCpp_Exceptions 

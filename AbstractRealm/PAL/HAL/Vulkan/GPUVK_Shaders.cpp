@@ -59,7 +59,7 @@ namespace HAL::GPU::Vulkan
 
 		if (! SPIR_V::CompileGLSL(_vertShader, EShaderStageFlag::Vertex, bytecode))
 		{
-			throw RuntimeError("Failed to compile GLSL to SPIR-V");
+			Exception::Fatal::Throw("Failed to compile GLSL to SPIR-V");
 		}
 
 		info.CodeSize = bytecode.size() * sizeof(u32);
@@ -67,7 +67,7 @@ namespace HAL::GPU::Vulkan
 
 		if (vertexModule.Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
 		{
-			throw RuntimeError("Failed to create vertex shader module.");
+			Exception::Fatal::Throw("Failed to create vertex shader module.");
 		}
 
 		bytecode.clear();
@@ -83,7 +83,7 @@ namespace HAL::GPU::Vulkan
 
 		if (!SPIR_V::CompileGLSL(_fragShader, EShaderStageFlag::Fragment, bytecode))
 		{
-			throw RuntimeError("Failed to compile GLSL to SPIR-V");
+			Exception::Fatal::Throw("Failed to compile GLSL to SPIR-V");
 		}
 
 		info.CodeSize = bytecode.size() * sizeof(u32);
@@ -91,7 +91,7 @@ namespace HAL::GPU::Vulkan
 
 		if (fragModule.Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
 		{
-			throw RuntimeError("Failed to create fragment shader module.");
+			Exception::Fatal::Throw("Failed to create fragment shader module.");
 		}
 
 		bytecode.clear();
@@ -256,7 +256,7 @@ namespace HAL::GPU::Vulkan
 					return EStage::Compute;
 
 				default:
-					throw RuntimeError("Unknown shader type specified. Exiting!");
+					Exception::Fatal::Throw("Unknown shader type specified. Exiting!");
 			}
 		}
 
@@ -285,9 +285,9 @@ namespace HAL::GPU::Vulkan
 
 			EStage stage = GetStageType(_type);
 
-			UPtr<LinkerUnit> linker = MakeUPtr<LinkerUnit>();
+			UPtr<LinkerUnit> linker = MakeUnique<LinkerUnit>();
 
-			UPtr<ShaderUnit> shader = MakeUPtr<ShaderUnit>( EShLanguage(stage));
+			UPtr<ShaderUnit> shader = MakeUnique<ShaderUnit>( EShLanguage(stage));
 
 			RoCStr strings[numShaders];
 			

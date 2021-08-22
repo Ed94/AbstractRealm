@@ -7,18 +7,19 @@ Last Modified: 5/18/2020
 
 #pragma once
 #include "LAL_Declarations.hpp"
+#include "LAL_Reflection.hpp"
 
 
 namespace LAL
 {
 	/*
-	Constant Cast (Direct)
+	Constant Cast(Ref)
 	*/
 	template<typename Type>
-	ForceInline 
-	Type CVCast(const Type _obj)
+	ForceInline
+	Type& CVCast(Type& _obj)
 	{
-		return const_cast<Type>(_obj);
+		return const_cast<Type& >(_obj);
 	}
 
 	/*
@@ -26,39 +27,49 @@ namespace LAL
 	*/
 	template<typename Type>
 	ForceInline 
-	Type* CVCast(const Type* _obj)
+	Type* CVCast(Type* _obj)
 	{
-		return const_cast<Type*>(_obj);
+		return const_cast<Type* >(_obj);
 	}
 
 	/*
 	Dynamic Cast (Direct)
 	*/
 	template<typename Derived, typename Base>
-	ForceInline 
-	Derived DCast(const Base _obj)
+	ForceInline Where<!IsReference<Base>(),
+	Derived> DCast(Base _obj)
 	{
 		return dynamic_cast<Derived>(_obj);
+	}
+
+	/*
+	Dynamic Cast (Direct)
+	*/
+	template<typename Derived, typename Base>
+	ForceInline Where<IsReference<Base>(), 
+	Derived&> DCast(Base _obj)
+	{
+		return dynamic_cast<Derived&>(_obj);
 	}
 
 	/*
 	Dynamic Cast (Pointer)
 	*/
 	template<typename Derived, typename Base>
-	ForceInline 
-	Derived* DCast(Base* const _ptr)
+	ForceInline
+	Derived* DCast(Base* _ptr)
 	{
 		return dynamic_cast< Derived* >(_ptr);
 	}
 
 	/*
-	Reinterpret Cast (Direct)
+	Reinterpret Cast (Pointer)
 	*/
-	template<typename Derived, typename Base>
+	template<typename Derived, typename Base> 
 	ForceInline 
-	Derived RCast(Base _obj)
+	Derived& RCast(Base& _ptr)
 	{
-		return reinterpret_cast<Derived>(_obj);
+		return reinterpret_cast< Derived& >(_ptr);
 	}
 
 	/*
@@ -71,17 +82,25 @@ namespace LAL
 		return reinterpret_cast< Derived* >(_ptr);
 	}
 
-	//template<typename Object>
-	
+	/*
+	Static Cast (Direct)
+	*/
+	template<typename Derived, typename Base>
+	ForceInline Where<!IsReference<Base>(), 
+	Derived> SCast(Base _obj)
+	{
+		return static_cast<Derived>(_obj);
+	}
 
 	/*
 	Static Cast (Direct)
 	*/
 	template<typename Derived, typename Base> 
 	ForceInline 
-	Derived SCast(const Base _obj)
+	Where<IsReference<Base>(), 
+	Derived&> SCast(Base _obj)
 	{
-		return static_cast<Derived>(_obj);
+		return static_cast<Derived& >(_obj);
 	}
 
 	/*
@@ -89,8 +108,8 @@ namespace LAL
 	*/
 	template<typename Derived, typename Base> 
 	ForceInline 
-	Derived* SCast(const Base* _ptr)
+	Derived* SCast(Base* _ptr)
 	{
-		return static_cast< Derived* >(_ptr);
+		return static_cast<Derived* >(_ptr);
 	}
 }

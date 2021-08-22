@@ -1,19 +1,16 @@
 // Parent Header
 #include "HAL_Backend.hpp"
 
-#include "Dev/Log.hpp"
-
+Meta_SetupEngineModule_Implementation(HAL);
 
 
 namespace HAL
 {
 	using namespace LAL;
 
-	Dev_Declare_Log(HAL);
-
 	void Load_Backend()
 	{
-		SubLogger.Init();
+		Meta_EngineModule_Init();
 	}
 
 	namespace GPU

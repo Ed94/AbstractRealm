@@ -18,8 +18,6 @@ namespace OSAL
 
 #ifdef _WIN32
 
-using namespace C_API;
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /* hPrevInstance */, LPSTR /* lpCmdLine */, int /* nShowCmd */)
 {
 	OSAL::Record_EntryPoint_StartExecution();

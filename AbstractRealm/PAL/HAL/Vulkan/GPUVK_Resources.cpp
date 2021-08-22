@@ -200,7 +200,7 @@ namespace HAL::GPU::Vulkan
 		EResult returnCode = buffer.Create(_bufferInfo);
 
 		if (returnCode != EResult::Success)
-			throw RuntimeError("Failed to initialize buffer package.");
+			Exception::Fatal::Throw("Failed to initialize buffer package.");
 
 		Memory::AllocateInfo allocInfo;
 
@@ -548,7 +548,7 @@ namespace HAL::GPU::Vulkan
 		allocationInfo.MemoryTypeIndex = gpu.FindMemoryType(image.GetMemoryRequirements().MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
 
 		if (memory.Allocate(image.GetMemoryRequirements(), Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal)) != EResult::Success)
-			throw RuntimeError("Failed to allocate image memory!");
+			Exception::Fatal::Throw("Failed to allocate image memory!");
 
 		image.BindMemory(memory, 0);
 
@@ -624,7 +624,7 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
 		if (imageView.Create(GPU_Comms::GetEngagedDevice(), viewInfo) != EResult::Success)
-			throw RuntimeError("Failed to create texture image view!");
+			Exception::Fatal::Throw("Failed to create texture image view!");
 	}
 
 	void TextureImage::CreateSampler()
@@ -653,7 +653,7 @@ namespace HAL::GPU::Vulkan
 		samplerInfo.MaxLod     = SCast<f32>(GetMipmapLevels());
 
 		if (sampler.Create(GPU_Comms::GetEngagedDevice(), samplerInfo) != EResult::Success)
-			throw RuntimeError("Failed to create texture sampler!");
+			Exception::Fatal::Throw("Failed to create texture sampler!");
 	}
 
 	void TextureImage::GenerateMipmaps()
@@ -796,7 +796,7 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success)
 		{
-			throw RuntimeError("Failed to create uniform buffer.");
+			Exception::Fatal::Throw("Failed to create uniform buffer.");
 		}
 
 		Memory::AllocateInfo allocInfo;
@@ -813,14 +813,14 @@ namespace HAL::GPU::Vulkan
 
 		if (result != EResult::Success)
 		{
-			throw RuntimeError("Failed to create uniform buffer memory.");
+			Exception::Fatal::Throw("Failed to create uniform buffer memory.");
 		}
 
 		buffer.BindMemory(memory, Memory::ZeroOffset);
 
 		if (result != EResult::Success)
 		{
-			throw RuntimeError("Failed to bind uniform buffer memory.");
+			Exception::Fatal::Throw("Failed to bind uniform buffer memory.");
 		}
 
 		return result;

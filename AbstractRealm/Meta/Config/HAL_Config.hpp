@@ -6,17 +6,13 @@ Currently has GPU HAL related configuration
 */
 
 
-
 #pragma once
-
 
 
 // Includes
 
 #include "LAL/LAL.hpp"
-
 #include "Meta/Specification.hpp"
-
 
 
 // Macros
@@ -29,7 +25,6 @@ Determines which Vulkan library will be used to interface with the Vulkan API.
 */
 #define VulkanAPI_Interface \
 VaultedVulkan_Interface
-
 
 
 namespace Meta
@@ -48,7 +43,7 @@ namespace Meta
 	enum class EGPUPlatformAPI
 	{
 		No_API,
-		BGFX  ,
+		Methane,
 		Vulkan,
 	};
 
@@ -92,11 +87,6 @@ namespace Meta
 	EGPU_PresentMode    GPU_PresentationPref  ();
 	EGPU_FrameBuffering GPU_FrameBufferingPref();
 
-
-	namespace BGFX
-	{
-
-	}
 
 	namespace  Vulkan
 	{

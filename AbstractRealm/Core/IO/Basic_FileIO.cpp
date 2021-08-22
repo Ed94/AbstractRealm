@@ -17,7 +17,7 @@ namespace IO
 
 		if (! fileStream.is_open())
 		{
-			throw RuntimeError("BufferFile: Failed to open file at: " + _fileToBuffer.generic_string());
+			Exception::Fatal::Throw("BufferFile: Failed to open file at: " + _fileToBuffer.generic_string());
 		}
 
 		// TellG: Get position in input sequence 

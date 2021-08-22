@@ -23,8 +23,6 @@ namespace LAL
 
 	// Flexible
 
-	using ui16 = unsigned int;
-	using si16 = signed   int;
 	using ui32 = unsigned int;
 	using si32 = signed   int;
 
@@ -47,7 +45,6 @@ namespace LAL
 
 	using f32 = float ;
 	using f64 = double;
-
 
 
 	// Functions

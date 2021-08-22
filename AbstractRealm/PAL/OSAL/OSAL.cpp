@@ -7,9 +7,8 @@
 
 #include "OSAL_Backend.hpp"
 #include "OSAL_Hardware.hpp"
-#include "OSAL_Platform.hpp"
+#include "OSAL_Networking.hpp"
 #include "OSAL_Timing.hpp"
-
 
 
 namespace OSAL
@@ -97,19 +96,19 @@ namespace OSAL
 				{
 					StringStream toString;
 					
-					toString << PutTime(&GetExecutionStartDate(), "%F %I:%M:%S %p");
+					toString << PutTime(GetExecutionStartDate(), "%F %I:%M:%S %p");
 
 					Table2C::Entry("Execution Start", toString.str());
 
 					toString.str(String());;
 
-					toString << PutTime(&GetTime_Local(), "%F %I:%M:%S %p");
+					toString << PutTime(GetTime_Local(), "%F %I:%M:%S %p");
 
 					Table2C::Entry("Current Time (Local)", toString.str());
 
 					toString.str(String());;
 
-					toString << PutTime(&GetTime_UTC(), "%F %I:%M:%S %p");
+					toString << PutTime(GetTime_UTC(), "%F %I:%M:%S %p");
 
 					Table2C::Entry("Current Time (UTC)", toString.str());
 
@@ -180,10 +179,14 @@ namespace OSAL
 				break;
 			}
 		}
+
+		Load_Networking();
 	}
 
 	void Unload()
 	{
+		Unload_Networking();
+
 		switch (WindowingPlatform)
 		{
 			case EWindowingPlatform::GLFW:
@@ -209,7 +212,6 @@ namespace OSAL
 
 
 	// Private
-
 
 	void GetProessInformation()
 	{

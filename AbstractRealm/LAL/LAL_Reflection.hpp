@@ -73,6 +73,9 @@ namespace LAL
 	template<typename Type>
 	using IsArithmeticType = STL::is_arithmetic<Type>;
 
+	template<typename Type>
+	using IsReferenceType = STL::is_reference<Type>;
+
 	// Type Primary Categories
 
 	template<typename Type>
@@ -140,6 +143,12 @@ namespace LAL
 		return IsArithmeticType<Type>::value;
 	}
 
+	template<typename Type> constexpr
+	bool IsReference()
+	{
+		return IsReferenceType<Type>::value;
+	}
+
 	// Type Primary Categories
 
 	template<typename Type> constexpr
@@ -172,6 +181,24 @@ namespace LAL
 			IsSameType<Raw , String    >() &&
 			IsSameType<Raw , StringView>();
 	}
+	
+
+	// Nameof
+
+	// Obtains name of type, reference and cv-qualifiers are ignored.
+	//template <typename T>
+	//[[nodiscard]] constexpr 
+	//StringView nameof_type() noexcept {
+	//	static_assert(detail::nameof_type_supported<T>::value, "nameof::nameof_type unsupported compiler (https://github.com/Neargye/nameof#compiler-compatibility).");
+	//	using U = detail::identity<detail::remove_cvref_t<T>>;
+	//	constexpr string_view name = detail::type_name_v<U>;
+	//	static_assert(name.size() > 0, "Type does not have a name.");
+
+	//	return name;
+	//}
+
+	template<typename Type>
+	constexpr auto NameOfType = nameof::nameof_type<Type>;
 }
 
 // NameOf

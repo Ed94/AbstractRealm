@@ -49,11 +49,11 @@ namespace PAL
 
 			Log("Loading module.");
 
+			SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
+
 			OSAL::Load();
 
 			HAL::Load();
-
-			SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
 		}
 
 		void Unload()

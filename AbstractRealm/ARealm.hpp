@@ -26,11 +26,17 @@ The main include file that games should use.
 
 namespace ARealm
 {
-	namespace C_API = C_API;
 	namespace LAL    = LAL;
 	namespace Meta   = Meta;
-	namespace HAL    = HAL;
+	namespace HAL
+	{
+		using namespace HAL;
+
+		namespace GPU
+		{
+			using namespace HAL::GPU;
+		}
+	}
 	namespace OSAL   = OSAL;
 	namespace PAL    = PAL;
-	namespace TP_API = TP_API;
 }

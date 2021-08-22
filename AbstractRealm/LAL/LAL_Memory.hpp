@@ -18,9 +18,6 @@ Last Modified: 5/18/2020
 
 namespace LAL
 {
-	// Macro Static Variable scope specifier.
-	#define StaticData()
-
 #ifdef LAL_UseMemorySpecifiers
 
 	/*
@@ -70,6 +67,8 @@ namespace LAL
 
 #endif
 
+	template<typename Type> using ref = Type&;
+
 	/*
 	Pointer Template
 
@@ -97,16 +96,22 @@ namespace LAL
 		return &_obj;
 	}
 
+	template<typename Type>
+	auto getPtr(Type* _objPtr)
+	{
+		return &_objPtr;
+	}
+
 	template<typename FunctionType>
 	auto getFnPtr(FunctionType& /*_obj*/)
 	{
 		return NULL;
 	}
 
-	using std::move;
+	using STL::move;
 
 	template<typename ReturnType, typename... ParameterTypes>
-	using FPtr = ReturnType(*)(ParameterTypes...);
+	using fnPtr = ReturnType(*)(ParameterTypes...);
 
 	// Clang-CL does not like window's offsetof macro.
 	template <typename StructType, typename StructMemberType>
@@ -116,4 +121,18 @@ namespace LAL
 	}
 
 	#define OffsetOf(_MEMBEER) TOffsetOf(&_MEMBEER);
+
+	template<typename Type>
+	ptr<void> FormatByFill(ptr<Type> _memoryAddress, Type& _fillValue, uDM _count)
+	{
+		//return memset(_memoryAddress, _fillValue, _count * sizeof(Type));
+		return STL::fill_n(_memoryAddress, _count, _fillValue);
+	}
+
+	template<typename Type>
+	ptr<void> FormatWithData(ptr<Type> _memoryAddress, ptr<const Type> _dataSource, uDM _count)
+	{
+		//return memcpy(_memoryAddress, _dataSource, _count * sizeof(Type));
+		return STL::copy_n(_dataSource, _count, _memoryAddress);
+	}
 }

@@ -5,17 +5,12 @@ C++ Standard Library Interface
 
 #pragma once
 
+#ifndef LAL_STL_HEADER_GUARD
+#define LAL_STL_HEADER_GUARD
+
 
 #include "Meta/Config/LAL_Config.hpp"
 
-// C Libraries
-// These cannot be namespaced
-#include <cassert>
-#include <cmath>
-#include <cstddef>
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
 
 #ifdef META_USE_STANDARD_LIBRARY
 	#include <algorithm>
@@ -139,3 +134,6 @@ C++ Standard Library Interface
 		using namespace eastl;
 	}
 #endif
+
+
+#endif LAL_STL_HEADER_GUARD

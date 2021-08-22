@@ -1,22 +1,11 @@
 #pragma once
 
 
-#include "LAL/LAL.hpp"
+#include "Dev_Backend.hpp"
 
 
 namespace Dev
 {
-	using namespace LAL;
-
-
-	enum class ESeverity
-	{
-		Verbose,
-		Info,
-		Warning,
-		Error
-	};
-
 	//TODO: If deemed viable... (Could be if using multiple logger types in the future, or want to have ptr refs to them).
 	class ALogger
 	{};
@@ -38,7 +27,8 @@ namespace Dev
 			String       message;
 		};
 
-		Logger(String _name);
+		 Logger(String _name);
+		~Logger();
 
 		void Init();
 
@@ -70,7 +60,7 @@ namespace Dev
 	};
 
 	#define Dev_Declare_LogAPI()\
-	void Log        (String _message, Dev::ESeverity _severity = Dev::ESeverity::Info);\
+	void Log        (String _message, Dev::ESeverity _severity =  Dev::ESeverity::Info);\
 	void Log_Verbose(String _message);\
 	void Log_Warning(String _message);\
 	void Log_Error  (String _message);

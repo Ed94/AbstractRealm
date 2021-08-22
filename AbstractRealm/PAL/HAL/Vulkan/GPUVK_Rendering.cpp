@@ -1,7 +1,8 @@
 // Parent Header
 #include "GPUVK_Rendering.hpp"
-#include "Meta/EngineInfo.hpp"
 
+
+#include "Meta/EngineInfo.hpp"
 
 
 namespace HAL::GPU::Vulkan
@@ -378,15 +379,15 @@ namespace HAL::GPU::Vulkan
 
 		EResult result = Parent::Create(GPU_Comms::GetEngagedDevice(), info);
 
-		if (result != EResult::Success) throw RuntimeError("Unable to regenerate swapchain.");
+		if (result != EResult::Success) Exception::Fatal::Throw("Unable to regenerate swapchain.");
 
 		result = RetrieveImages();
 
-		if (result != EResult::Success) throw RuntimeError("Unable to retrieve swapchain images after regeneration.");
+		if (result != EResult::Success) Exception::Fatal::Throw("Unable to retrieve swapchain images after regeneration.");
 
 		result = GenerateViews();
 
-		if (result != EResult::Success) throw RuntimeError("Unable to generate new image views after regenerating swapchain.");
+		if (result != EResult::Success) Exception::Fatal::Throw("Unable to generate new image views after regenerating swapchain.");
 	}
 
 	EResult Swapchain::GenerateViews()
@@ -805,7 +806,7 @@ namespace HAL::GPU::Vulkan
 
 			if (result != EResult::Success)
 			{
-				throw RuntimeError("Unable to submit frame to graphics queue");
+				Exception::Fatal::Throw("Unable to submit frame to graphics queue");
 			}
 		}
 		else
@@ -855,7 +856,7 @@ namespace HAL::GPU::Vulkan
 
 		else if (result != EResult::Success)
 		{
-			throw RuntimeError("Not able to render frame and was not due to out-of-date or suboptimal...");
+			Exception::Fatal::Throw("Not able to render frame and was not due to out-of-date or suboptimal...");
 		}
 
 		previousFrame = currentFrameBuffer;
@@ -881,15 +882,15 @@ namespace HAL::GPU::Vulkan
 
 			EResult result = CreateDepthBuffer();
 
-			if (result != EResult::Success) throw RuntimeError("Failed to recreate depth buffer in context.");
+			if (result != EResult::Success) Exception::Fatal::Throw("Failed to recreate depth buffer in context.");
 
 			result = CreateRenderPass();
 
-			if (result != EResult::Success) throw RuntimeError("Failed to recreate render pass in context.");
+			if (result != EResult::Success) Exception::Fatal::Throw("Failed to recreate render pass in context.");
 
 			result = CreateFramebuffers();
 
-			if (result != EResult::Success) throw RuntimeError("Failed to recreate frame renderer in context.");
+			if (result != EResult::Success) Exception::Fatal::Throw("Failed to recreate frame renderer in context.");
 
 			// Adjust view contexts to the new relative size of the swapchain.
 		}
@@ -1284,13 +1285,14 @@ namespace HAL::GPU::Vulkan
 	Deque<RenderContext> RenderContexts;
 
 
+	using Rendering_SingleGPU = Rendering_Maker<Meta::EGPU_Engage::Single>;
 
-	void Rendering_Maker<Meta::EGPU_Engage::Single>::SetSubmissionMode(ESubmissionType _submissionBehaviorDesired)
+	void Rendering_SingleGPU::SetSubmissionMode(ESubmissionType _submissionBehaviorDesired)
 	{
 		SubmissionMode = _submissionBehaviorDesired;
 	}
 
-	void Rendering_Maker<Meta::EGPU_Engage::Single>::Shutdown()
+	void Rendering_SingleGPU::Shutdown()
 	{
 		for (auto& swapchain : SwapChains)
 		{
@@ -1308,7 +1310,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	Surface& Rendering_Maker<Meta::EGPU_Engage::Single>::Request_Surface(ptr<OSAL::Window> _window)
+	Surface& Rendering_SingleGPU::Request_Surface(ptr<OSAL::Window> _window)
 	{
 		Surfaces.resize(Surfaces.size() + 1);
 
@@ -1318,20 +1320,20 @@ namespace HAL::GPU::Vulkan
 
 		if (surface.Create(_window) != EResult::Success)
 		{
-			throw RuntimeError("Failed to create surface for targeted window.");
+			Exception::Fatal::Throw("Failed to create surface for targeted window.");
 		}
 
 		return surface;
 	}
 
-	void Rendering_Maker<Meta::EGPU_Engage::Single>::Retire_Surface(ptr<Surface> _surface)
+	void Rendering_SingleGPU::Retire_Surface(ptr<Surface> _surface)
 	{
 		_surface->Destroy();
 
 		Surfaces.erase(find(Surfaces.begin(), Surfaces.end(), *_surface));
 	}
 
-	Swapchain& Rendering_Maker<Meta::EGPU_Engage::Single>::Request_SwapChain(Surface& _surface, Surface::Format _formatDesired)
+	Swapchain& Rendering_SingleGPU::Request_SwapChain(Surface& _surface, Surface::Format _formatDesired)
 	{
 		Swapchain::CreateInfo info;
 
@@ -1349,36 +1351,37 @@ namespace HAL::GPU::Vulkan
 		return swapchain;
 	}
 
-	void Rendering_Maker<Meta::EGPU_Engage::Single>::Retire_SwapChain(ptr<Swapchain> _swapchain)
+	void Rendering_SingleGPU::Retire_SwapChain(ptr<Swapchain> _swapchain)
 	{
 		_swapchain->Destroy();
 
 		SwapChains.erase(find(SwapChains.begin(), SwapChains.end(), *_swapchain));
 	}
 
-	RenderContext& Rendering_Maker<Meta::EGPU_Engage::Single>::Request_RenderContext(Swapchain& _swapchain)
+	RenderContext& Rendering_SingleGPU::Request_RenderContext(Swapchain& _swapchain)
 	{
 		RenderContexts.resize(RenderContexts.size() + 1);
 
 		EResult result = RenderContexts.back().Create(_swapchain);
 
-		if (result != EResult::Success) throw RuntimeError("Failed to create render context");	
+		if (result != EResult::Success) 
+			Exception::Fatal::Throw("Failed to create render context");
 
 		return RenderContexts.back();
 	}
 
-	void Rendering_Maker<Meta::EGPU_Engage::Single>::Retire_RenderContext(ptr<RenderContext> _renderContext)
+	void Rendering_SingleGPU::Retire_RenderContext(ptr<RenderContext> _renderContext)
 	{
 		_renderContext->Destroy();
 
 		RenderContexts.erase(find(RenderContexts.begin(), RenderContexts.end(), *_renderContext));
 	}
 
-	void Rendering_Maker<Meta::EGPU_Engage::Single>::Initalize()
+	void Rendering_SingleGPU::Initalize()
 	{
 	}
 
-	void Rendering_Maker<Meta::EGPU_Engage::Single>::Update()
+	void Rendering_SingleGPU::Update()
 	{
 		for (auto& renderContext : RenderContexts)
 		{
@@ -1386,7 +1389,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void Rendering_Maker<Meta::EGPU_Engage::Single>::Present()
+	void Rendering_SingleGPU::Present()
 	{
 		for (auto& renderContext : RenderContexts)
 		{

@@ -2,14 +2,14 @@
 #include "Core_Backend.hpp"
 
 
-Meta_SetupModule_Implementation(Core);
+Meta_SetupEngineModule_Implementation(Core);
 
 
 namespace Core
 {
 	void LoadBackend()
 	{
-		SubLogger.Init();
+		Meta_EngineModule_Init();
 	}
 }
 

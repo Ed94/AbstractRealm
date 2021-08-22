@@ -20,27 +20,27 @@ that can handle multiple different datatype accuracies. (As well as conversion b
 
 // Will use a more accurate epsilon for math floating-point operations.
 //#define SIM_DecN_USE_HIGH_ACCURACY_COMPARE \
-true
+// true
 
 // Only if using a type higher than FP32.
 //#define SIM_DecN_USE_NANO_ACCURACY_COMPARE \
-false
+// false
 
 // Accuracy specified for DecN type used in simulation's real number units.
 //#define SIM_DecN_ACCURACY \
-BitAccuracy::_32_Bit
+// BitAccuracy::_32_Bit
 
 // Will use a more accurate epsilon for math floating-point operations.
 //#define SIM_DecN_USE_HIGH_ACCURACY_UNIT \
-true
+// true
 
 // Only if using a type higher than FP32.
 //#define SIM_DecN_USE_NANO_ACCURACY_UNIT \
-false
+// false
 
 // Accuracy specified for IntN type used in simulation's integer number units. (Will use nano-accurate epsilon)
 //#define SIM_IntN_ACCURACY \
-BitAccuracy::_64_Bit
+// BitAccuracy::_64_Bit
 
 
 

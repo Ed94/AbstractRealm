@@ -3,31 +3,13 @@ Operating System Abstraction Layer: Platform Definitions
 
 */
 
+
 #pragma once
 
 
-// Engine
-#include "Meta/Meta.hpp"
+#include "OSAL_API_Windows.hpp"
+#include "LAL/LAL.hpp"
 
-namespace C_API
-{
-	extern "C"
-	{
-	// Windows
-	#ifdef _WIN32
-
-		//#include "targetver.h"
-		// Prevents the numeric limits error in LAL.
-		#define NOMINMAX
-		#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-		// Windows Header Files
-		#include <windows.h>
-		#include <corecrt_io.h>
-		#include <fcntl.h>
-
-	#endif
-	}
-}
 
 namespace OSAL
 {
@@ -58,7 +40,47 @@ namespace OSAL
 
 	namespace PlatformBackend
 	{
-		using namespace C_API;
+		template<typename PlatformType>
+		struct PlatformStruct_Base
+		{
+			using BaseType = PlatformType;
+
+			/**
+			@brief Does a pointer r-cast to the desired struct type.
+			(Since any wrapped platform struct have the same members this is possible)
+			*/
+			operator PlatformType()
+			{
+				return dref(RCast<PlatformType>(this));
+			}
+
+			/**
+			@brief Does a pointer r-cast to the desired struct type.
+			(Since any wrapped platform struct have the same members this is possible)
+			*/
+			operator const PlatformType& () const
+			{
+				return dref(RCast<const PlatformType>(this));
+			}
+
+			/**
+			@brief Does a pointer r-cast to the desired struct type.
+			(Since any wrapped platform struct have the same members this is possible)
+			*/
+			operator PlatformType* ()
+			{
+				return RCast<PlatformType>(this);
+			}
+
+			/**
+			@brief Does a pointer r-cast to the desired struct type.
+			(Since any wrapped platform struct have the same members this is possible)
+			*/
+			operator const PlatformType* () const
+			{
+				return RCast<const PlatformType>(this);
+			}
+		};
 
 		template<OSAL::EOS>
 		struct PlatformTypes_Maker;
@@ -66,8 +88,6 @@ namespace OSAL
 		template<>
 		struct PlatformTypes_Maker<EOS::Windows>
 		{
-			
-
 			using OS_AppHandle    = HINSTANCE;
 			using OS_Handle       = HANDLE   ;
 			using OS_WindowHandle = HWND     ;
@@ -77,7 +97,10 @@ namespace OSAL
 
 			using HANDLE = HANDLE;
 
-			static OS_Handle InvalidHandle() { return INVALID_HANDLE_VALUE; };
+			static OS_Handle InvalidHandle() 
+			{
+				return INVALID_HANDLE_VALUE; 
+			};
 
 			using ExitValT = int;
 		};
@@ -121,7 +144,7 @@ namespace OSAL
 		u32 Minor;
 		u32 Patch;
 
-		C_API::UINT32 Build;
+		UINT32 Build;
 
 		String Str() const
 		{

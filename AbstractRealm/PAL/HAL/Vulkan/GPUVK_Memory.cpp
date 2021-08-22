@@ -6,9 +6,11 @@
 
 namespace HAL::GPU::Vulkan
 {
-	StaticData()
+#pragma region StaticData
 
 		DynamicArray<Memory> Memories;
+
+#pragma endregion StaticData
 
 
 

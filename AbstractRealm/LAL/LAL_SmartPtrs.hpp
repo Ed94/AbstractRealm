@@ -19,13 +19,13 @@ namespace LAL
 	template<typename Type> using WPtr = STL::weak_ptr  <Type>;
 
 	template<typename Type, class... ArgumentsTypes>
-	UPtr<Type> MakeUPtr(ArgumentsTypes&&... _arguments)
+	UPtr<Type> MakeUnique(ArgumentsTypes&&... _arguments)
 	{
 		return STL::make_unique<Type>(_arguments...);
 	}
 
 	template<typename Type, class... ArgumentsTypes>
-	SPtr<Type> MakeSPtr(ArgumentsTypes&&... _arguments)
+	SPtr<Type> MakeShared(ArgumentsTypes&&... _arguments)
 	{
 		return STL::make_shared<Type>(_arguments...);
 	}

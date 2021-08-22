@@ -11,12 +11,11 @@
 
 namespace Memory
 {
-	StaticData()
-
+#pragma region StaticData
 		Map<ptr<void>, Heap::Allocation> AllocationsReported;
 
 		Map<String, Heap::Allocation> AllocationsReported_NoAddress;
-
+#pragma endregion StaticData
 
 
 	// Heap

@@ -10,26 +10,15 @@
 #pragma once
 
 
-
-// Engine
 #include "LAL/LAL.hpp"
-#include "Memory/MemTracking.hpp"
-
+#include "Exceptions/Exceptions.hpp"
 
 
 namespace IO
 {
-	using namespace Memory;
-
-	
-
-	// Usings
-
 	using namespace LAL;
 
 	using FileBuffer = DynamicArray<char>;
-	//using Path       = String            ;
-
 
 
 	// Enums and Masks
@@ -47,16 +36,13 @@ namespace IO
 	};
 
 	
-
 	using OpenFlags = 
 		Bitfield<EOpenFlag, std::ios::openmode>;
-
 
 
 	// Compile-Time
 		
 	constexpr int FileStream_Beginning = 0;
-
 
 
 	// Functions

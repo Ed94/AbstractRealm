@@ -2,8 +2,6 @@
 File: Meta.hpp
 Module: Meta
 
-Last Modified: 2021 April 19
-
 This is the main header for the meta module, and also acts as a "Meta" header for other major modules of the engine source.
 */
 
@@ -11,24 +9,19 @@ This is the main header for the meta module, and also acts as a "Meta" header fo
 #pragma once
 
 
+// Platform related headers should always come first to prevent redef issues with macros.
+// This is the only file that so far has this exception.
+#include "OSAL/OSAL_Platform.hpp"
 // All modules of the engine with exception to LAL, use the LAL.
 #include "LAL/LAL.hpp"
-// All modules of the engine, including the Dev module of Core, use the LAL.
+// All modules of the engine, EXCEPT the Dev module of Core, use the Log module using this include.
 #include "Dev/Log.hpp"
-
-// Meta
-#include "EngineInfo.hpp"
-
-
-namespace Meta
-{
-	// Functions
-
-	void LoadModule();
-}
+// All modules of the engien use the Core's exception module.
+// However not all modules include the exception module directly
+#include "Exceptions/Exceptions.hpp"
 
 
-#define Meta_SetupModule(_Module) \
+#define Meta_SetupEngineModule(_Module) \
 namespace _Module\
 {\
 	using namespace LAL;\
@@ -36,21 +29,30 @@ namespace _Module\
 	Dev_Declare_LogAPI();\
 }
 
-#define Meta_SetupModule_Implementation(_Module)\
+#define Meta_SetupEngineModule_Implementation(_Module)\
 namespace _Module\
 {\
 \
 	Dev_Declare_Log(_Module);\
 }
 
+#define Meta_EngineModule_Init() \
+SubLogger.Init();
+
 // Not used yet.
-#define Meta_SetupSubmodule(_Module, _Submodule) \
-namespace _Submodule\
-{\
-	using namespace LAL;\
-\
-	Dev_Declare_SubLog(_Module, _Submodule);\
-}
+//#define Meta_SetupSubmodule(_Module, _Submodule) \
+//namespace _Submodule\
+//{\
+//	using namespace LAL;\
+//\
+//	Dev_Declare_SubLog(_Module, _Submodule);\
+//}
 
 
-Meta_SetupModule(Meta);
+// Meta Module Headers
+
+// Note: Config files ommited on purpose
+
+#include "AppInfo.hpp"
+#include "EngineInfo.hpp"
+#include "Specification.hpp"

@@ -2,23 +2,24 @@
 #include "SAL_ImGui.hpp"
 
 
-// Engine
-#include "Memory/MemTracking.hpp"
-#include "HAL_GPU.hpp"
-#include "Console.hpp"
-
-
 #include "Meta/Config/CoreDev_Config.hpp"
 #include "Meta/Config/OSAL_Config.hpp"
 #include "Meta/Config/Resource_Config.hpp"
 #include "Meta/Config/Simulation_Config.hpp"
 
-#include "PAL/OSAL//OSAL_Hardware.hpp"
+#include "HAL/HAL_GPU.hpp"
+#include "HAL/Vulkan/GPU_Vulkan.hpp"
+
+#include "OSAL//OSAL_Hardware.hpp"
+
+#include "Dev/Console.hpp"
+#include "Exceptions/Exceptions.hpp"
+
 #include "cereal/archives/json.hpp"
 #include "ctti/nameof.hpp"
 #include "ctti/name.hpp"
 #include "ctti/detailed_nameof.hpp"
-#include "nameof.hpp"
+
 
 #include "imgui/backends/imgui_impl_vulkan.h"	
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -26,10 +27,6 @@
 
 namespace SAL::Imgui
 {
-	using namespace C_API;
-
-	using namespace Memory;
-
 	UnorderedMap<String, DynamicArray<WindowCallback>> WindowsQueued;
 
 	void CLog(String _info)
@@ -39,7 +36,7 @@ namespace SAL::Imgui
 
 	namespace PlatformBackend
 	{
-		StaticData()
+#pragma region StaticData
 
 			// GLFW
 
@@ -54,6 +51,8 @@ namespace SAL::Imgui
 			VV::V3::DescriptorPool DescriptorPool;
 
 			DynamicArray<VV::V3::Framebuffer> SwapChain_Framebuffers;
+
+#pragma endregion StaticData
 
 
 		// Functions
@@ -164,7 +163,7 @@ namespace SAL::Imgui
 			}
 			case Meta::EWindowingPlatform::OSAL:
 			{
-				throw NotImplementedException();
+				Exception::Fatal::NotImplemented("OSAL does not provide a windowing platform yet.");
 
 				break;
 			}
@@ -190,10 +189,10 @@ namespace SAL::Imgui
 				initSpec.QueueFamily     = RenderContext->Queue.GetFamilyIndex();
 				initSpec.Queue           = RenderContext->Queue                 ;
 				initSpec.PipelineCache   = RenderContext->PipelineCache         ;
-				initSpec.Allocator       = RenderContext->Allocator->operator const C_API::VkAllocationCallbacks*();
+				initSpec.Allocator       = RenderContext->Allocator->operator const VkAllocationCallbacks*();
 				initSpec.MinImageCount   = RenderContext->MinimumFrameBuffers   ;
 				initSpec.ImageCount      = RenderContext->FrameBufferCount      ;
-				initSpec.MSAASamples     = C_API::VkSampleCountFlagBits(RenderContext->MSAA_Samples);
+				initSpec.MSAASamples     = VkSampleCountFlagBits(RenderContext->MSAA_Samples);
 				initSpec.CheckVkResultFn = PlatformBackend::Vulkan_DebugCallback;
 
 				SetupGPU_Interface();
@@ -210,7 +209,7 @@ namespace SAL::Imgui
 			}
 			case Meta::EGPUPlatformAPI::No_API:
 			{
-				throw RuntimeError("No API Selected");
+				Exception::Fatal::Throw("No API Selected");
 
 				break;
 			}
@@ -392,7 +391,7 @@ namespace SAL::Imgui
 			}
 			case Meta::EGPUPlatformAPI::No_API:
 			{
-				throw RuntimeError("No API Selected.");
+				Exception::Fatal::Throw("No API Selected.");
 			}
 		}
 	}
@@ -413,7 +412,7 @@ namespace SAL::Imgui
 			}
 			case Meta::EGPUPlatformAPI::No_API:
 			{
-				throw RuntimeError("No API Selected.");
+				Exception::Fatal::Throw("No API Selected.");
 			}
 		}
 	}	

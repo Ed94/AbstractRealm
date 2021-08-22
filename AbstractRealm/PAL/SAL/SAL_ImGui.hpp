@@ -1,18 +1,17 @@
-#pragma once
+ #pragma once
 
 
 
 // Includes
 
+#include "OSAL/OSAL_Platform.hpp"
 #include "LAL/LAL.hpp"
 #include "Meta/Config/HAL_Config.hpp"
 #include "Meta/Config/OSAL_Config.hpp"
-#include "OSAL/OSAL_Platform.hpp"
 #include "OSAL/OSAL_Windowing.hpp"
 
 
 #include "imgui/imgui.h"
-
 
 namespace SAL::Imgui
 {
@@ -21,6 +20,8 @@ namespace SAL::Imgui
 	using IO = ImGuiIO;
 
 	using WindowCallback = Function<void()>;
+
+	//struct ImGuiContext* CreateContext(struct ImFontAtlas* shared_font_atlas);
 
 	using ImGui::CreateContext  ;
 	using ImGui::GetIO          ;

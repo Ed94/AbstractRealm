@@ -11,10 +11,9 @@ namespace OSAL
 {
 	namespace PlatformBackend
 	{
-		using namespace Memory;
+		using ConsoleAPI_Win = ConsoleAPI_Maker<EOS::Windows>;
 
-		//template<>
-		bool ConsoleAPI_Maker<EOS::Windows>::Bind_IOBuffersTo_OSIO()
+		bool ConsoleAPI_Win::Bind_IOBuffersTo_OSIO()
 		{				 
 			bool result = false;
 
@@ -77,7 +76,7 @@ namespace OSAL
 			return true;
 		}
 
-		bool ConsoleAPI_Maker<EOS::Windows>::Unbind_IOBuffersTo_OSIO()
+		bool ConsoleAPI_Win::Unbind_IOBuffersTo_OSIO()
 		{
 			bool result = true;
 
@@ -118,12 +117,12 @@ namespace OSAL
 			return result;
 		}
 
-		OS_Handle ConsoleAPI_Maker<EOS::Windows>::CreateBuffer()
+		OS_Handle ConsoleAPI_Win::CreateBuffer()
 		{
 			return CreateConsoleScreenBuffer(GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
 		}
 
-		bool ConsoleAPI_Maker<EOS::Windows>::Create()
+		bool ConsoleAPI_Win::Create()
 		{
 			static bool created = false;
 
@@ -145,7 +144,7 @@ namespace OSAL
 			}
 		}
 
-		bool ConsoleAPI_Maker<EOS::Windows>::Destroy()
+		bool ConsoleAPI_Win::Destroy()
 		{
 			bool result = Unbind_IOBuffersTo_OSIO();
 
@@ -159,40 +158,40 @@ namespace OSAL
 			return result;
 		}
 
-		OS_Handle ConsoleAPI_Maker<EOS::Windows>::GetConsoleHandle(EHandle::NativeT _type)
+		OS_Handle ConsoleAPI_Win::GetConsoleHandle(EHandle::NativeT _type)
 		{
 			return GetStdHandle(_type);
 		}
 
-		bool ConsoleAPI_Maker<EOS::Windows>::SetBufferSize(OS_Handle _handle, ConsoleTypes::Extent _extent)
+		bool ConsoleAPI_Win::SetBufferSize(OS_Handle _handle, Extent _extent)
 		{
 			return SetConsoleScreenBufferSize(_handle, _extent);
 		}
 
-		bool ConsoleAPI_Maker<EOS::Windows>::SetSize(OS_Handle _handle, ConsoleTypes::Rect& _rect)
+		bool ConsoleAPI_Win::SetSize(OS_Handle _handle, Rect& _rect)
 		{
 			return SetConsoleWindowInfo(_handle, TRUE, &_rect);
 		}
 
-		bool ConsoleAPI_Maker<EOS::Windows>::SetTitle(OS_RoCStr _title)
+		bool ConsoleAPI_Win::SetTitle(OS_RoCStr _title)
 		{
 			return SetConsoleTitle(_title);
 		}
 
-		bool ConsoleAPI_Maker<EOS::Windows>::WriteToConsole
+		bool ConsoleAPI_Win::WriteToConsole
 		(
 			OS_Handle _handle     ,
-			Char*    _buffer     ,
+			Char*     _buffer     ,
 			Extent    _bufferSize ,
 			Extent    _bufferCoord,
-			Rect      _readRegion
+			Rect&     _readRegion
 		)
 		{
 			auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
 			if (handle == INVALID_HANDLE_VALUE) return false;
 
-			return WriteConsoleOutput(_handle, _buffer, _bufferSize, _bufferCoord, _readRegion);
+			return WriteConsoleOutput(_handle, _buffer, _bufferSize, _bufferCoord, &_readRegion);
 		}
 	}
 }

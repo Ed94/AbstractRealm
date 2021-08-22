@@ -2,12 +2,12 @@
 #include "Log.hpp"
 
 
-#include "Console.hpp"
-#include "EngineInfo.hpp"
-#include "SAL_ImGui.hpp"
+// PAL
 #include "OSAL/OSAL_Timing.hpp"
+#include "SAL_ImGui.hpp"
+// Core
 #include "IO/Basic_FileIO.hpp"
-
+#include "Console.hpp"
 
 
 namespace Dev
@@ -34,6 +34,11 @@ namespace Dev
 		name(_name)
 	{}
 
+	Logger::~Logger()
+	{
+		FileOut.close();
+	}
+
 	void Logger::Init()
 	{
 		SubRecords newSubRecord;
@@ -44,9 +49,9 @@ namespace Dev
 
 			auto dateSnapshot = OSAL::GetExecutionStartDate();
 			
-			dateStream << PutTime(&dateSnapshot, "%F");
+			dateStream << PutTime(dateSnapshot, "%F");
 
-			dateFull << dateStream.str() << PutTime(&dateSnapshot, "_%I-%M-%S_%p");
+			dateFull << dateStream.str() << PutTime(dateSnapshot, "_%I-%M-%S_%p");
 
 			IO::OpenFile
 			(
@@ -67,7 +72,7 @@ namespace Dev
 					<< EEngineVersion::Minor << "."
 					<< EEngineVersion::Patch << "    "
 
-					<< "Dev Log - " + name + ": " << PutTime(&OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p") << endl;
+					<< "Dev Log - " + name + ": " << PutTime(OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p") << endl;
 
 				FileOut << setfill('-') << setw(140) << '-' << endl;
 			}
@@ -81,12 +86,12 @@ namespace Dev
 
 		static StringStream dateSig;
 
-		dateSig << PutTime(&records.back()->date, "%F %I:%M:%S %p");
+		dateSig << PutTime(records.back()->date, "%F %I:%M:%S %p");
 	}
 
 	void Logger::Record(ESeverity _severity, String _message)
 	{
-		records.push_back(MakeUPtr<RecordEntry>(_severity, name, _message));
+		records.push_back(MakeUnique<RecordEntry>(_severity, name, _message));
 
 		subRecordsRef->push_back(records.back().get());
 
@@ -94,7 +99,7 @@ namespace Dev
 		{
 			static StringStream dateSig; dateSig.str(String());
 
-			dateSig << PutTime(&records.back().get()->date, "%F %I:%M:%S %p");
+			dateSig << PutTime(records.back().get()->date, "%F %I:%M:%S %p");
 
 			FileOut
 				<< ToString(records.back()->index) << " | "
@@ -137,9 +142,9 @@ namespace Dev
 
 			auto dateSnapshot = OSAL::GetExecutionStartDate();
 
-			dateStream << PutTime(&dateSnapshot, "%F");
+			dateStream << PutTime(dateSnapshot, "%F");
 
-			dateFull << dateStream.str() << PutTime(&dateSnapshot, "_%I-%M-%S_%p");
+			dateFull << dateStream.str() << PutTime(dateSnapshot, "_%I-%M-%S_%p");
 
 			switch (Meta::LogToFile_Mode())
 			{
@@ -192,7 +197,7 @@ namespace Dev
 					<< EEngineVersion::Minor << "."
 					<< EEngineVersion::Patch << "    "
 
-					<< "Dev Log: " << PutTime(&OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p") << endl;
+					<< "Dev Log: " << PutTime(OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p") << endl;
 
 				globalFileOut << setfill('-') << setw(140) << '-' << endl;
 			}
@@ -201,13 +206,13 @@ namespace Dev
 
 	void Logger::GlobalRecord(ESeverity _severity, String _message)
 	{
-		records.push_back(MakeUPtr<RecordEntry>(_severity, "Global", _message));
+		records.push_back(MakeUnique<RecordEntry>(_severity, "Global", _message));
 
 		if (globalFileOut.is_open())
 		{
 			static StringStream dateSig;
 
-			dateSig << PutTime(&records.back()->date, "%F %I:%M:%S %p");
+			dateSig << PutTime(records.back()->date, "%F %I:%M:%S %p");
 
 			globalFileOut
 				<< ToString(records.back()->index) << " | "
@@ -261,7 +266,7 @@ namespace Dev
 					{
 						dateSig.str(String());
 
-						dateSig << PutTime(&record->date, "%F %I:%M:%S %p");
+						dateSig << PutTime(record->date, "%F %I:%M:%S %p");
 
 						Table5C::Entry
 						(
@@ -293,7 +298,7 @@ namespace Dev
 						{
 							dateSig.str(String());
 
-							dateSig << PutTime(&record->date, "%F %I:%M:%S %p");
+							dateSig << PutTime(record->date, "%F %I:%M:%S %p");
 
 							Table4C::Entry
 							(

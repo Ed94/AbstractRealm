@@ -5,10 +5,10 @@
 
 namespace OSAL
 {
-	StaticData()
+#pragma region StaticData
 		u32 NumberOfLogicalCores;
+#pragma endregion StaticData
 		
-
 	
 	namespace Backend
 	{

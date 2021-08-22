@@ -15,6 +15,8 @@ namespace Core
 		{
 			if (TreeNode("Concurrency"))
 			{
+				Concurrency::Record_EditorDevDebugUI();
+
 				TreePop();
 			}
 

@@ -1,18 +1,16 @@
 #pragma once
 
 
+#include "Meta/Meta.hpp"
+
+Meta_SetupEngineModule(HAL);
 
 #include "Console.hpp"
 #include "Dev/Log.hpp"
 
 
-
 namespace HAL
 {
-	using namespace LAL;
-
-	Dev_Declare_LogAPI();
-
 	void Load_Backend();
 	
 	namespace GPU

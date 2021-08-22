@@ -1,19 +1,12 @@
 #pragma once
 
 
-
-// Engine
-
 #include "LAL/LAL.hpp"
-
 
 
 namespace Meta
 {
-	// Usings
-
-	using namespace LAL;
-
+	using LAL::u32;
 
 
 	// Structs

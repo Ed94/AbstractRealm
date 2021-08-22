@@ -17,5 +17,5 @@ namespace HAL::GPU::BGFX
 
 	void Setup_Window();
 
-	void Cease_GPUComms();
+	void CeaseComms();
 }

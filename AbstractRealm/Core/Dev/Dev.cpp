@@ -1,9 +1,10 @@
 // Parent Header
 #include "Dev.hpp"
 
+// PAL
+#include "SAL/SAL_Imgui.hpp"
 
-// Engine
-#include "Core_Backend.hpp"
+#include "Dev_Backend.hpp"
 
 
 namespace Dev
@@ -28,13 +29,11 @@ namespace Dev
 
 	// Public
 
-	Dev_Declare_Log(Dev);
-	
 	void Load()
 	{
 		Logger::GlobalInit();
 
-		SubLogger.Init();
+		LoadBackend();
 
 		Log("Loading module.");
 
@@ -45,7 +44,6 @@ namespace Dev
 		Logger::Queue_DebugUI();
 
 		Log("loaded.");
-
 	}
 
 	void Unload()

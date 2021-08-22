@@ -6,33 +6,24 @@ GFLW Software Abstraction Layer
 #pragma once
 
 
-// Includes
+#include "Meta/Meta.hpp"
+
 
 // Vulkan must be included before GLFW
 #include "HAL/Vulkan/Vulkan_API.hpp"
 
-namespace TP_API
-{	
-	using namespace C_API;
+#include "GLFW/glfw3.h"         // Main glfw header, must come first.
 
-	//extern "C"
-	//{
-		#include "GLFW/glfw3.h"         // Main glfw header, must come first.
+#ifdef _WIN32 
 
-	#ifdef _WIN32 
-
-		#ifndef GLFW_EXPOSE_NATIVE_WIN32
-		#define GLFW_EXPOSE_NATIVE_WIN32
-			#include "GLFW/glfw3native.h"   // Provides platform specific functionality.
-		#endif
-
+	#ifndef GLFW_EXPOSE_NATIVE_WIN32
+	#define GLFW_EXPOSE_NATIVE_WIN32
+		#include "GLFW/glfw3native.h"   // Provides platform specific functionality.
 	#endif
-	//}
-}
 
-// Engine
-#include "LAL/LAL.hpp"
-#include "OSAL/OSAL_Platform.hpp"
+	#undef UNICODE
+
+#endif
 
 
 namespace SAL::GLFW
@@ -72,10 +63,10 @@ namespace SAL::GLFW
 
 	// Types
 
-	using Monitor = TP_API::GLFWmonitor;
-	using Window  = TP_API::GLFWwindow ;
+	using Monitor = GLFWmonitor;
+	using Window  = GLFWwindow ;
 
-	using WindowSize_Callback = TP_API::GLFWwindowsizefun;
+	using WindowSize_Callback = GLFWwindowsizefun;
 
 
 
@@ -95,16 +86,16 @@ namespace SAL::GLFW
 		typename AppInstanceHandle,
 		typename SurfaceHandle    ,
 
-		class EResult = C_API::VkResult
+		class EResult = VkResult
 	>
 	typename std::enable_if< 
-		sizeof(AppInstanceHandle) == sizeof(C_API::VkInstance  ) && 
-		sizeof(SurfaceHandle    ) == sizeof(C_API::VkSurfaceKHR)   , 
+		sizeof(AppInstanceHandle) == sizeof(VkInstance  ) && 
+		sizeof(SurfaceHandle    ) == sizeof(VkSurfaceKHR)   , 
 	EResult>::type CreateWindowSurface
 	(
 			  AppInstanceHandle      _appHandle, 
 			  Window*                _window   , 
-		const C_API::VkAllocationCallbacks* _allocator, 
+		const VkAllocationCallbacks* _allocator, 
 			  SurfaceHandle&         _surface
 	)
 	{

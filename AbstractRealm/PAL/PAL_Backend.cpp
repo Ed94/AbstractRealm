@@ -3,7 +3,7 @@
 
 
 
-Meta_SetupModule_Implementation(PAL);
+Meta_SetupEngineModule_Implementation(PAL);
 
 
 

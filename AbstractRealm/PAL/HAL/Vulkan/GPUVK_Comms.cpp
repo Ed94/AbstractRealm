@@ -2,35 +2,32 @@
 #include "GPUVK_Comms.hpp"
 
 
-// Engine
-#include "OSAL_Platform.hpp"
-#include "OSAL_Windowing.hpp"
-#include "HAL_Backend.hpp"
-#include "Meta/EngineInfo.hpp"
-
+#include "OSAL/OSAL.hpp"
 
 
 namespace HAL::GPU::Vulkan
 {
-	StaticData()
+#pragma region StaticData
 
-		AppInstance            AppGPU_Comms          ;
-		LayerandExtensionsList AppLayersAndExtensions;
-		DynamicArray<RoCStr>   DesiredLayers         ;
-		DynamicArray<RoCStr>   DesiredInstanceExts   ;
-		DynamicArray<RoCStr>   DesiredDeviceExts     ;
+	AppInstance            AppGPU_Comms          ;
+	LayerandExtensionsList AppLayersAndExtensions;
+	DynamicArray<RoCStr>   DesiredLayers         ;
+	DynamicArray<RoCStr>   DesiredInstanceExts   ;
+	DynamicArray<RoCStr>   DesiredDeviceExts     ;
 
-		DebugUtils::Messenger GPU_Messenger_Verbose;
-		DebugUtils::Messenger GPU_Messenger_Info;
-		DebugUtils::Messenger GPU_Messenger_Warning;
-		DebugUtils::Messenger GPU_Messenger_Error;
+	DebugUtils::Messenger GPU_Messenger_Verbose;
+	DebugUtils::Messenger GPU_Messenger_Info;
+	DebugUtils::Messenger GPU_Messenger_Warning;
+	DebugUtils::Messenger GPU_Messenger_Error;
 
-		PhysicalDeviceList PhysicalGPUs;
-		LogicalDeviceList  LogicalGPUs ;
+	PhysicalDeviceList PhysicalGPUs;
+	LogicalDeviceList  LogicalGPUs ;
 
-		/*  Currently the design of the Vulkan backend is monolithic.
-			Only one device of those available is engaged at a time */
-		ptr<LogicalDevice> DeviceEngaged = nullptr;
+	/*  Currently the design of the Vulkan backend is monolithic.
+		Only one device of those available is engaged at a time */
+	ptr<LogicalDevice> DeviceEngaged = nullptr;
+	
+#pragma endregion StaticData
 
 
 	// Forwards
@@ -215,7 +212,7 @@ namespace HAL::GPU::Vulkan
 				return transferQueue;
 			}
 			default:
-				throw RuntimeError("Attempted to queue that is not supported by this logical device.");
+				Exception::Fatal::Throw("Attempted to use queue that is not supported by this logical device.");
 		}
 	}
 
@@ -403,7 +400,7 @@ namespace HAL::GPU::Vulkan
 		EResult result = AppGPU_Comms.GetAvailablePhysicalDevices(PhysicalGPUs);
 
 		if (result != EResult::Success)
-			throw RuntimeError("Failed to get the physical GPUs.");
+			Exception::Fatal::Throw("Failed to get the physical GPUs.");
 
 		Log("Physical GPUs acquired:");
 
@@ -485,7 +482,7 @@ namespace HAL::GPU::Vulkan
 				
 			if (!CheckLayerSupport(DesiredLayers))
 			{
-				RuntimeError("Layers requested, but are not available!");
+				Exception::Fatal::Throw("Layers requested, but are not available!");
 			}
 		}
 
@@ -533,7 +530,7 @@ namespace HAL::GPU::Vulkan
 		EResult creationResult = AppGPU_Comms.Create(createSpec);  
 
 		if (creationResult != EResult::Success) 
-			throw RuntimeError("Failed to create Vulkan app instance.");
+			Exception::Fatal::Throw("Failed to create Vulkan app instance.");
 
 		Log("Application handshake complete.");
 
@@ -544,7 +541,7 @@ namespace HAL::GPU::Vulkan
 				creationResult = GPU_Messenger_Error.Create(AppGPU_Comms);
 
 				if (creationResult != EResult::Success)
-					throw RuntimeError("Failed to setup error debug messenger.");
+					Exception::Fatal::Throw("Failed to setup error debug messenger.");
 			}
 
 			if (Meta::Vulkan::Enable_LogWarning())
@@ -552,7 +549,7 @@ namespace HAL::GPU::Vulkan
 				creationResult = GPU_Messenger_Warning.Create(AppGPU_Comms);
 
 				if (creationResult != EResult::Success)
-					throw RuntimeError("Failed to setup warning debug messenger.");
+					Exception::Fatal::Throw("Failed to setup warning debug messenger.");
 			}
 			
 			if (Meta::Vulkan::Enable_LogInfo())
@@ -560,7 +557,7 @@ namespace HAL::GPU::Vulkan
 				creationResult = GPU_Messenger_Info.Create(AppGPU_Comms);
 
 				if (creationResult != EResult::Success)
-					throw RuntimeError("Failed to setup info debug messenger.");
+					Exception::Fatal::Throw("Failed to setup info debug messenger.");
 			}
 
 			if (Meta::Vulkan::Enable_LogVerbose())
@@ -568,7 +565,7 @@ namespace HAL::GPU::Vulkan
 				creationResult = GPU_Messenger_Verbose.Create(AppGPU_Comms);
 
 				if (creationResult != EResult::Success)
-					throw RuntimeError("Failed to setup verbose debug messenger.");
+					Exception::Fatal::Throw("Failed to setup verbose debug messenger.");
 			}
 
 			Log("Debug messenger created");
@@ -596,7 +593,7 @@ namespace HAL::GPU::Vulkan
 
 		if (testSurface.Create(AppGPU_Comms, OSAL::GetOS_WindowHandle(testWindow)) != EResult::Success)
 		{
-			throw RuntimeError("Failed to create window surface!");
+			Exception::Fatal::Throw("Failed to create window surface!");
 		}
 
 		for (auto& device : LogicalGPUs)
@@ -625,7 +622,7 @@ namespace HAL::GPU::Vulkan
 
 		if (DeviceEngaged == nullptr)
 		{
-			throw RuntimeError("Failed to engage a suitable logical device.");
+			Exception::Fatal::Throw("Failed to engage a suitable logical device.");
 		}
 
 		testSurface.Destroy();
@@ -653,7 +650,7 @@ namespace HAL::GPU::Vulkan
 
 			if (result != EResult::Success)
 			{
-				throw RuntimeError("Failed to create logical device!");
+				Exception::Fatal::Throw("Failed to create logical device!");
 			}
 		}
 

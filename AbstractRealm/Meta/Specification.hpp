@@ -18,14 +18,23 @@ Last Modified: 5/18/2020
 
 // Macro: EComplationIntention:
 
-#define Meta_CompileFor_User \
-	ECompilationIntention::User
+#define Meta_Build_Tuned \
+	EBuild::Tuned
 
-#define Meta_CompileFor_User_WithDebug \
-	ECompilationIntention::User_WithDebug
+#define Meta_Build_Tuned_WithDebug \
+	EBuild::Tuned_WithDebug
 
-#define Meta_CompileFor_Development	\
-	ECompilationIntention::Development
+#define Meta_Build_Project \
+	EBuild::Project
+
+#define Meta_Build_User \
+	EBuild::User
+
+#define Meta_Build_User_WithDebug \
+	EBuild::User_WithDebug
+
+#define Meta_Build_Development	\
+	EBuild::EngineDevelopment
 
 // End of Macro: EComplationIntention
 
@@ -33,7 +42,7 @@ Last Modified: 5/18/2020
 Macro version of the compilation intention.
 */
 #define Meta_BuildType \
-	Meta_CompileFor_Development
+	Meta_Build_Development
 
 
 
@@ -52,22 +61,28 @@ namespace Meta
 		_ExtendedPrecision = 4,
 	};
 
-	enum class ECompilationIntention
+	enum class EBuild
 	{
+		// Build for a packaged project
+		Tuned,
+
+		// Builds for packaged project with tooling for debug and profiling.
+		Tuned_WithDebug,
+
 		/*
-		Builds for the user with tooling.
+		Builds for the engine user with debug and profiling tools only for the project level.
 		*/
 		User,
 
 		/*
-		Builds for user but with debug tools available.
+		Builds for engine user but with debug and profiling tools available.
 		*/
 		User_WithDebug,
 
 		/*
-		Builds for development.
+		Builds for engine development.
 		*/
-		Development
+		EngineDevelopment
 	};
 
 
@@ -87,5 +102,7 @@ namespace Meta
 		f64
 	>;
 
-	constexpr ECompilationIntention BuildType = Meta_BuildType;
+	constexpr EBuild BuildType = Meta_BuildType;
+
+	constexpr bool BuildIsNonTuned = BuildType > EBuild::Tuned_WithDebug;
 }

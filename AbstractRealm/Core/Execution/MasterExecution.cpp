@@ -1,18 +1,22 @@
 // Parent Header
 #include "MasterExecution.hpp"
 
+#define Meta_EngineModule
+#include "Meta/Meta.hpp"
 
-// Engine
-#include "Cycler.hpp"
-#include "Concurrency/CyclerPool.hpp"
-#include "Meta/EngineInfo.hpp"
-#include "Renderer/Renderer.hpp"
 #include "HAL.hpp"
 #include "HAL/HAL_GPU.hpp"
+#include "HAL/Vulkan/GPU_Vulkan.hpp"
+#include "OSAL.hpp"
+
+#include "Concurrency/CyclerPool.hpp"
+#include "Cycler.hpp"
+#include "Dev/Console.hpp"
+
+#include "Renderer/Renderer.hpp"
 
 // When you have a proper UI module setup, setup it to bind to imgui instead.
 #include "SAL_ImGui.hpp"
-
 
 
 namespace Execution
@@ -95,7 +99,7 @@ namespace Execution
 		{
 			switch (GPU_API())
 			{
-				case Meta::EGPUPlatformAPI:: BGFX :
+				case Meta::EGPUPlatformAPI:: Methane :
 				{
 					
 
@@ -127,7 +131,7 @@ namespace Execution
 
 		if (OSAL::CanClose(Renderer::EngineWindow()))
 		{
-			HAL::GPU::WaitFor_GPUIdle();
+			HAL::GPU::WaitForIdle();
 
 			if (Meta::UseConcurrency())
 			{

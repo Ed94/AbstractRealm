@@ -2,14 +2,8 @@
 #include "SAL_GLFW.hpp"
 
 
-#include "Core/Memory/MemTracking.hpp"
-
-
 namespace SAL::GLFW
 {
-	using namespace TP_API;
-	using namespace Memory;
-
 	bool CanClose(const ptr<Window> _window)
 	{
 		return glfwWindowShouldClose(_window);
@@ -57,7 +51,7 @@ namespace SAL::GLFW
 
 	CStrArray GetRequiredVulkanAppExtensions(u32& _extensionCount)
 	{
-		return glfwGetRequiredInstanceExtensions(getPtr(RCast<uint32_t&, u32&>(_extensionCount)));
+		return glfwGetRequiredInstanceExtensions(getPtr(RCast<uint32_t>(_extensionCount)));
 	}
 
 	void WaitForEvents()

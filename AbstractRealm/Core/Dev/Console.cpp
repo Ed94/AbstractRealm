@@ -1,23 +1,21 @@
 // Parent Header
 #include "Console.hpp"
 
-
-// Engine
-#include "Core_Backend.hpp"
+// PAL
+#include "OSAL_Console.hpp"
+#include "OSAL_Timing.hpp"
+#include "SAL/SAL_Imgui.hpp"
+//Core
 #include "IO/Basic_FileIO.hpp"
 
 
 namespace Dev
 {
-	using namespace C_API;
 	using namespace OSAL;
 
 	using OSAL::ConsoleChar;
 
-
-
-	StaticData()
-	//(
+#pragma region StaticData
 		// Windows uses short instead of unsigned short for rect...
 		s16 ConsoleWidth  = 160;   //140;
 		s16 ConsoleHeight = 118;   //50 ;
@@ -69,13 +67,12 @@ namespace Dev
 		//File_InputStream  DevLogFileIn ;
 
 		bool AutoUpdateConsole = false;
-	//)
+#pragma endregion StaticData
 
 
 
 
 	// Forwards
-	void Load_DevLog_IOFileStream();
 	void Load_DevLogStream        ();
 	void Load_DevLogStream_LogFeed();
 	void Load_DevLogStream_Status ();
@@ -112,7 +109,7 @@ namespace Dev
 
 				auto dateSnapshot = OSAL::GetExecutionStartDate();
 
-				dateStream << PutTime(&dateSnapshot, "%F_%I-%M-%S_%p");
+				dateStream << PutTime(dateSnapshot, "%F_%I-%M-%S_%p");
 
 				String logstr = String(DevLogPath) + String("/") + String(DevLogName) + String("__") + dateStream.str() + String(".txt");
 
@@ -156,7 +153,7 @@ namespace Dev
 
 		CalendarDate dateSnapshot = OSAL::GetTime_Local();
 
-		StringStream dateSig; dateSig << "[" << PutTime(&dateSnapshot, "%F %I:%M:%S %p") << "] ";
+		StringStream dateSig; dateSig << "[" << PutTime(dateSnapshot, "%F %I:%M:%S %p") << "] ";
 
 		uDM lineLength = dateSig.str().size() + _info.size();
 
@@ -262,7 +259,7 @@ namespace Dev
 
 		CalendarDate dateSnapshot = OSAL::GetTime_Local();
 
-		StringStream dateSig; dateSig << "[" << PutTime(&dateSnapshot, "%F %I:%M:%S %p") << "] Error:  ";
+		StringStream dateSig; dateSig << "[" << PutTime(dateSnapshot, "%F %I:%M:%S %p") << "] Error:  ";
 
 		uDM lineLength = dateSig.str().size() + _info.size();
 
@@ -526,17 +523,6 @@ namespace Dev
 				{
 					uDM col = index + StatusColumnWidth * x;
 
-					/*ConsoleCharBuffer.data()[y + StatusStart + 1 ][col].Char.UnicodeChar = str.at(index);
-
-					ConsoleCharBuffer[y + StatusStart + 1 ][col].Attributes = 
-						ConslAttribFlags
-						(
-							EConslAttribFlag::Foreground_Red      , 
-							EConslAttribFlag::Foreground_Green    , 
-							EConslAttribFlag::Foreground_Blue     , 
-							EConslAttribFlag::Foreground_Intensity
-						);*/
-
 					ConsoleCharBuffer[(y + StatusStart + 1) * ConsoleWidth + col].Char.UnicodeChar = str.at(index);
 
 					ConsoleCharBuffer[(y + StatusStart + 1) * ConsoleWidth + col].Attributes =
@@ -551,13 +537,11 @@ namespace Dev
 			}
 		}
 
-		WriteToConsole(ConsoleOutput, &ConsoleCharBuffer[0], ConsoleCharBufferSize, ConsoleCharPos, &ConsoleSize);
+		WriteToConsole(ConsoleOutput, getPtr(ConsoleCharBuffer[0]), ConsoleCharBufferSize, ConsoleCharPos, ConsoleSize);
 	}
 
 	void Load_DevConsole()
 	{
-		Load_DevLog_IOFileStream();
-
 		ConsoleOutput = OSAL::Console_GetHandle(EConsoleHandle::Output);
 		ConsoleInput  = OSAL::Console_GetHandle(EConsoleHandle::Input );
 
@@ -574,7 +558,7 @@ namespace Dev
 
 		cout << "Dev: DevLogStream loaded";
 
-		WriteToConsole(ConsoleOutput, &ConsoleCharBuffer[0], ConsoleCharBufferSize, ConsoleCharPos, &ConsoleSize);
+		WriteToConsole(ConsoleOutput, getPtr(ConsoleCharBuffer[0]), ConsoleCharBufferSize, ConsoleCharPos, ConsoleSize);
 
 		//auto error = GetLastError();
 
@@ -582,14 +566,14 @@ namespace Dev
 		
 		Console_UpdateBuffer();
 
-		CLog("Dev: Console / Logging ready");
+		Log("Dev: Console / Logging ready");
 
 		Console_UpdateBuffer();
 	}
 
 	void Unload_DevConsole()
 	{
-		CLog("Unloading dev console (there will be no logs after this)");
+		Log("Unloading dev console (there will be no logs after this)");
 
 		//DevLogFileOut.close(); 
 		//DevLogFileIn .close(); 
@@ -597,48 +581,6 @@ namespace Dev
 
 
 	// Private
-
-	void Load_DevLog_IOFileStream()
-	{
-		/*StringStream dateStream;
-
-		auto dateSnapshot = OSAL::GetExecutionStartDate();
-
-		dateStream << PutTime(&dateSnapshot, "%F_%I-%M-%S_%p");
-
-		Path path = DevLogPath;
-
-		if (!CheckPathExists(path))
-		{
-			Create_Directories(path);
-		}
-		
-		using namespace IO;
-
-		bool openResult = OpenFile
-		(
-			DevLogFileOut,
-			OpenFlags(EOpenFlag::ForOutput),
-			Path(String(DevLogPath) + String("/") + String(DevLogName) + String("__") + dateStream.str() + String(".txt"))
-		);
-
-		if (!openResult)
-		{
-			throw RuntimeError("Failed to create a dev log file...");
-		}
-
-		openResult = OpenFile
-		(
-			DevLogFileIn,
-			OpenFlags(EOpenFlag::ForInput),
-			Path(String(DevLogPath) + String("/") + String(DevLogName) + String("__") + dateStream.str() + String(".txt"))
-		);
-
-		if (!openResult)
-		{
-			throw RuntimeError("Failed to open a dev log file...");
-		}*/
-	}
 
 	void Load_DevLogStream()
 	{
@@ -666,8 +608,6 @@ namespace Dev
 				)
 			);
 		}
-
-
 	}
 
 	void Load_DevLogStream_Status()
@@ -744,19 +684,9 @@ namespace Dev
 			<< EEngineVersion::Patch << "    "
 			
 			<< "Dev Log: "
-			<< PutTime(&OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p")
+			<< PutTime(OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p")
 
 			<< setfill(' ') << setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
-
-		//DevLogFileOut 
-		//	<< "Abstract Realm: MVP Build - "
-		//	<< EEngineVersion::Major << "."
-		//	<< EEngineVersion::Minor << "."
-		//	<< EEngineVersion::Patch << "    "
-
-		//	<< "Dev Log: " << PutTime(&OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p")
-
-		//	<< setfill(' ') << setw(ConsoleWidth - DevLogStream.str().size()) << ' ' << endl; 
 
 		WriteTo_Buffer
 		(

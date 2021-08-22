@@ -21,7 +21,6 @@ namespace Meta
 
 	using namespace LAL;
 
-
 	
 	// Enums
 
@@ -33,7 +32,7 @@ namespace Meta
 		enum
 		{
 			Major = 0  ,
-			Minor = 100,
+			Minor = 174,
 			Patch = 0
 		};
 	};
@@ -72,6 +71,7 @@ namespace Meta
 		Core_Concurrency,
 		Core_Dev,
 		Core_Events,
+		Core_Exception,
 		Core_Execution,
 		Core_IO,
 		Core_Memory,
@@ -86,8 +86,9 @@ namespace Meta
 		LAL,
 
 		Manifest,
-		Manifest_ECS,
+		Manifest_Entities,
 		Manifest_States,
+		Manifest_World,
 
 		Meta,
 		Meta_Config,
@@ -97,6 +98,7 @@ namespace Meta
 		PAL,
 		PAL_HAL,
 		PAL_HAL_Vulkan,
+		PAL_NAL,
 		PAL_OSAL,
 		PAL_SAL,
 		PAL_Thirdparty,
@@ -129,21 +131,29 @@ namespace Meta
 	/*
 	Defines the default operational mode of the engine.
 
-	Determined by the compilation intention.
+	Determined by the build intention.
 	*/
 	constexpr EOperationMode Default_OperationalMode()
 	{
 		switch (BuildType)
 		{
-			case ECompilationIntention::Development:
+			case EBuild::EngineDevelopment:
 			{
 				return EOperationMode::Development;
 			}
-			case ECompilationIntention::User_WithDebug:
+			case EBuild::User_WithDebug:
 			{
 				return EOperationMode::Debugging;
 			}
-			case ECompilationIntention::User:
+			case EBuild::User:
+			{
+				return EOperationMode::Profiling;
+			}
+			case EBuild::Tuned_WithDebug:
+			{
+				return EOperationMode::Debugging;
+			}
+			case EBuild::Tuned:
 			{
 				return EOperationMode::User;
 			}

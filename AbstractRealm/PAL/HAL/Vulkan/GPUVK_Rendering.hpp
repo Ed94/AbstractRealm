@@ -1,16 +1,13 @@
 #pragma once
 
 
-
 #include "GPUVK_Comms.hpp"
 #include "GPUVK_PayloadDeck.hpp"
-
 #include "GPUVK_Memory.hpp"
 #include "GPUVK_Resources.hpp"
 #include "GPUVK_Pipeline.hpp"
-#include "LAL.hpp"
-#include "OSAL.hpp"
 
+#include "OSAL.hpp"
 
 
 namespace HAL::GPU::Vulkan

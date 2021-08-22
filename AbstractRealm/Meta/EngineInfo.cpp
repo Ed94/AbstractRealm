@@ -2,7 +2,6 @@
 #include "EngineInfo.hpp"
 
 
-
 namespace Meta
 {
 	namespace StaticData
@@ -19,8 +18,7 @@ namespace Meta
 	}
 
 
-
-	// Public
+#pragma region Public
 
 	EOperationMode OperationalMode()
 	{
@@ -51,4 +49,6 @@ namespace Meta
 	{
 		return StaticData::FixRenderRateToRefreshRate;
 	}
+
+#pragma endregion Public
 }

@@ -239,7 +239,7 @@ namespace HAL::GPU::Vulkan
 
 		if (_descriptorPool.Allocate(allocInfo, descriptors) != EResult::Success)
 		{
-			throw RuntimeError("Failed to allocate descriptor sets.");
+			Exception::Fatal::Throw("Failed to allocate descriptor sets.");
 		}
 
 		for (uDM index = 0; index < _count; index++)
@@ -332,7 +332,7 @@ namespace HAL::GPU::Vulkan
 		layoutInfo.Bindings     = bindings.data();
 
 		if (descriptorsLayout.Create(GPU_Comms::GetEngagedDevice(), layoutInfo) != EResult::Success)
-			throw RuntimeError("Failed to create descriptor set layout.");
+			Exception::Fatal::Throw("Failed to create descriptor set layout.");
 	}
 
 #pragma endregion ModelRenderable
@@ -347,7 +347,7 @@ namespace HAL::GPU::Vulkan
 	//	// Hardcoding to primtive renderable for now...
 	//	// Also not checking if renderable already exists.
 
-	//	SPtr< PrimitiveRenderable> newRenderable = MakeSPtr<PrimitiveRenderable>();
+	//	SPtr< PrimitiveRenderable> newRenderable = MakeShared<PrimitiveRenderable>();
 
 	//	newRenderable->Create(_verticies, _shader);
 

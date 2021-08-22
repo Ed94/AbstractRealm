@@ -5,7 +5,6 @@
 #include "Meta/EngineInfo.hpp"
 
 
-
 namespace Meta
 {
 	namespace StaticData

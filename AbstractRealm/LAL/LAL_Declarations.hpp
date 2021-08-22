@@ -81,13 +81,7 @@ inline
 //Plain Old Data type
 //#define POD \
 //struct
-template<typename Type> struct TPOD;
-
-//// Bit-field type
-//#define BitField \
-//struct
-template<typename Type> struct TBitfield;
-
+template<typename Type> struct POD;
 
 #define EnforceConstraint(__CONSTRAINT, __REASON_MSG) \
 static_assert(__CONSTRAINT, __REASON_MSG)

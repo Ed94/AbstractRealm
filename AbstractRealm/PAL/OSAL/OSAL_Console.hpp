@@ -9,9 +9,7 @@ This is currently only supports windows and doesn't do a proper abstraction for 
 #pragma once
 
 
-
 #include "OSAL_Platform.hpp"
-
 
 
 namespace OSAL
@@ -20,14 +18,13 @@ namespace OSAL
 
 	namespace PlatformBackend
 	{
-		//Bitmaskable_ScopeBase();
-
 		template<OSAL::EOS>
-		struct ConsoleTypes_Maker;
+		struct ConsoleAPI_Maker;
 
 		template<>
-		struct ConsoleTypes_Maker<EOS::Windows>
+		struct ConsoleAPI_Maker<EOS::Windows>
 		{
+#pragma region Types
 			enum class EAttributeFlag : WORD
 			{
 				Foreground_Red       = FOREGROUND_RED      ,
@@ -56,22 +53,7 @@ namespace OSAL
 			using Rect   = SMALL_RECT;
 			using Extent = COORD     ;
 			using Char   = CHAR_INFO ;
-		};
-
-		
-
-		using ConsoleTypes = ConsoleTypes_Maker<OSAL::OS>;
-
-		template<OSAL::EOS>
-		struct ConsoleAPI_Maker;
-
-		template<>
-		struct ConsoleAPI_Maker<EOS::Windows>
-		{
-			using EHandle = ConsoleTypes::EHandle;
-			using Extent  = ConsoleTypes::Extent ;
-			using Rect    = PSMALL_RECT          ;
-			using Char    = ConsoleTypes::Char  ;
+#pragma endregion Types
 
 			// CAUSED MEMORY LEAK. (Sigh)
 			// https://stackoverflow.com/questions/311955/redirecting-cout-to-a-console-in-windows   
@@ -88,9 +70,9 @@ namespace OSAL
 			
 			static OS_Handle GetConsoleHandle(EHandle::NativeT _type);
 
-			static bool SetBufferSize(OS_Handle _handle, ConsoleTypes::Extent _extent);
+			static bool SetBufferSize(OS_Handle _handle, Extent _extent);
 
-			static bool SetSize(OS_Handle _handle, ConsoleTypes::Rect& _rect);
+			static bool SetSize(OS_Handle _handle, Rect& _rect);
 
 			static bool SetTitle(OS_RoCStr _title);
 
@@ -100,7 +82,7 @@ namespace OSAL
 				Char*    _buffer     ,
 				Extent    _bufferSize ,
 				Extent    _bufferCoord,
-				Rect      _readRegion
+				Rect&     _readRegion
 			);
 		};
 
@@ -119,15 +101,14 @@ namespace OSAL
 		};
 	}
 
-	using PlatformBackend::ConsoleTypes;
-	using PlatformBackend::ConsoleAPI  ;
+	using PlatformBackend::ConsoleAPI;
 
-	using ConslAttribFlags = ConsoleTypes::AttributeFlags;
-	using EConslAttribFlag = ConsoleTypes::EAttributeFlag;
-	using ConsoleChar      = ConsoleTypes::Char         ;
-	using ConsoleExtent    = ConsoleTypes::Extent        ;
-	using ConsoleRect      = ConsoleTypes::Rect          ;
-	using EConsoleHandle   = ConsoleTypes::EHandle       ;
+	using ConslAttribFlags = ConsoleAPI::AttributeFlags;
+	using EConslAttribFlag = ConsoleAPI::EAttributeFlag;
+	using ConsoleChar      = ConsoleAPI::Char         ;
+	using ConsoleExtent    = ConsoleAPI::Extent        ;
+	using ConsoleRect      = ConsoleAPI::Rect          ;
+	using EConsoleHandle   = ConsoleAPI::EHandle       ;
 
 	constexpr auto CreateConsole                 = ConsoleAPI::Create               ;
 	constexpr auto DestroyConsole                = ConsoleAPI::Destroy              ;
@@ -139,5 +120,3 @@ namespace OSAL
 	constexpr auto Console_SetTitle              = ConsoleAPI::SetTitle             ;
 	constexpr auto WriteToConsole                = ConsoleAPI::WriteToConsole       ;
 }
-
-//SpecifyBitmaskable(OSAL::PlatformBackend::ConsoleTypes_Maker<OSAL::EOS::Windows>::EAttributeFlag);

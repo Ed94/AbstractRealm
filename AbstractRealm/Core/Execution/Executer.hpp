@@ -7,18 +7,17 @@ Last Modified: 5/18/2020
 
 #pragma once
 
-#include "LAL.hpp"
-#include "OSAL/OSAL_Platform.hpp"
+#define Meta_EngineModule
+#include "Meta/Meta.hpp"
+
+
+#include "OSAL/OSAL_Entrypoint.hpp"
 
 
 namespace Execution
 {
-	// Usings
-
-	using namespace LAL ;
+	using namespace LAL;
 	using namespace Meta;
-
-
 
 	// Enums
 

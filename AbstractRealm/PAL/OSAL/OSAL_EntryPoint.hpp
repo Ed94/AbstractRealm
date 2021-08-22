@@ -12,10 +12,7 @@
 #pragma once
 
 
-
-#include "LAL.hpp"
 #include "OSAL_Platform.hpp"
-
 
 
 namespace OSAL

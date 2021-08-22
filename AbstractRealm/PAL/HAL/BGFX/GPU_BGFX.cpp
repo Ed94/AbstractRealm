@@ -21,7 +21,7 @@ namespace HAL::GPU::BGFX
 	{
 	}
 
-	void Cease_GPUComms()
+	void CeaseComms()
 	{
 		//bgfx::shutdown();
 

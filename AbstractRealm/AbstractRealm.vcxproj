@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -74,7 +74,8 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execptions;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Objects;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -108,11 +109,15 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <ShowIncludes>false</ShowIncludes>
+      <DisableSpecificWarnings>5105</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(ProjectDir)PAL\ThirdParty\Libraries\glfw\out\build\x64-Debug\src;$(ProjectDir)PAL\ThirdParty\Libraries\infoware\out\build\x64-Debug\lib;$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>version.lib;wbemuuid.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;infowared.lib;glslangd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;wbemuuid.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;infowared.lib;glslangd.lib;HLSLd.lib;OGLCompilerd.lib;OSDependentd.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <HeapReserveSize>3145728 </HeapReserveSize>
@@ -121,6 +126,7 @@
       </StackCommitSize>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <LinkStatus>true</LinkStatus>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -190,6 +196,7 @@
     </ClInclude>
     <ClInclude Include="Core\Core.hpp" />
     <ClInclude Include="Core\Core_Backend.hpp" />
+    <ClInclude Include="Core\Dev\Dev_Backend.hpp" />
     <ClInclude Include="Core\Dev\Log.hpp" />
     <ClInclude Include="Core\Events\EventMngr.hpp">
       <SubType>
@@ -197,6 +204,10 @@
     </ClInclude>
     <ClInclude Include="Core\Events\Events.hpp" />
     <ClInclude Include="ARealm.hpp" />
+    <ClInclude Include="Core\Exceptions\Assertions.hpp" />
+    <ClInclude Include="Core\Exceptions\CrashInsurer.hpp" />
+    <ClInclude Include="Core\Exceptions\Exceptions.hpp" />
+    <ClInclude Include="Core\Exceptions\Exceptions_Backend.hpp" />
     <ClInclude Include="Core\Execution\Cycler.hpp">
       <SubType>
       </SubType>
@@ -218,10 +229,14 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Core\Interface\Interface.hpp" />
+    <ClInclude Include="Core\Interface\ITickable.hpp" />
     <ClInclude Include="Core\IO\Basic_FileIO.hpp">
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Core\Memory\Memory.hpp" />
+    <ClInclude Include="Core\Memory\Memory_Backend.hpp" />
     <ClInclude Include="Core\Memory\MemTracking.hpp">
       <SubType>
       </SubType>
@@ -230,6 +245,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Core\Memory\MObject.hpp" />
     <ClInclude Include="Core\Objects\Object.hpp">
       <SubType>
       </SubType>
@@ -238,6 +254,13 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Core\Objects\Objects.hpp" />
+    <ClInclude Include="Core\Objects\Objects_Backend.hpp" />
+    <ClInclude Include="Core\Objects\Indirection.hpp" />
+    <ClInclude Include="Core\Reflection\Reflection.hpp" />
+    <ClInclude Include="Core\Reflection\Reflection_Backend.hpp" />
+    <ClInclude Include="Core\Reflection\SubtypeOf.hpp" />
+    <ClInclude Include="Core\Reflection\Type.hpp" />
     <ClInclude Include="Editor\Assets\Asset.hpp">
       <SubType>
       </SubType>
@@ -256,6 +279,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="LAL\LAL_C_STL.hpp" />
     <ClInclude Include="LAL\LAL_Algorithms.hpp">
       <SubType>
       </SubType>
@@ -267,6 +291,7 @@
     </ClInclude>
     <ClInclude Include="LAL\LAL_Enum.hpp" />
     <ClInclude Include="LAL\LAL_Iterator.hpp" />
+    <ClInclude Include="LAL\LAL_Math.hpp" />
     <ClInclude Include="LAL\LAL_Thread.hpp">
       <SubType>
       </SubType>
@@ -280,12 +305,25 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Manifest\ECS\ECS.hpp">
+    <ClInclude Include="Manifest\Enities\Component.hpp" />
+    <ClInclude Include="Manifest\Enities\Phenomena\Animal.hpp" />
+    <ClInclude Include="Manifest\Enities\Phenomena\Avatar.hpp" />
+    <ClInclude Include="Manifest\Enities\Entities.hpp">
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Manifest\Enities\Entity.hpp" />
+    <ClInclude Include="Manifest\Enities\Phenomena\Humanoid.hpp" />
+    <ClInclude Include="Manifest\Enities\Nomena\Nomenon.hpp" />
+    <ClInclude Include="Manifest\Enities\Phenomena\Phenomenon.hpp" />
+    <ClInclude Include="Manifest\Enities\SubEntity.hpp" />
+    <ClInclude Include="Manifest\Enities\Phenomena\Vehicle.hpp" />
+    <ClInclude Include="Manifest\Interface\IPossessable.hpp" />
+    <ClInclude Include="Networking\Interface\INetworkable.hpp" />
+    <ClInclude Include="Simulation\Interface\IPhenomena.h" />
     <ClInclude Include="Manifest\Level.hpp" />
     <ClInclude Include="Manifest\Manifest.hpp" />
+    <ClInclude Include="Manifest\Manifest_Backend.hpp" />
     <ClInclude Include="Manifest\States\BasicState.hpp">
       <SubType>
       </SubType>
@@ -311,6 +349,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Meta\Config\LAL_Config.hpp" />
+    <ClInclude Include="Meta\Config\Memory_Config.hpp" />
     <ClInclude Include="Meta\Config\OSAL_Config.hpp">
       <SubType>
       </SubType>
@@ -360,11 +399,12 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Meta\Meta.hpp" />
+    <ClInclude Include="Meta\Meta_Backend.hpp" />
     <ClInclude Include="Networking\Networking.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\Audio_HAL.hpp">
+    <ClInclude Include="PAL\HAL\HAL_Audio.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -588,10 +628,16 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\Vulkan\_TutorialRelated.hpp" />
+    <ClInclude Include="PAL\NAL\NAL.hpp" />
+    <ClInclude Include="PAL\NAL\NAL_Backend.hpp" />
+    <ClInclude Include="PAL\NAL\NAL_Socket.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.hpp">
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\OSAL\OSAL_API_FreeBSD.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_API_Linux.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_API_Macintosh.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_Backend.hpp">
       <SubType>
       </SubType>
@@ -608,6 +654,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\OSAL\OSAL_Networking.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL_Platform.hpp">
       <SubType>
       </SubType>
@@ -624,6 +671,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PAL\OSAL\OSAL_API_Windows.hpp" />
     <ClInclude Include="PAL\PAL.hpp">
       <SubType>
       </SubType>
@@ -662,6 +710,8 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Renderer\Interfaces\IRenderable.hpp" />
+    <ClInclude Include="Renderer\RenderContext.hpp" />
     <ClInclude Include="Renderer\Renderer.hpp">
       <SubType>
       </SubType>
@@ -706,6 +756,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Simulation\Collision\Collision.hpp" />
     <ClInclude Include="Simulation\Math\Constants.hpp">
       <SubType>
       </SubType>
@@ -735,6 +786,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="User\Interface\IAccountable.h" />
     <ClInclude Include="User\User.hpp">
       <SubType>
       </SubType>
@@ -750,7 +802,11 @@
     <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
     <ClCompile Include="Core\Core.cpp" />
     <ClCompile Include="Core\Core_Backend.cpp" />
+    <ClCompile Include="Core\Dev\Dev_Backend.cpp" />
     <ClCompile Include="Core\Dev\Log.cpp" />
+    <ClCompile Include="Core\Exceptions\Assertions.cpp" />
+    <ClCompile Include="Core\Exceptions\CrashInsurer.cpp" />
+    <ClCompile Include="Core\Exceptions\Exceptions_Backend.cpp" />
     <ClCompile Include="Core\Execution\Cycler.cpp" />
     <ClCompile Include="Core\Dev\Console.cpp" />
     <ClCompile Include="Core\Dev\Dev.cpp" />
@@ -758,14 +814,30 @@
     <ClCompile Include="Core\Execution\MasterExecution.cpp" />
     <ClCompile Include="Core\Execution\PrimitiveExecuter_Implem.hpp" />
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
+    <ClCompile Include="Core\Memory\Memory_Backend.cpp" />
     <ClCompile Include="Core\Memory\MemTracking.cpp" />
+    <ClCompile Include="Core\Memory\MObject.cpp" />
+    <ClCompile Include="Core\Objects\Indirection.cpp" />
+    <ClCompile Include="Core\Reflection\SubtypeOf.cpp" />
+    <ClCompile Include="Core\Reflection\Type.cpp" />
     <ClCompile Include="Editor\Editor.cpp" />
+    <ClCompile Include="LAL\LAL_Algorithms.cpp" />
+    <ClCompile Include="LAL\LAL_C_STL.cpp" />
     <ClCompile Include="LAL\LAL_IO.cpp" />
     <ClCompile Include="LAL\LAL_Memory.cpp" />
+    <ClCompile Include="Manifest\Enities\Component.cpp" />
+    <ClCompile Include="Manifest\Enities\Phenomena\Animal.cpp" />
+    <ClCompile Include="Manifest\Enities\Phenomena\Avatar.cpp" />
+    <ClCompile Include="Manifest\Enities\Entity.cpp" />
+    <ClCompile Include="Manifest\Enities\Phenomena\Humanoid.cpp" />
+    <ClCompile Include="Manifest\Enities\Nomena\Nomenon.cpp" />
+    <ClCompile Include="Manifest\Enities\Phenomena\Phenomenon.cpp" />
+    <ClCompile Include="Manifest\Enities\SubEntity.cpp" />
+    <ClCompile Include="Manifest\Enities\Phenomena\Vehicle.cpp" />
     <ClCompile Include="Meta\Config\CoreDev_Config.cpp" />
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
-    <ClCompile Include="Meta\Meta.cpp" />
+    <ClCompile Include="Meta\Meta_backend.cpp" />
     <ClCompile Include="PAL\HAL\BGFX\GPU_BGFX.cpp" />
     <ClCompile Include="PAL\HAL\HAL_GPU.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
@@ -781,11 +853,15 @@
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />
+    <ClCompile Include="PAL\NAL\NAL.cpp" />
+    <ClCompile Include="PAL\NAL\NAL_Backend.cpp" />
+    <ClCompile Include="PAL\NAL\NAL_Socket.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Backend.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Console.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_EntryPoint.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Hardware.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Networking.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Platform.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Threading.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Timing.cpp" />

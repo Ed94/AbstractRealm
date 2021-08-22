@@ -3,11 +3,14 @@
 
 
 #include "Meta/EngineInfo.hpp"
-#include "OSAL/OSAL_Hardware.hpp"
-#include "SAL_ImGui.hpp"
+
 #include "HAL.hpp"
 #include "HAL/HAL_GPU.hpp"
+#include "HAL/Vulkan/GPU_Vulkan.hpp"
 
+#include "OSAL/OSAL_Hardware.hpp"
+
+#include "SAL_ImGui.hpp"
 
 
 namespace Renderer
@@ -99,9 +102,9 @@ namespace Renderer
 		{
 			using namespace Meta;
 
-			case Meta::EGPUPlatformAPI::BGFX:
+			case Meta::EGPUPlatformAPI::Methane:
 			{
-				HAL::GPU::Initialize_GPUComms
+				HAL::GPU::StartComms
 				(
 					String("Abstract Realm: MVP " +
 					ToString(EEngineVersion::Major) + "." +
@@ -110,14 +113,14 @@ namespace Renderer
 					AppVer
 				);
 
-				HAL::GPU::Cease_GPUComms();
+				HAL::GPU::CeaseComms();
 
 
 			} break;
 
 			case Meta::EGPUPlatformAPI::Vulkan:
 			{
-				HAL::GPU::Initialize_GPUComms
+				HAL::GPU::StartComms
 				(
 					String("Abstract Realm: MVP " +
 					ToString(EEngineVersion::Major) + "." +
@@ -155,7 +158,7 @@ namespace Renderer
 
 				OSAL::Destroy_Window(StaticData::EngineWindow);
 
-				HAL::GPU::Cease_GPUComms();
+				HAL::GPU::CeaseComms();
 
 			} break;
 		}

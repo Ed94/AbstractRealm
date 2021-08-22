@@ -1,8 +1,6 @@
 /*
 Language Abstraction Layer
 
-Last Modified: 5/18/2020
-
 This is a all around wrapping of C++/STL features into a format I prefer. 
 Since I'm witting an entire engine, having an LAL to make things more efficient and less error prone,
 by having more explicit format for dealing with syntax makes things easier.
@@ -12,11 +10,13 @@ standard c++.
 */
 
 
-
 #pragma once
 
+#ifndef LAL_HEADER_GUARD
+#define LAL_HEADER_GUARD
 
 
+#include "LAL_C_STL.hpp"
 #include "LAL_Cpp_STL.hpp"
 #include "LAL_Algorithms.hpp"
 #include "LAL_Ambiguous.hpp"
@@ -40,3 +40,6 @@ standard c++.
 #include "LAL_Chrono.hpp"
 #include "LAL_Thread.hpp"
 #include "LAL_Types.hpp"
+
+
+#endif

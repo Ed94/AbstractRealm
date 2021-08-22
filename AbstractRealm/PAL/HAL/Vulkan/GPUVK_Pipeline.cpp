@@ -22,7 +22,7 @@ namespace HAL::GPU::Vulkan
 	{
 		if (Parent::Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
 		{
-			throw RuntimeError("Failed to create pipeline cache.");
+			Exception::Fatal::Throw("Failed to create pipeline cache.");
 		}
 	}
 
@@ -183,7 +183,7 @@ namespace HAL::GPU::Vulkan
 
 		if (layout.Create(GPU_Comms::GetEngagedDevice(), layoutInfo) != EResult::Success)
 		{
-			throw RuntimeError("Could not create pipeline layout.");
+			Exception::Fatal::Throw("Could not create pipeline layout.");
 		}
 
 
@@ -207,7 +207,7 @@ namespace HAL::GPU::Vulkan
 
 		if (Parent::Create(GPU_Comms::GetEngagedDevice(), GPU_Pipeline::Request_Cache(), info) != EResult::Success)
 		{
-			throw RuntimeError("Could not create graphics pipeline.");
+			Exception::Fatal::Throw("Could not create graphics pipeline.");
 		}
 	}
 

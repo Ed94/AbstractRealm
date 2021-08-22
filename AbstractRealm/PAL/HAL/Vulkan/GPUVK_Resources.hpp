@@ -471,7 +471,7 @@ namespace HAL::GPU::Vulkan
 		static Where< VulkanVertex<VertexType>(), ptr<ARenderable> >
 		Request_Renderable(const DynamicArray<VertexType>& _verticies, ptr<const AShader> _shader)
 		{
-			SPtr< TPrimitiveRenderable<VertexType>> newRenderable = MakeSPtr< TPrimitiveRenderable<VertexType>>();
+			SPtr< TPrimitiveRenderable<VertexType>> newRenderable = MakeShared< TPrimitiveRenderable<VertexType>>();
 
 			newRenderable->Create(_verticies, _shader);
 
@@ -491,7 +491,7 @@ namespace HAL::GPU::Vulkan
 			ptr<const AShader> _shader
 		)
 		{
-			SPtr< TModelRenderable<VertexType>> newRenderable = MakeSPtr< TModelRenderable<VertexType>>();
+			SPtr< TModelRenderable<VertexType>> newRenderable = MakeShared< TModelRenderable<VertexType>>();
 
 			newRenderable->Create(_verticies, _indicies, _textureData, _width, _height, _shader);
 

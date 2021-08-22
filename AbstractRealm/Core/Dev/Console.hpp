@@ -1,30 +1,18 @@
 #pragma once
 
 
-#include "LAL.hpp"
+#include "Dev_Backend.hpp"
 
 
 namespace Dev
 {
-	// Alias
-
-	using namespace LAL;
-
 	// CT
 
 	constexpr RoCStr DevLogPath = "Engine/Dev/Logs";
 	constexpr RoCStr DevLogName = "DevLog"         ;
 
 
-
 	// Fn
-
-	/*class CLog
-	{
-	public:
-
-	protected:
-	}*/;
 
 	void CLog       (String _info                    );
 	void CLog_Error (String _info                    );

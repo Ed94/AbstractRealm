@@ -90,8 +90,8 @@ namespace LAL
 
 	// using PutTime = std::put_time;
 	template <class Elem> _NODISCARD 
-	STL::_Timeobj<Elem, const CalendarDate*> PutTime(const CalendarDate* _date, const Elem* _elem)
+	STL::_Timeobj<Elem, ptr<const CalendarDate>> PutTime(const CalendarDate& _date, ptr<const Elem> _elem)
 	{
-		return STL::_Timeobj<Elem, const CalendarDate*>(_date, _elem);
+		return STL::_Timeobj<Elem, ptr<const CalendarDate>>(getPtr(_date), _elem);
 	}
 }

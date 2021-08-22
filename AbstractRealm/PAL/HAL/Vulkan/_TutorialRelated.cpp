@@ -2,15 +2,10 @@
 #include "_TutorialRelated.hpp"
 
 
-namespace C_API
-{
-	
-
-}
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
-	#define STB_IMAGE_IMPLEMENTATION
-	#include "stb/stb_image.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
 
 
 namespace HAL::GPU::Vulkan
@@ -42,8 +37,6 @@ namespace HAL::GPU::Vulkan
 
 	void LoadModel(String _modelPath)
 	{
-		using namespace C_API;
-		
 		tinyobj::attrib_t attrib;
 
 		DynamicArray<tinyobj::shape_t> shapes;
@@ -53,7 +46,7 @@ namespace HAL::GPU::Vulkan
 		String warning, error;
 
 		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warning, &error, _modelPath.c_str()))
-			throw RuntimeError(warning + error);
+			Exception::Fatal::Throw(warning + error);
 
 		for (const auto& shape : shapes)
 		{
