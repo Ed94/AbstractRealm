@@ -46,13 +46,5 @@ namespace HAL::GPU::Vulkan
 			HasMemberAddress(Type::GetAttributeDescriptions) &&
 			HasMemberAddress(Type::GetBindingDescription);
 	}
-
-	template<typename Type>
-	// Fail case for VulkanVertex
-	constexpr Where<!IsVulkanVertex<Type>(),
-	bool> VulkanVertex() noexcept
-	{
-		return false;
-	}
 #pragma region VulkanVertex
 }

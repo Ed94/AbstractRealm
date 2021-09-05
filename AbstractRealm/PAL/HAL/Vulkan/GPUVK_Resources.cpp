@@ -378,9 +378,9 @@ namespace HAL::GPU::Vulkan
 
 	EResult IndexBuffer::Create(ptr<const void> _data, DeviceSize _dataSize, DeviceSize /*_stride*/)
 	{
-		indices = _dataSize;
+		indices = SCast<u32>(_dataSize);
 
-		DeviceSize bufferSize = sizeof(u32) * _dataSize;
+		DeviceSize bufferSize = SCast<DeviceSize>(sizeof(u32)) * _dataSize;
 
 		EResult result = EResult::Incomplete;
 
@@ -481,11 +481,6 @@ namespace HAL::GPU::Vulkan
 	const Buffer& IndexBuffer::GetBuffer() const
 	{
 		return buffer;
-	}
-
-	ui32 IndexBuffer::GetBufferSize() const
-	{
-		return buffer.GetSize();
 	}
 
 	u32 IndexBuffer::GetSize() const

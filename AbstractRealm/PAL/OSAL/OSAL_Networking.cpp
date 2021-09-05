@@ -49,7 +49,7 @@ namespace OSAL
 		{
 			return SCast<EIPPresToNetworkCode>(inet_pton(AF_INET, _presentation, getPtr(_ipv4Address_Out)));
 		}
-
+	
 		EIPPresToNetworkCode NetAPI_Win::IPPresentationToNetwork(RoCStr _presentation, IPV6_TRAddress& _ipv6Address_Out)
 		{
 			return SCast<EIPPresToNetworkCode>(inet_pton(AF_INET6, _presentation, getPtr(_ipv6Address_Out)));
@@ -57,7 +57,7 @@ namespace OSAL
 
 		EAddressInfoCode NetAPI_Win::GetAddressInfo(RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info_out)
 		{
-			return SCast<EAddressInfoCode>(getaddrinfo(_nodeName, _serviceName, _hints.operator const ADDRINFOA*(), getPtr(_info_out.operator ADDRINFOA*())));
+			return SCast<EAddressInfoCode>(getaddrinfo(_nodeName, _serviceName, _hints.operator const ADDRINFOA*(), RCast<PADDRINFOA>(getPtr(_info_out))));
 		}
 
 		EAddressInfoCode NetAPI_Win::GetAddressInfoAsync(RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info_out)

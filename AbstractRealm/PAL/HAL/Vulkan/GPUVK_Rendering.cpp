@@ -600,12 +600,12 @@ namespace HAL::GPU::Vulkan
 
 		const auto& swapExtent = _swapChain_in.GetExtent();
 
-		viewport.Height   = swapExtent.Height / 3;
-		viewport.Width    = swapExtent.Width / 3;
+		viewport.Height   = SCast<f32>(swapExtent.Height) / 3.f;
+		viewport.Width    = SCast<f32>(swapExtent.Width)  / 3.f;
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
-		viewport.X        = 0;
-		viewport.Y        = 0;
+		viewport.X        = 0.f;
+		viewport.Y        = 0.f;
 
 		viewContexts[0].SetViewport(viewport);
 
@@ -639,7 +639,7 @@ namespace HAL::GPU::Vulkan
 
 	void RenderContext::AddRenderable(ptr<ARenderable> _renderable_in)
 	{
-		_renderable_in->CreateDescriptorSets(swapchain->GetImages().size(), descriptorPool);
+		_renderable_in->CreateDescriptorSets(SCast<u32>(swapchain->GetImages().size()), descriptorPool);
 
 		if (renderGroups.empty())
 		{

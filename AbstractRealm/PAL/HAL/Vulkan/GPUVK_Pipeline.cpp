@@ -38,10 +38,10 @@ namespace HAL::GPU::Vulkan
 	{
 		// Vertex Input State
 
-		vertexInputStateInfo.BindingDescriptionCount = _bindingDescriptions.size();   
+		vertexInputStateInfo.BindingDescriptionCount = SCast<ui32>(_bindingDescriptions.size());   
 		vertexInputStateInfo.BindingDescriptions     = _bindingDescriptions.data();   
 
-		vertexInputStateInfo.AttributeDescriptionCount = _attributeDescriptions.size(); 
+		vertexInputStateInfo.AttributeDescriptionCount = SCast<ui32>(_attributeDescriptions.size()); 
 		vertexInputStateInfo.AttributeDescriptions     = _attributeDescriptions.data();
 
 		// Input Assembly State
@@ -163,7 +163,7 @@ namespace HAL::GPU::Vulkan
 			EDynamicState::Scissor 
 		};
 
-		dynamicStateInfo.StateCount = enabledDynamicStates.size();
+		dynamicStateInfo.StateCount = SCast<ui32>(enabledDynamicStates.size());
 		dynamicStateInfo.States     = enabledDynamicStates.data();
 
 		// Layout
@@ -182,7 +182,7 @@ namespace HAL::GPU::Vulkan
 			Exception::Fatal::Throw("Could not create pipeline layout.");
 		}
 
-		info.StageCount         = _shader->GetShaderStageInfos().size();   // BasicSahder only has 2 shader stages.
+		info.StageCount         = SCast<ui32>(_shader->GetShaderStageInfos().size());   // BasicSahder only has 2 shader stages.
 		info.Stages             = _shader->GetShaderStageInfos().data();
 		info.VertexInputState   = getPtr(vertexInputStateInfo);
 		info.InputAssemblyState = getPtr(inputAssemblyStateInfo);

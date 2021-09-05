@@ -164,7 +164,11 @@ namespace HAL::GPU::Vulkan
 
 		const Buffer& GetBuffer() const;
 
-		ui32 GetBufferSize() const; 
+		ForceInline
+		DeviceSize GetBufferSize() const
+		{
+			return buffer.GetSize();
+		}
 
 		u32 GetSize() const;
 

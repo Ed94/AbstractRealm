@@ -16,6 +16,9 @@ namespace LAL
 {
 	// Types
 
+	template<bool Value>
+	using TBool = STL::bool_constant<Value>;
+
 	using FalseType = STL::false_type;
 	using TrueType  = STL::true_type;
 
@@ -82,13 +85,19 @@ namespace LAL
 	// Type Primary Categories
 
 	template<typename Type>
-	using T_IsPointer = STL::is_pointer<Type>;
+	using IsIntType = STL::is_integral<Type>;
 
 	template<typename Type>
-	using T_IsFunction = STL::is_function<Type>;
+	using IsFloatType = STL::is_floating_point<Type>;
+
+	template<typename Type>
+	using IsPointerType = STL::is_pointer<Type>;
+
+	template<typename Type>
+	using IsFunctionType = STL::is_function<Type>;
 	
 	template<typename Type>
-	using T_IsFunctionPtr = STL::bool_constant< T_IsPointer<Type>::value && T_IsFunction< RemovePtr<Type>>::value >;
+	using IsFunctionPtrType = TBool< IsPointerType<Type>::value && IsFunctionType< RemovePtr<Type>>::value >;
 
 
 
@@ -170,25 +179,39 @@ namespace LAL
 
 	// Type Primary Categories
 
+	template<typename Type>
+	constexpr
+	bool IsInt()
+	{
+		return IsIntType<Type>::value;
+	}
+
+	template<typename Type>
+	constexpr
+	bool IsFloat()
+	{
+		return IsFloatType<Type>::value;
+	}
+
 	template<typename Type> 
 	constexpr
 	bool IsPointer()
 	{
-		return T_IsPointer<Type>::value;
+		return IsPointerType<Type>::value;
 	}
 
 	template<typename Type> 
 	constexpr
 	bool IsFunction()
 	{
-		return T_IsFunction<Type>::value;
+		return IsFunctionType<Type>::value;
 	}
 
 	template<typename Type> 
 	constexpr
 	bool IsFunctionPtr()
 	{
-		return T_IsFunctionPtr<Type>::value;
+		return IsFunctionPtrType<Type>::value;
 	}
 
 	// String
@@ -236,7 +259,7 @@ namespace LAL
 
 // Obtains name of variable, function, macro.
 #define NameOf(...) \
-[]() \
+[&]() \
 constexpr noexcept \
 {                          \
   ::LAL::VoidType<decltype(__VA_ARGS__)>();                              \

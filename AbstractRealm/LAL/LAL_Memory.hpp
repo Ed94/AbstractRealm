@@ -51,10 +51,11 @@ namespace LAL
 
 	template<typename Type>
 	ForceInline
-	auto getPtr(Type* _objPtr)
+	Type** getPtr(Type* _obj)
 	{
-		return &_objPtr;
+		return &_obj;
 	}
+
 
 	template<typename FunctionType>
 	ForceInline

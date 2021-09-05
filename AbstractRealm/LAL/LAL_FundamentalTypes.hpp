@@ -48,28 +48,6 @@ namespace LAL
 
 	using STL::signbit;
 
-	template<typename Type>
-	constexpr 
-	bool IsInt()
-	{
-		return IsSameType<Type, s8 >() || 
-			   IsSameType<Type, s16>() || 
-			   IsSameType<Type, s32>() || 
-			   IsSameType<Type, s64>() ||
-			   IsSameType<Type, u8 >() ||
-			   IsSameType<Type, u16>() ||
-			   IsSameType<Type, u32>() ||
-			   IsSameType<Type, u64>()   ;
-	}
-
-	template<typename Type>
-	constexpr 
-	bool IsFloat()
-	{
-		return IsSameType<Type, f32>() || IsSameType<Type, f64>();
-	}
-
-
 	// Literals
 
 	constexpr u16 operator"" _uI16 (unsigned long long _uI16)
