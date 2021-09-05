@@ -10,6 +10,7 @@ namespace OSAL
 {
 	using namespace LAL;
 
+
 	struct CPU_InstructionSupportInfo
 	{
 
@@ -43,9 +44,10 @@ namespace OSAL
 		u64 VirtualAvail;
 	};
 
+
 	const String&                    Get_CPUVendor();
 	const String&                    Get_CPUModel();
-	const u64                        Get_CPUFrequency();
+	      u64                        Get_CPUFrequency();
 	const MemoryInfo&                Get_Memory();
 	const DynamicArray<DisplayInfo>& Get_Displays();
 	const DisplayInfo&               Get_MainDisplay();

@@ -223,17 +223,17 @@ namespace HAL::GPU::Vulkan
 		RenderContext_Default.MSAA_Samples        = ESampleCount::_1;
 	}
 
-	void Default_InitializeRenderer(ptr<Window> _window_in)
+	void Default_InitializeRenderer(ptr<Window> /*_window_in*/)
 	{
 	}
 
-	void Default_ReinitializeRenderer(ptr<Window> _window_in)
+	void Default_ReinitializeRenderer(ptr<Window> /*_window_in*/)
 	{
 	}
 
 	DynamicArray<CommandBuffer::Handle> CommandBuffersToSubmit;
 
-	void Default_DrawFrame(ptr<Window> _window_in)
+	void Default_DrawFrame(ptr<Window> /*_window_in*/)
 	{
 	}
 

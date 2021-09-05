@@ -35,7 +35,7 @@ namespace OSAL
 		return CPU_Model;
 	}
 
-	const u64 Get_CPUFrequency()
+	u64 Get_CPUFrequency()
 	{
 		return CPU_Frequency;
 	}

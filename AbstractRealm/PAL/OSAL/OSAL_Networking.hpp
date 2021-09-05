@@ -316,10 +316,12 @@ namespace OSAL
 		{
 			return htonll(_hostData);
 		}
+		else
+		{
+			Exception::Fatal::NoEntry("HostToNetwork");
 
-		Exception::Fatal::NoEntry("HostToNetwork");
-
-		return 0;
+			return 0;
+		}
 	}
 
 	template<typename ReturnType, typename ArgumentType>
@@ -348,9 +350,9 @@ namespace OSAL
 		else constexpr
 		{
 			Exception::Fatal::NoEntry("HostToNetwork");
-		}
 
-		return 0;
+			return 0;
+		}
 	}
 
 	constexpr fnPtr<EIPPresToNetworkCode, RoCStr, IPV4_TRAddress&> IPV4AddressToNetwork    = NetworkingAPI::IPV4AddressToNetwork;

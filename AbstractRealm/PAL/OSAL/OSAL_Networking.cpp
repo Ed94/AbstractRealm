@@ -60,7 +60,7 @@ namespace OSAL
 			return SCast<EAddressInfoCode>(getaddrinfo(_nodeName, _serviceName, _hints.operator const ADDRINFOA*(), RCast<PADDRINFOA>(getPtr(_info_out))));
 		}
 
-		EAddressInfoCode NetAPI_Win::GetAddressInfoAsync(RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info_out)
+		EAddressInfoCode NetAPI_Win::GetAddressInfoAsync(RoCStr /*_nodeName*/, RoCStr /*_serviceName*/, const AddressInfo& /*_hints*/, AddressInfo& /*_info_out*/)
 		{
 			Exception::Fatal::NotImplemented("GetAddressInfo");
 

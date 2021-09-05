@@ -1265,7 +1265,7 @@ namespace HAL::GPU::Vulkan
 		_commandbuffer.SetScissor(scissor);
 	}
 
-	void ViewContext::Render(const CommandBuffer& _commandBuffer)
+	void ViewContext::Render(const CommandBuffer& /*_commandBuffer*/)
 	{
 	}
 

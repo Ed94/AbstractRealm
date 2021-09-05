@@ -118,23 +118,28 @@ namespace HAL::GPU::Vulkan
 
 
 #pragma region StaticData
-		multiDefs const DynamicArray<Vertex_WColor> TriangleVerticies = 
+		multiDefs 
+		const DynamicArray<Vertex_WColor> TriangleVerticies = 
 		{
 			{
 				{ 0.0f, -0.5f, 0.0f}, 
-				{ 1.0f,  0.0f, 0.0f}
+				{ 1.0f,  0.0f, 0.0f},
+				{}
 			},
 			{
 				{ 0.5f, 0.5f, 0.0f}, 
-				{ 0.0f, 1.0f, 0.0f}
+				{ 0.0f, 1.0f, 0.0f},
+				{}
 			},
 			{
 				{-0.5f, 0.5f, 0.0f}, 
-				{ 0.0f, 0.0f, 1.0f}
+				{ 0.0f, 0.0f, 1.0f},
+				{}
 			}
 		};
 
-		multiDefs const DynamicArray<Vertex_WTexture> SquareVerticies =
+		multiDefs 
+		const DynamicArray<Vertex_WTexture> SquareVerticies =
 		{
 			{
 				{ -0.5f, -0.5f, 0.0f }, 
@@ -179,7 +184,8 @@ namespace HAL::GPU::Vulkan
 			}
 		};
 
-		multiDefs const DynamicArray<u16> SquareIndices =
+		multiDefs 
+		const DynamicArray<u16> SquareIndices =
 		{
 			0, 1, 2, 2, 3, 0,
 			4, 5, 6, 6, 7, 4

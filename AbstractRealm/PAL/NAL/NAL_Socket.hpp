@@ -31,7 +31,7 @@ namespace NAL
 		SocketAddress(const OSAL::SocketAddress& socketAddress);
 
 		static SPtr<SocketAddress> CreateIPV4(const String& _hostAndPort);
-		static SPtr<SocketAddress> CreateIPV6(u32 _address, u16 _port)
+		static SPtr<SocketAddress> CreateIPV6(u32 /*_address*/, u16 /*_port*/)
 		{
 			Exception::Fatal::NotImplemented("CreateIPV6");
 

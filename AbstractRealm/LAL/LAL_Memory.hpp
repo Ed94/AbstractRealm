@@ -49,14 +49,6 @@ namespace LAL
 		return &_obj;
 	}
 
-	template<typename Type>
-	ForceInline
-	Type** getPtr(Type* _obj)
-	{
-		return &_obj;
-	}
-
-
 	template<typename FunctionType>
 	ForceInline
 	auto getFnPtr(FunctionType& /*_obj*/)

@@ -138,7 +138,7 @@ namespace TPAL::Imgui
 		}
 	}
 
-	void Dequeue(RoCStr _windowName, WindowCallback _callback_in)
+	void Dequeue(RoCStr _windowName, WindowCallback /*_callback_in*/)
 	{
 		auto possibleWindow = WindowsQueued.find(String(_windowName));
 
