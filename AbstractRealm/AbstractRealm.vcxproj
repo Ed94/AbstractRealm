@@ -114,6 +114,7 @@
       <ShowIncludes>false</ShowIncludes>
       <DisableSpecificWarnings>5105</DisableSpecificWarnings>
       <AdditionalOptions>/showFilenames  </AdditionalOptions>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
