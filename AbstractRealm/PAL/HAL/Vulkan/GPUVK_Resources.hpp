@@ -1,14 +1,14 @@
 #pragma once
 
-
 #include "GPUVK_Memory.hpp"
-//#include "GPUVK_Rendering.hpp"
 #include "GPUVK_Shaders.hpp"
-
+#include "GPUVK_Traits.hpp"
 
 
 namespace HAL::GPU::Vulkan
 {
+	class Swapchain;
+
 	// Classes
 
 	class Buffer : public V3::Buffer
@@ -32,7 +32,11 @@ namespace HAL::GPU::Vulkan
 
 		EResult Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator);
 
-		DeviceSize GetSize() const { return info.Size; }
+		ForceInline
+		DeviceSize GetSize() const 
+		{ 
+			return info.Size; 
+		}
 
 	protected:
 
@@ -59,7 +63,7 @@ namespace HAL::GPU::Vulkan
 
 		void TransitionLayout(EImageLayout _old, EImageLayout _new);
 
-		operator Parent&();
+		//operator Parent&();
 
 	protected:
 
@@ -106,10 +110,10 @@ namespace HAL::GPU::Vulkan
 
 	protected:
 
-		      Buffer     buffer      ;
-		const Memory*    memory      ;
-		      DeviceSize memoryOffset;
-		      BufferView view        ;
+		Buffer            buffer      ;
+		ptr<const Memory> memory      ;
+		DeviceSize        memoryOffset;
+		BufferView        view        ;
 	};
 
 	class ImagePackage
@@ -123,7 +127,6 @@ namespace HAL::GPU::Vulkan
 
 		Image      image ;
 		Memory     memory;
-		//Memory*    memory;
 		DeviceSize memoryOffset;
 		ImageView  view  ;
 	};
@@ -219,35 +222,6 @@ namespace HAL::GPU::Vulkan
 		Memory memory;
 	};
 
-
-	template<typename Type, typename = void>
-	struct IsVulkanVertex : std::false_type
-	{};
-
-	template<typename Type>
-	/**
-	@brief Will be defined with a true_type when Type has the function.
-	*/
-	struct IsVulkanVertex<Type, decltype(static_cast<void>(Type::GetAttributeDescriptions))> : IsClassType<Type>
-	{};
-
-	template <typename Type>
-	/**
-	@brief Returns true if IsVulkanVertex is false.
-	*/
-	constexpr Where<IsVulkanVertex<Type>::value, 
-	bool> VulkanVertex() noexcept
-	{
-		return static_cast< ptr<void>>(Type::GetAttributeDescriptions) != nullptr ? true : false;
-	}
-
-	template<typename Type>
-	constexpr Where<! IsVulkanVertex<Type>::value, 
-	bool> VulkanVertex() noexcept
-	{
-		return false;
-	}
-
 	struct Vertex_WColor
 	{
 		using AttributeDescription = Pipeline::VertexInputState::AttributeDescription;
@@ -326,9 +300,6 @@ namespace HAL::GPU::Vulkan
 		}
 	};
 
-
-	class Swapchain;
-
 	class ARenderable
 	{
 	public:
@@ -336,7 +307,7 @@ namespace HAL::GPU::Vulkan
 		using AttributeDescription = Pipeline::VertexInputState::AttributeDescription;
 		using BindingDescription   = Pipeline::VertexInputState::BindingDescription;
 
-		~ARenderable() {};
+		virtual ~ARenderable() {};
 
 		virtual void Destroy() = NULL;
 
@@ -357,14 +328,17 @@ namespace HAL::GPU::Vulkan
 		virtual void UpdateUniforms(ptr<const void> _data, DeviceSize _size) = NULL;
 	};
 
-	
-
 	template<typename VertexType>
 	class TPrimitiveRenderable : public ARenderable
 	{
 	public:
 
 		EnforceConstraint(VulkanVertex<VertexType>(), "VertexType must be of vulkan vertex type.");
+
+		~TPrimitiveRenderable() 
+		{
+			Destroy();
+		}
 
 		using Vertex = VertexType;
 
@@ -388,6 +362,12 @@ namespace HAL::GPU::Vulkan
 
 	protected:
 
+		DynamicArray<Buffer::Handle> handles;
+
+		DynamicArray<AttributeDescription> attributeDescriptions;
+
+		DynamicArray<BindingDescription> bindingDescriptions;
+
 		VertexBuffer vertBuffer;
 
 		ptr<const AShader> shader;
@@ -404,13 +384,19 @@ namespace HAL::GPU::Vulkan
 
 		using Vertex = VertexType;
 
+		~TModelRenderable()
+		{
+			Destroy();
+		}
+
 		void Create
 		(
 			const DynamicArray<VertexType>& _verticies, 
-			const DynamicArray<u32>         _indicies,
-			ptr<const u8>                   _textureData,
-			u32 _width, u32 _height,
-			ptr<const AShader> _shader
+			const DynamicArray<u32>&        _indicies,
+			      ptr<const u8>             _textureData,
+			      u32                       _width, 
+			      u32                       _height,
+			      ptr<const AShader>        _shader
 		);
 
 #pragma region ARenderable
@@ -434,6 +420,14 @@ namespace HAL::GPU::Vulkan
 #pragma endregion ARenderable
 
 	protected:
+
+		DynamicArray<Buffer::Handle> handles;
+
+		// Attributes
+
+		DynamicArray<AttributeDescription> attributeDescriptions;
+
+		DynamicArray<BindingDescription> bindingDescriptions;
 
 		void CreateDescriptorsLayout();
 
@@ -460,10 +454,10 @@ namespace HAL::GPU::Vulkan
 
 
 	template<Meta::EGPU_Engage>
-	class GPU_Resources_Maker;
+	class Resources_Maker;
 
 	template<>
-	class GPU_Resources_Maker<Meta::EGPU_Engage::Single>
+	class Resources_Maker<Meta::EGPU_Engage::Single>
 	{
 	public:
 
@@ -485,10 +479,11 @@ namespace HAL::GPU::Vulkan
 		Request_Renderable
 		(
 			const DynamicArray<VertexType>& _verticies, 
-			const DynamicArray<u32> _indicies, 
-			ptr<const u8> _textureData,
-			u32 _width, u32 _height,
-			ptr<const AShader> _shader
+			const DynamicArray<u32>&        _indicies, 
+			      ptr<const u8>             _textureData,
+			      u32                       _width, 
+			      u32                       _height,
+			      ptr<const AShader>        _shader
 		)
 		{
 			SPtr< TModelRenderable<VertexType>> newRenderable = MakeShared< TModelRenderable<VertexType>>();
@@ -536,7 +531,7 @@ namespace HAL::GPU::Vulkan
 		static DynamicArray< SPtr<ARenderable> > renderables;
 	};
 
-	using GPU_Resources = GPU_Resources_Maker<Meta::GPU_Engagement>;
+	using Resources = Resources_Maker<Meta::GPU_Engagement>;
 }
 
 

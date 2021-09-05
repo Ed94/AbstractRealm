@@ -11,9 +11,7 @@ that can handle multiple different datatype accuracies. (As well as conversion b
 */
 
 
-
 #pragma once
-
 
 
 #include "Meta/Specification.hpp"
@@ -41,7 +39,6 @@ that can handle multiple different datatype accuracies. (As well as conversion b
 // Accuracy specified for IntN type used in simulation's integer number units. (Will use nano-accurate epsilon)
 //#define SIM_IntN_ACCURACY \
 // BitAccuracy::_64_Bit
-
 
 
 namespace Meta

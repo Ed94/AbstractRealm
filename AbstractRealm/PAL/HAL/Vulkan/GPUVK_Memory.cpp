@@ -2,22 +2,17 @@
 #include "GPUVK_Memory.hpp"
 
 
-
-
 namespace HAL::GPU::Vulkan
 {
+	// Forwards
+
+	const Memory& RequestMemory(const Memory::AllocateInfo& _info);
+
 #pragma region StaticData
 
 		DynamicArray<Memory> Memories;
 
 #pragma endregion StaticData
-
-
-
-	// Forwards
-
-	const Memory& RequestMemory(const Memory::AllocateInfo& _info);
-
 
 #pragma region Memory
 
@@ -30,8 +25,8 @@ namespace HAL::GPU::Vulkan
 
 	EResult Memory::Allocate(const LogicalDevice& _device, const AllocateInfo& _info)
 	{
-		device = &_device;
-		info = _info;
+		device = getPtr(_device);
+		info   = _info;
 
 		return Parent::Allocate(_info);
 	}
@@ -40,13 +35,13 @@ namespace HAL::GPU::Vulkan
 	{
 		info.AllocationSize  = _requirements.Size;
 
-		info.MemoryTypeIndex = GPU_Comms::GetEngagedPhysicalGPU().FindMemoryType
+		info.MemoryTypeIndex = Comms::GetEngagedPhysicalGPU().FindMemoryType
 		(
 			_requirements.MemoryTypeBits,
 			_propertyFlags
 		);
 
-		return Parent::Allocate(GPU_Comms::GetEngagedDevice(), info);
+		return Parent::Allocate(Comms::GetEngagedDevice(), info);
 	}
 
 	void Memory::Free()

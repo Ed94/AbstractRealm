@@ -61,7 +61,8 @@ namespace Concurrency
 	{
 		return
 		Initiated == true ?
-			ActiveUnits > 0 ? false : true : 
+			ActiveUnits > 0 ? 
+				false : true : 
 			true
 		;
 	}

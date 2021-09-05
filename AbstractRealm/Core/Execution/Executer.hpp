@@ -7,18 +7,13 @@ Last Modified: 5/18/2020
 
 #pragma once
 
-#define Meta_EngineModule
-#include "Meta/Meta.hpp"
-
+#include "Execution_Backend.hpp"
 
 #include "OSAL/OSAL_Entrypoint.hpp"
 
 
 namespace Execution
 {
-	using namespace LAL;
-	using namespace Meta;
-
 	// Enums
 
 	enum class EExecutionType
@@ -108,7 +103,6 @@ namespace Execution
 	};
 
 
-
 	// Functions
 	
 	/**
@@ -117,8 +111,6 @@ namespace Execution
 	OSAL::ExitValT EntryPoint();
 
 	//ptr<OSAL::Window> EngineWindow();
-
-	Dev_Declare_LogAPI();
 }
 
 

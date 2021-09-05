@@ -42,9 +42,6 @@ namespace Meta
 		}
 
 
-
-		// Public
-
 		bool EnableLayers() { return StaticData::EnableLayers; }
 
 		bool Enable_API_Dump  () { return StaticData::Enable_API_Dump  ; }

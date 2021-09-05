@@ -20,39 +20,32 @@ namespace LAL
 	using HighResTimePoint  = HighResClock::time_point          ;
 
 
-	template<class RepresentiveType, class Period = std::ratio<1>>
+	template<class RepresentiveType, class Period = Ratio<1>>
 	using Duration = STL::chrono::duration<RepresentiveType, Period>;
 
+	using Duration32 = Duration<f32>;
 	using Duration64 = Duration<f64>;
 
-	//template<class ToDuration>
-	//using CastTODuration = std::chrono::duration_cast<ToDuration>;
-
-	template 
-	<
-		class ToDuration, 
-		class RepresentiveType, 
-		class Period, 
-		std::enable_if_t<std::chrono::_Is_duration_v<ToDuration>, int> EnabledT
-	>
+	// Fails, enable if doesn't work here.
+	template<class ToDuration, class RepresentiveType, class Period, STL::enable_if_t<STL::chrono::_Is_duration_v<ToDuration>, int> _Enabled>
 	_NODISCARD constexpr 
 	ToDuration CastTo_Duration(const Duration<RepresentiveType, Period>& _duration) 
 	noexcept
 	(   /* strengthened */
-		std::is_arithmetic_v<RepresentiveType> && std::is_arithmetic_v<typename ToDuration::rep>
+		STL::is_arithmetic_v<RepresentiveType> && STL::is_arithmetic_v<typename ToDuration::rep>
 	)
 	{
 		// convert duration to another duration; truncate
-		using CommonFactor     = std::ratio_divide<Period, typename ToDuration::period>;
+		using CommonFactor     = STL::ratio_divide<Period, typename ToDuration::period>;
 		using ToRepresentative = typename ToDuration::rep;
-		using CommonRep        = std::common_type_t<ToRepresentative, RepresentiveType, intmax_t>;
+		using CommonRep        = STL::common_type_t<ToRepresentative, RepresentiveType, IntMaxType>;
 
-		constexpr bool _Num_is_one = CommonFactor::num == 1;
-		constexpr bool _Den_is_one = CommonFactor::den == 1;
+		constexpr bool NumIsOne = CommonFactor::num == 1;
+		constexpr bool DenIsOne = CommonFactor::den == 1;
 
-		if (_Den_is_one) 
+		if (DenIsOne)
 		{
-			if (_Num_is_one) 
+			if (NumIsOne)
 			{
 				return SCast<ToDuration>(SCast<ToRepresentative>(_duration.count()));
 			}
@@ -63,7 +56,7 @@ namespace LAL
 		}
 		else 
 		{
-			if (_Num_is_one) 
+			if (NumIsOne)
 			{
 				return SCast<ToDuration>(SCast<ToRepresentative>(SCast<CommonRep>(_duration.count()) / SCast<CommonRep>(CommonFactor::den)));
 			}
@@ -74,6 +67,13 @@ namespace LAL
 		}
 	}
 
+	// Fails, template argument deduction doesn't work.
+	template<class _To, class _Rep, class _Period>
+	constexpr fnPtr<_To, const Duration<_Rep, _Period>&> CastToDuration = STL::chrono::duration_cast<_To, _Rep, _Period>;
+
+	// This thing is cursed.
+	using STL::chrono::duration_cast;
+
 	using CalendarDate = STL::tm;
 
 	using Seconds      = STL::chrono::seconds;
@@ -81,14 +81,14 @@ namespace LAL
 	using Milliseconds = STL::chrono::milliseconds;
 	using Nanoseconds  = STL::chrono::nanoseconds ;
 
-	using Time = std::time_t;
+	using Time = STL::time_t;
 
 	constexpr auto ToTime  = SystemClock::to_time_t;
 	constexpr auto TimeUTC = STL::gmtime;
 
 	// Time Local is defined in OSAL.
 
-	// using PutTime = std::put_time;
+	// using PutTime = STL::put_time;
 	template <class Elem> _NODISCARD 
 	STL::_Timeobj<Elem, ptr<const CalendarDate>> PutTime(const CalendarDate& _date, ptr<const Elem> _elem)
 	{

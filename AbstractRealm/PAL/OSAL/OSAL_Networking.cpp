@@ -55,12 +55,12 @@ namespace OSAL
 			return SCast<EIPPresToNetworkCode>(inet_pton(AF_INET6, _presentation, getPtr(_ipv6Address_Out)));
 		}
 
-		EAddressInfoCode NetAPI_Win::GetAddressInfo(RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info)
+		EAddressInfoCode NetAPI_Win::GetAddressInfo(RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info_out)
 		{
-			return SCast<EAddressInfoCode>(getaddrinfo(_nodeName, _serviceName, _hints.operator const ADDRINFOA*(), getPtr(_info.operator ADDRINFOA*())));
+			return SCast<EAddressInfoCode>(getaddrinfo(_nodeName, _serviceName, _hints.operator const ADDRINFOA*(), getPtr(_info_out.operator ADDRINFOA*())));
 		}
 
-		EAddressInfoCode NetAPI_Win::GetAddressInfoAsync(RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info)
+		EAddressInfoCode NetAPI_Win::GetAddressInfoAsync(RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info_out)
 		{
 			Exception::Fatal::NotImplemented("GetAddressInfo");
 
@@ -75,9 +75,9 @@ namespace OSAL
 			);*/
 		}
 
-		void NetAPI_Win::FreeAddressInfo(ptr<AddressInfo> _addressInfo)
+		void NetAPI_Win::FreeAddressInfo(ptr<AddressInfo> _addressInfo_in)
 		{
-			freeaddrinfo(RCast<ADDRINFOA>(_addressInfo));
+			freeaddrinfo(RCast<ADDRINFOA>(_addressInfo_in));
 		}
 	}
 

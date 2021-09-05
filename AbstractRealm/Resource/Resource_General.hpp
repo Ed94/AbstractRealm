@@ -1,11 +1,6 @@
 #pragma once
 
-#include "LAL.hpp"
-
-#include "Meta/Specification.hpp"
-#include "Meta/Config/Resource_Config.hpp"
-
-
+#include "Resource_Backend.hpp"
 
 
 namespace Resource
@@ -16,7 +11,6 @@ namespace Resource
 
 	using GreyscaleValue = Meta::Choose_FloatAccuracy<Meta::Greyscale_LinearAccuracy >;
 	using ColorValue     = Meta::Choose_FloatAccuracy<Meta::ColorValue_LinearAccuracy>;
-
 
 
 	template<typename Value>
@@ -72,7 +66,6 @@ namespace Resource
 			G,   // Green 
 			B;   // Blue
 	};
-
 
 
 	using LinearGrey_NoA = TGreyscale_NoAlpha<GreyscaleValue>;

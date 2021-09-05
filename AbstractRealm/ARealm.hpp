@@ -3,13 +3,11 @@ ARealm
 
 File: ARealm.hpp
 
-
 The main include file that games should use.
 */
 
 
 #pragma once
-
 
 
 #include "Meta/Meta.hpp"
@@ -26,8 +24,8 @@ The main include file that games should use.
 
 namespace ARealm
 {
-	namespace LAL    = LAL;
-	namespace Meta   = Meta;
+	namespace LAL  = LAL;
+	namespace Meta = Meta;
 	namespace HAL
 	{
 		using namespace HAL;
@@ -37,6 +35,6 @@ namespace ARealm
 			using namespace HAL::GPU;
 		}
 	}
-	namespace OSAL   = OSAL;
-	namespace PAL    = PAL;
+	namespace OSAL = OSAL;
+	namespace PAL  = PAL;
 }

@@ -33,21 +33,6 @@ namespace Execution
 		executer = _executerToBind;
 	}
 
-	Duration64 Cycler::GetAverageDelta() const 
-	{ 
-		return averageDelta; 
-	}
-
-	f64 Cycler::GetCycle() const 
-	{ 
-		return cycles; 
-	}
-	
-	Duration64 Cycler::GetDeltaTime() const
-	{ 
-		return deltaTime; 
-	}
-
 	void Cycler::Initiate()
 	{
 		exist = true;
@@ -74,7 +59,7 @@ namespace Execution
 
 				deltaInterval += deltaTime;
 
-				//std::this_thread::yield(); 
+				//STL::this_thread::yield(); 
 			}
 		}
 
@@ -90,7 +75,7 @@ namespace Execution
 
 	void Cycler::CalculateStats()
 	{
-		deltaTime = std::chrono::duration_cast<Duration64>(cycleEnd - cycleStart);
+		deltaTime = duration_cast<Duration64>(cycleEnd - cycleStart);
 
 		f64 alpha = 0.5;
 

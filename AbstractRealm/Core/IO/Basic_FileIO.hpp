@@ -6,7 +6,6 @@
 */
 
 
-
 #pragma once
 
 
@@ -23,21 +22,20 @@ namespace IO
 
 	// Enums and Masks
 
-	enum class EOpenFlag : std::ios::openmode
+	enum class EOpenFlag : STL::ios::openmode
 	{
-		SeekToEOF_BeforeWrite = std::ios::app   ,
-		BinaryMode            = std::ios::binary,
-		ForInput              = std::ios::in    ,
-		ForOutput             = std::ios::out   ,
-		DiscardStreamContents = std::ios::trunc ,
-		SeekToEOF             = std::ios::ate   ,
+		SeekToEOF_BeforeWrite = STL::ios::app   ,
+		BinaryMode            = STL::ios::binary,
+		ForInput              = STL::ios::in    ,
+		ForOutput             = STL::ios::out   ,
+		DiscardStreamContents = STL::ios::trunc ,
+		SeekToEOF             = STL::ios::ate   ,
 
-		SpecifyBitmaskable = sizeof(std::ios::openmode)
+		SpecifyBitmaskable = sizeof(STL::ios::openmode)
 	};
 
-	
 	using OpenFlags = 
-		Bitfield<EOpenFlag, std::ios::openmode>;
+		Bitfield<EOpenFlag, STL::ios::openmode>;
 
 
 	// Compile-Time
@@ -52,7 +50,6 @@ namespace IO
 	*/
 	FileBuffer BufferFile(const Path& _fileToBuffer);
 
-	bool OpenFile(File_OutputStream& _fileStream, OpenFlags _flags, const Path& _file);
-
-	bool OpenFile(File_InputStream&  _fileStream, OpenFlags _flags, const Path& _file);
+	bool OpenFile(File_OutputStream& _fileStream_in, OpenFlags _flags, const Path& _file);
+	bool OpenFile(File_InputStream&  _fileStream_in, OpenFlags _flags, const Path& _file);
 }

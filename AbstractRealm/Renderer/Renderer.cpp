@@ -10,7 +10,7 @@
 
 #include "OSAL/OSAL_Hardware.hpp"
 
-#include "SAL_ImGui.hpp"
+#include "TPAL_ImGui.hpp"
 
 
 namespace Renderer
@@ -42,7 +42,7 @@ namespace Renderer
 
 	void Record_EditorDevDebugUI()
 	{
-		using namespace SAL::Imgui;
+		using namespace TPAL::Imgui;
 
 		if (CollapsingHeader("Renderer"))
 		{
@@ -93,9 +93,11 @@ namespace Renderer
 
 	void Load()
 	{
+		Load_Backend();
+
 		PresentInterval = Meta::FixRenderRateToRefreshRate() ? Duration64(1.0 / OSAL::Get_MainDisplay().RefreshRate) : Duration64(0.0);
 
-		SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
+		TPAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
 
 		// Temp situation due to not having a well fleshed out interface to the gpu hal backend.
 		switch (Meta::GPU_API())
@@ -115,8 +117,8 @@ namespace Renderer
 
 				HAL::GPU::CeaseComms();
 
-
-			} break;
+				break;
+			} 
 
 			case Meta::EGPUPlatformAPI::Vulkan:
 			{
@@ -144,6 +146,15 @@ namespace Renderer
 				OSAL::SetWindow_SizeChangeCallback(StaticData::EngineWindow, WindowSizeChanged);
 
 				HAL::GPU::Vulkan::Start_GPUVK_Demo(StaticData::EngineWindow);
+
+				break;
+			}
+
+			case Meta::EGPUPlatformAPI::No_API:
+			{
+				Exception::Fatal::NotImplemented("Software rendering is not supported yet.");
+
+				break;
 			}
 		}
 	}
@@ -152,6 +163,10 @@ namespace Renderer
 	{
 		switch (Meta::GPU_API())
 		{
+			case Meta::EGPUPlatformAPI::Methane:
+				Exception::Fatal::NotImplemented("Software rendering is not supported yet.");
+				[[fallthrough]];
+
 			case Meta::EGPUPlatformAPI::Vulkan:
 			{
 				HAL::GPU::Vulkan::Stop_GPUVK_Demo();
@@ -160,7 +175,15 @@ namespace Renderer
 
 				HAL::GPU::CeaseComms();
 
-			} break;
+				break;
+			}
+
+			case Meta::EGPUPlatformAPI::No_API:
+			{
+				Exception::Fatal::NotImplemented("Software rendering is not supported yet.");
+
+				break;
+			}
 		}
 	}
 }

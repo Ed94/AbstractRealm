@@ -30,18 +30,6 @@ namespace HAL::GPU::Vulkan
 #pragma endregion StaticData
 
 
-	// Forwards
-
-	//void AquireSupportedValidationLayers();
-
-	//bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified);
-
-	//void DetermineRequiredExtensions();
-
-	//void SetupDebugMessenger();
-
-
-
 	// Class Implementation
 
 #pragma region PhysicalDevice
@@ -56,7 +44,8 @@ namespace HAL::GPU::Vulkan
 		{
 			result = Parent::GetAvailableExtensions(layerAndExtensions.Layer.Name, layerAndExtensions.Extensions);
 
-			if (result != EResult::Success) return result;
+			if (result != EResult::Success) 
+				return result;
 		}
 
 		return result;
@@ -72,15 +61,15 @@ namespace HAL::GPU::Vulkan
 		return layersAndExtensions;
 	}
 
-	PhysicalDevice::operator Parent& ()
-	{
-		return *static_cast<Parent*>(this);
-	}
+	//PhysicalDevice::operator Parent&()
+	//{
+	//	return SCast<Parent>(dref(this));
+	//}
 
-	PhysicalDevice::operator const Parent& () const
-	{
-		return *static_cast<const Parent*>(this);
-	}
+	//PhysicalDevice::operator const Parent&() const
+	//{
+	//	return SCast<const Parent>(dref(this));
+	//}
 
 #pragma endregion PhysicalDevice
 
@@ -110,22 +99,23 @@ namespace HAL::GPU::Vulkan
 
 #pragma region AppInstance
 
-	EResult AppInstance::GetAvailablePhysicalDevices(DynamicArray<PhysicalDevice>& _deviceListing) const
+	EResult AppInstance::GetAvailablePhysicalDevices(DynamicArray<PhysicalDevice>& _deviceListing_in) const
 	{
 		ui32 count; DynamicArray<PhysicalDevice::Handle> handleList;
 
-		EResult returnCode = QueryPhysicalDeviceListing(&count, nullptr);
+		EResult returnCode = QueryPhysicalDeviceListing(getPtr(count), nullptr);
 
-		if (returnCode != EResult::Success) return returnCode;
+		if (returnCode != EResult::Success) 
+			return returnCode;
 
-		handleList    .resize(count);
-		_deviceListing.resize(count);
+		handleList       .resize(count);
+		_deviceListing_in.resize(count);
 
-		returnCode = QueryPhysicalDeviceListing(&count, handleList.data());
+		returnCode = QueryPhysicalDeviceListing(getPtr(count), handleList.data());
 
 		for (DeviceSize index = 0; index < count; index++)
 		{
-			_deviceListing[index].AssignHandle(handleList[index]);
+			_deviceListing_in[index].AssignHandle(handleList[index]);
 		}
 
 		return returnCode;
@@ -137,11 +127,11 @@ namespace HAL::GPU::Vulkan
 
 	// Public
 
-	void LogicalDevice::AssignPhysicalDevice(PhysicalDevice& _physicalDevice)
+	void LogicalDevice::AssignPhysicalDevice(PhysicalDevice& _physicalDevice_in)
 	{ 
-		physicalDevice = &_physicalDevice; 
+		physicalDevice = getPtr(_physicalDevice_in); 
 
-		info.EnabledFeatures = &physicalDevice->GetFeatures();
+		info.EnabledFeatures = getPtr(physicalDevice->GetFeatures());
 
 		PrepareQueues();
 
@@ -152,26 +142,32 @@ namespace HAL::GPU::Vulkan
 
 	EResult LogicalDevice::Create()
 	{
-		EResult result = Parent::Parent::Create(*physicalDevice, info, handle);
+		EResult result = Parent::Parent::Create(dref(physicalDevice), info, handle);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
-		if (graphicsQueue.FamilySpecified()) graphicsQueue.Retrieve();
-		if (computeQueue .FamilySpecified()) computeQueue .Retrieve();
-		if (transferQueue.FamilySpecified()) transferQueue.Retrieve();
+		if (graphicsQueue.FamilySpecified()) 
+			graphicsQueue.Retrieve();
+
+		if (computeQueue.FamilySpecified()) 
+			computeQueue.Retrieve();
+
+		if (transferQueue.FamilySpecified()) 
+			transferQueue.Retrieve();
 
 		return result;
 	}
 
-	bool LogicalDevice::ExtensionsEnabled(DynamicArray<RoCStr> _extensions)
+	bool LogicalDevice::ExtensionsEnabled(DynamicArray<RoCStr> _extensions_in)
 	{
-		uDM extensionsLeft = _extensions.size();
+		uDM extensionsLeft = _extensions_in.size();
 
-		for (auto& enabledExtension : _extensions)
+		for (auto& enabledExtension : _extensions_in)
 		{
 			uDM index = 0;
 
-			for (auto& extension : _extensions)
+			for (auto& extension : _extensions_in)
 			{
 				if (CStrCompare(enabledExtension, extension) == 0)
 				{
@@ -203,6 +199,10 @@ namespace HAL::GPU::Vulkan
 	{
 		switch (_type)
 		{
+			case EQueueFlag::VV_SpecifyBitmaskable:
+				Exception::Fatal::Throw("Attempted to use a trait enum.");
+				[[fallthrough]];
+
 			case EQueueFlag::Graphics:
 			{
 				return graphicsQueue;
@@ -211,9 +211,17 @@ namespace HAL::GPU::Vulkan
 			{
 				return transferQueue;
 			}
+
+			case EQueueFlag::Compute      : [[fallthrough]];
+			case EQueueFlag::Protected    : [[fallthrough]];
+			case EQueueFlag::SparseBinding: [[fallthrough]];
 			default:
 				Exception::Fatal::Throw("Attempted to use queue that is not supported by this logical device.");
 		}
+
+		Exception::Fatal::NoEntry("GetQueue");
+
+		return graphicsQueue;
 	}
 
 	const LogicalDevice::Queue& LogicalDevice::GetGraphicsQueue() const
@@ -248,15 +256,15 @@ namespace HAL::GPU::Vulkan
 		return handle;
 	}
 
-	LogicalDevice::operator Parent& ()
-	{
-		return *reinterpret_cast<Parent*>(this);
-	}
+	//LogicalDevice::operator Parent& ()
+	//{
+	//	return dref(RCast<Parent>(this));
+	//}
 
-	LogicalDevice::operator const Parent& () const
-	{
-		return *reinterpret_cast<const Parent*>(this);
-	}
+	//LogicalDevice::operator const Parent& () const
+	//{
+	//	return dref(RCast<const Parent>(this));
+	//}
 
 	// Protected
 
@@ -346,7 +354,7 @@ namespace HAL::GPU::Vulkan
 		}
 
 		info.QueueCreateInfoCount = SCast<u32>(queueFamilyInfos.size());
-		info.QueueCreateInfos     = queueFamilyInfos.data()               ;
+		info.QueueCreateInfos     = queueFamilyInfos.data()            ;
 	}
 
 	void LogicalDevice::ProcessExtensionSupport()
@@ -368,7 +376,7 @@ namespace HAL::GPU::Vulkan
 		}
 
 		info.EnabledExtensionCount = SCast<u32>(extensionsEnabled.size());
-		info.EnabledExtensionNames = extensionsEnabled.data()               ;
+		info.EnabledExtensionNames = extensionsEnabled.data()            ;
 	}
 
 	void LogicalDevice::ProcessLayerSupport()
@@ -386,16 +394,14 @@ namespace HAL::GPU::Vulkan
 
 #pragma endregion LogicalDevice
 
-
-
 #pragma region Public
 
-	const AppInstance& GPU_Comms::GetAppInstance()
+	const AppInstance& Comms::GetAppInstance()
 	{
 		return AppGPU_Comms;
 	}
 
-	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::AcquirePhysicalDevices()
+	void Comms_Maker<Meta::EGPU_Engage::Single>::AcquirePhysicalDevices()
 	{
 		EResult result = AppGPU_Comms.GetAvailablePhysicalDevices(PhysicalGPUs);
 
@@ -419,12 +425,19 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::Cease()
+	void Comms_Maker<Meta::EGPU_Engage::Single>::Cease()
 	{
-		if (Meta::Vulkan::Enable_LogError  ()) GPU_Messenger_Error  .Destroy();
-		if (Meta::Vulkan::Enable_LogWarning()) GPU_Messenger_Warning.Destroy();
-		if (Meta::Vulkan::Enable_LogInfo   ()) GPU_Messenger_Info   .Destroy();
-		if (Meta::Vulkan::Enable_LogVerbose()) GPU_Messenger_Verbose.Destroy();
+		if (Meta::Vulkan::Enable_LogError()) 
+			GPU_Messenger_Error.Destroy();
+
+		if (Meta::Vulkan::Enable_LogWarning()) 
+			GPU_Messenger_Warning.Destroy();
+
+		if (Meta::Vulkan::Enable_LogInfo()) 
+			GPU_Messenger_Info.Destroy();
+
+		if (Meta::Vulkan::Enable_LogVerbose()) 
+			GPU_Messenger_Verbose.Destroy();
 
 		DeviceEngaged = nullptr;
 
@@ -440,7 +453,7 @@ namespace HAL::GPU::Vulkan
 		Log("GPU communications ceased");
 	}
 
-	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::Initialize(RoCStr _appName, Meta::AppVersion _version)
+	void Comms_Maker<Meta::EGPU_Engage::Single>::Initialize(RoCStr _appName, Meta::AppVersion _version)
 	{
 		AppInstance::AppInfo    spec       {};
 		AppInstance::CreateInfo createSpec {};
@@ -480,7 +493,7 @@ namespace HAL::GPU::Vulkan
 				AquireSupportedValidationLayers();
 			}
 				
-			if (!CheckLayerSupport(DesiredLayers))
+			if (! CheckLayerSupport(DesiredLayers))
 			{
 				Exception::Fatal::Throw("Layers requested, but are not available!");
 			}
@@ -503,7 +516,7 @@ namespace HAL::GPU::Vulkan
 		DetermineRequiredExtensions();
 
 		createSpec.EnabledExtensionCount = SCast<u32>(DesiredInstanceExts.size());
-		createSpec.EnabledExtensionNames = DesiredInstanceExts.data()               ;
+		createSpec.EnabledExtensionNames = DesiredInstanceExts.data()            ;
 
 		DynamicArray<DebugUtils::Messenger::CreateInfo> debugInfos;
 
@@ -514,10 +527,17 @@ namespace HAL::GPU::Vulkan
 
 			SetupDebugMessenger();
 
-			if (Meta::Vulkan::Enable_LogError  ()) debugInfos.push_back(GPU_Messenger_Error  .GetInfo());
-			if (Meta::Vulkan::Enable_LogWarning()) debugInfos.push_back(GPU_Messenger_Warning.GetInfo());
-			if (Meta::Vulkan::Enable_LogInfo   ()) debugInfos.push_back(GPU_Messenger_Info   .GetInfo());
-			if (Meta::Vulkan::Enable_LogVerbose()) debugInfos.push_back(GPU_Messenger_Verbose.GetInfo());
+			if (Meta::Vulkan::Enable_LogError  ()) 
+				debugInfos.push_back(GPU_Messenger_Error.GetInfo());
+
+			if (Meta::Vulkan::Enable_LogWarning())
+				debugInfos.push_back(GPU_Messenger_Warning.GetInfo());
+
+			if (Meta::Vulkan::Enable_LogInfo   ()) 
+				debugInfos.push_back(GPU_Messenger_Info.GetInfo());
+
+			if (Meta::Vulkan::Enable_LogVerbose())
+				debugInfos.push_back(GPU_Messenger_Verbose.GetInfo());
 
 			createSpec.Next = debugInfos.data();
 		}
@@ -572,7 +592,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::EngageMostSuitableDevice()
+	void Comms_Maker<Meta::EGPU_Engage::Single>::EngageMostSuitableDevice()
 	{
 		Log("Determining most suitable device to engage.");
 
@@ -630,7 +650,7 @@ namespace HAL::GPU::Vulkan
 		OSAL::Destroy_Window(testWindow);
 	}
 
-	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GenerateLogicalDevices()
+	void Comms_Maker<Meta::EGPU_Engage::Single>::GenerateLogicalDevices()
 	{
 		LogicalGPUs.resize(PhysicalGPUs.size());
 
@@ -657,27 +677,27 @@ namespace HAL::GPU::Vulkan
 		Log("Logical devices generated");
 	}
 
-	const LogicalDevice& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetEngagedDevice()
+	const LogicalDevice& Comms_Maker<Meta::EGPU_Engage::Single>::GetEngagedDevice()
 	{
 		return dref(DeviceEngaged);
 	}
 
-	const PhysicalDevice& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetEngagedPhysicalGPU()
+	const PhysicalDevice& Comms_Maker<Meta::EGPU_Engage::Single>::GetEngagedPhysicalGPU()
 	{
 		return DeviceEngaged->GetPhysicalDevice();
 	}
 
-	const LogicalDevice::Queue& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetGraphicsQueue()
+	const LogicalDevice::Queue& Comms_Maker<Meta::EGPU_Engage::Single>::GetGraphicsQueue()
 	{
 		return DeviceEngaged->GetGraphicsQueue();
 	}
 
-	const LogicalDevice::Queue& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetComputeQueue()
+	const LogicalDevice::Queue& Comms_Maker<Meta::EGPU_Engage::Single>::GetComputeQueue()
 	{
 		return DeviceEngaged->GetComputeQueue();
 	}
 
-	const LogicalDevice::Queue& GPU_Comms_Maker<Meta::EGPU_Engage::Single>::GetTransferQueue()
+	const LogicalDevice::Queue& Comms_Maker<Meta::EGPU_Engage::Single>::GetTransferQueue()
 	{
 		return DeviceEngaged->GetTransferQueue();
 	}
@@ -686,7 +706,7 @@ namespace HAL::GPU::Vulkan
 
 #pragma region Protected
 
-	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::AquireSupportedValidationLayers()
+	void Comms_Maker<Meta::EGPU_Engage::Single>::AquireSupportedValidationLayers()
 	{
 		bool found = false;
 
@@ -785,7 +805,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	bool GPU_Comms_Maker<Meta::EGPU_Engage::Single>::CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
+	bool Comms_Maker<Meta::EGPU_Engage::Single>::CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified)
 	{
 		uDM layersFound = 0;
 
@@ -816,10 +836,10 @@ namespace HAL::GPU::Vulkan
 
 	Bool DebugCallback_Verbose
 	(
-		Messenger::ServerityFlags /*_messageServerity*/,
-		Messenger::TypeFlags      /*_messageType*/,
+		      Messenger::ServerityFlags /*_messageServerity*/,
+		      Messenger::TypeFlags      /*_messageType*/,
 		const Messenger::CallbackData   _callbackData,
-		void*                     /*_userData*/
+		      ptr<void>                 /*_userData*/
 	)
 	{
 		String formattedMessage("Verbose: \n");
@@ -835,10 +855,10 @@ namespace HAL::GPU::Vulkan
 
 	Bool DebugCallback_Info
 	(
-		Messenger::ServerityFlags /*_messageServerity*/,
-		Messenger::TypeFlags      /*_messageType*/,
+		      Messenger::ServerityFlags /*_messageServerity*/,
+		      Messenger::TypeFlags      /*_messageType*/,
 		const Messenger::CallbackData   _callbackData,
-		void*                     /*_userData*/
+		      ptr<void>                 /*_userData*/
 	)
 	{
 		String formattedMessage("Info: \n");
@@ -854,10 +874,10 @@ namespace HAL::GPU::Vulkan
 
 	Bool DebugCallback_Warning
 	(
-		Messenger::ServerityFlags /*_messageServerity*/,
-		Messenger::TypeFlags      /*_messageType*/,
+		      Messenger::ServerityFlags /*_messageServerity*/,
+		      Messenger::TypeFlags      /*_messageType*/,
 		const Messenger::CallbackData   _callbackData,
-		void*                     /*_userData*/
+		      ptr<void>                 /*_userData*/
 	)
 	{
 		String formattedMessage(_callbackData.MesssageIDName);
@@ -874,7 +894,7 @@ namespace HAL::GPU::Vulkan
 		      Messenger::ServerityFlags /*_messageServerity*/,
 		      Messenger::TypeFlags      /*_messageType*/,
 		const Messenger::CallbackData   _callbackData    , 
-		      void*                     /*_userData*/
+		      ptr<void>                 /*_userData*/
 	)
 	{
 		String formattedMessage(_callbackData.MesssageIDName);
@@ -886,7 +906,7 @@ namespace HAL::GPU::Vulkan
 		return EBool::True;
 	}
 
-	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::DetermineRequiredExtensions()
+	void Comms_Maker<Meta::EGPU_Engage::Single>::DetermineRequiredExtensions()
 	{
 		switch (OSAL::WindowingPlatform)
 		{
@@ -894,11 +914,11 @@ namespace HAL::GPU::Vulkan
 			{
 				u32 numExtensions = 0;
 
-				CStrArray extensions = CStrArray(SAL::GLFW::GetRequiredVulkanAppExtensions(numExtensions));
+				CStrArray extensions = CStrArray(TPAL::GLFW::GetRequiredVulkanAppExtensions(numExtensions));
 
 				for (u32 index = 0; index < numExtensions; index++)
 				{
-					if (std::find(DesiredInstanceExts.begin(), DesiredInstanceExts.end(), extensions[index]) == DesiredInstanceExts.end())
+					if (find(DesiredInstanceExts.begin(), DesiredInstanceExts.end(), extensions[index]) == DesiredInstanceExts.end())
 					{
 						DesiredInstanceExts.push_back(extensions[index]);
 
@@ -937,7 +957,7 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	void GPU_Comms_Maker<Meta::EGPU_Engage::Single>::SetupDebugMessenger()
+	void Comms_Maker<Meta::EGPU_Engage::Single>::SetupDebugMessenger()
 	{
 		Messenger::CreateInfo info{};
 
@@ -984,6 +1004,6 @@ namespace HAL::GPU::Vulkan
 			GPU_Messenger_Verbose.AssignInfo(info);
 		}
 	}
+#pragma endregion Protected
 }
 
-#pragma endregion Protected

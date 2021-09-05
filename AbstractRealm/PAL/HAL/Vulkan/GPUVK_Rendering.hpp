@@ -14,14 +14,19 @@ namespace HAL::GPU::Vulkan
 {
 	using namespace LAL;
 
-
-	// Forwards
-
 	class ViewContext;
 
 
+	enum class ESubmissionType
+	{
+		Individual,   // Individual render and presentation context submissions.
+		Combined  ,   // Combined render and presentation context submissions.
+		IR_CP     ,   // Individual render and combined presentation context submissions.
+		CR_IP         // Combined render and individual presentation context submissions.
+	};
 
-	// Classes
+
+#pragma region Classes
 
 	class Surface : public V3::Surface
 	{
@@ -29,7 +34,7 @@ namespace HAL::GPU::Vulkan
 
 		using Parent = V3::Surface;
 
-		EResult Create(ptr<OSAL::Window> _window);
+		EResult Create(ptr<OSAL::Window> _window_in);
 
 		bool IsFormatAvailable(const Format& _format) const;
 
@@ -60,7 +65,7 @@ namespace HAL::GPU::Vulkan
 
 		using Parent = V3::Swapchain;
 
-		EResult Create(Surface& _surface, Surface::Format _format);
+		EResult Create(Surface& _surface_in, Surface::Format _format);
 
 		void Destroy();
 
@@ -116,9 +121,9 @@ namespace HAL::GPU::Vulkan
 			SubpassDependency  Dependency ;
 		};*/
 
-		EResult Create(const LogicalDevice& _device, CreateInfo& _info);
+		EResult Create(const LogicalDevice& _device, const CreateInfo& _info);
 
-		EResult Create(const LogicalDevice& _device, CreateInfo& _info, const Memory::AllocationCallbacks& _allocator);
+		EResult Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator);
 
 		u32 GetAttachmentCount() const;
 
@@ -153,7 +158,6 @@ namespace HAL::GPU::Vulkan
 
 		bool shouldClear = true, bufferDepth = true;*/
 	};
-
 
 	// Upgrade the frame buffer?
 
@@ -219,19 +223,19 @@ namespace HAL::GPU::Vulkan
 		ptr<GraphicsPipeline> Pipeline;
 	};
 
-	using RenderCallback = void(*)(const CommandBuffer& _buffer, int _index);
+	using RenderCallback = fnPtr<void,  const CommandBuffer& /*_buffer*/, int /*_index*/>;
 
 	class RenderContext
 	{
 	public:
 
-		EResult Create(Swapchain& _swapChain);
+		EResult Create(Swapchain& _swapChain_in);
 
 		void Destroy();
 
-		void AddRenderable(ptr<ARenderable> _renderable);
+		void AddRenderable(ptr<ARenderable> _renderable_in);
 
-		void AddRenderCallback(RenderCallback _callback);
+		void AddRenderCallback(RenderCallback _callback_in);
 
 		const RenderPass& GetRenderPass() const;
 
@@ -239,7 +243,7 @@ namespace HAL::GPU::Vulkan
 
 		void SubmitFrameToPresentation();
 
-		bool operator== (const RenderContext& _other);
+		bool operator== (const RenderContext& _other_in);
 
 	protected:
 
@@ -253,7 +257,7 @@ namespace HAL::GPU::Vulkan
 
 		void CheckContext();
 
-		GraphicsPipeline& Request_GraphicsPipeline(ptr<ARenderable> _renderable);
+		GraphicsPipeline& Request_GraphicsPipeline(ptr<ARenderable> _renderable_in);
 
 		ptr<Swapchain> swapchain;
 
@@ -321,15 +325,15 @@ namespace HAL::GPU::Vulkan
 		 ViewContext();
 		~ViewContext();
 
-		void SetViewport(const Viewport& _viewport);
+		void SetViewport(const Viewport& _viewport_in);
 
-		void SetScissor(const Rect2D& _scissor);
+		void SetScissor(const Rect2D& _scissor_in);
 
 		// 
 
-		void Prepare(const CommandBuffer& _commandBuffer);
+		void Prepare(const CommandBuffer& _commandBuffer_in);
 
-		void Render(const CommandBuffer& _commandbuffer);
+		void Render(const CommandBuffer& _commandbuffer_in);
 
 		void SetupScissor();
 
@@ -342,34 +346,24 @@ namespace HAL::GPU::Vulkan
 		Viewport viewport;
 		Rect2D   scissor;
 	};
-
-
-
-	enum class ESubmissionType
-	{
-		Individual,   // Individual render and presentation context submissions.
-		Combined  ,   // Combined render and presentation context submissions.
-		IR_CP     ,   // Individual render and combined presentation context submissions.
-		CR_IP         // Combined render and individual presentation context submissions.
-	};
-
+#pragma endregion Classes
 
 
 	template<Meta::EGPU_Engage>
-	class Rendering_Maker;
+	class Renderer_Maker;
 
 	template<>
-	class Rendering_Maker<Meta::EGPU_Engage::Single>
+	class Renderer_Maker<Meta::EGPU_Engage::Single>
 	{
 	public:
 
-		static Surface& Request_Surface(ptr<OSAL::Window> _window);
-		static void     Retire_Surface (ptr<Surface> _surface);
+		static Surface& Request_Surface(ptr<OSAL::Window> _window_in);
+		static void     Retire_Surface (ptr<Surface> _surface_in);
 
-		static Swapchain& Request_SwapChain(Surface& _surface, Surface::Format _formatDesired);
-		static void       Retire_SwapChain (ptr<Swapchain> _swapchain);
+		static Swapchain& Request_SwapChain(Surface& _surface_in, Surface::Format _formatDesired);
+		static void       Retire_SwapChain (ptr<Swapchain> _swapchain_in);
 
-		static RenderContext& Request_RenderContext(Swapchain& _swapchain);
+		static RenderContext& Request_RenderContext(Swapchain& _swapchain_in);
 		static void           Retire_RenderContext(const ptr<RenderContext> _renderContext);
 
 		static void SetSubmissionMode(ESubmissionType _submissionBehaviorDesired);
@@ -380,14 +374,14 @@ namespace HAL::GPU::Vulkan
 		static void Update();
 	};
 
-	using Rendering = Rendering_Maker<Meta::GPU_Engagement>;
+	using Rendering = Renderer_Maker<Meta::GPU_Engagement>;
 
 	void SetTestCallback(void (*_recordToBuffers)
 	(
-		int index,
-		const CommandBuffer& _buffer,
-		Framebuffer::Handle _frameBuffer,
-		ptr<const Swapchain> _swap,
+		int                   _index,
+		const CommandBuffer&  _buffer,
+		Framebuffer::Handle   _frameBuffer,
+		ptr<const Swapchain>  _swap,
 		RenderPass::BeginInfo _beginInfo
 	)
 	);

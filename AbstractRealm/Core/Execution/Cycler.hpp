@@ -18,7 +18,6 @@ namespace Execution
 	};*/
 
 
-
 	class ACycler
 	{
 	public:
@@ -41,15 +40,46 @@ namespace Execution
 
 		void BindExecuter(ptr<AExecuter> _executerToBind);
 
-		Duration64 GetAverageDelta() const;   // { return averageDelta; }
-		f64        GetCycle       () const;   // { return cycles      ; }
-		Duration64 GetDeltaTime   () const;   // { return deltaTime   ; }
+		ForceInline
+		Duration64 GetAverageDelta() const 
+		{
+			return averageDelta; 
+		}
 
-		void Lapse ()       { exist = false; }
-		bool Lapsed() const { return lapsed; }
-		void Toggle()       { pause ^= true; }
+		ForceInline
+		f64 GetCycle() const
+		{
+			return cycles;
+		}
 
-		operator ptr<ACycler>() { return RCast<ACycler>(this); }
+		ForceInline
+		Duration64 GetDeltaTime() const
+		{
+			return deltaTime; 
+		}
+
+		ForceInline
+		void Lapse ()       
+		{
+			exist = false; 
+		}
+
+		ForceInline
+		bool Lapsed() const 
+		{ 
+			return lapsed; 
+		}
+
+		ForceInline
+		void Toggle()
+		{ 
+			pause ^= true; 
+		}
+
+		operator ptr<ACycler>() 
+		{ 
+			return RCast<ACycler>(this); 
+		}
 
 	protected:
 

@@ -60,7 +60,7 @@ namespace OSAL
 	{
 		const Time timeSnap = SystemClock::to_time_t(SystemClock::now());;
 
-		TimeLocal(&TimeLocal_Buffer, &timeSnap);
+		TimeLocal(getPtr(TimeLocal_Buffer), getPtr(timeSnap));
 
 		return TimeLocal_Buffer;
 	}
@@ -69,7 +69,7 @@ namespace OSAL
 	{
 		const Time timeSnap = SystemClock::to_time_t(SystemClock::now());;
 
-		TimeUTC_Buffer = *TimeUTC(&timeSnap);
+		TimeUTC_Buffer = dref(TimeUTC(getPtr(timeSnap)));
 
 		return TimeUTC_Buffer;
 	}
@@ -85,6 +85,6 @@ namespace OSAL
 
 		const Time timeSnap = SystemClock::to_time_t(EntryPoint_StartExecution);
 
-		TimeLocal(&EntryPoint_StartDate, &timeSnap);
+		TimeLocal(getPtr(EntryPoint_StartDate), getPtr(timeSnap));
 	}
 }

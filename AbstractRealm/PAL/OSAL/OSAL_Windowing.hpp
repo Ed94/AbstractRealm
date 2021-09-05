@@ -12,7 +12,7 @@ into a binding interface instead (Or at least most likely refactor how I do the 
 #include "OSAL_Platform.hpp"
 #include "OSAL_Backend.hpp"
 #include "Meta/Config/OSAL_Config.hpp"
-#include "SAL/SAL_GLFW.hpp"
+#include "TPAL/TPAL_GLFW.hpp"
 
 
 namespace OSAL
@@ -22,7 +22,7 @@ namespace OSAL
 	using namespace LAL;
 
 	using namespace Meta;
-	using namespace SAL;
+	using namespace TPAL;
 
 
 	struct FrameBufferDimensions
@@ -59,9 +59,9 @@ namespace OSAL
 
 			static constexpr auto WindowedMode = GLFW::WindowedMode;
 
-			EBool                   Resizable        ;
-			ptr<SAL::GLFW::Monitor> Windowed         ;
-			ptr<Window>             WindowToShareWith;
+			EBool              Resizable        ;
+			ptr<GLFW::Monitor> Windowed         ;
+			ptr<Window>        WindowToShareWith;
 		};
 
 		using WindowInfo = WindowInfo_Maker<WindowingPlatform>;
@@ -77,7 +77,7 @@ namespace OSAL
 
 			static ptr<Window> Create_Window(WindowInfo _windowCreationSpec)
 			{
-				using namespace SAL::GLFW;
+				using namespace TPAL::GLFW;
 
 				SetWindowCreationParameter(EWindowCreationParameter::ClientAPI, EClient_API::No_API          );
 				SetWindowCreationParameter(EWindowCreationParameter::Resizable, _windowCreationSpec.Resizable);
@@ -102,33 +102,33 @@ namespace OSAL
 
 			static bool CanClose(const ptr<Window> _window)
 			{
-				return SAL::GLFW::CanClose(_window);
+				return GLFW::CanClose(_window);
 			}
 
 			static void Destroy_Window(const ptr<Window> _window)
 			{
-				SAL::GLFW::DestroyWindow(_window);
+				GLFW::DestroyWindow(_window);
 
 				StringStream ptrString; ptrString << _window;
 
 				Log("Window: " + ptrString.str() + " destroyed");
 			}
 
-			static void SetWindow_SizeChangeCallback(const ptr<Window> _window, WindowSize_Callback _callback)
+			static void SetWindow_SizeChangeCallback(const ptr<Window> _window, WindowSize_Callback _callback_in)
 			{
-				SAL::GLFW::SetWidnowSizeCallback(_window, _callback);
+				GLFW::SetWidnowSizeCallback(_window, _callback_in);
 			}
 
 			static OS_WindowHandle GetOS_WindowHandle(const ptr<Window> _window)
 			{
-				return SAL::GLFW::GetOS_WindowHandle(_window);
+				return GLFW::GetOS_WindowHandle(_window);
 			}
 
 			static FrameBufferDimensions GetFramebufferDimensions(const ptr<Window> _window)
 			{
 				int width, height;
 
-				SAL::GLFW::GetFramebufferSize(_window, width, height);
+				GLFW::GetFramebufferSize(_window, width, height);
 
 				return FrameBufferDimensions(width, height);
 			}

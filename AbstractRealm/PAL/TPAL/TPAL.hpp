@@ -9,10 +9,9 @@ or if they are, offered as an alternative.
 
 #pragma once
 
-
-
 // For now its globally exposed... Not sure about in the future for these...
-#include "SAL_ImGui.hpp"
-#include "SAL_Gainput.hpp"
+#include "TPAL_ImGui.hpp"
+#include "TPAL_Gainput.hpp"
+#include "TPAL_GLFW.hpp"
 
 

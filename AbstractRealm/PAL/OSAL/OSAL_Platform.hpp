@@ -3,7 +3,6 @@ Operating System Abstraction Layer: Platform Definitions
 
 */
 
-
 #pragma once
 
 
@@ -13,6 +12,9 @@ Operating System Abstraction Layer: Platform Definitions
 
 namespace OSAL
 {
+	using namespace LAL;
+
+
 	enum class EOS
 	{
 		Windows,

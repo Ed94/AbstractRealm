@@ -1,11 +1,8 @@
 // Parent Header
 #include "GPUVK_Shaders.hpp"
 
-
-
 #include "Core/IO/Basic_FileIO.hpp"
 #include "HAL_Backend.hpp"
-
 
 
 namespace HAL::GPU::Vulkan
@@ -44,8 +41,6 @@ namespace HAL::GPU::Vulkan
 
 	void BasicShader::Create(const Path& _vertShader, const Path& _fragShader)
 	{
-		EResult result;
-
 		ShaderModule::CreateInfo info;
 
 		SPIR_V::Bytecode_Buffer bytecode;
@@ -65,7 +60,7 @@ namespace HAL::GPU::Vulkan
 		info.CodeSize = bytecode.size() * sizeof(u32);
 		info.Code     = bytecode.data();
 
-		if (vertexModule.Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
+		if (vertexModule.Create(Comms::GetEngagedDevice(), info) != EResult::Success)
 		{
 			Exception::Fatal::Throw("Failed to create vertex shader module.");
 		}
@@ -89,7 +84,7 @@ namespace HAL::GPU::Vulkan
 		info.CodeSize = bytecode.size() * sizeof(u32);
 		info.Code     = bytecode.data();
 
-		if (fragModule.Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
+		if (fragModule.Create(Comms::GetEngagedDevice(), info) != EResult::Success)
 		{
 			Exception::Fatal::Throw("Failed to create fragment shader module.");
 		}
@@ -98,7 +93,6 @@ namespace HAL::GPU::Vulkan
 		
 		fragStage.Module = fragModule;
 		fragStage.Stage  = EShaderStageFlag::Fragment;
-
 
 		glslang::FinalizeProcess();
 	}
@@ -122,13 +116,13 @@ namespace HAL::GPU::Vulkan
 
 	const DynamicArray<ShaderStageInfo>& BasicShader::GetShaderStageInfos() const
 	{
-		static DynamicArray<ShaderStageInfo> shaderStagesExport =
+		static DynamicArray<ShaderStageInfo> _ShaderStagesExport =
 		{
 			shaderStageInfos[0],
 			shaderStageInfos[1]
 		};
 
-		return shaderStagesExport;
+		return _ShaderStagesExport;
 	}
 
 #pragma endregion BasicShader
@@ -257,20 +251,21 @@ namespace HAL::GPU::Vulkan
 
 				default:
 					Exception::Fatal::Throw("Unknown shader type specified. Exiting!");
+					return EStage::Vertex;   // Garbage line to avoid compiler warning.
 			}
 		}
 
 		bool CompileGLSL(const Path& _path, const EShaderStageFlag _type, Bytecode_Buffer& _bytecode)
 		{
-			static constexpr auto numShaders = 1;
+			static constexpr auto NumShaders = 1;
 
-			static bool doneOnce = false;
+			static bool _DoneOnce = false;
 
-			if (!doneOnce) 
+			if (! _DoneOnce) 
 			{
 				InitializeResource();
 
-				doneOnce = true;
+				_DoneOnce = true;
 			}
 
 			auto shaderCode = IO::BufferFile(_path);
@@ -286,18 +281,15 @@ namespace HAL::GPU::Vulkan
 			EStage stage = GetStageType(_type);
 
 			UPtr<LinkerUnit> linker = MakeUnique<LinkerUnit>();
-
 			UPtr<ShaderUnit> shader = MakeUnique<ShaderUnit>( EShLanguage(stage));
 
-			RoCStr strings[numShaders];
+			RoCStr strings[NumShaders];
 			
 			strings[0] = shaderCode.data();
 
-			shader->setStrings(strings, numShaders);
+			shader->setStrings(strings, NumShaders);
 
-			if (! shader->parse(getPtr(Hardcoded_Resource), 100, false, 
-				//(EShMessages)u32(messageOptions)))
-				messages))
+			if (! shader->parse(getPtr(Hardcoded_Resource), 100, false, messages))
 			{
 				Log_Error(String(shader->getInfoLog()));
 				Log_Error(String(shader->getInfoDebugLog()));

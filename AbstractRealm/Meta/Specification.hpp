@@ -1,17 +1,12 @@
 /*
 Specification
-
-Last Modified: 5/18/2020
 */
-
 
 
 #pragma once
 
 
-
 #include "LAL.hpp"
-
 
 
 // Macros
@@ -33,7 +28,7 @@ Last Modified: 5/18/2020
 #define Meta_Build_User_WithDebug \
 	EBuild::User_WithDebug
 
-#define Meta_Build_Development	\
+#define Meta_Build_Development \
 	EBuild::EngineDevelopment
 
 // End of Macro: EComplationIntention
@@ -43,7 +38,6 @@ Macro version of the compilation intention.
 */
 #define Meta_BuildType \
 	Meta_Build_Development
-
 
 
 namespace Meta

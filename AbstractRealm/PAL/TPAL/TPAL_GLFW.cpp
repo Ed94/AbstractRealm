@@ -1,8 +1,8 @@
 // Parent Header
-#include "SAL_GLFW.hpp"
+#include "TPAL_GLFW.hpp"
 
 
-namespace SAL::GLFW
+namespace TPAL::GLFW
 {
 	bool CanClose(const ptr<Window> _window)
 	{
@@ -16,9 +16,9 @@ namespace SAL::GLFW
 		return handle;
 	}
 
-	void DestroyWindow(ptr<Window> _window)
+	void DestroyWindow(ptr<Window> _window_in)
 	{
-		glfwDestroyWindow(_window);
+		glfwDestroyWindow(_window_in);
 	}
 
 	bool Initalize()
@@ -46,19 +46,17 @@ namespace SAL::GLFW
 	}
 
 
-
 	// Vulkan Related
 
-	CStrArray GetRequiredVulkanAppExtensions(u32& _extensionCount)
+	CStrArray GetRequiredVulkanAppExtensions(u32& _extensionCount_out)
 	{
-		return glfwGetRequiredInstanceExtensions(getPtr(RCast<uint32_t>(_extensionCount)));
+		return glfwGetRequiredInstanceExtensions(getPtr(RCast<uint32_t>(_extensionCount_out)));
 	}
 
 	void WaitForEvents()
 	{
 		glfwWaitEvents();
 	}
-
 
 
 	// OS Related
@@ -69,13 +67,13 @@ namespace SAL::GLFW
 		return glfwGetWin32Window(_window);
 	}
 
-	void GetFramebufferSize(const ptr<Window> _window, int& _width, int& _height)
+	void GetFramebufferSize(const ptr<Window> _window, int& _width_out, int& _height_out)
 	{
-		glfwGetFramebufferSize(_window, &_width, &_height);
+		glfwGetFramebufferSize(_window, &_width_out, &_height_out);
 	}
 
-	void SetWidnowSizeCallback(const ptr<Window> _window, WindowSize_Callback _callback)
+	void SetWidnowSizeCallback(const ptr<Window> _window, WindowSize_Callback _callback_out)
 	{
-		glfwSetWindowSizeCallback(_window, _callback);
+		glfwSetWindowSizeCallback(_window, _callback_out);
 	}
 }

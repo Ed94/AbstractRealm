@@ -34,7 +34,6 @@ namespace HAL::GPU::Vulkan
 #pragma region StaticData
 
 
-
 	void LoadModel(String _modelPath)
 	{
 		tinyobj::attrib_t attrib;
@@ -45,7 +44,7 @@ namespace HAL::GPU::Vulkan
 
 		String warning, error;
 
-		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warning, &error, _modelPath.c_str()))
+		if (! tinyobj::LoadObj(getPtr(attrib), getPtr(shapes), getPtr(materials), getPtr(warning), getPtr(error), _modelPath.c_str()))
 			Exception::Fatal::Throw(warning + error);
 
 		for (const auto& shape : shapes)
@@ -70,7 +69,7 @@ namespace HAL::GPU::Vulkan
 				vertex.Color = { 1.0f, 1.0f, 1.0f };
 
 				ModelVerticies.push_back(vertex);
-				ModelIndicies.push_back(SCast<u32>(ModelIndicies.size()));
+				ModelIndicies .push_back(SCast<u32>(ModelIndicies.size()));
 			}
 		}
 	}

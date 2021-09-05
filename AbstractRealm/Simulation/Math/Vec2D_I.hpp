@@ -9,13 +9,9 @@ Reference: https://github.com/godotengine/godot/blob/master/core/math/vector2.h
 */
 
 
-
 #pragma once
 
-
-
 #include "Math/Units.hpp"
-
 
 
 namespace Math

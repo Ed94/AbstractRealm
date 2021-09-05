@@ -9,19 +9,21 @@ namespace HAL::GPU::Vulkan
 {
 	void (*TestCallback)
 	(
-		int index,
-		const CommandBuffer& _buffer,
-		Framebuffer::Handle _frameBuffer,
-		ptr<const Swapchain> _swap,
+		int                   _index,
+		const CommandBuffer&  _buffer,
+		Framebuffer::Handle   _frameBuffer,
+		ptr<const Swapchain>  _swap,
 		RenderPass::BeginInfo _beginInfo
 	);
 
+
+
 	void SetTestCallback(void (*_recordToBuffers)
 	(
-		int index,
-		const CommandBuffer& _buffer,
-		Framebuffer::Handle _frameBuffer,
-		ptr<const Swapchain> _swap,
+		int                   _index,
+		const CommandBuffer&  _buffer,
+		Framebuffer::Handle   _frameBuffer,
+		ptr<const Swapchain>  _swap,
 		RenderPass::BeginInfo _beginInfo
 	)
 	)
@@ -29,25 +31,25 @@ namespace HAL::GPU::Vulkan
 		TestCallback = _recordToBuffers;
 	}
 
-
-
 #pragma region Surface
 
-	EResult Surface::Create(ptr<OSAL::Window> _window)
+	EResult Surface::Create(ptr<OSAL::Window> _window_in)
 	{
-		AssignPhysicalDevice(GPU_Comms::GetEngagedPhysicalGPU());
+		AssignPhysicalDevice(Comms::GetEngagedPhysicalGPU());
 
-		EResult result = Parent::Create(GPU_Comms::GetAppInstance(), OSAL::GetOS_WindowHandle(_window));
+		EResult result = Parent::Create(Comms::GetAppInstance(), OSAL::GetOS_WindowHandle(_window_in));
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		Bool presentationSupport = false; 
 
-		CheckPhysicalDeviceSupport(GPU_Comms::GetGraphicsQueue().GetFamilyIndex(), presentationSupport);
+		CheckPhysicalDeviceSupport(Comms::GetGraphicsQueue().GetFamilyIndex(), presentationSupport);
 
-		if (!presentationSupport) return EResult::Incomplete;
+		if (!presentationSupport) 
+			return EResult::Incomplete;
 
-		window = _window;
+		window = _window_in;
 
 		GetSupportedPresentationModes(presentationModes);
 
@@ -115,13 +117,13 @@ namespace HAL::GPU::Vulkan
 
 	// Public	
 
-	EResult Swapchain::Create(Surface& _surface, Surface::Format _format)
+	EResult Swapchain::Create(Surface& _surface_in, Surface::Format _format)
 	{
-		surface = &_surface;
+		surface = getPtr(_surface_in);
 
-		info.Surface = _surface;
+		info.Surface = _surface_in;
 
-		const auto& presentationModes = _surface.GetPresentationModes();
+		const auto& presentationModes = _surface_in.GetPresentationModes();
 
 		EPresentationMode desiredPresentationMode = EPresentationMode::Mailbox;
 
@@ -162,19 +164,19 @@ namespace HAL::GPU::Vulkan
 			}
 		}
 
-		info.MinImageCount = _surface.GetCapabilities().MinImageCount;
+		info.MinImageCount = _surface_in.GetCapabilities().MinImageCount;
 
 		if (frameBuffering == Meta::EGPU_FrameBuffering::Triple)
 		{
 			info.MinImageCount += 1;   // Want one more image than minimum... (Triple buffering)
 		}
 
-		if (_surface.GetCapabilities().MaxImageCount > 0 && info.MinImageCount > _surface.GetCapabilities().MaxImageCount)
+		if (_surface_in.GetCapabilities().MaxImageCount > 0 && info.MinImageCount > _surface_in.GetCapabilities().MaxImageCount)
 		{
-			info.MinImageCount = _surface.GetCapabilities().MaxImageCount;
+			info.MinImageCount = _surface_in.GetCapabilities().MaxImageCount;
 		}
 
-		if (_surface.IsFormatAvailable(_format))
+		if (_surface_in.IsFormatAvailable(_format))
 		{
 			info.ImageFormat     = _format.Format    ;
 			info.ImageColorSpace = _format.ColorSpace;
@@ -184,19 +186,19 @@ namespace HAL::GPU::Vulkan
 			return EResult::Error_FormatNotSupported;
 		}
 
-		if (_surface.GetCapabilities().CurrentExtent.Width != UInt32Max)
-			info.ImageExtent = _surface.GetCapabilities().CurrentExtent;
+		if (_surface_in.GetCapabilities().CurrentExtent.Width != UInt32Max)
+			info.ImageExtent = _surface_in.GetCapabilities().CurrentExtent;
 		else
 		{
-			OSAL::FrameBufferDimensions frameBufferSize = OSAL::GetFramebufferDimensions(_surface.GetWindow());
+			OSAL::FrameBufferDimensions frameBufferSize = OSAL::GetFramebufferDimensions(_surface_in.GetWindow());
 
 			Extent2D actualExtent;
 
 			actualExtent.Width  = SCast<u32>(frameBufferSize.Width );
 			actualExtent.Height = SCast<u32>(frameBufferSize.Height);
 
-			actualExtent.Width  = std::clamp(actualExtent.Width , _surface.GetCapabilities().MinImageExtent.Width , _surface.GetCapabilities().MaxImageExtent.Width );
-			actualExtent.Height = std::clamp(actualExtent.Height, _surface.GetCapabilities().MinImageExtent.Height, _surface.GetCapabilities().MaxImageExtent.Height);
+			actualExtent.Width  = clamp(actualExtent.Width , _surface_in.GetCapabilities().MinImageExtent.Width , _surface_in.GetCapabilities().MaxImageExtent.Width );
+			actualExtent.Height = clamp(actualExtent.Height, _surface_in.GetCapabilities().MinImageExtent.Height, _surface_in.GetCapabilities().MaxImageExtent.Height);
 
 			info.ImageExtent = actualExtent;
 		}
@@ -210,18 +212,20 @@ namespace HAL::GPU::Vulkan
 		info.QueueFamilyIndexCount = 0                      ; // Optional
 		info.QueueFamilyIndices    = nullptr                ; // Optional
 
-		info.PreTransform     = _surface.GetCapabilities().CurrentTransform;
+		info.PreTransform     = _surface_in.GetCapabilities().CurrentTransform;
 		info.CompositeAlpha   = ECompositeAlpha::Opaque                    ;   // Swapchain hard coded to only support opaque surfaces.
 		info.Clipped          = true                                       ;
 		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
-		EResult result = Parent::Create(GPU_Comms::GetEngagedDevice(), info);
+		EResult result = Parent::Create(Comms::GetEngagedDevice(), info);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success)
+			return result;
 
 		result = RetrieveImages();
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		result = GenerateViews();
 
@@ -262,7 +266,7 @@ namespace HAL::GPU::Vulkan
 	{
 		if (surface->RequeryCapabilities())
 		{
-			GPU_Comms::GetEngagedDevice().GetGraphicsQueue().WaitUntilIdle();	
+			Comms::GetEngagedDevice().GetGraphicsQueue().WaitUntilIdle();	
 
 			Regenerate();
 
@@ -357,8 +361,8 @@ namespace HAL::GPU::Vulkan
 			actualExtent.Width  = SCast<u32>(frameBufferSize.Width );
 			actualExtent.Height = SCast<u32>(frameBufferSize.Height);
 
-			actualExtent.Width  = std::clamp(actualExtent.Width , surface->GetCapabilities().MinImageExtent.Width , surface->GetCapabilities().MaxImageExtent.Width );
-			actualExtent.Height = std::clamp(actualExtent.Height, surface->GetCapabilities().MinImageExtent.Height, surface->GetCapabilities().MaxImageExtent.Height);
+			actualExtent.Width  = clamp(actualExtent.Width , surface->GetCapabilities().MinImageExtent.Width , surface->GetCapabilities().MaxImageExtent.Width );
+			actualExtent.Height = clamp(actualExtent.Height, surface->GetCapabilities().MinImageExtent.Height, surface->GetCapabilities().MaxImageExtent.Height);
 
 			info.ImageExtent = actualExtent;
 		}
@@ -377,17 +381,20 @@ namespace HAL::GPU::Vulkan
 		info.Clipped          = true                                       ;
 		info.OldSwapchain     = Null<Swapchain::Handle>                    ;
 
-		EResult result = Parent::Create(GPU_Comms::GetEngagedDevice(), info);
+		EResult result = Parent::Create(Comms::GetEngagedDevice(), info);
 
-		if (result != EResult::Success) Exception::Fatal::Throw("Unable to regenerate swapchain.");
+		if (result != EResult::Success) 
+			Exception::Fatal::Throw("Unable to regenerate swapchain.");
 
 		result = RetrieveImages();
 
-		if (result != EResult::Success) Exception::Fatal::Throw("Unable to retrieve swapchain images after regeneration.");
+		if (result != EResult::Success) 
+			Exception::Fatal::Throw("Unable to retrieve swapchain images after regeneration.");
 
 		result = GenerateViews();
 
-		if (result != EResult::Success) Exception::Fatal::Throw("Unable to generate new image views after regenerating swapchain.");
+		if (result != EResult::Success) 
+			Exception::Fatal::Throw("Unable to generate new image views after regenerating swapchain.");
 	}
 
 	EResult Swapchain::GenerateViews()
@@ -414,7 +421,7 @@ namespace HAL::GPU::Vulkan
 
 			ImageView view;
 
-			result = view.Create(GPU_Comms::GetEngagedDevice(), viewInfo);	
+			result = view.Create(Comms::GetEngagedDevice(), viewInfo);	
 
 			if (result != EResult::Success)
 				return result;
@@ -431,7 +438,8 @@ namespace HAL::GPU::Vulkan
 
 		EResult result = Parent::QueryImages(numImages, nullptr);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		if (images.size() != numImages)
 		{
@@ -444,7 +452,7 @@ namespace HAL::GPU::Vulkan
 
 		for (DeviceSize index = 0; index < numImages; index++)
 		{
-			images[index].Assign(*device, handles[index]);
+			images[index].Assign(dref(device), handles[index]);
 		}
 
 		return result;
@@ -454,14 +462,14 @@ namespace HAL::GPU::Vulkan
 
 #pragma region RenderPass
 
-	EResult RenderPass::Create(const LogicalDevice& _device, CreateInfo& _info)
+	EResult RenderPass::Create(const LogicalDevice& _device, const CreateInfo& _info)
 	{
 		info = _info;
 
 		return Parent::Create(_device, _info);
 	}
 
-	EResult RenderPass::Create(const LogicalDevice& _device, CreateInfo& _info, const Memory::AllocationCallbacks& _allocator)
+	EResult RenderPass::Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator)
 	{
 		info = _info;
 
@@ -502,21 +510,21 @@ namespace HAL::GPU::Vulkan
 
 			fenceInfo.Flags.Set(EFenceCreateFlag::Signaled);
 
-			flightToRender.Create(GPU_Comms::GetEngagedDevice(), fenceInfo);
+			flightToRender.Create(Comms::GetEngagedDevice(), fenceInfo);
 
 			
 			Semaphore::CreateInfo semaphoreInfo;
 
-			swapAcquisitionStatus.Create(GPU_Comms::GetEngagedDevice(), semaphoreInfo);
+			swapAcquisitionStatus.Create(Comms::GetEngagedDevice(), semaphoreInfo);
 
-			presentSubmitStatus.Create(GPU_Comms::GetEngagedDevice(), semaphoreInfo);
+			presentSubmitStatus.Create(Comms::GetEngagedDevice(), semaphoreInfo);
 
 
 			ptr<CommandPool> pools = Deck::RequestCommandPools(1);
 
 			commandPools.push_back(pools);
 
-			Primary_CmdBuffer = &commandPools[0]->RequestBuffer();
+			Primary_CmdBuffer = getPtr(commandPools[0]->RequestBuffer());
 		}
 
 		return EResult::Success;
@@ -524,7 +532,7 @@ namespace HAL::GPU::Vulkan
 
 	const CommandBuffer& FrameReference::Request_PrimaryCmdBuffer()
 	{
-		return *Primary_CmdBuffer;
+		return dref(Primary_CmdBuffer);
 	}
 
 	Semaphore& FrameReference::PresentSubmitStatus()
@@ -548,9 +556,9 @@ namespace HAL::GPU::Vulkan
 
 	// Public
 
-	EResult RenderContext::Create(Swapchain& _swapChain)
+	EResult RenderContext::Create(Swapchain& _swapChain_in)
 	{
-		swapchain = &_swapChain;
+		swapchain = getPtr(_swapChain_in);
 
 		EResult result = CreateDepthBuffer();	
 
@@ -579,7 +587,7 @@ namespace HAL::GPU::Vulkan
 
 		Semaphore::CreateInfo semaphoreInfo;
 
-		presentSubmitStatus.Create(GPU_Comms::GetEngagedDevice(), semaphoreInfo);
+		presentSubmitStatus.Create(Comms::GetEngagedDevice(), semaphoreInfo);
 
 		swapsInFlight.resize(frameBuffers.size());	
 
@@ -590,7 +598,7 @@ namespace HAL::GPU::Vulkan
 
 		Viewport viewport;
 
-		const auto& swapExtent = _swapChain.GetExtent();
+		const auto& swapExtent = _swapChain_in.GetExtent();
 
 		viewport.Height   = swapExtent.Height / 3;
 		viewport.Width    = swapExtent.Width / 3;
@@ -629,17 +637,17 @@ namespace HAL::GPU::Vulkan
 		depthBuffer.view.Destroy();
 	}
 
-	void RenderContext::AddRenderable(ptr<ARenderable> _renderable)
+	void RenderContext::AddRenderable(ptr<ARenderable> _renderable_in)
 	{
-		_renderable->CreateDescriptorSets(swapchain->GetImages().size(), descriptorPool);
+		_renderable_in->CreateDescriptorSets(swapchain->GetImages().size(), descriptorPool);
 
 		if (renderGroups.empty())
 		{
 			renderGroups.resize(1);
 
-			renderGroups.back().Pipeline = getPtr(Request_GraphicsPipeline(_renderable));
+			renderGroups.back().Pipeline = getPtr(Request_GraphicsPipeline(_renderable_in));
 
-			renderGroups.back().Renderables.push_back(_renderable);
+			renderGroups.back().Renderables.push_back(_renderable_in);
 
 			return;
 		}
@@ -649,15 +657,15 @@ namespace HAL::GPU::Vulkan
 			{
 				for (auto renderable : renderGroup.Renderables)
 				{
-					if (renderable == _renderable)
+					if (renderable == _renderable_in)
 					{
 						return;
 					}
 				}
 
-				if (renderGroup.Pipeline == getPtr(Request_GraphicsPipeline(_renderable)))
+				if (renderGroup.Pipeline == getPtr(Request_GraphicsPipeline(_renderable_in)))
 				{
-					renderGroup.Renderables.push_back(_renderable);
+					renderGroup.Renderables.push_back(_renderable_in);
 
 					return;
 				}
@@ -665,17 +673,17 @@ namespace HAL::GPU::Vulkan
 
 			renderGroups.resize(renderGroups.size() + 1);
 
-			renderGroups.back().Pipeline = getPtr(Request_GraphicsPipeline(_renderable));
+			renderGroups.back().Pipeline = getPtr(Request_GraphicsPipeline(_renderable_in));
 
-			renderGroups.back().Renderables.push_back(_renderable);
+			renderGroups.back().Renderables.push_back(_renderable_in);
 
 			return;
 		}
 	}
 
-	void RenderContext::AddRenderCallback(RenderCallback _callback)
+	void RenderContext::AddRenderCallback(RenderCallback _callback_in)
 	{
-		renderCallbacks.push_back(_callback);
+		renderCallbacks.push_back(_callback_in);
 	}
 
 	const RenderPass& RenderContext::GetRenderPass() const
@@ -708,17 +716,17 @@ namespace HAL::GPU::Vulkan
 		}
 		else if (result != EResult::Success && result != EResult::Suboptimal_KHR)
 		{
-			throw std::runtime_error("Failed to acquire swap chain image!");
+			Exception::Fatal::Throw("Failed to acquire swap chain image!");
 		}
 
 		// Make sure that the acquired image has been processed by the presentation queue.
-		if (swapsInFlight[currentSwap] != nullptr && *swapsInFlight[currentSwap] != Null<Fence::Handle>)
+		if (swapsInFlight[currentSwap] != nullptr && dref(swapsInFlight[currentSwap]) != Null<Fence::Handle>)
 			swapsInFlight[currentSwap]->WaitFor(UInt64Max);
 
 		// Set the current swap image fence to that of the frame queue fence.
-		swapsInFlight[currentSwap] = &frameRef.RenderingInFlight();
+		swapsInFlight[currentSwap] = getPtr(frameRef.RenderingInFlight());
 
-		clearValues[0].Color = { 0.13f, 0.13f, 0.13f, 0.1f };
+		clearValues[0].Color = { { 0.13f, 0.13f, 0.13f, 0.1f } };
 
 		/*switch (currentFrameBuffer)
 		{
@@ -789,11 +797,11 @@ namespace HAL::GPU::Vulkan
 			Pipeline::StageFlags waitStage(EPipelineStageFlag::ColorAttachmentOutput);
 
 			// Need to wait for swap image to be acquired before submitting render commands to queue.
-			submitInfo.WaitSemaphoreCount = 1                             ;
+			submitInfo.WaitSemaphoreCount = 1;
 			submitInfo.WaitSemaphores     = frameRef.SwapAcquisionStatus();
-			submitInfo.WaitDstStageMask   = &waitStage                    ;
+			submitInfo.WaitDstStageMask   = getPtr(waitStage);
 
-			submitInfo.CommandBufferCount = 1                                  ;
+			submitInfo.CommandBufferCount = 1;
 			submitInfo.CommandBuffers     = primaryBuffer;
 
 			// Let the presentation queue know that it can submit itself when render commands are finished in the queue.
@@ -802,7 +810,7 @@ namespace HAL::GPU::Vulkan
 
 			frameRef.RenderingInFlight().Reset();
 
-			result = GPU_Comms::GetGraphicsQueue().SubmitToQueue(1, submitInfo, frameRef.RenderingInFlight());
+			result = Comms::GetGraphicsQueue().SubmitToQueue(1, submitInfo, frameRef.RenderingInFlight());
 
 			if (result != EResult::Success)
 			{
@@ -829,7 +837,7 @@ namespace HAL::GPU::Vulkan
 	{
 		auto& frameRef = frameRefs[currentFrameBuffer];
 
-		static DynamicArray<Swapchain::Handle> swapchainsToSubmit;
+		static DynamicArray<Swapchain::Handle> _SwapchainsToSubmit;
 
 		Swapchain::PresentationInfo presentInfo;
 
@@ -837,9 +845,9 @@ namespace HAL::GPU::Vulkan
 		presentInfo.WaitSemaphoreCount = 1                             ;
 		presentInfo.WaitSemaphores     = frameRef.PresentSubmitStatus();
 		
-		swapchainsToSubmit.push_back(swapchain->operator const Swapchain::Handle&());
+		_SwapchainsToSubmit.push_back(swapchain->operator const Swapchain::Handle&());
 
-		Swapchain::Handle swapChains[] = { *swapchain };
+		Swapchain::Handle swapChains[] = { dref(swapchain) };
 
 		presentInfo.SwapchainCount = 1;
 		presentInfo.Swapchains     = swapChains;
@@ -847,7 +855,7 @@ namespace HAL::GPU::Vulkan
 
 		presentInfo.Results = nullptr;
 
-		EResult result = GPU_Comms::GetGraphicsQueue().QueuePresentation(presentInfo);
+		EResult result = Comms::GetGraphicsQueue().QueuePresentation(presentInfo.operator const VkPresentInfoKHR&());
 
 		if (result == EResult::Error_OutOfDate_KHR || result == EResult::Suboptimal_KHR)
 		{
@@ -865,9 +873,9 @@ namespace HAL::GPU::Vulkan
 		currentFrameBuffer = (currentFrameBuffer + 1) % maxFramesInFlight;
 	}
 
-	bool RenderContext::operator== (const RenderContext& _other)
+	bool RenderContext::operator== (const RenderContext& _other_in)
 	{
-		return this == &_other;
+		return this == getPtr(_other_in);
 	}
 
 
@@ -882,15 +890,18 @@ namespace HAL::GPU::Vulkan
 
 			EResult result = CreateDepthBuffer();
 
-			if (result != EResult::Success) Exception::Fatal::Throw("Failed to recreate depth buffer in context.");
+			if (result != EResult::Success) 
+				Exception::Fatal::Throw("Failed to recreate depth buffer in context.");
 
 			result = CreateRenderPass();
 
-			if (result != EResult::Success) Exception::Fatal::Throw("Failed to recreate render pass in context.");
+			if (result != EResult::Success) 
+				Exception::Fatal::Throw("Failed to recreate render pass in context.");
 
 			result = CreateFramebuffers();
 
-			if (result != EResult::Success) Exception::Fatal::Throw("Failed to recreate frame renderer in context.");
+			if (result != EResult::Success) 
+				Exception::Fatal::Throw("Failed to recreate frame renderer in context.");
 
 			// Adjust view contexts to the new relative size of the swapchain.
 		}
@@ -902,7 +913,7 @@ namespace HAL::GPU::Vulkan
 
 		imgInfo.ImageType = EImageType::_2D;
 
-		GPU_Comms::GetEngagedPhysicalGPU().FindSupportedFormat
+		Comms::GetEngagedPhysicalGPU().FindSupportedFormat
 		(
 			{ EFormat::D32_SFloat, EFormat::D32_SFloat_S8_UInt, EFormat::D24_UNormalized_S8_UInt },
 			EImageTiling::Optimal,
@@ -927,7 +938,7 @@ namespace HAL::GPU::Vulkan
 
 		imgInfo.Usage.Set(EImageUsage::DepthStencil_Attachment);
 
-		EResult result = depthBuffer.image.Create(GPU_Comms::GetEngagedDevice(), imgInfo);
+		EResult result = depthBuffer.image.Create(Comms::GetEngagedDevice(), imgInfo);
 
 		auto& memReq = depthBuffer.image.GetMemoryRequirements();
 
@@ -935,11 +946,10 @@ namespace HAL::GPU::Vulkan
 
 		allocInfo.AllocationSize = memReq.Size;
 
-		allocInfo.MemoryTypeIndex = 
-			GPU_Comms::GetEngagedDevice().GetPhysicalDevice().FindMemoryType
-			(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
+		allocInfo.MemoryTypeIndex = Comms::GetEngagedDevice().GetPhysicalDevice().
+			FindMemoryType(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
 
-		result = depthBuffer.memory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
+		result = depthBuffer.memory.Allocate(Comms::GetEngagedDevice(), allocInfo);
 
 		result = depthBuffer.image.BindMemory(depthBuffer.memory, depthBuffer.memoryOffset);
 
@@ -963,7 +973,7 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.BaseArrayLayer = 0;
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
-		result = depthBuffer.view.Create(GPU_Comms::GetEngagedDevice(), viewInfo);
+		result = depthBuffer.view.Create(Comms::GetEngagedDevice(), viewInfo);
 
 		depthBuffer.image.TransitionLayout(EImageLayout::Undefined, EImageLayout::DepthStencil_AttachmentOptimal);
 
@@ -1002,7 +1012,7 @@ namespace HAL::GPU::Vulkan
 		{
 			viewHandles[0] = swapImageViews[index];
 
-			result = frameBuffers[index].Create(GPU_Comms::GetEngagedDevice(), info);
+			result = frameBuffers[index].Create(Comms::GetEngagedDevice(), info);
 
 			if (result != EResult::Success) return result;
 		}
@@ -1092,9 +1102,9 @@ namespace HAL::GPU::Vulkan
 		subpass.PipelineBindPoint = EPipelineBindPoint::Graphics;
 
 		subpass.ColorAttachmentCount = 1;
-		subpass.ColorAttachments     = &colorReference;
+		subpass.ColorAttachments     = getPtr(colorReference);
 
-		subpass.DepthStencilAttachment = bufferDepth ? &depthReference : nullptr;
+		subpass.DepthStencilAttachment = bufferDepth ? getPtr(depthReference) : nullptr;
 
 		RenderPass::CreateInfo info;
 
@@ -1102,7 +1112,7 @@ namespace HAL::GPU::Vulkan
 		info.Attachments     = attachments.data();
 
 		info.SubpassCount = 1;
-		info.Subpasses    = &subpass;
+		info.Subpasses    = getPtr(subpass);
 
 		RenderPass::SubpassDependency dependency;
 
@@ -1117,11 +1127,12 @@ namespace HAL::GPU::Vulkan
 		dependency.DestinationAccessMask.Set(EAccessFlag::ColorAttachmentWrite);
 
 		info.DependencyCount = 1;
-		info.Dependencies    = &dependency;
+		info.Dependencies    = getPtr(dependency);
 
-		EResult result = renderPass.Create(GPU_Comms::GetEngagedDevice(), info);
+		EResult result = renderPass.Create(Comms::GetEngagedDevice(), info);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		beginInfo.RenderPass = renderPass;
 
@@ -1134,8 +1145,7 @@ namespace HAL::GPU::Vulkan
 		{
 			clearValues.resize(renderPass.GetAttachmentCount());
 
-			beginInfo.ClearValues = clearValues.data();
-
+			beginInfo.ClearValues     = clearValues.data();
 			beginInfo.ClearValueCount = SCast<u32>(clearValues.size());
 		}
 
@@ -1159,16 +1169,15 @@ namespace HAL::GPU::Vulkan
 		V3::DescriptorPool::CreateInfo poolInfo{};
 
 		poolInfo.PoolSizeCount = SCast<u32>(poolSizes.size());
-		poolInfo.PoolSizes = poolSizes.data();
+		poolInfo.PoolSizes     = poolSizes.data();
+		poolInfo.MaxSets       = SCast<u32>(swapchain->GetImages().size());
 
-		poolInfo.MaxSets = SCast<u32>(swapchain->GetImages().size());
-
-		EResult result = descriptorPool.Create(GPU_Comms::GetEngagedDevice(), poolInfo);
+		EResult result = descriptorPool.Create(Comms::GetEngagedDevice(), poolInfo);
 
 		return result;
 	}
 
-	GraphicsPipeline& RenderContext::Request_GraphicsPipeline(ptr<ARenderable> _renderable)
+	GraphicsPipeline& RenderContext::Request_GraphicsPipeline(ptr<ARenderable> _renderable_in)
 	{
 		// Check if existing pipeline meets criteria
 
@@ -1181,10 +1190,10 @@ namespace HAL::GPU::Vulkan
 			graphicsPipelines.back().Create
 			(
 				renderPass, 
-				_renderable->GetShader(), 
-				_renderable->GetVertexAttributes(), 
-				_renderable->GetVertexBindings(),
-				_renderable->GetDescriptorsLayout(),
+				_renderable_in->GetShader(), 
+				_renderable_in->GetVertexAttributes(), 
+				_renderable_in->GetVertexBindings(),
+				_renderable_in->GetDescriptorsLayout(),
 				bufferDepth
 			);
 
@@ -1196,9 +1205,9 @@ namespace HAL::GPU::Vulkan
 			{
 				if 
 				(
-					_renderable->GetShader()->GetShaderStageInfos().data() == graphicsPipeline.GetShaderStages()                           &&
-					_renderable->GetVertexAttributes()             .data() == graphicsPipeline.GetVertexInputState().AttributeDescriptions &&
-					_renderable->GetVertexBindings()               .data() == graphicsPipeline.GetVertexInputState().BindingDescriptions   
+					_renderable_in->GetShader()->GetShaderStageInfos().data() == graphicsPipeline.GetShaderStages()                           &&
+					_renderable_in->GetVertexAttributes()             .data() == graphicsPipeline.GetVertexInputState().AttributeDescriptions &&
+					_renderable_in->GetVertexBindings()               .data() == graphicsPipeline.GetVertexInputState().BindingDescriptions   
 					// Need to figure out a better check later.. I don't account for the layout...
 					//*_renderable->GetDescriptorsLayout()                   == graphicsPipeline.GetDescriptorSetLayout()
 				)
@@ -1212,10 +1221,10 @@ namespace HAL::GPU::Vulkan
 			graphicsPipelines.back().Create
 			(
 				renderPass, 
-				_renderable->GetShader(), 
-				_renderable->GetVertexAttributes(), 
-				_renderable->GetVertexBindings(), 
-				_renderable->GetDescriptorsLayout(),
+				_renderable_in->GetShader(), 
+				_renderable_in->GetVertexAttributes(), 
+				_renderable_in->GetVertexBindings(), 
+				_renderable_in->GetDescriptorsLayout(),
 				bufferDepth
 			);
 
@@ -1274,8 +1283,6 @@ namespace HAL::GPU::Vulkan
 
 #pragma endregion ViewContext
 
-
-
 	ESubmissionType SubmissionMode = ESubmissionType::Individual;
 
 	Deque<Surface> Surfaces;
@@ -1284,8 +1291,7 @@ namespace HAL::GPU::Vulkan
 
 	Deque<RenderContext> RenderContexts;
 
-
-	using Rendering_SingleGPU = Rendering_Maker<Meta::EGPU_Engage::Single>;
+	using Rendering_SingleGPU = Renderer_Maker<Meta::EGPU_Engage::Single>;
 
 	void Rendering_SingleGPU::SetSubmissionMode(ESubmissionType _submissionBehaviorDesired)
 	{
@@ -1310,15 +1316,15 @@ namespace HAL::GPU::Vulkan
 		}
 	}
 
-	Surface& Rendering_SingleGPU::Request_Surface(ptr<OSAL::Window> _window)
+	Surface& Rendering_SingleGPU::Request_Surface(ptr<OSAL::Window> _window_in)
 	{
 		Surfaces.resize(Surfaces.size() + 1);
 
 		Surface& surface = Surfaces.back();
 
-		surface.AssignPhysicalDevice(GPU_Comms::GetEngagedPhysicalGPU());
+		surface.AssignPhysicalDevice(Comms::GetEngagedPhysicalGPU());
 
-		if (surface.Create(_window) != EResult::Success)
+		if (surface.Create(_window_in) != EResult::Success)
 		{
 			Exception::Fatal::Throw("Failed to create surface for targeted window.");
 		}
@@ -1326,14 +1332,14 @@ namespace HAL::GPU::Vulkan
 		return surface;
 	}
 
-	void Rendering_SingleGPU::Retire_Surface(ptr<Surface> _surface)
+	void Rendering_SingleGPU::Retire_Surface(ptr<Surface> _surface_in)
 	{
-		_surface->Destroy();
+		_surface_in->Destroy();
 
-		Surfaces.erase(find(Surfaces.begin(), Surfaces.end(), *_surface));
+		Surfaces.erase(find(Surfaces.begin(), Surfaces.end(), dref(_surface_in)));
 	}
 
-	Swapchain& Rendering_SingleGPU::Request_SwapChain(Surface& _surface, Surface::Format _formatDesired)
+	Swapchain& Rendering_SingleGPU::Request_SwapChain(Surface& _surface_in, Surface::Format _formatDesired)
 	{
 		Swapchain::CreateInfo info;
 
@@ -1341,28 +1347,28 @@ namespace HAL::GPU::Vulkan
 
 		Swapchain& swapchain = SwapChains.back();
 
-		EResult result = swapchain.Create(_surface, _formatDesired);
+		EResult result = swapchain.Create(_surface_in, _formatDesired);
 
 		if (result != EResult::Success)
 		{
-			throw std::runtime_error("Failed to create the swap chain!");
+			Exception::Fatal::Throw("Failed to create the swap chain!");
 		}
 
 		return swapchain;
 	}
 
-	void Rendering_SingleGPU::Retire_SwapChain(ptr<Swapchain> _swapchain)
+	void Rendering_SingleGPU::Retire_SwapChain(ptr<Swapchain> _swapchain_in)
 	{
-		_swapchain->Destroy();
+		_swapchain_in->Destroy();
 
-		SwapChains.erase(find(SwapChains.begin(), SwapChains.end(), *_swapchain));
+		SwapChains.erase(find(SwapChains.begin(), SwapChains.end(), dref(_swapchain_in)));
 	}
 
-	RenderContext& Rendering_SingleGPU::Request_RenderContext(Swapchain& _swapchain)
+	RenderContext& Rendering_SingleGPU::Request_RenderContext(Swapchain& _swapchain_in)
 	{
 		RenderContexts.resize(RenderContexts.size() + 1);
 
-		EResult result = RenderContexts.back().Create(_swapchain);
+		EResult result = RenderContexts.back().Create(_swapchain_in);
 
 		if (result != EResult::Success) 
 			Exception::Fatal::Throw("Failed to create render context");
@@ -1370,11 +1376,11 @@ namespace HAL::GPU::Vulkan
 		return RenderContexts.back();
 	}
 
-	void Rendering_SingleGPU::Retire_RenderContext(ptr<RenderContext> _renderContext)
+	void Rendering_SingleGPU::Retire_RenderContext(ptr<RenderContext> _renderContext_in)
 	{
-		_renderContext->Destroy();
+		_renderContext_in->Destroy();
 
-		RenderContexts.erase(find(RenderContexts.begin(), RenderContexts.end(), *_renderContext));
+		RenderContexts.erase(find(RenderContexts.begin(), RenderContexts.end(), dref(_renderContext_in)));
 	}
 
 	void Rendering_SingleGPU::Initalize()

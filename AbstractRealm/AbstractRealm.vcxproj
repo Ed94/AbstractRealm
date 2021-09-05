@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -74,7 +74,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execptions;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Objects;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\SAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execptions;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Objects;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\TPAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Renderer;$(ProjectDir)Resource;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -113,6 +113,7 @@
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
       <ShowIncludes>false</ShowIncludes>
       <DisableSpecificWarnings>5105</DisableSpecificWarnings>
+      <AdditionalOptions>/showFilenames  </AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -186,6 +187,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Core\Concurrency\Concurrency.hpp" />
+    <ClInclude Include="Core\Concurrency\Concurrency_Backend.hpp" />
     <ClInclude Include="Core\Concurrency\CyclerPool.hpp">
       <SubType>
       </SubType>
@@ -225,6 +227,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Core\Execution\Execution.hpp" />
+    <ClInclude Include="Core\Execution\Execution_Backend.hpp" />
     <ClInclude Include="Core\Execution\MasterExecution.hpp">
       <SubType>
       </SubType>
@@ -261,11 +264,15 @@
     <ClInclude Include="Core\Reflection\Reflection_Backend.hpp" />
     <ClInclude Include="Core\Reflection\SubtypeOf.hpp" />
     <ClInclude Include="Core\Reflection\Type.hpp" />
-    <ClInclude Include="Editor\Assets\Asset.hpp">
+    <ClInclude Include="Manifest\Enities\EMS.hpp" />
+    <ClInclude Include="PAL\HAL\HAL_GPU_Resource.hpp" />
+    <ClInclude Include="PAL\HAL\Methane\Methane_API.hpp" />
+    <ClInclude Include="Renderer\Renderer_Backend.hpp" />
+    <ClInclude Include="Resource\Assets\Asset.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Editor\Assets\AssetMngr.hpp">
+    <ClInclude Include="Resource\Assets\AssetMngr.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -320,6 +327,9 @@
     <ClInclude Include="Manifest\Enities\Phenomena\Vehicle.hpp" />
     <ClInclude Include="Manifest\Interface\IPossessable.hpp" />
     <ClInclude Include="Networking\Interface\INetworkable.hpp" />
+    <ClInclude Include="PAL\HAL\Vulkan\GPUVK_Traits.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL_Memory.hpp" />
+    <ClInclude Include="Resource\Resource_Backend.hpp" />
     <ClInclude Include="Simulation\Interface\IPhenomena.h" />
     <ClInclude Include="Manifest\Level.hpp" />
     <ClInclude Include="Manifest\Manifest.hpp" />
@@ -453,8 +463,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\HAL\BGFX\BGFX_API.hpp" />
-    <ClInclude Include="PAL\HAL\BGFX\GPU_BGFX.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.cpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_DebugUtils.hpp" />
     <ClInclude Include="PAL\HAL\Vulkan\GPUVK_PayloadDeck.hpp">
@@ -677,21 +685,21 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\PAL_Backend.hpp" />
-    <ClInclude Include="PAL\SAL\SAL_EnkiTS.hpp">
+    <ClInclude Include="PAL\TPAL\TPAL_EnkiTS.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\SAL\SAL_GLFW.hpp">
+    <ClInclude Include="PAL\TPAL\TPAL_GLFW.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\SAL\SAL_Gainput.hpp" />
-    <ClInclude Include="PAL\SAL\SAL_GLM.hpp">
+    <ClInclude Include="PAL\TPAL\TPAL_Gainput.hpp" />
+    <ClInclude Include="PAL\TPAL\TPAL_GLM.hpp">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="PAL\SAL\SAL_ImGui.hpp" />
-    <ClInclude Include="PAL\SAL\SAL.hpp" />
+    <ClInclude Include="PAL\TPAL\TPAL_ImGui.hpp" />
+    <ClInclude Include="PAL\TPAL\TPAL.hpp" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_vulkan.h" />
     <ClInclude Include="PAL\ThirdParty\Libraries\imgui\imconfig.h" />
@@ -778,6 +786,9 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Simulation\Simulation.hpp" />
+    <ClInclude Include="Simulation\Simulation_Backend.hpp" />
+    <ClInclude Include="Simulation\Sound\Acoustic\Acoustic.hpp" />
+    <ClInclude Include="Simulation\Sound\Sound.hpp" />
     <ClInclude Include="Simulation\Space.hpp">
       <SubType>
       </SubType>
@@ -794,11 +805,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\HAL\Vulkan\GPUVK_Resources.tpp" />
-    <None Include="PAL\SAL\SAL_GLFW.tpp" />
-    <None Include="PAL\SAL\SAL_ImGui.tpp" />
+    <None Include="PAL\TPAL\TPAL_GLFW.tpp" />
+    <None Include="PAL\TPAL\TPAL_ImGui.tpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Concurrency\Concurrency.cpp" />
+    <ClCompile Include="Core\Concurrency\Concurrency_Backend.cpp" />
     <ClCompile Include="Core\Concurrency\CyclerPool.cpp" />
     <ClCompile Include="Core\Core.cpp" />
     <ClCompile Include="Core\Core_Backend.cpp" />
@@ -811,6 +823,7 @@
     <ClCompile Include="Core\Dev\Console.cpp" />
     <ClCompile Include="Core\Dev\Dev.cpp" />
     <ClCompile Include="Core\Execution\Executer_EntryPoint.cpp" />
+    <ClCompile Include="Core\Execution\Execution_Backend.cpp" />
     <ClCompile Include="Core\Execution\MasterExecution.cpp" />
     <ClCompile Include="Core\Execution\PrimitiveExecuter_Implem.hpp" />
     <ClCompile Include="Core\IO\Basic_FileIO.cpp" />
@@ -826,6 +839,7 @@
     <ClCompile Include="LAL\LAL_IO.cpp" />
     <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="Manifest\Enities\Component.cpp" />
+    <ClCompile Include="Manifest\Enities\EMS.cpp" />
     <ClCompile Include="Manifest\Enities\Phenomena\Animal.cpp" />
     <ClCompile Include="Manifest\Enities\Phenomena\Avatar.cpp" />
     <ClCompile Include="Manifest\Enities\Entity.cpp" />
@@ -838,7 +852,6 @@
     <ClCompile Include="Meta\Config\HAL_Config.cpp" />
     <ClCompile Include="Meta\EngineInfo.cpp" />
     <ClCompile Include="Meta\Meta_backend.cpp" />
-    <ClCompile Include="PAL\HAL\BGFX\GPU_BGFX.cpp" />
     <ClCompile Include="PAL\HAL\HAL_GPU.cpp" />
     <ClCompile Include="PAL\HAL\HAL.cpp" />
     <ClCompile Include="PAL\HAL\HAL_Backend.cpp" />
@@ -861,6 +874,7 @@
     <ClCompile Include="PAL\OSAL\OSAL_Console.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_EntryPoint.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Hardware.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL_Memory.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Networking.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Platform.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL_Threading.cpp" />
@@ -868,9 +882,9 @@
     <ClCompile Include="PAL\OSAL\OSAL_Windowing.cpp" />
     <ClCompile Include="PAL\PAL.cpp" />
     <ClCompile Include="PAL\PAL_Backend.cpp" />
-    <ClCompile Include="PAL\SAL\SAL_GLFW.cpp" />
-    <ClCompile Include="PAL\SAL\SAL_ImGui.cpp" />
-    <ClCompile Include="PAL\SAL\SAL_Gainput.cpp" />
+    <ClCompile Include="PAL\TPAL\TPAL_GLFW.cpp" />
+    <ClCompile Include="PAL\TPAL\TPAL_ImGui.cpp" />
+    <ClCompile Include="PAL\TPAL\TPAL_Gainput.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\backends\imgui_impl_vulkan.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui.cpp" />
@@ -879,8 +893,11 @@
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_tables.cpp" />
     <ClCompile Include="PAL\ThirdParty\Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Renderer\Renderer_Backend.cpp" />
     <ClCompile Include="Resource\Mesh\Mesh_Primitives.cpp" />
+    <ClCompile Include="Resource\Resource_Backend.cpp" />
     <ClCompile Include="Resource\Texture\Texture.cpp" />
+    <ClCompile Include="Simulation\Simulation_Backend.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="PAL\HAL\Vulkan\VaultedThermals\CMakeLists.txt" />

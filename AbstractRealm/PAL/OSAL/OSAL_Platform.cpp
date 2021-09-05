@@ -2,14 +2,12 @@
 #include "OSAL_Platform.hpp"
 
 
-
 // Engine
 #include "LAL.hpp"
 #include "OSAL_Backend.hpp"
 
 // Infoware
 #include "infoware/system.hpp"
-
 
 
 namespace OSAL

@@ -1,21 +1,14 @@
 #pragma once
 
-// Engine
-#include "LAL.hpp"
+
+#include "Concurrency_Backend.hpp"
 #include "Cycler.hpp"
 
 
 namespace Concurrency
 {
-#pragma region Usings
-
-	using namespace LAL;
 	using namespace Execution;
 
-#pragma endregion Usings
-
-
-#pragma region Structs
 
 	class CyclerPool
 	{
@@ -33,6 +26,4 @@ namespace Concurrency
 
 		static bool RequestShutdown();
 	};
-
-#pragma endregion Structs
 }

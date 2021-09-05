@@ -1,14 +1,9 @@
 // Not used yet.
 
-
 #pragma once
 
 
-
-
 #include "Vulkan_API.hpp"
-
-
 
 
 namespace HAL::GPU::Vulkan
@@ -27,7 +22,6 @@ namespace HAL::GPU::Vulkan
 	using LayerandExtensionsList = DynamicArray<LayerAndExtensionProperties>;
 
 
-
 	class PhysicalDevice : public V3::PhysicalDevice
 	{
 	public:
@@ -40,9 +34,9 @@ namespace HAL::GPU::Vulkan
 
 		const LayerandExtensionsList& GetLayersAndExtensions() const;
 
-		operator Parent&();
+		//operator Parent&();
 
-		operator const Parent& () const;
+		//operator const Parent& () const;
 
 	protected:
 
@@ -68,7 +62,5 @@ namespace HAL::GPU::Vulkan
 
 		AppInfo    appInfo   ;
 		CreateInfo createInfo;
-
-
 	};
 }

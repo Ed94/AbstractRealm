@@ -1,6 +1,5 @@
 #pragma once
 
-#define Meta_EngineModule
 #include "Meta.hpp"
 
 

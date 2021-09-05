@@ -8,12 +8,14 @@
 #include "PAL/PAL.hpp"
 	#include "HAL.hpp"
 	#include "HAL/HAL_GPU.hpp"
-	#include "SAL/SAL_ImGui.hpp"
+	#include "TPAL/TPAL_ImGui.hpp"
 
 #include "Core.hpp"
 	#include "Concurrency/CyclerPool.hpp"
 	#include "Cycler.hpp"
 	#include "MasterExecution.hpp"
+
+#include "Execution_Backend.hpp"
 
 #include "Renderer/Renderer.hpp"
 
@@ -24,9 +26,7 @@ namespace Execution
 
 	using namespace LAL ;
 	using namespace Meta;
-	using namespace SAL ;
-
-
+	using namespace TPAL;
 
 	// Aliases
 
@@ -35,90 +35,67 @@ namespace Execution
 	using OSAL::FrameBufferDimensions;
 
 
-
-	namespace StaticData 
-	{
+#pragma region StaticData
 		ptr<Window> EngineWindow;
-	}
-
-	Dev_Declare_Log(Execution);
-
+#pragma endregion StaticData
 	
 
 	// Public
 
 	OSAL::ExitValT EntryPoint()
 	{
-		#ifdef Meta_UseCpp_Exceptions
-		try
+		Meta::LoadModule();
+
+		Load_Backend();
+
+		if (UseDebug())
 		{
-		#endif
-			Meta::LoadModule();
+			if (! OSAL::CreateConsole()) 
+				return 0;
 
-			SubLogger.Init();
+			cout << "Initializing Dev Module" << endl;
 
-			if (UseDebug())
-			{
-				using namespace LAL;
-
-				if (!OSAL::CreateConsole()) return 0;
-
-				cout << "Initializing Dev Module" << endl;
-
-				Dev::Load();
-			}
-
-			Dev::Console_EnableAutoUpdate();
-
-			// Set the floating-point precision to 10 places.
-			STL::cout.precision(10);
-
-			Log("Initiating");
-
-			PAL ::Module::Load();
-			Core::Module::Load();
-
-			Renderer::Load();
-
-			// Editor
-			// Later on set this to use its own window, and make sure the regular console is disabled while active.
-			Imgui::Initialize(Renderer::EngineWindow());
-
-			// Master execution
-
-			Initialize_MasterCycler();
-
-			Dev::Console_EnableAutoUpdate();
-
-			// App closing
-
-			Imgui::Deinitialize();
-
-			Renderer::Unload();	
-
-			Core::Module::Unload();
-			PAL ::Module::Unload();
-
-			if (UseDebug())
-			{
-				OSAL::DestroyConsole();
-
-				Dev::Unload();
-			}
-		#ifdef Meta_UseCpp_Exceptions
+			Dev::Load();
 		}
-		catch (std::exception e)
+
+		Dev::Console_EnableAutoUpdate();
+
+		Log("Initiating");
+
+		PAL ::Load();
+		Core::Load();
+
+		Renderer::Load();
+
+		// Editor
+		// Later on set this to use its own window, and make sure the regular console is disabled while active.
+		Imgui::Initialize(Renderer::EngineWindow());
+
+		// Master execution
+
+		Initialize_MasterCycler();
+
+		Dev::Console_EnableAutoUpdate();
+
+		// App closing
+
+		Imgui::Deinitialize();
+
+		Renderer::Unload();	
+
+		Core::Unload();
+		PAL ::Unload();
+
+		if (UseDebug())
 		{
-			Log_Error(e.what());
+			OSAL::DestroyConsole();
 
-			Dev::Console_UpdateBuffer();
+			Dev::Unload();
 		}
-		#endif
 
 		return OSAL::ExitValT(EExitCode::Success);
 	}
 }
-
 
 
 // OSAL Entrypoint:  Setting function overload.

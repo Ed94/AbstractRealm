@@ -22,7 +22,6 @@ namespace HAL::GPU::Vulkan
 		CreateInfo info;
 	};
 
-
 	class GraphicsPipeline : public V3::GraphicsPipeline
 	{
 		using Parent = V3::GraphicsPipeline;
@@ -72,19 +71,16 @@ namespace HAL::GPU::Vulkan
 	};
 
 
-	class GPU_Pipeline
+	class PipelineManager
 	{
 
 	public:
 
 		static const PipelineCache& Request_Cache();
 
-
 	protected:
 
-
 		static DynamicArray<Pipeline::Layout> layouts;
-
 
 		static PipelineCache cache;
 	};

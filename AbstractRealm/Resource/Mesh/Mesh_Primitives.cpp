@@ -2,8 +2,6 @@
 #include "Mesh_Primitives.hpp"
 
 
-
-
 namespace Resource::Mesh
 {
 	namespace _2D

@@ -2,7 +2,6 @@
 #include "OSAL_Threading.hpp"
 
 
-
 namespace OSAL
 {
 #pragma region StaticData
@@ -62,7 +61,7 @@ namespace OSAL
 		*/
 		NumberOfLogicalCores = Thread::hardware_concurrency(); 
 
-		Log(String("Number of Logical Cores: " + std::to_string(NumberOfLogicalCores)));
+		Log(String("Number of Logical Cores: " + ToString(NumberOfLogicalCores)));
 	}
 
 	u32 GetNumberOfLogicalCores()

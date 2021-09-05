@@ -2,7 +2,7 @@
 #include "OSAL.hpp"
 
 
-#include "SAL_ImGui.hpp"
+#include "TPAL_ImGui.hpp"
 
 
 #include "OSAL_Backend.hpp"
@@ -18,7 +18,7 @@ namespace OSAL
 
 	void Record_EditorDevDebugUI()
 	{
-		using namespace SAL::Imgui;
+		using namespace TPAL::Imgui;
 
 		#define Args(_Entry) NameOf(_Entry).str(), _Entry
 
@@ -112,7 +112,7 @@ namespace OSAL
 
 					Table2C::Entry("Current Time (UTC)", toString.str());
 
-					auto sinceStart = std::chrono::duration_cast<Nanoseconds>(SystemClock::now().time_since_epoch()).count();
+					auto sinceStart = duration_cast<Nanoseconds>(SystemClock::now().time_since_epoch()).count();
 
 					toString.str(String());;
 
@@ -120,7 +120,7 @@ namespace OSAL
 
 					Table2C::Entry("System Clock: Now", toString.str());
 
-					sinceStart = std::chrono::duration_cast<Nanoseconds>(SteadyClock::now().time_since_epoch()).count();
+					sinceStart = duration_cast<Nanoseconds>(SteadyClock::now().time_since_epoch()).count();
 
 					toString.str(String());;
 
@@ -128,7 +128,7 @@ namespace OSAL
 
 					Table2C::Entry("Steady Clock: Now", toString.str());
 
-					sinceStart = std::chrono::duration_cast<Nanoseconds>(HighResClock::now().time_since_epoch()).count();
+					sinceStart = duration_cast<Nanoseconds>(HighResClock::now().time_since_epoch()).count();
 
 					toString.str(String());;
 
@@ -172,7 +172,7 @@ namespace OSAL
 		{
 			case EWindowingPlatform::GLFW:
 			{
-				SAL::GLFW::Initalize();
+				TPAL::GLFW::Initalize();
 
 				Log("Initialized windowing platform: GLFW");
 				
@@ -192,7 +192,7 @@ namespace OSAL
 			case EWindowingPlatform::GLFW:
 
 			{
-				SAL::GLFW::Terminate();
+				TPAL::GLFW::Terminate();
 
 				Log("Terminated windowing platform: GLFW");
 			}
@@ -205,7 +205,7 @@ namespace OSAL
 	{
 		if constexpr (WindowingPlatform == Meta::EWindowingPlatform::GLFW)
 		{
-			SAL::GLFW::PollEvents();
+			TPAL::GLFW::PollEvents();
 		}
 	}
 

@@ -1,7 +1,6 @@
 /*
 GPU HAL: Vulkan Interface
 
-
 This currently contains extra implementation for GPU_HAL, I'm not final on my design so
 its going to stay here and get modified and slowly moved to VaultedThermals
 (If its more associated wit that).
@@ -27,11 +26,6 @@ namespace HAL::GPU::Vulkan
 	using namespace VV        ;
 	using namespace VV::V3    ;
 	using namespace VV::SPIR_V;
-
-
-	using namespace LAL ;
-	using namespace Meta;
-
 
 	using LAL::DynamicArray;
 
@@ -59,19 +53,19 @@ namespace HAL::GPU::Vulkan
 	{
 		using Memory = Vulkan::Memory;
 
-		AppInstance::Handle          ApplicationInstance;
-		V3::PhysicalDevice           PhysicalDevice     ;
-		V3::LogicalDevice::Handle    LogicalDevice      ;
-		ui32                         QueueFamilyIndex   ;
-		LogicalDevice::Queue         Queue              ;
-		V3::Pipeline::Cache::Handle  PipelineCache      ;
-		EFormat                      ImageFormat        ;
-		V3::RenderPass::Handle       RenderPass         ;
-		Memory::AllocationCallbacks* Allocator          ;
-		ui32                         MinimumFrameBuffers;
-		ui32                         FrameBufferCount   ;
-		Extent2D                     FrameSize          ;
-		ESampleCount                 MSAA_Samples       ;
+		AppInstance::Handle              ApplicationInstance;
+		V3::PhysicalDevice               PhysicalDevice     ;
+		V3::LogicalDevice::Handle        LogicalDevice      ;
+		ui32                             QueueFamilyIndex   ;
+		LogicalDevice::Queue             Queue              ;
+		V3::Pipeline::Cache::Handle      PipelineCache      ;
+		EFormat                          ImageFormat        ;
+		V3::RenderPass::Handle           RenderPass         ;
+		ptr<Memory::AllocationCallbacks> Allocator          ;
+		ui32                             MinimumFrameBuffers;
+		ui32                             FrameBufferCount   ;
+		Extent2D                         FrameSize          ;
+		ESampleCount                     MSAA_Samples       ;
 	};
 
 	using RenderContextList = DynamicArray<RawRenderContext>;
@@ -81,7 +75,7 @@ namespace HAL::GPU::Vulkan
 
 #pragma region Temp
 
-	void Start_GPUVK_Demo(ptr<OSAL::Window> _window);
+	void Start_GPUVK_Demo(ptr<OSAL::Window> _window_in);
 
 	void Render();
 
@@ -96,11 +90,11 @@ namespace HAL::GPU::Vulkan
 
 	// Descriptor Pool
 
-	EResult RequestDescriptorPool(V3::DescriptorPool& _pool, V3::DescriptorPool::CreateInfo _info);
+	EResult RequestDescriptorPool(V3::DescriptorPool& _pool_out, V3::DescriptorPool::CreateInfo _info);
 	
 	// Command Buffer Related
 
-	void EndSingleTimeBuffer(const CommandBuffer& _buffer);
+	void EndSingleTimeBuffer(const CommandBuffer& _buffer_in);
 
 	const CommandBuffer& RequestSingleTimeBuffer();
 
@@ -129,39 +123,39 @@ namespace HAL::GPU::Vulkan
 			  DebugUtils::Messenger::ServerityFlags   _messageServerity,
 			  DebugUtils::Messenger::TypeFlags        _messageType     ,
 		const V1::DebugUtils::Messenger::CallbackData _callbackData    ,
-			  void*                                   _userData
+			  ptr<void>                               _userData_in
 	);
 
 	EFormat FindDepthFormat();
 
-	EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates, EImageTiling _tiling, FormatFeatureFlags _features);
+	EFormat FindSupportedFormat(const DynamicArray<EFormat>& _canidates_in, EImageTiling _tiling, FormatFeatureFlags _features);
 
-	void GenerateMipMaps(Image& _image, EFormat _format, u32 _textureWidth, u32 _textureHeight, u32 _mipLevels);
+	void GenerateMipMaps(Image& _image_in, EFormat _format, u32 _textureWidth, u32 _textureHeight, u32 _mipLevels);
 
-	void Start_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion);
+	void Start_GPUComms(RoCStr _applicationName, Meta::AppVersion _applicationVersion);
 
 	void CeaseComms();
 
 	void WaitForIdle();
 
 
-	ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window);
+	ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> _window_in);
 
 	u32 GetNumberOfFramebuffers();
 
 	u32 GetMinimumFramebufferCount();
 
-	using RenderCallback = void(*)(const CommandBuffer& _buffer, int _index);
+	using RenderCallback = fnPtr<void,  const CommandBuffer& /*_buffer_in*/, int /*_index*/>;
 
-	void AddRenderCallback(RenderCallback _callback);
+	void AddRenderCallback(RenderCallback _callback_in);
 
-	void Default_InitializeRenderer(ptr<OSAL::Window> _window);
+	void Default_InitializeRenderer(ptr<OSAL::Window> _window_in);
 
-	void Default_ReinitializeRenderer(ptr<OSAL::Window> _window);
+	void Default_ReinitializeRenderer(ptr<OSAL::Window> _window_in);
 
-	void Default_DeinitializeRenderer(ptr<OSAL::Window> _window);
+	void Default_DeinitializeRenderer(ptr<OSAL::Window> _window_in);
 
-	void Default_DrawFrame(ptr<OSAL::Window> _window);
+	void Default_DrawFrame(ptr<OSAL::Window> _window_in);
 
 #pragma endregion UnderReview
 }

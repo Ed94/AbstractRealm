@@ -31,7 +31,6 @@ namespace Meta
 	};
 
 
-
 	// TODO: Make these runtime settable. (However whether or not they can be used or exist depends on build type.
 
 	// Will not build any log to file functionality. (Could be used to optimize build size).

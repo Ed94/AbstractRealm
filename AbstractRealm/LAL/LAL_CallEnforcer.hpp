@@ -9,9 +9,7 @@ C++17
 */
 
 
-
 #pragma once
-
 
 
 #ifndef CALLING_CONVENTION_ENFORCER_H
@@ -40,7 +38,7 @@ C++17
 		{                                                                            \
 			static __ATTRIBUTE ReturnType __CALL Call(ParameterTypes... _parameters) \
 			{                                                                        \
-				return FunctionType(std::forward<ParameterTypes>(_parameters)...);   \
+				return FunctionType(STL::forward<ParameterTypes>(_parameters)...);   \
 			}                                                                        \
 		};                                                                           \
 	};

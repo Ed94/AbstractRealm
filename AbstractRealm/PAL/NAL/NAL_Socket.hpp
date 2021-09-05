@@ -3,7 +3,6 @@
 
 #include "NAL_Backend.hpp"
 
-
 #include "OSAL_Networking.hpp"
 
 
@@ -32,9 +31,15 @@ namespace NAL
 		SocketAddress(const OSAL::SocketAddress& socketAddress);
 
 		static SPtr<SocketAddress> CreateIPV4(const String& _hostAndPort);
-		static SPtr<SocketAddress> CreateIPV6(u32 _address, u16 _port);
+		static SPtr<SocketAddress> CreateIPV6(u32 _address, u16 _port)
+		{
+			Exception::Fatal::NotImplemented("CreateIPV6");
 
-		ForceInline ui32 GetSize() const
+			return nullptr;   // Line to remove warning.
+		}
+
+		ForceInline 
+		ui32 GetSize() const
 		{
 			return sizeof(address);
 		}
@@ -46,12 +51,14 @@ namespace NAL
 
 	protected:
 
-		ForceInline SocketAddress_IPV4& GetAsIPV4()
+		ForceInline 
+		SocketAddress_IPV4& GetAsIPV4()
 		{
 			return RCast<SocketAddress_IPV4>(address);
 		}
 
-		ForceInline SocketAddress_IPV6& GetAsIPV6()
+		ForceInline 
+		SocketAddress_IPV6& GetAsIPV6()
 		{
 			return RCast<SocketAddress_IPV6>(address);
 		}
@@ -66,15 +73,41 @@ namespace NAL
 	{
 	public:
 
-		void Create(EAddressFamily _family, ESocketType _type, EProtocol _protocol);
+		ForceInline
+		void Create(EAddressFamily _family, ESocketType _type, EProtocol _protocol)
+		{
+			handle = OSAL::CreateSocket(_family, _type, _protocol);
+		}
 
-		void CreateUDP(EAddressFamily _family, EProtocol _protocol = EProtocol::Default);
-		void CreateTCP(EAddressFamily _family, EProtocol _protocol = EProtocol::Default);
+		ForceInline
+		void CreateUDP(EAddressFamily _family, EProtocol _protocol = EProtocol::Default)
+		{
+			handle = OSAL::CreateSocket(_family, ESocketType::DGram, _protocol);
+		}
 
-		void Bind(const SocketAddress& _address);
+		ForceInline
+			void CreateTCP(EAddressFamily _family, EProtocol _protocol = EProtocol::Default)
+		{
+			handle = OSAL::CreateSocket(_family, ESocketType::Stream, _protocol);
+		}
 
-		ESocketOpResult Shutdown(ESocketChannel _what);
-		ESocketOpResult Close();
+		ForceInline
+		void Bind(const SocketAddress& _address)
+		{
+			OSAL::BindSocket(dref(this), _address, _address.GetSize());
+		}
+
+		ForceInline
+		ESocketOpResult Shutdown(ESocketChannel _what)
+		{
+			return OSAL::ShutdownSocket(handle, _what);
+		}
+
+		ForceInline
+		ESocketOpResult Close()
+		{
+			return OSAL::CloseSocket(handle);
+		}
 
 		operator OSAL::Socket()
 		{

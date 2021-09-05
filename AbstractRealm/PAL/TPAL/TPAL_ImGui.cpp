@@ -1,5 +1,5 @@
 // Parent Header
-#include "SAL_ImGui.hpp"
+#include "TPAL_ImGui.hpp"
 
 
 #include "Meta/Config/CoreDev_Config.hpp"
@@ -20,12 +20,11 @@
 #include "ctti/name.hpp"
 #include "ctti/detailed_nameof.hpp"
 
-
 #include "imgui/backends/imgui_impl_vulkan.h"	
 #include "imgui/backends/imgui_impl_glfw.h"
 
 
-namespace SAL::Imgui
+namespace TPAL::Imgui
 {
 	UnorderedMap<String, DynamicArray<WindowCallback>> WindowsQueued;
 
@@ -44,7 +43,7 @@ namespace SAL::Imgui
 
 			// Vulkan
 
-			HAL::GPU::Vulkan::RawRenderContext* RenderContext;
+			ptr<HAL::GPU::Vulkan::RawRenderContext> RenderContext;
 
 			VV::V3::GraphicsPipeline GraphicsPipeline;
 
@@ -79,8 +78,8 @@ namespace SAL::Imgui
 
 			info.Flags.Set(EDescriptorPoolCreateFlag::FreeDescriptorSet);
 
-			info.MaxSets       = 1000 *  ((int)(sizeof(pool_sizes)) / sizeof(*(pool_sizes)));   // TODO: Define this better
-			info.PoolSizeCount = (u32)  ((int)(sizeof(pool_sizes)) / sizeof(*(pool_sizes)));
+			info.MaxSets       = 1000 * ((int)(sizeof(pool_sizes)) / sizeof(dref(pool_sizes)));   // TODO: Define this better
+			info.PoolSizeCount = (u32)  ((int)(sizeof(pool_sizes)) / sizeof(dref(pool_sizes)));
 			info.PoolSizes     = pool_sizes;
 
 			HAL::GPU::Vulkan::RequestDescriptorPool(DescriptorPool, info);
@@ -90,56 +89,56 @@ namespace SAL::Imgui
 		{
 			if (_returnCode != VkResult(VV::V3::EResult::Success))
 			{
-				std::cerr << "Imgui Callback Error Code: " << int(_returnCode) << std::endl;
+				cerr << "Imgui Callback Error Code: " << int(_returnCode) << endl;
 
 				CLog("Imgui Callback Error Code: " + ToString(int(_returnCode)));
 			}
 		}
 
-		void Vulkan_GPU_DrawRender(const HAL::GPU::Vulkan::CommandBuffer& _buffer, int /* _index */)
+		void Vulkan_GPU_DrawRender(const HAL::GPU::Vulkan::CommandBuffer& _buffer_in, int /* _index */)
 		{
-			ImDrawData* draw_data = ImGui::GetDrawData();
+			ptr<ImDrawData> draw_data = ImGui::GetDrawData();
 
 			// Record dear Imgui primitives into command buffer
-			ImGui_ImplVulkan_RenderDrawData(draw_data, _buffer);
+			ImGui_ImplVulkan_RenderDrawData(draw_data, _buffer_in);
 		}
 	}
 
 	// Static Data
 
-	Imgui::IO* IO_Config;
+	ptr<Imgui::IO> IO_Config;
 
 
-	void Dirty_DoSurfaceStuff(ptr<OSAL::Window> _window)
+	void Dirty_DoSurfaceStuff(ptr<OSAL::Window> _window_in)
 	{
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 
-		glfwMakeContextCurrent(_window);
+		glfwMakeContextCurrent(_window_in);
 	}
 
 
 	// Functions
 
-	void Queue(RoCStr _windowName, WindowCallback _callback)
+	void Queue(RoCStr _windowName, WindowCallback _callback_in)
 	{
 		auto possibleWindow = WindowsQueued.find(String(_windowName));
 
 		if (possibleWindow != WindowsQueued.end())
 		{
-			possibleWindow->second.push_back(_callback);
+			possibleWindow->second.push_back(_callback_in);
 		}
 		else
 		{
 			auto callbacks = DynamicArray<WindowCallback>();
 
-			callbacks.push_back(_callback);
+			callbacks.push_back(_callback_in);
 
 			WindowsQueued.insert({_windowName, move(callbacks) });
 		}
 	}
 
-	void Dequeue(RoCStr _windowName, WindowCallback _callback)
+	void Dequeue(RoCStr _windowName, WindowCallback _callback_in)
 	{
 		auto possibleWindow = WindowsQueued.find(String(_windowName));
 
@@ -149,13 +148,13 @@ namespace SAL::Imgui
 		}
 	}
 
-	void BindToPlatformAndRenderer(ptr<OSAL::Window> _window)
+	void BindToPlatformAndRenderer(ptr<OSAL::Window> _window_in)
 	{
 		switch (Meta::WindowingPlatform)
 		{
 			case Meta::EWindowingPlatform::GLFW:
 			{
-				ImGui_ImplGlfw_InitForVulkan(_window, PlatformBackend::GLFW_InstallCallbacks);
+				ImGui_ImplGlfw_InitForVulkan(_window_in, PlatformBackend::GLFW_InstallCallbacks);
 
 				CLog("GLFW callbacks setup");
 
@@ -171,6 +170,9 @@ namespace SAL::Imgui
 
 		switch (Meta::GPU_API())
 		{
+			case Meta::EGPUPlatformAPI::Methane:
+				Exception::Fatal::NotImplemented("Methane is not supported yet.");
+
 			case Meta::EGPUPlatformAPI::Vulkan:
 			{
 				using namespace HAL::GPU;
@@ -179,7 +181,7 @@ namespace SAL::Imgui
 
 				using namespace PlatformBackend;
 
-				RenderContext = RCast<RawRenderContext>(GetRenderContext(_window));
+				RenderContext = RCast<RawRenderContext>(GetRenderContext(_window_in));
 
 				ImGui_ImplVulkan_InitInfo initSpec{};
 
@@ -225,11 +227,11 @@ namespace SAL::Imgui
 		CLog("Deinitialized");
 	}
 
-	void Initialize(ptr<OSAL::Window> _window)
+	void Initialize(ptr<OSAL::Window> _window_in)
 	{
 		CLog("Initializing...");
 
-		using namespace SAL;
+		using namespace TPAL;
 
 		Imgui::VerifyVersion();
 
@@ -246,28 +248,28 @@ namespace SAL::Imgui
 
 		if (IO_Config->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			style.WindowRounding = 0.0f;
+			style.WindowRounding              = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 0.0f;
 		}
 
-		Imgui::BindToPlatformAndRenderer(_window);
+		Imgui::BindToPlatformAndRenderer(_window_in);
 
 		Imgui::SetupFonts();
 	}
 
 	void Text(RoCStr _cStr)
 	{
-		ImGui::Text(_cStr);
+		ImGui::Text("%s", _cStr);
 	}
 
 	void Text(const StringView& _view)
 	{
-		ImGui::Text(_view.data());
+		ImGui::Text("%s", _view.data());
 	}
 
 	void Text(const String& _string)
 	{
-		ImGui::Text(_string.c_str());
+		ImGui::Text("%s", _string.c_str());
 	}
 
 	bool TreeNode(RoCStr _cStr)
@@ -377,6 +379,10 @@ namespace SAL::Imgui
 	{
 		switch (Meta::GPU_API())
 		{
+			case Meta::EGPUPlatformAPI::Methane:
+				Exception::Fatal::NotImplemented("Methane is not supported yet.");
+				[[fallthrough]];
+
 			case Meta::EGPUPlatformAPI::Vulkan:
 			{
 				using namespace HAL::GPU::Vulkan;
@@ -400,6 +406,10 @@ namespace SAL::Imgui
 	{
 		switch (Meta::GPU_API())
 		{
+			case Meta::EGPUPlatformAPI::Methane:
+				Exception::Fatal::NotImplemented("Methane is not supported yet.");
+				[[fallthrough]];
+
 			case Meta::EGPUPlatformAPI::Vulkan:
 			{
 				using namespace HAL::GPU;

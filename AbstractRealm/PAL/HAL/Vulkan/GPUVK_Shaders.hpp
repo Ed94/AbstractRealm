@@ -1,11 +1,8 @@
 #pragma once
 
-
-
 #include "GPUVK_Comms.hpp"
 
 #include "Renderer/Shader/Shader.hpp"
-
 
 
 namespace HAL::GPU::Vulkan

@@ -1,14 +1,8 @@
 #pragma once
 
 
-#include "Meta/Meta.hpp"
-
-
-#include <tiny_obj_loader.h>
-#include <stb/stb_image.h>
-
-
 // Engine
+#include "HAL_Backend.hpp"
 #include "Vulkan_API.hpp"
 #include "GPUVK_Resources.hpp"
 
@@ -17,6 +11,9 @@
 #include "Renderer/Shader/VKTut/VKTut.hpp"
 
 // Raw Libraries
+#include <tiny_obj_loader.h>
+#include <stb/stb_image.h>
+
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
@@ -31,12 +28,7 @@ namespace HAL::GPU::Vulkan
 	using namespace VV::V3;
 	using namespace VV::SPIR_V;
 
-	using namespace LAL ;
-	using namespace Meta;
-
-
-
-	// Structs
+#pragma region Structs
 
 	struct UniformBufferObject
 	{
@@ -122,10 +114,10 @@ namespace HAL::GPU::Vulkan
 		}
 	};
 
+#pragma endregion Structs
 
 
-	//StaticData
-	//(
+#pragma region StaticData
 		multiDefs const DynamicArray<Vertex_WColor> TriangleVerticies = 
 		{
 			{
@@ -194,7 +186,7 @@ namespace HAL::GPU::Vulkan
 		};
 
 		eGlobal DynamicArray<Vertex_WTexture> ModelVerticies;
-		eGlobal DynamicArray<u32  > ModelIndicies ;
+		eGlobal DynamicArray<u32  > ModelIndicies;
 
 		multiDefs const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
 		multiDefs const String VikingRoom_TexturePath = "Engine/Data/Models/VikingRoom/viking_room.png";
@@ -204,22 +196,20 @@ namespace HAL::GPU::Vulkan
 
 		// TODO: Make the GPU hal agnostic to this.
 
-		eGlobal Buffer VertexBuffer_Old      ;
+		eGlobal Buffer VertexBuffer_Old;
 		eGlobal Memory VertexBufferMemory;
 
-		eGlobal Buffer IndexBuffer_Old      ;
+		eGlobal Buffer IndexBuffer_Old;
 		eGlobal Memory IndexBufferMemory;
 
 		eGlobal DynamicArray<Buffer> UniformBuffers      ;
 		eGlobal DynamicArray<Memory> UniformBuffersMemory;
 
-		eGlobal Image     TextureImage_Old      ;
+		eGlobal Image     TextureImage_Old  ;
 		eGlobal Memory    TextureImageMemory;
 		eGlobal ImageView TextureImageView  ;
 		eGlobal Sampler   TextureSampler    ;
-	//)
-
+#pragma endregion StaticData
 
 		void LoadModel(String _modelPath);
-		
 }

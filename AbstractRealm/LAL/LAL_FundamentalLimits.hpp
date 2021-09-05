@@ -16,6 +16,8 @@ Last Modified: 5/18/2020
 
 namespace LAL
 {
+	using IntMaxType = STL::intmax_t;
+
 	template<typename Type>
 	using NumLimits = STL::numeric_limits<Type>;
 

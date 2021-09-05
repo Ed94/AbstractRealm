@@ -1,9 +1,7 @@
 // Parent Header
 #include "Dev.hpp"
 
-// PAL
-#include "SAL/SAL_Imgui.hpp"
-
+#include "TPAL/TPAL_Imgui.hpp"
 #include "Dev_Backend.hpp"
 
 
@@ -15,13 +13,9 @@ namespace Dev
 
 	void Record_EditorDevDebugUI()
 	{
-		using namespace SAL::Imgui;
+		using namespace TPAL::Imgui;
 
 		Console_Record_EditorDevDebugUI();
-
-		/*if (CollapsingHeader("Dev"))
-		{
-		}*/
 	}
 
 

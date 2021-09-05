@@ -11,9 +11,6 @@
 
 namespace Core
 {
-	namespace Module
-	{
-		void Load();
-		void Unload();
-	}
+	void Load();
+	void Unload();
 }

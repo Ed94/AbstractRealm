@@ -25,14 +25,14 @@ namespace Core
 		{}
 
 		template<typename Type>
-		VPtr(Type& _object)
+		VPtr(Type& _object_in)
 		:
-			rPtr(getPtr(_object))
+			rPtr(getPtr(_object_in))
 		{}
 
-		VPtr(ptr<void> _ptr)
+		VPtr(ptr<void> _ptr_in)
 		:
-			rPtr(_ptr)
+			rPtr(_ptr_in)
 		{}
 	#pragma endregion Constructors
 
@@ -64,14 +64,14 @@ namespace Core
 			rPtr(nullptr)
 		{}
 
-		TPtr(Type& _object)
+		TPtr(Type& _object_in)
 		:	
-			rPtr(getPtr(_object))
+			rPtr(getPtr(_object_in))
 		{}
 
-		TPtr(ptr<Type> _ptr)
+		TPtr(ptr<Type> _ptr_in)
 		:
-			rPtr(_ptr)
+			rPtr(_ptr_in)
 		{}
 	#pragma endregion Constructors
 
@@ -109,10 +109,10 @@ namespace Core
 	public:
 
 	#pragma region Constructors
-		ObjPtr(Object& _obj) : TPtr(_obj)
+		ObjPtr(Object& _obj_in) : TPtr(_obj_in)
 		{}
 
-		ObjPtr(ptr<Object> _ptr) : TPtr(_ptr)
+		ObjPtr(ptr<Object> _ptr_in) : TPtr(_ptr_in)
 		{}
 	#pragma endregion Constructors
 

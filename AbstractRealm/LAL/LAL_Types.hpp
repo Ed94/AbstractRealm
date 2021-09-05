@@ -1,28 +1,26 @@
 /*
 STL Basic Types
-
-Last Modified: 5/18/2020
 */
-
 
 
 #pragma once
 
 
-
 #include "LAL_Cpp_STL.hpp"
-
 
 
 namespace LAL
 {
 	// Data
 
+	template<typename... Type>
+	using VoidType = STL::void_t<Type...>;
+
 	using Byte = STL::byte;
 
 	using uDM = STL::size_t;   // Defined according to the target processor's pointer arithmetic capabilities (Not memory capabilities).
 
-	using PtrDiff  = STL::ptrdiff_t;
+	using ptrDiff  = STL::ptrdiff_t;
 	using sIntPtr  = STL::intptr_t ;
 	using uIntPtr  = STL::uintptr_t;
 
@@ -33,10 +31,8 @@ namespace LAL
 	template<typename TypeA, typename TypeB>
 	using Pair = STL::pair<TypeA, TypeB>;
 
-	//template<typename TypeA, typename TypeB>
-	//Pair<TypeA, TypeB> MakePair(TypeA&& _typeA, TypeB&& _typeB) { return std::make_pair<TypeA, TypeB>; }
-
-	using STL::make_pair;
+	template<class TypeA, class TypeB>
+	constexpr auto MakePair = STL::make_pair<TypeA, TypeB>;
 
 	template<typename... Types>
 	using Tuple = STL::tuple<Types...>;

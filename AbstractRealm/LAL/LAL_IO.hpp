@@ -20,16 +20,28 @@ namespace LAL
 
 	using Path = STL::filesystem::path;
 
-
-
 	using STL::cerr;
+	using STL::cin;
 	using STL::cout;
 	using STL::endl;
+	using STL::wcerr;
+	using STL::wcin;
+	using STL::wcout;
 
-	using STL::setfill;
-	using STL::setw   ;
+	inline 
+	bool SyncWith_STDIO(bool _newSync)
+	{
+		return STL::ios::sync_with_stdio(_newSync);
+	}
 
+	template <class ElemType>
+	_NODISCARD 
+	STL::_Fillobj<ElemType> SetFill(ElemType _Ch)
+	{
+		return STL::_Fillobj<ElemType>(_Ch);
+	}
 
+	constexpr auto SetWidth = STL::setw;
 
 	bool CheckPathExists(const Path& _path);
 

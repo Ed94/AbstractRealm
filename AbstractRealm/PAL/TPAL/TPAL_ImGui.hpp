@@ -1,19 +1,15 @@
  #pragma once
 
-
-
-// Includes
-
 #include "OSAL/OSAL_Platform.hpp"
 #include "LAL/LAL.hpp"
 #include "Meta/Config/HAL_Config.hpp"
 #include "Meta/Config/OSAL_Config.hpp"
 #include "OSAL/OSAL_Windowing.hpp"
 
-
 #include "imgui/imgui.h"
 
-namespace SAL::Imgui
+
+namespace TPAL::Imgui
 {
 	using namespace LAL;
 
@@ -21,7 +17,7 @@ namespace SAL::Imgui
 
 	using WindowCallback = Function<void()>;
 
-	//struct ImGuiContext* CreateContext(struct ImFontAtlas* shared_font_atlas);
+	//struct ptr<ImGuiContext> CreateContext(ptr<struct ImFontAtlas> shared_font_atlas);
 
 	using ImGui::CreateContext  ;
 	using ImGui::GetIO          ;
@@ -35,12 +31,12 @@ namespace SAL::Imgui
 		//eGlobal bool GLFW_InstallCallbacks;
 	}
 
-	void Queue(RoCStr _windowName, WindowCallback _callback);
-	void Dequeue(RoCStr _windowName, WindowCallback _callback);
+	void Queue(RoCStr _windowName, WindowCallback _callback_in);
+	void Dequeue(RoCStr _windowName, WindowCallback _callback_in);
 
-	void Dirty_DoSurfaceStuff(ptr<OSAL::Window> _window);
-	void BindToPlatformAndRenderer(ptr<OSAL::Window> _window);
-	void Initialize(ptr<OSAL::Window> _window);
+	void Dirty_DoSurfaceStuff(ptr<OSAL::Window> _window_in);
+	void BindToPlatformAndRenderer(ptr<OSAL::Window> _window_in);
+	void Initialize(ptr<OSAL::Window> _window_in);
 
 	void Deinitialize();
 	void MakeFrame();
@@ -129,6 +125,6 @@ namespace SAL::Imgui
 	};
 }
 
-#include "SAL_ImGui.tpp"
+#include "TPAL_ImGui.tpp"
 
 

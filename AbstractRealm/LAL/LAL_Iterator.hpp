@@ -7,4 +7,5 @@
 namespace LAL
 {
 	using STL::back_inserter;
+	using STL::distance;
 }

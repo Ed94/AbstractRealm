@@ -2,10 +2,6 @@
 #include "GPUVK_Pipeline.hpp"
 
 
-
-
-
-
 namespace HAL::GPU::Vulkan
 {
 #pragma region PipelineCache
@@ -20,7 +16,7 @@ namespace HAL::GPU::Vulkan
 
 	void PipelineCache::Create()
 	{
-		if (Parent::Create(GPU_Comms::GetEngagedDevice(), info) != EResult::Success)
+		if (Parent::Create(Comms::GetEngagedDevice(), info) != EResult::Success)
 		{
 			Exception::Fatal::Throw("Failed to create pipeline cache.");
 		}
@@ -176,17 +172,15 @@ namespace HAL::GPU::Vulkan
 
 		//layoutInfo.SetLayoutCount = RCast<ui32>(_descriptorSetLayouts.size());  // hardcoded for now.
 		layoutInfo.SetLayoutCount         = 1;  
-		layoutInfo.SetLayouts             = *_descriptorSetLayout;
+		layoutInfo.SetLayouts             = dref(_descriptorSetLayout);
 		layoutInfo.PushConstantRangeCount = 0;
 		layoutInfo.PushConstantRanges     = nullptr;
 
 
-		if (layout.Create(GPU_Comms::GetEngagedDevice(), layoutInfo) != EResult::Success)
+		if (layout.Create(Comms::GetEngagedDevice(), layoutInfo) != EResult::Success)
 		{
 			Exception::Fatal::Throw("Could not create pipeline layout.");
 		}
-
-
 
 		info.StageCount         = _shader->GetShaderStageInfos().size();   // BasicSahder only has 2 shader stages.
 		info.Stages             = _shader->GetShaderStageInfos().data();
@@ -205,7 +199,7 @@ namespace HAL::GPU::Vulkan
 		info.BasePipelineHandle = Null<Handle>;
 		info.BasePipelineIndex  = -1;
 
-		if (Parent::Create(GPU_Comms::GetEngagedDevice(), GPU_Pipeline::Request_Cache(), info) != EResult::Success)
+		if (Parent::Create(Comms::GetEngagedDevice(), PipelineManager::Request_Cache(), info) != EResult::Success)
 		{
 			Exception::Fatal::Throw("Could not create graphics pipeline.");
 		}
@@ -235,14 +229,14 @@ namespace HAL::GPU::Vulkan
 
 #pragma region GPU_Pipeline
 
-const PipelineCache& GPU_Pipeline::Request_Cache()
+const PipelineCache& PipelineManager::Request_Cache()
 {
 	return cache;
 }
 
 // Protected
 
-PipelineCache GPU_Pipeline::cache;
+PipelineCache PipelineManager::cache;
 
 #pragma endregion GPU_Pipeline
 }

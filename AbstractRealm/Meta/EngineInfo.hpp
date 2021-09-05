@@ -1,16 +1,11 @@
 /*
 Engine Information
-
-Last Modified: 5/19/2020
 */
-
 
 
 #pragma once
 
 
-
-// Engine
 #include "LAL/LAL.hpp"
 #include "Meta/Specification.hpp"
 
@@ -32,7 +27,7 @@ namespace Meta
 		enum
 		{
 			Major = 0  ,
-			Minor = 174,
+			Minor = 176,
 			Patch = 0
 		};
 	};
@@ -123,7 +118,7 @@ namespace Meta
 
 	// Compile Time
 
-	constexpr char EngineName[] = "Abstract Realm";
+	constexpr RoCStr EngineName = "Abstract Realm";
 
 	constexpr auto BuildType_Name = nameOf(BuildType);
 

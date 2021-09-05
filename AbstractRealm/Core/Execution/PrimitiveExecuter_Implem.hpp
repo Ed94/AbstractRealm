@@ -4,7 +4,6 @@
 //#include "Executer.hpp"
 
 
-
 //namespace Core::Execution
 //{
 //	template<typename FN_Type>

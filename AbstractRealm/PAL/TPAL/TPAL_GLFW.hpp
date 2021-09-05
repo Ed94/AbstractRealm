@@ -2,9 +2,7 @@
 GFLW Software Abstraction Layer
 */
 
-
 #pragma once
-
 
 #include "Meta/Meta.hpp"
 
@@ -26,7 +24,7 @@ GFLW Software Abstraction Layer
 #endif
 
 
-namespace SAL::GLFW
+namespace TPAL::GLFW
 {
 	// Usings
 
@@ -60,7 +58,6 @@ namespace SAL::GLFW
 	};
 
 
-
 	// Types
 
 	using Monitor = GLFWmonitor;
@@ -69,12 +66,10 @@ namespace SAL::GLFW
 	using WindowSize_Callback = GLFWwindowsizefun;
 
 
-
 	// Compile-Time
 
 	constexpr ptr<Window > NotShared    = NULL; 
 	constexpr ptr<Monitor> WindowedMode = NULL; 
-
 
 
 	// Functions
@@ -88,21 +83,20 @@ namespace SAL::GLFW
 
 		class EResult = VkResult
 	>
-	typename std::enable_if< 
-		sizeof(AppInstanceHandle) == sizeof(VkInstance  ) && 
-		sizeof(SurfaceHandle    ) == sizeof(VkSurfaceKHR)   , 
-	EResult>::type CreateWindowSurface
+	Where<sizeof(AppInstanceHandle) == sizeof(VkInstance  ) && 
+		  sizeof(SurfaceHandle    ) == sizeof(VkSurfaceKHR)   , 
+	EResult> CreateWindowSurface
 	(
-			  AppInstanceHandle      _appHandle, 
-			  Window*                _window   , 
-		const VkAllocationCallbacks* _allocator, 
-			  SurfaceHandle&         _surface
+		AppInstanceHandle                _appHandle, 
+		ptr<Window>                      _window   , 
+		ptr<const VkAllocationCallbacks> _allocator, 
+		SurfaceHandle&                   _surface
 	)
 	{
 		return glfwCreateWindowSurface(_appHandle, _window, _allocator, &_surface);
 	}
 
-	void DestroyWindow(ptr<Window> WindowToDestroy);
+	void DestroyWindow(ptr<Window> WindowToDestroy_in);
 
 	bool Initalize();
 
@@ -129,7 +123,7 @@ namespace SAL::GLFW
 
 	using CStrArray = ptr<const ptr<const char>>;
 
-	CStrArray GetRequiredVulkanAppExtensions(u32& NumberOfExensions_Container);
+	CStrArray GetRequiredVulkanAppExtensions(u32& NumberOfExensions_Container_out);
 
 
 	// Platform
@@ -137,12 +131,11 @@ namespace SAL::GLFW
 	Where<OSAL::IsWindows, OSAL::PlatformTypes::
 	OS_WindowHandle> GetOS_WindowHandle(const ptr<Window> _window);
 
-	void GetFramebufferSize(const ptr<Window> _window, int& _width, int& _height);
+	void GetFramebufferSize(const ptr<Window> _window, int& _width_out, int& _height_out);
 
-	void SetWidnowSizeCallback(const ptr<Window> _window, WindowSize_Callback _callback);
+	void SetWidnowSizeCallback(const ptr<Window> _window, WindowSize_Callback _callback_out);
 }
 
 
-
 // Implementation
-#include "SAL_GLFW.tpp"
+#include "TPAL_GLFW.tpp"

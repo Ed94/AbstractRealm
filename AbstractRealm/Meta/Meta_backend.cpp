@@ -12,12 +12,12 @@
 #include "Specification.hpp"
 
 // SAL
-#include "SAL/SAL_ImGui.hpp"
+#include "TPAL/TPAL_ImGui.hpp"
 
 
 namespace Meta
 {
-	using namespace SAL;
+	using namespace TPAL;
 
 	// Table Objects referencing Meta constants and variables.
 
@@ -25,7 +25,8 @@ namespace Meta
 	{
 		using namespace Imgui;
 
-		#define Args(_Entry) NameOf(_Entry).str(), _Entry
+		#define Args(_Entry)\
+		NameOf(_Entry).str(), _Entry
 
 		if (CollapsingHeader("Meta"))
 		{
@@ -58,9 +59,12 @@ namespace Meta
 
 					switch (GPU_API())
 					{
+						case EGPUPlatformAPI::No_API:
+							Exception::Fatal::NotImplemented("Engine currently does not support software rendering");
+							[[fallthrough]];
+
 						case EGPUPlatformAPI::Methane:
-						{
-						} break;
+							Exception::Fatal::NotImplemented("Engine currently does not support Methane");
 
 						case Meta::EGPUPlatformAPI::Vulkan:
 						{
@@ -83,7 +87,8 @@ namespace Meta
 								ImGui::TreePop();
 							}
 
-						} break;
+							break;
+						} 
 					}
 				}
 
@@ -159,6 +164,8 @@ namespace Meta
 				ImGui::TreePop();
 			}
 		}
+
+		#undef Args
 	}
 
 	void LoadModule()

@@ -1,15 +1,17 @@
 // Parent
 #include "Core.hpp"
 
-#include "Core_Backend.hpp"
+
 #include "PAL.hpp"
+#include "Concurrency/Concurrency_Backend.hpp"
+#include "Core_Backend.hpp"
 
 
 namespace Core
 {
 	void Record_EditorDevDebugUI()
 	{
-		using namespace SAL::Imgui;
+		using namespace TPAL::Imgui;
 
 		if (CollapsingHeader("Core"))
 		{
@@ -64,24 +66,21 @@ namespace Core
 	}
 
 	
-	namespace Module
+	void Load()
 	{
-		void Load()
-		{
-			LoadBackend();
+		LoadBackend();
 
-			Log("Loading module.");
+		Log("Loading module.");
 
-			SAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
+		TPAL::Imgui::Queue("Dev Debug", Record_EditorDevDebugUI);
 
-			Concurrency::Load();
-		}
+		Concurrency::Load();
+	}
 
-		void Unload()
-		{
-			Log("Loading module");
+	void Unload()
+	{
+		Log("Loading module");
 
-			Concurrency::Unload();
-		}
+		Concurrency::Unload();
 	}
 }

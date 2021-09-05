@@ -1,28 +1,17 @@
 // Parent
 #include "Concurrency.hpp"
 
-Meta_SetupEngineModule_Implementation(Concurrency);
 
-
-#include "SAL/SAL_Imgui.hpp"
+#include "Concurrency_Backend.hpp"
 
 
 namespace Concurrency
 {
-#pragma region Editor
-	
-	void Record_EditorDevDebugUI()
-	{
-		using namespace SAL::Imgui;
-	}
-
-#pragma endregion Editor
-
 #pragma region Fn
 
 	void Load()
 	{
-		Meta_EngineModule_Init();
+		Load_Backend();
 
 		Log("Loading module.");
 

@@ -1,8 +1,6 @@
 // Parent Header
 #include "GPU_Vulkan.hpp"
 
-
-
 // TUtorial: This needs to be removed from GPU_Vulkan
 // This can be done by making the design of the GPU HAL agnostic to what the tutorial requires.
 #include "_TutorialRelated.hpp"
@@ -14,14 +12,13 @@
 #include "GPUVK_Pipeline.hpp"
 #include "GPUVK_Rendering.hpp"
 
-
 #include "Dev/Console.hpp"
 
 #if VulkanAPI_Interface == VaultedVulkan_Interface
 
 namespace HAL::GPU::Vulkan
 {
-	// StaticData
+#pragma region StaticData
 
 		RawRenderContext RenderContext_Default;   // Should this still be used?
 
@@ -38,25 +35,26 @@ namespace HAL::GPU::Vulkan
 
 		using ImageBytes = stbi_uc;
 
-		ImageBytes* ModelWTxtur_TxtImage;
+		ptr<ImageBytes> ModelWTxtur_TxtImage;
 
 		int Model_TxtWidth, Model_TxtHeight, Model_TxtChannels;
 
+#pragma endregion
 
 
 	void SetRenderContext();
 
-	void Start_GPUVK_Demo(ptr<OSAL::Window> _window)
+	void Start_GPUVK_Demo(ptr<OSAL::Window> _window_in)
 	{
-		GPUVKDemo_Surface = getPtr(Rendering::Request_Surface(_window));
+		GPUVKDemo_Surface = getPtr(Rendering::Request_Surface(_window_in));
 
 		Surface::Format format;
 
 		format.Format     = EFormat::B8_G8_R8_A8_UNormalized;
 		format.ColorSpace = EColorSpace::SRGB_NonLinear;
 
-		GPUVKDemo_Swap    = getPtr(Rendering::Request_SwapChain    (*GPUVKDemo_Surface, format));
-		GPUVKDemo_Context = getPtr(Rendering::Request_RenderContext(*GPUVKDemo_Swap));
+		GPUVKDemo_Swap    = getPtr(Rendering::Request_SwapChain    (dref(GPUVKDemo_Surface), format));
+		GPUVKDemo_Context = getPtr(Rendering::Request_RenderContext(dref(GPUVKDemo_Swap)));
 
 		ModelWTxtur_Shader.Create
 		(
@@ -69,7 +67,7 @@ namespace HAL::GPU::Vulkan
 
 		ModelWTxtur_TxtImage = stbi_load(VikingRoom_TexturePath.c_str(), &Model_TxtWidth, &Model_TxtHeight, &Model_TxtChannels, STBI_rgb_alpha);
 
-		ModelWTexur_Renderable = GPU_Resources::Request_Renderable
+		ModelWTexur_Renderable = Resources::Request_Renderable
 		(
 			ModelVerticies,
 			ModelIndicies,
@@ -86,9 +84,9 @@ namespace HAL::GPU::Vulkan
 
 	//DynamicArray<RenderCallback> RenderCallbacks;
 
-	void AddRenderCallback(RenderCallback _renderCallback)
+	void AddRenderCallback(RenderCallback _renderCallback_in)
 	{
-		GPUVKDemo_Context->AddRenderCallback(_renderCallback);
+		GPUVKDemo_Context->AddRenderCallback(_renderCallback_in);
 	}
 
 	void UpdateUniformBuffers();
@@ -135,14 +133,14 @@ namespace HAL::GPU::Vulkan
 		return Deck::RecordOnTransient();
 	}
 
-	void EndSingleTimeBuffer(const CommandBuffer& _buffer)
+	void EndSingleTimeBuffer(const CommandBuffer& _buffer_in)
 	{
-		Deck::EndRecordOnTransient(_buffer);
+		Deck::EndRecordOnTransient(_buffer_in);
 	}
 
-	EResult RequestDescriptorPool(V3::DescriptorPool& _pool, V3::DescriptorPool::CreateInfo _info)
+	EResult RequestDescriptorPool(V3::DescriptorPool& _pool_out, V3::DescriptorPool::CreateInfo _info)
 	{
-		EResult returnCode =  _pool.Create(GPU_Comms::GetEngagedDevice(), _info);
+		EResult returnCode = _pool_out.Create(Comms::GetEngagedDevice(), _info);
 
 		return returnCode;
 	}
@@ -153,11 +151,11 @@ namespace HAL::GPU::Vulkan
 	{
 		using namespace TP_API;
 
-		static auto startTime = std::chrono::high_resolution_clock::now();
+		static auto _StartTime = HighResClock::now();
 
-		auto currentTime = std::chrono::high_resolution_clock::now();
+		auto currentTime = HighResClock::now();
 
-		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+		float time = Duration32(currentTime - _StartTime).count();
 
 		UniformBufferObject ubo {};
 
@@ -170,22 +168,22 @@ namespace HAL::GPU::Vulkan
 
 		ubo.Projection[1][1] *= -1;
 
-		const void* address = &ubo;
+		ptr<const void> address = getPtr(ubo);
 
 		ModelWTexur_Renderable->UpdateUniforms(address, sizeof(ubo));
 	}
 
 	// GPU_HAL
 
-	void Start_GPUComms(RoCStr _applicationName, AppVersion _applicationVersion)
+	void Start_GPUComms(RoCStr _applicationName, Meta::AppVersion _applicationVersion)
 	{
-		GPU_Comms::Initialize(_applicationName, _applicationVersion);
+		Comms::Initialize(_applicationName, _applicationVersion);
 
-		GPU_Comms::AcquirePhysicalDevices();
+		Comms::AcquirePhysicalDevices();
 
-		GPU_Comms::GenerateLogicalDevices();
+		Comms::GenerateLogicalDevices();
 
-		GPU_Comms::EngageMostSuitableDevice();
+		Comms::EngageMostSuitableDevice();
 
 		Deck::Prepare();
 	}
@@ -194,14 +192,14 @@ namespace HAL::GPU::Vulkan
 	{
 		Deck::Wipe();
 
-		GPU_Resources::Clear();
+		Resources::Clear();
 
-		GPU_Comms::Cease();	
+		Comms::Cease();	
 	}
 
 	void WaitForIdle()
 	{
-		GPU_Comms::GetEngagedDevice().WaitUntilIdle();
+		Comms::GetEngagedDevice().WaitUntilIdle();
 	}
 	
 	ptr<ARenderContext> GetRenderContext(ptr<OSAL::Window> /* _window */)
@@ -211,11 +209,11 @@ namespace HAL::GPU::Vulkan
 
 	void SetRenderContext()
 	{
-		RenderContext_Default.ApplicationInstance = GPU_Comms::GetAppInstance();
-		RenderContext_Default.PhysicalDevice      = GPU_Comms::GetEngagedDevice().GetPhysicalDevice();
-		RenderContext_Default.LogicalDevice       = GPU_Comms::GetEngagedDevice();
-		RenderContext_Default.Queue               = GPU_Comms::GetEngagedDevice().GetGraphicsQueue();
-		RenderContext_Default.PipelineCache       = GPU_Pipeline::Request_Cache();
+		RenderContext_Default.ApplicationInstance = Comms::GetAppInstance();
+		RenderContext_Default.PhysicalDevice      = Comms::GetEngagedDevice().GetPhysicalDevice();
+		RenderContext_Default.LogicalDevice       = Comms::GetEngagedDevice();
+		RenderContext_Default.Queue               = Comms::GetEngagedDevice().GetGraphicsQueue();
+		RenderContext_Default.PipelineCache       = PipelineManager::Request_Cache();
 		RenderContext_Default.ImageFormat         = GPUVKDemo_Swap->GetFormat();
 		RenderContext_Default.FrameSize           = GPUVKDemo_Swap->GetExtent();
 		RenderContext_Default.Allocator           = Memory::DefaultAllocator;
@@ -225,21 +223,21 @@ namespace HAL::GPU::Vulkan
 		RenderContext_Default.MSAA_Samples        = ESampleCount::_1;
 	}
 
-	void Default_InitializeRenderer(ptr<Window> _window)
+	void Default_InitializeRenderer(ptr<Window> _window_in)
 	{
 	}
 
-	void Default_ReinitializeRenderer(ptr<Window> _window)
+	void Default_ReinitializeRenderer(ptr<Window> _window_in)
 	{
 	}
 
 	DynamicArray<CommandBuffer::Handle> CommandBuffersToSubmit;
 
-	void Default_DrawFrame(ptr<Window> _window)
+	void Default_DrawFrame(ptr<Window> _window_in)
 	{
 	}
 
-	void Default_DeinitializeRenderer(ptr<OSAL::Window> /* _window */)
+	void Default_DeinitializeRenderer(ptr<OSAL::Window> /* _window_in */)
 	{
 	}
 }

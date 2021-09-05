@@ -27,7 +27,7 @@ Wrapping the namespace is also not always possible.
 #include <cstdio>
 #include <cstdlib>
 
-#endif LAL_C_STL_HEADER_GUARD
+#endif // LAL_C_STL_HEADER_GUARD
 
 
 namespace LAL

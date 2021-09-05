@@ -1,8 +1,6 @@
 #pragma once
 
 
-
-
 namespace Renderer
 {
 	class Display
@@ -14,5 +12,4 @@ namespace Renderer
 	protected:
 
 	};
-
 }

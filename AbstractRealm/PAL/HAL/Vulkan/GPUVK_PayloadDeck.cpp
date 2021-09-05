@@ -2,9 +2,9 @@
 #include "GPUVK_PayloadDeck.hpp"
 
 
-
 namespace HAL::GPU::Vulkan
 {
+#pragma region CommandPool
 	const CommandBuffer& CommandPool::RequestBuffer()
 	{
 		AllocateInfo info;
@@ -15,13 +15,11 @@ namespace HAL::GPU::Vulkan
 
 		CommandBuffer::Handle newBuffer;
 
-		
-		
 		Allocate(info, &newBuffer);
 
 		// Allocations of buffers here are not tracked. They are freed automatically by the command pool on its destruction.
 
-		commandBuffers.push_back(CommandBuffer(GPU_Comms::GetEngagedDevice(), newBuffer));
+		commandBuffers.push_back(CommandBuffer(Comms::GetEngagedDevice(), newBuffer));
 
 		return commandBuffers.back();
 	}
@@ -53,11 +51,11 @@ namespace HAL::GPU::Vulkan
 
 	void CommandPool::EndSingleTimeCommands(const CommandBuffer& _buffer)
 	{
-		auto result = std::find(commandBuffers.begin(), commandBuffers.end(), _buffer);
+		auto result = find(commandBuffers.begin(), commandBuffers.end(), _buffer);
 
 		if (result != commandBuffers.end())
 		{
-			auto pos = std::distance(commandBuffers.begin(), result); 
+			auto pos = distance(commandBuffers.begin(), result); 
 
 			CommandBuffer& buffer = commandBuffers.at(pos);
 
@@ -71,12 +69,12 @@ namespace HAL::GPU::Vulkan
 			submitInfo.CommandBufferCount = 1     ;
 			submitInfo.CommandBuffers     = buffer;
 
-			vResult = GPU_Comms::GetGraphicsQueue().SubmitToQueue(1, submitInfo, Null<Fence::Handle>);
+			vResult = Comms::GetGraphicsQueue().SubmitToQueue(1, submitInfo, Null<Fence::Handle>);
 
 			if (vResult != EResult::Success) 
 				Exception::Fatal::Throw("Failed to submit to queue.");
 
-			vResult = GPU_Comms::GetGraphicsQueue().WaitUntilIdle();
+			vResult = Comms::GetGraphicsQueue().WaitUntilIdle();
 
 			if (vResult != EResult::Success)
 				Exception::Fatal::Throw("Failed to wait for queue to idle.");
@@ -90,8 +88,7 @@ namespace HAL::GPU::Vulkan
 			Exception::Fatal::Throw("Cannot find command buffer in tracked pool.");
 		}
 	}
-
-
+#pragma endregion CommandPool
 
 #pragma region StaticData
 
@@ -102,12 +99,11 @@ namespace HAL::GPU::Vulkan
 
 #pragma endregion StaticData
 
-
 	void Deck_Maker<Meta::EGPU_Engage::Single>::Prepare()
 	{
 		CommandPool::CreateInfo info {};
 
-		info.QueueFamilyIndex = GPU_Comms::GetGraphicsQueue().GetFamilyIndex();   // Hard coding pool to graphics queue
+		info.QueueFamilyIndex = Comms::GetGraphicsQueue().GetFamilyIndex();   // Hard coding pool to graphics queue
 
 		// Only one set of pools for now since its single threaded
 
@@ -115,7 +111,7 @@ namespace HAL::GPU::Vulkan
 
 		GeneralPool = &CommandPools.back();
 		
-		GeneralPool->Create(GPU_Comms::GetEngagedDevice(), info); 
+		GeneralPool->Create(Comms::GetEngagedDevice(), info); 
 
 		CommandPools.resize(CommandPools.size() + 1);
 
@@ -123,7 +119,7 @@ namespace HAL::GPU::Vulkan
 
 		info.Flags.Set(ECommandPoolCreateFlag::Transient);
 
-		TransientPool->Create(GPU_Comms::GetEngagedDevice(), info);
+		TransientPool->Create(Comms::GetEngagedDevice(), info);
 	}
 
 	const CommandBuffer& Deck_Maker<Meta::EGPU_Engage::Single>::RecordOnGraphics()
@@ -144,9 +140,9 @@ namespace HAL::GPU::Vulkan
 
 		CommandPool::CreateInfo info;
 
-		info.QueueFamilyIndex = GPU_Comms::GetGraphicsQueue().GetFamilyIndex();
+		info.QueueFamilyIndex = Comms::GetGraphicsQueue().GetFamilyIndex();
 
-		EResult result = CommandPools.back().Create(GPU_Comms::GetEngagedDevice(), info);
+		EResult result = CommandPools.back().Create(Comms::GetEngagedDevice(), info);
 
 		if (result != EResult::Success)
 		{

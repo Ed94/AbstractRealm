@@ -3,20 +3,23 @@ C++ STL Reflection
 
 */
 
+
 #pragma once
 
 #include "LAL_Cpp_STL.hpp"
+#include "LAL_Types.hpp"
 #include "LAL_CharacterTypes.hpp"
 #include "LAL_String.hpp"
-#include "nameof.hpp"
 
 
 namespace LAL
 {
 	// Types
 
-	using TypeHash = STL::size_t;
+	using FalseType = STL::false_type;
+	using TrueType  = STL::true_type;
 
+	using TypeHash = STL::size_t;
 	using TypeData = STL::type_info;
 
 	template<typename Type>
@@ -52,7 +55,7 @@ namespace LAL
 	// Types as constants
 
 	/*template<typename Type>
-	using Something = std::integral_constant<Type>;*/
+	using Something = STL::integral_constant<Type>;*/
 
 	// Type Signage
 
@@ -92,58 +95,74 @@ namespace LAL
 	// Functions
 
 	template<typename Type>
-	constexpr bool IsClass()
+	constexpr 
+	bool IsClass()
 	{
 		return IsClassType<Type>::value;
 	}
 
 	template<typename Type>
-	constexpr bool IsEnum()
+	constexpr
+	bool IsEnum()
 	{
 		return IsEnumType<Type>::value;
 	}
 
 	template<typename Type>
-	constexpr bool IsSigned()
+	constexpr 
+	bool IsSigned()
 	{
 		return IsSignedType<Type>::value;
 	}
 
 	template<typename Type>
-	constexpr bool IsUnsigned()
+	constexpr 
+	bool IsUnsigned()
 	{
 		return IsUnsignedType<Type>::value;
+	}
+
+	template<typename Type>
+	constexpr 
+	bool IsWithinDataModelSize()
+	{
+		return sizeof(Type) <= sizeof(uDM);
 	}
 
 	// Type Signage
 
 	template<typename Base, typename Derived>
-	constexpr bool IsOfClass()
+	constexpr 
+	bool IsOfClass()
 	{
 		return OfClass<Base, Derived>::value;
 	}
 
 	template<typename Type, typename TypeRef>
-	constexpr bool IsSameType()
+	constexpr 
+	bool IsSameType()
 	{
 		return SameType<Type, TypeRef>::value;
 	}
 
 	template<typename Type, typename TypeRef>
-	constexpr bool IsSameTypeCV()
+	constexpr 
+	bool IsSameTypeCV()
 	{
 		return SameTypeCV<Type, TypeRef>::value;
 	}
 
 	// Composite Type Categories
 
-	template<typename Type> constexpr
+	template<typename Type> 
+	constexpr
 	bool IsArithmetic()
 	{
 		return IsArithmeticType<Type>::value;
 	}
 
-	template<typename Type> constexpr
+	template<typename Type> 
+	constexpr
 	bool IsReference()
 	{
 		return IsReferenceType<Type>::value;
@@ -151,19 +170,22 @@ namespace LAL
 
 	// Type Primary Categories
 
-	template<typename Type> constexpr
+	template<typename Type> 
+	constexpr
 	bool IsPointer()
 	{
 		return T_IsPointer<Type>::value;
 	}
 
-	template<typename Type> constexpr
+	template<typename Type> 
+	constexpr
 	bool IsFunction()
 	{
 		return T_IsFunction<Type>::value;
 	}
 
-	template<typename Type> constexpr
+	template<typename Type> 
+	constexpr
 	bool IsFunctionPtr()
 	{
 		return T_IsFunctionPtr<Type>::value;
@@ -171,7 +193,8 @@ namespace LAL
 
 	// String
 
-	template<typename Type> constexpr 
+	template<typename Type> 
+	constexpr 
 	bool IsStringRelated()
 	{
 		using Raw = RawType<Type>;
@@ -181,6 +204,14 @@ namespace LAL
 			IsSameType<Raw , String    >() &&
 			IsSameType<Raw , StringView>();
 	}
+
+	// Type Traits
+
+	#define HasMemberSymbol(__MEMBER_SYMBOL)\
+	decltype(static_cast<void>(__MEMBER_SYMBOL))
+
+	#define HasMemberAddress(__MEMBER_SYMBOL)\
+	__MEMBER_SYMBOL != nullptr ? true : false
 	
 
 	// Nameof
@@ -205,9 +236,10 @@ namespace LAL
 
 // Obtains name of variable, function, macro.
 #define NameOf(...) \
-[]() constexpr noexcept \
+[]() \
+constexpr noexcept \
 {                          \
-  ::std::void_t<decltype(__VA_ARGS__)>();                              \
+  ::LAL::VoidType<decltype(__VA_ARGS__)>();                              \
 \
   constexpr auto _name = ::nameof::detail::pretty_name(#__VA_ARGS__);  \
 \

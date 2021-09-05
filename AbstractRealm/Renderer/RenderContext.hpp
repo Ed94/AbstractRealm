@@ -1,12 +1,8 @@
 #pragma once
 
 
-
-
 namespace Renderer
 {
-
-
 	// A context for rendering. May have a window or target binded to it.
 	class Context
 	{

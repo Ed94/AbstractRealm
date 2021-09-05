@@ -1,17 +1,10 @@
 #pragma once
 
-
-
-#include "LAL/LAL.hpp"
-
-
+#include "Resource_Backend.hpp"
 
 
 namespace Resource
 {
-	using namespace LAL;
-
-
 	class ATexture;
 
 

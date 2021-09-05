@@ -2,11 +2,8 @@
 #include "GPUVK_Resources.hpp"
 
 
-
 #include "GPUVK_PayloadDeck.hpp"
 #include "GPUVK_Memory.hpp"
-
-
 
 
 namespace HAL::GPU::Vulkan
@@ -48,7 +45,7 @@ namespace HAL::GPU::Vulkan
 	EResult Image::Create(const LogicalDevice& _device, const CreateInfo& _info, const Memory::AllocationCallbacks& _allocator)
 	{
 		info      = _info;
-		allocator = &_allocator;
+		allocator = getPtr(_allocator);
 
 		return Parent::Create(_device, _info);
 	}
@@ -70,7 +67,7 @@ namespace HAL::GPU::Vulkan
 
 	bool Image::HasStencilComponent() const
 	{
-		return info.Format == EFormat::D32_SFloat_S8_UInt ||  info.Format  == EFormat::D24_UNormalized_S8_UInt;
+		return info.Format == EFormat::D32_SFloat_S8_UInt || info.Format == EFormat::D24_UNormalized_S8_UInt;
 	}
 
 	void Image::TransitionLayout(EImageLayout _old, EImageLayout _new)
@@ -139,24 +136,23 @@ namespace HAL::GPU::Vulkan
 		}
 		else
 		{
-			throw std::invalid_argument("unsupported layout transition!");
+			Exception::Fatal::Throw("unsupported layout transition!");
 		}
 
 		commandBuffer.SubmitPipelineBarrier
 		(
 			sourceStage, destinationStage,   // TODO
 			0, 
-			1, &barrier
+			1, getPtr(barrier)
 		);
 
 		Deck::EndRecordOnTransient(commandBuffer);
 	}
 
-
-	Image::operator Parent& ()
-	{
-		return *static_cast<Parent*>(this);
-	}
+	//Image::operator Parent& ()
+	//{
+	//	return dref(SCast<Parent>(this));
+	//}
 
 #pragma endregion Image
 
@@ -187,7 +183,7 @@ namespace HAL::GPU::Vulkan
 	{}
 
 	BufferPackage::BufferPackage(const LogicalDevice& _device, const Memory& _memory) : 
-		buffer(_device), memory(&_memory), memoryOffset(0), view(_device)
+		buffer(_device), memory(getPtr(_memory)), memoryOffset(0), view(_device)
 	{}
 
 	BufferPackage::~BufferPackage()
@@ -211,9 +207,9 @@ namespace HAL::GPU::Vulkan
 		allocInfo.MemoryTypeIndex = 
 			buffer.GetDevice().GetPhysicalDevice().FindMemoryType(memReq.MemoryTypeBits, _memoryFlags);
 
-		memory = &RequestMemory(allocInfo);
+		memory = getPtr(RequestMemory(allocInfo));
 
-		buffer.BindMemory(*memory, memoryOffset);
+		buffer.BindMemory(dref(memory), memoryOffset);
 	}
 
 	void BufferPackage::Destroy()
@@ -233,7 +229,7 @@ namespace HAL::GPU::Vulkan
 
 	const Memory& BufferPackage::GetMemory()
 	{
-		return *memory;
+		return dref(memory);
 	}
 
 	const DeviceSize& BufferPackage::GetMemoryOffset()
@@ -286,9 +282,10 @@ namespace HAL::GPU::Vulkan
 
 		stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-		result = stagingBuffer.Create(GPU_Comms::GetEngagedDevice(), stagingBufferInfo);
+		result = stagingBuffer.Create(Comms::GetEngagedDevice(), stagingBufferInfo);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		Memory::AllocateInfo allocInfo;
 
@@ -300,13 +297,15 @@ namespace HAL::GPU::Vulkan
 			stagingBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
 			(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
 
-		result = stagingBufferMemory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
+		result = stagingBufferMemory.Allocate(Comms::GetEngagedDevice(), allocInfo);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		result = stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		Memory::MapFlags mapflags;
 
@@ -319,9 +318,10 @@ namespace HAL::GPU::Vulkan
 
 		vertexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::VertexBuffer);
 
-		result = buffer.Create(GPU_Comms::GetEngagedDevice(), vertexBufferInfo);
+		result = buffer.Create(Comms::GetEngagedDevice(), vertexBufferInfo);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		auto& memReqVert = buffer.GetMemoryRequirements();
 
@@ -331,21 +331,27 @@ namespace HAL::GPU::Vulkan
 			buffer.GetDevice().GetPhysicalDevice().FindMemoryType
 			(memReqVert.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
 
-		result = memory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
+		result = memory.Allocate(Comms::GetEngagedDevice(), allocInfo);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		memoryOffset = Memory::ZeroOffset;   // Hardcoded
 
 		result = buffer.BindMemory(memory, memoryOffset);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
-		Buffer::CopyInfo copyInfo {}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
+		Buffer::CopyInfo copyInfo {}; 
+
+		copyInfo.DestinationOffset = 0; 
+		copyInfo.SourceOffset      = 0; 
+		copyInfo.Size              = bufferSize;
 
 		auto commandBuffer = Deck::RecordOnTransient();
 
-		commandBuffer.CopyBuffer(stagingBuffer, buffer, 1, &copyInfo);
+		commandBuffer.CopyBuffer(stagingBuffer, buffer, 1, getPtr(copyInfo));
 
 		Deck::EndRecordOnTransient(commandBuffer);
 
@@ -358,11 +364,13 @@ namespace HAL::GPU::Vulkan
 	void VertexBuffer::Destroy()
 	{
 		buffer.Destroy();
-
 		memory.Free();
 	}
 	
-	const Buffer& VertexBuffer::GetBuffer() const { return buffer; }
+	const Buffer& VertexBuffer::GetBuffer() const 
+	{
+		return buffer; 
+	}
 
 #pragma endregion VertexBuffer
 
@@ -381,13 +389,14 @@ namespace HAL::GPU::Vulkan
 		Memory             stagingBufferMemory;
 
 		stagingBufferInfo.SharingMode = ESharingMode::Exclusive;
-		stagingBufferInfo.Size = bufferSize;
+		stagingBufferInfo.Size        = bufferSize;
 
 		stagingBufferInfo.Usage.Set(EBufferUsage::TransferSource);
 
-		result = stagingBuffer.Create(GPU_Comms::GetEngagedDevice(), stagingBufferInfo);
+		result = stagingBuffer.Create(Comms::GetEngagedDevice(), stagingBufferInfo);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		Memory::AllocateInfo allocInfo;
 
@@ -395,17 +404,18 @@ namespace HAL::GPU::Vulkan
 
 		allocInfo.AllocationSize = memReq.Size;
 
-		allocInfo.MemoryTypeIndex =
-			stagingBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
-			(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
+		allocInfo.MemoryTypeIndex =stagingBuffer.GetDevice().GetPhysicalDevice().
+			FindMemoryType(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
 
-		result = stagingBufferMemory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
+		result = stagingBufferMemory.Allocate(Comms::GetEngagedDevice(), allocInfo);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		result = stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		// Hard coded vertex data...
 
@@ -416,37 +426,43 @@ namespace HAL::GPU::Vulkan
 		Buffer::CreateInfo indexBufferInfo{};
 
 		indexBufferInfo.SharingMode = ESharingMode::Exclusive;
-		indexBufferInfo.Size = bufferSize;
+		indexBufferInfo.Size        = bufferSize;
 
 		indexBufferInfo.Usage.Set(EBufferUsage::TransferDestination, EBufferUsage::IndexBuffer);
 
-		result = buffer.Create(GPU_Comms::GetEngagedDevice(), indexBufferInfo);
+		result = buffer.Create(Comms::GetEngagedDevice(), indexBufferInfo);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		auto& memReqIndex = buffer.GetMemoryRequirements();
 
 		allocInfo.AllocationSize = memReqIndex.Size;
 
-		allocInfo.MemoryTypeIndex =
-			buffer.GetDevice().GetPhysicalDevice().FindMemoryType
-			(memReqIndex.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
+		allocInfo.MemoryTypeIndex = buffer.GetDevice().GetPhysicalDevice().
+			FindMemoryType(memReqIndex.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
 
-		result = memory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
+		result = memory.Allocate(Comms::GetEngagedDevice(), allocInfo);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
 		memoryOffset = Memory::ZeroOffset;
 
 		result = buffer.BindMemory(memory, memoryOffset);
 
-		if (result != EResult::Success) return result;
+		if (result != EResult::Success) 
+			return result;
 
-		Buffer::CopyInfo copyInfo{}; copyInfo.DestinationOffset = 0; copyInfo.SourceOffset = 0; copyInfo.Size = bufferSize;
+		Buffer::CopyInfo copyInfo{}; 
+		
+		copyInfo.DestinationOffset = 0; 
+		copyInfo.SourceOffset      = 0; 
+		copyInfo.Size              = bufferSize;
 
 		auto commandBuffer = Deck::RecordOnTransient();
 
-		commandBuffer.CopyBuffer(stagingBuffer, buffer, 1, &copyInfo);
+		commandBuffer.CopyBuffer(stagingBuffer, buffer, 1, getPtr(copyInfo));
 
 		Deck::EndRecordOnTransient(commandBuffer);
 
@@ -459,7 +475,6 @@ namespace HAL::GPU::Vulkan
 	void IndexBuffer::Destroy()
 	{
 		buffer.Destroy();
-
 		memory.Free();
 	}
 
@@ -488,7 +503,7 @@ namespace HAL::GPU::Vulkan
 	{
 		DeviceSize imageSize = _width * _height * 4;
 
-		u32 mipmapLevels = SCast<u32>(std::floor(std::log2(std::max<u32>(_width, _height)))) + 1;
+		u32 mipmapLevels = SCast<u32>(floor(log2(max<u32>(_width, _height)))) + 1;
 
 		Buffer stagingBuffer;
 
@@ -496,12 +511,12 @@ namespace HAL::GPU::Vulkan
 
 		Buffer::CreateInfo stagingBufferInfo{};
 
-		stagingBufferInfo.Size = imageSize;
+		stagingBufferInfo.Size        = imageSize;
 		stagingBufferInfo.SharingMode = ESharingMode::Exclusive;
 
 		stagingBufferInfo.Usage.Set(EImageUsage::TransferSource);
 
-		stagingBuffer.Create(GPU_Comms::GetEngagedDevice(), stagingBufferInfo);
+		stagingBuffer.Create(Comms::GetEngagedDevice(), stagingBufferInfo);
 
 		Memory::AllocateInfo allocInfo;
 
@@ -513,7 +528,7 @@ namespace HAL::GPU::Vulkan
 			stagingBuffer.GetDevice().GetPhysicalDevice().FindMemoryType
 			(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
 
-		stagingBufferMemory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
+		stagingBufferMemory.Allocate(Comms::GetEngagedDevice(), allocInfo);
 
 		stagingBuffer.BindMemory(stagingBufferMemory, Memory::ZeroOffset);
 
@@ -523,26 +538,26 @@ namespace HAL::GPU::Vulkan
 
 		Image::CreateInfo info;
 
-		info.ImageType     = EImageType::_2D       ;
+		info.ImageType     = EImageType::_2D    ;
 		info.Extent.Width  = SCast<u32>(_width );
 		info.Extent.Height = SCast<u32>(_height);
-		info.Extent.Depth  = 1                     ;
-		info.MipmapLevels  = mipmapLevels            ;
-		info.ArrayLayers   = 1                     ;
+		info.Extent.Depth  = 1                  ;
+		info.MipmapLevels  = mipmapLevels       ;
+		info.ArrayLayers   = 1                  ;
 
 		info.Format       = EFormat::R8_G8_B8_A8_UNormalized;
-		info.Tiling       = EImageTiling::Optimal  ;
+		info.Tiling       = EImageTiling::Optimal;
 		info.InitalLayout = EImageLayout::Undefined;
 		info.Usage        = Image::UsageFlags(EImageUsage::TransferDestination, EImageUsage::Sampled, EImageUsage::TransferSource);
-		info.SharingMode  = ESharingMode::Exclusive ;
+		info.SharingMode  = ESharingMode::Exclusive;
 		info.Samples      = ESampleCount::_1;
-		info.Flags        = 0                      ;
+		info.Flags        = 0;
 
-		image.Create(GPU_Comms::GetEngagedDevice(), info);
+		image.Create(Comms::GetEngagedDevice(), info);
 
 		Memory::AllocateInfo allocationInfo{};
 
-		auto& gpu = GPU_Comms::GetEngagedDevice().GetPhysicalDevice();
+		auto& gpu = Comms::GetEngagedDevice().GetPhysicalDevice();
 
 		allocationInfo.AllocationSize  = image.GetMemoryRequirements().Size;
 		allocationInfo.MemoryTypeIndex = gpu.FindMemoryType(image.GetMemoryRequirements().MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::DeviceLocal));
@@ -558,14 +573,14 @@ namespace HAL::GPU::Vulkan
 
 		CommandBuffer::BufferImageRegion region{};
 
-		region.BufferOffset = 0;
+		region.BufferOffset    = 0;
 		region.BufferRowLength = 0;
 
 		region.ImageSubresource.AspectMask.Set(EImageAspect::Color);
 
-		region.ImageSubresource.MipLevel = 0;
+		region.ImageSubresource.MipLevel       = 0;
 		region.ImageSubresource.BaseArrayLayer = 0;
-		region.ImageSubresource.LayerCount = 1;
+		region.ImageSubresource.LayerCount     = 1;
 
 		region.ImageOffset.X = 0;
 		region.ImageOffset.Y = 0;
@@ -575,7 +590,7 @@ namespace HAL::GPU::Vulkan
 		region.ImageExtent.Height = _height;
 		region.ImageExtent.Depth  = 1;
 
-		buffer.CopyBufferToImage(stagingBuffer, image, EImageLayout::TransferDestination_Optimal, 1, &region);
+		buffer.CopyBufferToImage(stagingBuffer, image, EImageLayout::TransferDestination_Optimal, 1, getPtr(region));
 
 		Deck::EndRecordOnTransient(buffer);
 
@@ -585,7 +600,7 @@ namespace HAL::GPU::Vulkan
 
 		CreateSampler();
 
-		stagingBuffer.Destroy();
+		stagingBuffer      .Destroy();
 		stagingBufferMemory.Free();
 
 		return EResult::Success;
@@ -623,7 +638,7 @@ namespace HAL::GPU::Vulkan
 		viewInfo.SubresourceRange.BaseArrayLayer = 0;
 		viewInfo.SubresourceRange.LayerCount     = 1;
 
-		if (imageView.Create(GPU_Comms::GetEngagedDevice(), viewInfo) != EResult::Success)
+		if (imageView.Create(Comms::GetEngagedDevice(), viewInfo) != EResult::Success)
 			Exception::Fatal::Throw("Failed to create texture image view!");
 	}
 
@@ -652,18 +667,18 @@ namespace HAL::GPU::Vulkan
 		samplerInfo.MinimumLod = 0.0f;
 		samplerInfo.MaxLod     = SCast<f32>(GetMipmapLevels());
 
-		if (sampler.Create(GPU_Comms::GetEngagedDevice(), samplerInfo) != EResult::Success)
+		if (sampler.Create(Comms::GetEngagedDevice(), samplerInfo) != EResult::Success)
 			Exception::Fatal::Throw("Failed to create texture sampler!");
 	}
 
 	void TextureImage::GenerateMipmaps()
 	{
 		// Check if image format supports linear blitting
-		FormatProperties formatProperties = GPU_Comms::GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(GetFormat());
+		FormatProperties formatProperties = Comms::GetEngagedDevice().GetPhysicalDevice().GetFormatProperties(GetFormat());
 
 		if (!(formatProperties.OptimalTilingFeatures.HasFlag(EFormatFeatureFlag::SampledImageFilterLinear)))
 		{
-			throw std::runtime_error("Texture image format does not support linear blitting!");
+			Exception::Fatal::Throw("Texture image format does not support linear blitting!");
 		}
 
 		auto& commandBuffer = Deck::RecordOnTransient();
@@ -696,7 +711,7 @@ namespace HAL::GPU::Vulkan
 			commandBuffer.SubmitPipelineBarrier
 			(
 				EPipelineStageFlag::Transfer, EPipelineStageFlag::Transfer, 0,
-				1, &barrier
+				1, getPtr(barrier)
 			);
 
 			Image::Blit blit{};
@@ -710,28 +725,28 @@ namespace HAL::GPU::Vulkan
 			blit.SrcOffsets[1].Z = 1;
 
 			blit.SrcSubresource.AspectMask.Set(EImageAspect::Color);
-			blit.SrcSubresource.MipLevel = index - 1;
+			blit.SrcSubresource.MipLevel       = index - 1;
 			blit.SrcSubresource.BaseArrayLayer = 0;
-			blit.SrcSubresource.LayerCount = 1;
+			blit.SrcSubresource.LayerCount     = 1;
 
 			blit.DstOffsets[0].X = 0;
 			blit.DstOffsets[0].Y = 0; 
 			blit.DstOffsets[0].Z = 0;
 
-			blit.DstOffsets[1].X = mipWidth > 1 ? mipWidth / 2 : 1;
+			blit.DstOffsets[1].X = mipWidth  > 1 ? mipWidth  / 2 : 1;
 			blit.DstOffsets[1].Y = mipHeight > 1 ? mipHeight / 2 : 1; 
 			blit.DstOffsets[1].Z = 1;
 
 			blit.DstSubresource.AspectMask.Set(EImageAspect::Color);
-			blit.DstSubresource.MipLevel = index;
+			blit.DstSubresource.MipLevel       = index;
 			blit.DstSubresource.BaseArrayLayer = 0;
-			blit.DstSubresource.LayerCount = 1;
+			blit.DstSubresource.LayerCount     = 1;
 
 			commandBuffer.BlitImage
 			(
 				image, EImageLayout::TransferSource_Optimal,
 				image, EImageLayout::TransferDestination_Optimal,
-				1, &blit,
+				1, getPtr(blit),
 				EFilter::Linear
 			);
 
@@ -744,11 +759,14 @@ namespace HAL::GPU::Vulkan
 			commandBuffer.SubmitPipelineBarrier
 			(
 				EPipelineStageFlag::Transfer, EPipelineStageFlag::FragementShader, 0,
-				1, &barrier
+				1, getPtr(barrier)
 			);
 
-			if (mipWidth  > 1) mipWidth  /= 2;
-			if (mipHeight > 1) mipHeight /= 2;
+			if (mipWidth > 1) 
+				mipWidth /= 2;
+
+			if (mipHeight > 1) 
+				mipHeight /= 2;
 		}
 
 		barrier.SubresourceRange.BaseMipLevel = GetMipmapLevels() - 1;
@@ -762,7 +780,7 @@ namespace HAL::GPU::Vulkan
 		commandBuffer.SubmitPipelineBarrier
 		(
 			EPipelineStageFlag::Transfer, EPipelineStageFlag::FragementShader, 0,
-			1, &barrier
+			1, getPtr(barrier)
 		);
 
 		Deck::EndRecordOnTransient(commandBuffer);
@@ -792,7 +810,7 @@ namespace HAL::GPU::Vulkan
 
 		uniformBufferInfo.SharingMode = ESharingMode::Exclusive;
 
-		EResult result = buffer.Create(GPU_Comms::GetEngagedDevice(), uniformBufferInfo);
+		EResult result = buffer.Create(Comms::GetEngagedDevice(), uniformBufferInfo);
 
 		if (result != EResult::Success)
 		{
@@ -805,11 +823,10 @@ namespace HAL::GPU::Vulkan
 
 		allocInfo.AllocationSize = memReq.Size;
 
-		allocInfo.MemoryTypeIndex =
-			buffer.GetDevice().GetPhysicalDevice().FindMemoryType
-			(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
+		allocInfo.MemoryTypeIndex = buffer.GetDevice().GetPhysicalDevice().
+			FindMemoryType(memReq.MemoryTypeBits, Memory::PropertyFlags(EMemoryPropertyFlag::HostVisible, EMemoryPropertyFlag::HostCoherent));
 
-		result = memory.Allocate(GPU_Comms::GetEngagedDevice(), allocInfo);
+		result = memory.Allocate(Comms::GetEngagedDevice(), allocInfo);
 
 		if (result != EResult::Success)
 		{
@@ -829,7 +846,6 @@ namespace HAL::GPU::Vulkan
 	void UniformBuffer::Destroy()
 	{
 		buffer.Destroy();
-
 		memory.Free();
 	}
 
@@ -850,14 +866,16 @@ namespace HAL::GPU::Vulkan
 
 #pragma endregion UniformBuffer
 
-#pragma region GPU_Resources
+#pragma region Resources
 
-	void GPU_Resources_Maker<Meta::EGPU_Engage::Single>::Clear()
+	void Resources_Maker<Meta::EGPU_Engage::Single>::Clear()
 	{
-		for (auto& renderable : renderables)
+		/*for (auto& renderable : renderables)
 		{
 			renderable->Destroy();
-		}
+		}*/
+
+		renderables.clear();
 	}
 
 	//DynamicArray< DescriptorPool> GPU_Resources_Maker<Meta::EGPU_Engage::Single>::descriptorPools;
@@ -866,7 +884,7 @@ namespace HAL::GPU::Vulkan
 
 	//DynamicArray< DescriptorSet> GPU_Resources_Maker<Meta::EGPU_Engage::Single>::descriptorSets;
 
-	DynamicArray< SPtr<ARenderable>> GPU_Resources_Maker<Meta::EGPU_Engage::Single>::renderables;
+	DynamicArray< SPtr<ARenderable>> Resources_Maker<Meta::EGPU_Engage::Single>::renderables;
 
-#pragma endregion GPU_Resources
+#pragma endregion Resources
 }

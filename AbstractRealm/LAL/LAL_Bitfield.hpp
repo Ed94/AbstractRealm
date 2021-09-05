@@ -6,9 +6,7 @@ ease of use functionality for manipulating the bitfield.
 */
 
 
-
 #pragma once
-
 
 
 #include "LAL_Casting.hpp"
@@ -17,41 +15,22 @@ ease of use functionality for manipulating the bitfield.
 #include "LAL_Types.hpp"
 
 
-
-#ifndef BITFIELD_DEFINED
-#define BITFIELD_DEFINED
-
-	/*template<typename Enum>
-	struct Bitmaskable
-	{
-		static constexpr bool specified = false;
-	};
-
-	#define SpecifyBitmaskable(__ENUM)          \
-	template<>                                  \
-	struct Bitmaskable<__ENUM>                  \
-	{                                           \
-		static constexpr bool specified = true; \
-	};*/
-
-#endif
-
-
-
 namespace LAL
 {
+#pragma region BitmaskableTraits
+
 	template<typename Enum, typename = void>
 	/**
 	@brief Used when the enum does not meet the criteria for bitmaskable.
 	*/
-	struct IsBitmaskable : std::false_type
+	struct IsBitmaskable : FalseType
 	{};
 
 	template<typename Enum>
 	/**
 	@brief Will be defined with a true_type when enum has the SpecifyBitmaskable enum value.
 	*/
-	struct IsBitmaskable<Enum, decltype(static_cast<void>(Enum::SpecifyBitmaskable))> : IsEnumType<Enum>
+	struct IsBitmaskable<Enum, HasMemberSymbol(Enum::SpecifyBitmaskable)> : IsEnumType<Enum>
 	{};
 
 	template <typename Enum>
@@ -61,7 +40,8 @@ namespace LAL
 	constexpr Where<IsBitmaskable<Enum>::value, 
 	bool> Bitmaskable() noexcept
 	{
-		return static_cast<uDM>(Enum::SpecifyBitmaskable) > uDM(0) ? true : false;
+		// Make sure enum member is greater than 0 (as it was supposed to be one of the last if not last entry).
+		return SCast<uDM>(Enum::SpecifyBitmaskable) > uDM(0) ? true : false;
 	}
 
 	template <typename Enum> 
@@ -74,6 +54,8 @@ namespace LAL
 		return false;
 	}
 
+#pragma endregion BitmaskableTraits
+	
 	template
 	<
 		typename EnumType             ,
@@ -100,60 +82,85 @@ namespace LAL
 		{}
 
 		template<typename... BitTypes>
+		ForceInline
 		Bitfield(const BitTypes... _bits) : mask(0)
 		{
 			mask = (Representation(_bits) | ...);
 		}
 
 		template<typename... BitType>
+		ForceInline
 		void Add(const BitType... _bits)
 		{
 			mask |= (Representation(_bits) | ...);
 		}
 
 		template<typename... BitType>
+		ForceInline
 		bool CheckForEither(const BitType... _bits) const
 		{
 			return (mask & (Representation(_bits) | ...)) != 0;
 		}
 
 		template<typename... BitType>
+		ForceInline
 		void Clear(const BitType... _bits)
 		{
-			if (mask <= 0) return;
+			if (mask <= 0) 
+				return;
 
 			mask &= ~(Representation(_bits) | ...);
 		}
 
+		ForceInline
 		bool HasFlag(const Enum _bit) const
 		{
 			return (mask & Representation(_bit)) == Representation(_bit);
 		}
 
 		template<typename... BitType>
+		ForceInline
 		bool HasExactly(const BitType... _bits) const
 		{
 			return (mask & (Representation(_bits) | ...)) == mask;
 		}
 
-		bool HasAnyFlag() const { return mask != 0 ? true : false; }
-		bool IsZero    () const { return mask == 0 ? true : false; }	
+		ForceInline
+		bool HasAnyFlag() const 
+		{
+			return mask != 0 ? true : false; 
+		}
 
-		void Reset() { mask = 0; }
+		ForceInline
+		bool IsZero() const 
+		{
+			return mask == 0 ? true : false; 
+		}	
+
+		ForceInline
+		void Reset() 
+		{
+			mask = 0; 
+		}
 
 		template<typename... BitType>
+		ForceInline
 		void Set(const BitType... _bits)
 		{
 			mask = (Representation(_bits) | ...);
 		}
 
 		template<typename... BitType>
+		ForceInline
 		void Toggle(const BitType... _bits)
 		{
 			mask ^= (Representation(_bits) | ...);
 		}
 
-		operator Representation() const { return mask; }
+		operator Representation() const 
+		{
+			return mask; 
+		}
 
 		_ThisType& operator= (const Representation _mask ) { mask = _mask      ; return *this; }
 		_ThisType& operator= (const _ThisType      _other) { mask = _other.mask; return *this; }

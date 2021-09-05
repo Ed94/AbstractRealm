@@ -2,14 +2,9 @@
 
 */
 
-
-
 #pragma once
 
-
-
 #include "Math/Units.hpp"
-
 
 
 namespace Math
@@ -41,7 +36,6 @@ namespace Math
 		return CompareEpsilon() * CompareEpsilon();
 	}
 
-
 	/*
 
 	*/
@@ -67,37 +61,37 @@ namespace Math
 	constexpr 
 	DecN Sqrt_OneHalf()
 	{
-		return std::sqrt(DecN(1.0) / DecN(2.0));
+		return STL::sqrt(DecN(1.0) / DecN(2.0));
 	}
 	
 	constexpr
 	DecN Sqrt_2()
 	{
-		return std::sqrt( DecN(2.0) );
+		return STL::sqrt( DecN(2.0) );
 	}
 
 	constexpr
 	DecN Log_2()
 	{
-		return std::log( DecN(2.0) );
+		return STL::log( DecN(2.0) );
 	}
 
 	constexpr
 	DecN Pi()
 	{
-		return std::atan( DecN(1.0) ) * 4;
+		return STL::atan( DecN(1.0) ) * 4;
 	}
 
 	constexpr
 	DecN Tau()
 	{
-		return std::atan( DecN(1.0) ) * 8;
+		return STL::atan( DecN(1.0) ) * 8;
 	}
 
 	constexpr
 	DecN Euler()
 	{
-		return std::exp( DecN(1.0) );
+		return STL::exp( DecN(1.0) );
 	}
 
 	constexpr 
@@ -112,3 +106,4 @@ namespace Math
 		return LAL::IsOfClass<LAL::f32, DecN>() ? LAL::Float32_QNaN : LAL::Float64_QNaN;
 	}
 }
+

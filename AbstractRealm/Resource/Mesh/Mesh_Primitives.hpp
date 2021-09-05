@@ -1,13 +1,6 @@
 #pragma once
 
-
-
-#include "LAL.hpp"
-
-#include "Meta/Config/Resource_Config.hpp"
-
 #include "Resource/Resource_General.hpp"
-
 
 
 namespace Resource::Mesh

@@ -16,7 +16,7 @@ namespace LAL
 	Constant Cast(Ref)
 	*/
 	template<typename Type>
-	ForceInline
+	constexpr
 	Type& CVCast(Type& _obj)
 	{
 		return const_cast<Type& >(_obj);
@@ -26,7 +26,7 @@ namespace LAL
 	Constant Cast (Pointer)
 	*/
 	template<typename Type>
-	ForceInline 
+	constexpr
 	Type* CVCast(Type* _obj)
 	{
 		return const_cast<Type* >(_obj);
@@ -35,28 +35,28 @@ namespace LAL
 	/*
 	Dynamic Cast (Direct)
 	*/
-	template<typename Derived, typename Base>
-	ForceInline Where<!IsReference<Base>(),
-	Derived> DCast(Base _obj)
-	{
-		return dynamic_cast<Derived>(_obj);
-	}
+	//template<typename Derived, typename Base>
+	//ForceInline Where<!IsReference<Base>(),
+	//Derived> DCast(Base _obj)
+	//{
+	//	return dynamic_cast< Derived >(_obj);
+	//}
 
 	/*
 	Dynamic Cast (Direct)
 	*/
 	template<typename Derived, typename Base>
-	ForceInline Where<IsReference<Base>(), 
-	Derived&> DCast(Base _obj)
+	constexpr
+	Derived& DCast(Base& _obj)
 	{
-		return dynamic_cast<Derived&>(_obj);
+		return dynamic_cast< Derived& >(_obj);
 	}
 
 	/*
 	Dynamic Cast (Pointer)
 	*/
 	template<typename Derived, typename Base>
-	ForceInline
+	constexpr
 	Derived* DCast(Base* _ptr)
 	{
 		return dynamic_cast< Derived* >(_ptr);
@@ -66,7 +66,7 @@ namespace LAL
 	Reinterpret Cast (Pointer)
 	*/
 	template<typename Derived, typename Base> 
-	ForceInline 
+	constexpr
 	Derived& RCast(Base& _ptr)
 	{
 		return reinterpret_cast< Derived& >(_ptr);
@@ -76,40 +76,41 @@ namespace LAL
 	Reinterpret Cast (Pointer)
 	*/
 	template<typename Derived, typename Base> 
-	ForceInline 
+	constexpr
 	Derived* RCast(Base* _ptr)
 	{
 		return reinterpret_cast< Derived* >(_ptr);
 	}
 
 	/*
-	Static Cast (Direct)
+	Static Cast (Reference)
 	*/
 	template<typename Derived, typename Base>
-	ForceInline Where<!IsReference<Base>(), 
+	constexpr 
+	Where<IsWithinDataModelSize<Base>(),
 	Derived> SCast(Base _obj)
 	{
 		return static_cast<Derived>(_obj);
 	}
 
 	/*
-	Static Cast (Direct)
+	Static Cast (Reference)
 	*/
 	template<typename Derived, typename Base> 
-	ForceInline 
-	Where<IsReference<Base>(), 
-	Derived&> SCast(Base _obj)
+	constexpr
+	Where<! IsWithinDataModelSize<Base>(),
+	Derived&>  SCast(Base& _obj)
 	{
-		return static_cast<Derived& >(_obj);
+		return static_cast< Derived& >(_obj);
 	}
 
 	/*
 	Static Cast (Pointer)
 	*/
 	template<typename Derived, typename Base> 
-	ForceInline 
+	constexpr 
 	Derived* SCast(Base* _ptr)
 	{
-		return static_cast<Derived* >(_ptr);
+		return static_cast< Derived* >(_ptr);
 	}
 }

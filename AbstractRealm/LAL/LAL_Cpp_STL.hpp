@@ -30,6 +30,7 @@ C++ Standard Library Interface
 	#include <optional>
 	#include <queue>
 	#include <optional>
+	#include <ratio>
 	#include <stdexcept>
 	#include <set>
 	#include <string>
@@ -135,5 +136,11 @@ C++ Standard Library Interface
 	}
 #endif
 
+#pragma region ThirdParty
 
-#endif LAL_STL_HEADER_GUARD
+#include "nameof.hpp"
+
+#pragma endregion ThirdParty
+
+
+#endif // LAL_STL_HEADER_GUARD

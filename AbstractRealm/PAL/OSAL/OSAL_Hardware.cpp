@@ -21,7 +21,7 @@ namespace OSAL
 
 	DynamicArray<DisplayInfo> Displays;
 
-	DisplayInfo* MainDisplay;
+	ptr<DisplayInfo> MainDisplay;
 #pragma endregion StaticData
 
 
@@ -65,7 +65,7 @@ namespace OSAL
 
 		auto memInfo = iware::system::memory();
 
-		Memory = *reinterpret_cast<MemoryInfo*>(&memInfo);
+		Memory = RCast<MemoryInfo>(memInfo);
 
 		auto displays = iware::system::displays();
 		auto configs = iware::system::available_display_configurations();

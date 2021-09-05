@@ -23,11 +23,22 @@ namespace Core
 	{
 	public:			
 
-		Object();
-			
+		Object() 
+		: 
+			type(nullptr), 
+			name(NameOf(this))
+		{};
+
+		ForceInline	
 		ObjPtr Ptr()
 		{
 			return this;
+		}
+
+		ForceInline
+		void SetName(String _name)
+		{
+			name = _name;
 		}
 
 	protected:

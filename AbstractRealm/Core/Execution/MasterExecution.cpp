@@ -1,12 +1,11 @@
 // Parent Header
 #include "MasterExecution.hpp"
 
-#define Meta_EngineModule
 #include "Meta/Meta.hpp"
 
 #include "HAL.hpp"
-#include "HAL/HAL_GPU.hpp"
-#include "HAL/Vulkan/GPU_Vulkan.hpp"
+	#include "HAL/HAL_GPU.hpp"
+	#include "HAL/Vulkan/GPU_Vulkan.hpp"
 #include "OSAL.hpp"
 
 #include "Concurrency/CyclerPool.hpp"
@@ -16,26 +15,26 @@
 #include "Renderer/Renderer.hpp"
 
 // When you have a proper UI module setup, setup it to bind to imgui instead.
-#include "SAL_ImGui.hpp"
+#include "TPAL_ImGui.hpp"
 
 
 namespace Execution
 {
 	using namespace Concurrency;
-	//using namespace Meta;
 
+	void MainCycle();
+
+#pragma region StaticData
 	PrimitiveExecuter<void()> MasterExecuter;
 
 	Cycler MasterCycler;
+#pragma endregion StaticData
 
-
-	void MainCycle();
 
 	const Cycler& Get_MasterCycler()
 	{
 		return MasterCycler;
 	}
-
 
 	void Initialize_MasterCycler()
 	{
@@ -43,11 +42,7 @@ namespace Execution
 
 		MasterCycler.BindExecuter(MasterExecuter);
 
-		//MasterCycler.AssignInterval(Duration64(1.0 / 1036.0));
-
-		//std::chrono::seconds sec(1);
-
-		Dev::CLog(String("Interval: ") + ToString(std::chrono::duration<f64, std::ratio<1>>(1.0 / 144.0).count()));
+		Dev::CLog(String("Interval: ") + ToString(Duration<f64, Ratio<1>>(1.0 / 144.0).count()));
 
 		MasterCycler.Initiate();
 
@@ -56,18 +51,17 @@ namespace Execution
 
 	void MainCycle()
 	{
-		using namespace SAL;
+		using namespace TPAL;
 
 		OSAL::PollEvents();
 
-		static Duration64 consoleUpdateDelta(0), consoleUpdateInterval(1.0 / 30.0);
-		static Duration64 renderPresentDelta(0);
+		static Duration64 _ConsoleUpdateDelta(0), _ConsoleUpdateInterval(1.0 / 30.0);
+		static Duration64 _RenderPresentDelta(0);
 
-		if (consoleUpdateDelta >= consoleUpdateInterval)
+		if (_ConsoleUpdateDelta >= _ConsoleUpdateInterval)
 		{
-
 			Dev::CLog_Status("Master    Delta: " + ToString(MasterCycler.GetDeltaTime().count()), 0, 0);
-			Dev::CLog_Status("Render    Delta: " + ToString(renderPresentDelta.count()), 1, 0);
+			Dev::CLog_Status("Render    Delta: " + ToString(_RenderPresentDelta.count()), 1, 0);
 
 			if (Concurrency::CyclerPool::GetNumUnits() > 0)
 			{
@@ -86,25 +80,23 @@ namespace Execution
 
 			Dev::Console_UpdateBuffer();
 
-			Dev::CLog_Status("Console   Delta: " + ToString(consoleUpdateDelta.count()), 2, 0);
+			Dev::CLog_Status("Console   Delta: " + ToString(_ConsoleUpdateDelta.count()), 2, 0);
 
-			consoleUpdateDelta = Duration64(0);
+			_ConsoleUpdateDelta = Duration64(0);
 		}
 		else
 		{
-			consoleUpdateDelta += MasterCycler.GetDeltaTime();
+			_ConsoleUpdateDelta += MasterCycler.GetDeltaTime();
 		}
 
-		if (renderPresentDelta >= Renderer::Get_PresentInterval())
+		if (_RenderPresentDelta >= Renderer::Get_PresentInterval())
 		{
-			switch (GPU_API())
+			switch (Meta::GPU_API())
 			{
 				case Meta::EGPUPlatformAPI:: Methane :
-				{
-					
+					Exception::Fatal::NotImplemented("Software rendering not supported.");
+					[[fallthrough]];
 
-				} break;
-				
 				case Meta::EGPUPlatformAPI:: Vulkan :
 				{
 								Imgui ::MakeFrame();
@@ -113,20 +105,19 @@ namespace Execution
 					HAL::GPU::	Vulkan::Present();
 								Imgui ::Dirty_DoSurfaceStuff(Renderer::EngineWindow());
 
-				} break;
+					break;
+				} 
 
+				default: [[fallthrough]];
 				case Meta::EGPUPlatformAPI::No_API :
-				{
-
-
-				} break;
+					Exception::Fatal::NotImplemented("Software rendering not supported.");
 			}
 
-			renderPresentDelta = Duration64(0);
+			_RenderPresentDelta = Duration64(0);
 		}
 		else
 		{
-			renderPresentDelta += MasterCycler.GetDeltaTime();
+			_RenderPresentDelta += MasterCycler.GetDeltaTime();
 		}
 
 		if (OSAL::CanClose(Renderer::EngineWindow()))

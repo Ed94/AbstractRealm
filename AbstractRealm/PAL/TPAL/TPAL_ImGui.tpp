@@ -1,9 +1,8 @@
 // Parent
-// ImGui.hpp
+// TPAL_ImGui.hpp
 
 
-
-namespace SAL::Imgui
+namespace TPAL::Imgui
 {
 	template<typename Type>
 	bool Table2C::NestedTree(Type _name)

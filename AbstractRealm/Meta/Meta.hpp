@@ -21,19 +21,19 @@ This is the main header for the meta module, and also acts as a "Meta" header fo
 #include "Exceptions/Exceptions.hpp"
 
 
-#define Meta_SetupEngineModule(_Module) \
-namespace _Module\
+#define Meta_SetupEngineModule(__MODULE) \
+namespace __MODULE\
 {\
 	using namespace LAL;\
 \
 	Dev_Declare_LogAPI();\
 }
 
-#define Meta_SetupEngineModule_Implementation(_Module)\
-namespace _Module\
+#define Meta_SetupEngineModule_Implementation(__MODULE)\
+namespace __MODULE\
 {\
 \
-	Dev_Declare_Log(_Module);\
+	Dev_Declare_Log(__MODULE);\
 }
 
 #define Meta_EngineModule_Init() \

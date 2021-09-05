@@ -2,7 +2,6 @@
 #include "GPUVK_PhysicalDevice.hpp"
 
 
-
 //namespace HAL::GPU::Vulkan
 //{
 //	EResult PhysicalDevice::GetAvailableExtensions()
@@ -33,11 +32,11 @@
 //
 //	PhysicalDevice::operator Parent& ()
 //	{
-//		return *static_cast<Parent*>(this);
+//		return dref(SCast<Parent>(this));
 //	}
 //
 //	PhysicalDevice::operator const Parent& () const
 //	{
-//		return *static_cast<const Parent*>(this);
+//		return dref(SCast<const Parent>(this));
 //	}
 //}

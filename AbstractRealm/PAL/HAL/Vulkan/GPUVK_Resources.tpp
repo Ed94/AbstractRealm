@@ -30,52 +30,43 @@ namespace HAL::GPU::Vulkan
 	template<typename VertexType>
 	void TPrimitiveRenderable<VertexType>::RecordRender(const CommandBuffer& _commandBuffer)
 	{
-		static DynamicArray<Buffer::Handle> handles;
-
-		if (handles.empty())
-		{
-			Buffer::Handle handle = vertBuffer.GetBuffer();
-
-			handles.push_back(handle);
-		}
-
-		_commandBuffer.BindVertexBuffers(0, 1, handles.data());
+		_commandBuffer.BindVertexBuffers(0, 1, vertBuffer.GetBuffer().operator const Buffer::Handle*());
 
 		_commandBuffer.Draw(0, 3, 0, 1);
 	}
 
 	template<typename VertexType>
-	DynamicArray< Pipeline::VertexInputState::AttributeDescription>&
+	DynamicArray< Pipeline::VertexInputState::AttributeDescription>& 
 	TPrimitiveRenderable<VertexType>::GetVertexAttributes() const
 	{
-		static DynamicArray<AttributeDescription> attributeDescriptions;
+		static DynamicArray<AttributeDescription> _AttributeDescriptions;
 
-		if (attributeDescriptions.size() == 0)
+		if (_AttributeDescriptions.size() == 0)
 		{
 			for (auto& attribute : VertexType::GetAttributeDescriptions())
 			{
-				attributeDescriptions.push_back(attribute);
+				_AttributeDescriptions.push_back(attribute);
 			}
 		}
 
-		return attributeDescriptions;
+		return _AttributeDescriptions;
 	}
 
 	template<typename VertexType>
 	DynamicArray< Pipeline::VertexInputState::BindingDescription>&
 	TPrimitiveRenderable<VertexType>::GetVertexBindings() const
 	{
-		static DynamicArray<BindingDescription> bindingDescriptions;
+		static DynamicArray<BindingDescription> _BindingDescriptions;
 
-		if (bindingDescriptions.size() == 0)
+		if (_BindingDescriptions.size() == 0)
 		{
 			for (auto& binding : VertexType::GetBindingDescription())
 			{
-				bindingDescriptions.push_back(binding);
+				_BindingDescriptions.push_back(binding);
 			}
 		}
 
-		return bindingDescriptions;
+		return _BindingDescriptions;
 	}
 
 	template<typename VertexType>
@@ -100,10 +91,11 @@ namespace HAL::GPU::Vulkan
 	void TModelRenderable<VertexType>::Create
 	(
 		const DynamicArray<VertexType>& _verticies, 
-		const DynamicArray<u32> _indicies, 
-		ptr<const u8> _textureData,
-		u32 _width, u32 _height,
-		ptr<const AShader> _shader
+		const DynamicArray<u32>&        _indicies, 
+		      ptr<const u8>             _textureData,
+		      u32                       _width,
+		      u32                       _height,
+		      ptr<const AShader>        _shader
 	)
 	{
 		vertBuffer.Create(_verticies.data(), _verticies.size(), 0);
@@ -137,18 +129,9 @@ namespace HAL::GPU::Vulkan
 	template<typename VertexType>
 	void TModelRenderable<VertexType>::RecordRender(u32 _index, const CommandBuffer& _commandBuffer, const PipelineLayout& _pipelineLayout)
 	{
-		static DynamicArray<Buffer::Handle> handles;
-
-		if (handles.empty())
-		{
-			Buffer::Handle handle = vertBuffer.GetBuffer();
-
-			handles.push_back(handle);
-		}
-
 		DeviceSize offsets = 0;
 
-		_commandBuffer.BindVertexBuffers(0, 1, handles.data(), &offsets);
+		_commandBuffer.BindVertexBuffers(0, 1, vertBuffer.GetBuffer().operator const Buffer::Handle*(), &offsets);
 
 		_commandBuffer.BindIndexBuffer(indexBuffer.GetBuffer(), 0, EIndexType::uInt32);
 
@@ -177,34 +160,34 @@ namespace HAL::GPU::Vulkan
 	DynamicArray< Pipeline::VertexInputState::AttributeDescription>&
 	TModelRenderable<VertexType>::GetVertexAttributes() const
 	{
-		static DynamicArray<AttributeDescription> attributeDescriptions;
+		static DynamicArray<AttributeDescription> _AttributeDescriptions;
 
-		if (attributeDescriptions.size() == 0)
+		if (_AttributeDescriptions.size() == 0)
 		{
 			for (auto& attribute : VertexType::GetAttributeDescriptions())
 			{
-				attributeDescriptions.push_back(attribute);
+				_AttributeDescriptions.push_back(attribute);
 			}
 		}
 
-		return attributeDescriptions;
+		return _AttributeDescriptions;
 	}
 
 	template<typename VertexType>
 	DynamicArray< Pipeline::VertexInputState::BindingDescription>&
 	TModelRenderable<VertexType>::GetVertexBindings() const
 	{
-		static DynamicArray<BindingDescription> bindingDescriptions;
+		static DynamicArray<BindingDescription> _BindingDescriptions;
 
-		if (bindingDescriptions.size() == 0)
+		if (_BindingDescriptions.size() == 0)
 		{
 			for (auto& binding : VertexType::GetBindingDescription())
 			{
-				bindingDescriptions.push_back(binding);
+				_BindingDescriptions.push_back(binding);
 			}
 		}
 
-		return bindingDescriptions;
+		return _BindingDescriptions;
 	}
 
 	template<typename VertexType>
@@ -216,7 +199,7 @@ namespace HAL::GPU::Vulkan
 	template<typename VertexType>
 	ptr<const DescriptorSetLayout> TModelRenderable<VertexType>::GetDescriptorsLayout() const
 	{
-		return &descriptorsLayout;
+		return getPtr(descriptorsLayout);
 	}
 
 	template<typename VertexType>
@@ -269,7 +252,7 @@ namespace HAL::GPU::Vulkan
 			descriptorWrites[0].DescriptorType  = EDescriptorType::UniformBuffer;
 			descriptorWrites[0].DescriptorCount = 1                             ;
 
-			descriptorWrites[0].BufferInfo      = &bufferInfo;
+			descriptorWrites[0].BufferInfo      = getPtr(bufferInfo);
 			descriptorWrites[0].ImageInfo       = nullptr    ; // Optional
 			descriptorWrites[0].TexelBufferView = nullptr    ; // Optional
 
@@ -281,7 +264,7 @@ namespace HAL::GPU::Vulkan
 			descriptorWrites[1].DescriptorCount = 1                                    ;
 
 			descriptorWrites[1].BufferInfo      = nullptr   ;
-			descriptorWrites[1].ImageInfo       = &imageInfo; // Optional
+			descriptorWrites[1].ImageInfo       = getPtr(imageInfo); // Optional
 			descriptorWrites[1].TexelBufferView = nullptr   ; // Optional
 
 			descriptors[index].Update(SCast<u32>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);	
@@ -291,11 +274,11 @@ namespace HAL::GPU::Vulkan
 	template<typename VertexType>
 	void TModelRenderable<VertexType>::UpdateUniforms(ptr<const void> _data, DeviceSize _size)
 	{
-		ptr<const Byte> _dataBytes = RCast<const Byte>(_data);
+		ptr<const Byte> dataBytes = RCast<const Byte>(_data);
 
-		ptr<const Byte> endAddress = _dataBytes + _size;
+		ptr<const Byte> endAddress = dataBytes + _size;
 
-		uniformData.assign(_dataBytes, endAddress);
+		uniformData.assign(dataBytes, endAddress);
 	}
 
 	// Private
@@ -331,13 +314,13 @@ namespace HAL::GPU::Vulkan
 		layoutInfo.BindingCount = SCast<ui32>(bindings.size());
 		layoutInfo.Bindings     = bindings.data();
 
-		if (descriptorsLayout.Create(GPU_Comms::GetEngagedDevice(), layoutInfo) != EResult::Success)
+		if (descriptorsLayout.Create(Comms::GetEngagedDevice(), layoutInfo) != EResult::Success)
 			Exception::Fatal::Throw("Failed to create descriptor set layout.");
 	}
 
 #pragma endregion ModelRenderable
 
-#pragma region GPU_Resources
+#pragma region Resources
 
 	//template<typename VertexType>
 	////Where< VulkanVertex<VertexType>(), ptr<ARenderable> > 
@@ -356,5 +339,5 @@ namespace HAL::GPU::Vulkan
 	//	return renderables.back();
 	//}
 
-#pragma endregion GPU_Resources
+#pragma endregion Resources
 }

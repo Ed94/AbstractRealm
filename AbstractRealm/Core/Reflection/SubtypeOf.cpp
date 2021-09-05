@@ -2,7 +2,6 @@
 #include "SubtypeOf.hpp"
 
 
-
 namespace Core
 {
 

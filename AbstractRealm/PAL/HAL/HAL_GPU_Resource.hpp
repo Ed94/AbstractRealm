@@ -4,7 +4,6 @@
 #include "Resource/Mesh/Mesh_Primitives.hpp"
 
 
-
 namespace HAL::GPU
 {
 	namespace _2D

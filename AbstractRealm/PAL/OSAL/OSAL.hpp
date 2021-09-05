@@ -3,9 +3,7 @@ Operating System Abstraction Layer
 */
 
 
-
 #pragma once
-
 
 
 #include "OSAL_Platform.hpp"
@@ -14,7 +12,6 @@ Operating System Abstraction Layer
 #include "OSAL_Timing.hpp"
 #include "OSAL_Threading.hpp"
 #include "OSAL_Windowing.hpp"
-
 
 
 namespace OSAL

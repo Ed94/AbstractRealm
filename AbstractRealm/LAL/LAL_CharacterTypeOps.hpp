@@ -7,7 +7,8 @@
 namespace LAL
 {
 	template<typename TextType>
-	Where<IsStringRelated<TextType>(), RoCStr> ToRoCStr(TextType _type)
+	Where<IsStringRelated<TextType>(), 
+	RoCStr> ToRoCStr(TextType _type)
 	{
 		if constexpr (IsSameTypeCV<TextType, RoCStr>())
 		{

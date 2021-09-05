@@ -1,7 +1,7 @@
 # Abstract Realm
 A Real-Time Engine
 
-![Current State: https://files.catbox.moe/f5ta3q.gif](https://files.catbox.moe/f5ta3q.gif)
+![Current State](https://i.imgur.com/S8AXDwP.png)
 
 # Dependencies
 

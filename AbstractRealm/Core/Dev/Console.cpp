@@ -4,7 +4,7 @@
 // PAL
 #include "OSAL_Console.hpp"
 #include "OSAL_Timing.hpp"
-#include "SAL/SAL_Imgui.hpp"
+#include "TPAL/TPAL_Imgui.hpp"
 //Core
 #include "IO/Basic_FileIO.hpp"
 
@@ -15,79 +15,72 @@ namespace Dev
 
 	using OSAL::ConsoleChar;
 
+	void Load_DevLogStream();
+	void Load_DevLogStream_LogFeed();
+	void Load_DevLogStream_Status();
+	void Load_DevLogStream_Title();
+
+	void WriteTo_Buffer(int _line, ConslAttribFlags _flags);
+	void WriteTo_StatusModule(int _row, int _col, ConslAttribFlags _flags);
+
+
 #pragma region StaticData
-		// Windows uses short instead of unsigned short for rect...
-		s16 ConsoleWidth  = 160;   //140;
-		s16 ConsoleHeight = 118;   //50 ;
+	// Windows uses short instead of unsigned short for rect...
+	s16 ConsoleWidth  = 160;   //140;
+	s16 ConsoleHeight = 118;   //50 ;
 
-		using CharBuffer = ConsoleChar[1024][1024];
+	using CharBuffer = ConsoleChar[1024][1024];
 
-		OS_Handle ConsoleOutput;
-		OS_Handle ConsoleInput ;
+	OS_Handle ConsoleOutput;
+	OS_Handle ConsoleInput ;
 
-		ConsoleRect ConsoleSize =
-		{
-			0, 0,
-			s16(ConsoleWidth  - 1),   // Width
-			s16(ConsoleHeight - 1)    // Height	
-		};
+	ConsoleRect ConsoleSize =
+	{
+		0, 0,
+		s16(ConsoleWidth  - 1),   // Width
+		s16(ConsoleHeight - 1)    // Height	
+	};
 
-		ConsoleExtent ConsoleBufferSize = { ConsoleWidth, ConsoleHeight };
+	ConsoleExtent ConsoleBufferSize = { ConsoleWidth, ConsoleHeight };
 
-		OS_RoCStr ConsoleTitle = L"Abstract Realm: Dev Console";
+	OS_RoCStr ConsoleTitle = L"Abstract Realm: Dev Console";
 
-		StaticArray<OS_Handle, 2> ConsoleBuffers;
+	StaticArray<OS_Handle, 2> ConsoleBuffers;
 
-		DynamicArray<ConsoleChar> ConsoleCharBuffer(u32(ConsoleHeight) * u32(ConsoleWidth));
+	DynamicArray<ConsoleChar> ConsoleCharBuffer(u32(ConsoleHeight) * u32(ConsoleWidth));
 
-		ConsoleExtent ConsoleCharBufferSize = { ConsoleWidth, ConsoleHeight };
-		ConsoleExtent ConsoleCharPos        = { 0           , 0             };
+	ConsoleExtent ConsoleCharBufferSize = { ConsoleWidth, ConsoleHeight };
+	ConsoleExtent ConsoleCharPos        = { 0           , 0             };
 
-		 //Just use console size.
-		ConsoleRect ConsoleWriteArea =
-		{
-			0, 0,
-			s16(ConsoleWidth  - 1),   // Width
-			s16(ConsoleHeight - 1)    // Height	
-		};
+	 //Just use console size.
+	ConsoleRect ConsoleWriteArea =
+	{
+		0, 0,
+		s16(ConsoleWidth  - 1),   // Width
+		s16(ConsoleHeight - 1)    // Height	
+	};
 
-		OS_Handle FrontBuffer = ConsoleBuffers[0],
-			      BackBuffer  = ConsoleBuffers[1] ;
+	OS_Handle FrontBuffer = ConsoleBuffers[0],
+			  BackBuffer  = ConsoleBuffers[1] ;
 
-		u16 DevLogLineEnd = ConsoleHeight - 6;
-		u16 StatusStart   = ConsoleHeight - 5;
+	u16 DevLogLineEnd = ConsoleHeight - 6;
+	u16 StatusStart   = ConsoleHeight - 5;
 
-		u16 StatusColumnWidth = ConsoleWidth / 4;
+	u16 StatusColumnWidth = ConsoleWidth / 4;
 
-		StaticArray<StaticArray<StringStream, 4>, 4> StatusStreams;
+	StaticArray<StaticArray<StringStream, 4>, 4> StatusStreams;
 
-		StringStream DevLogStream;
+	StringStream DevLogStream;
 
-		//File_OutputStream DevLogFileOut;
-		//File_InputStream  DevLogFileIn ;
-
-		bool AutoUpdateConsole = false;
+	bool AutoUpdateConsole = false;
 #pragma endregion StaticData
 
 
-
-
-	// Forwards
-	void Load_DevLogStream        ();
-	void Load_DevLogStream_LogFeed();
-	void Load_DevLogStream_Status ();
-	void Load_DevLogStream_Title  ();
-
-	void WriteTo_Buffer      (int _line,           ConslAttribFlags _flags);
-	void WriteTo_StatusModule(int _row , int _col, ConslAttribFlags _flags);
-
-
-
-	// Public
+#pragma region Public
 
 	void Console_Record_EditorDevDebugUI()
 	{
-		using namespace SAL::Imgui; 
+		using namespace TPAL::Imgui; 
 
 		#define Args(_Entry) NameOf(_Entry).str(), _Entry
 
@@ -134,19 +127,18 @@ namespace Dev
 				ConsoleCharBuffer[y * ConsoleHeight + x].Attributes       = 0  ;
 			}
 		}
-
-		//memcpy()
 	}
 
 	void CLog(String _info)
 	{
-		if (!Meta::UseDebug()) return;
+		if (! Meta::UseDebug()) 
+			return;
 
-		static u16 linePos = 3;
+		static u16 _LinePos = 3;
 
-		if (linePos == StatusStart + 1 )
+		if (_LinePos == StatusStart + 1 )
 		{
-			linePos = 3;
+			_LinePos = 3;
 		}
 
 		DevLogStream.str(String());
@@ -157,21 +149,16 @@ namespace Dev
 
 		uDM lineLength = dateSig.str().size() + _info.size();
 
-		//DevLogFileOut 
-		//	<< dateSig.str()
-		//	<< _info 
-		//	<< endl;
-
 		if (lineLength > uDM(ConsoleWidth))
 		{
 			DevLogStream 
 				<< dateSig.str()
-				<< setfill(' ')
-				<< setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
+				<< SetFill(' ')
+				<< SetWidth(ConsoleWidth - DevLogStream.str().size()) << ' ';
 
 			WriteTo_Buffer
 			(
-				linePos - 1,
+				_LinePos - 1,
 				ConslAttribFlags(EConslAttribFlag::Foreground_Red, EConslAttribFlag::Foreground_Green, EConslAttribFlag::Foreground_Blue)
 			);
 
@@ -179,19 +166,19 @@ namespace Dev
 
 			uDM pos = 0, endPos = ConsoleWidth;
 
-			while (!_info.empty())
+			while (! _info.empty())
 			{
-				linePos ++;
+				_LinePos ++;
 
-				if (linePos == StatusStart + 1)
+				if (_LinePos == StatusStart + 1)
 				{
-					linePos = 3;
+					_LinePos = 3;
 				}
 
 				DevLogStream 
 					<< _info.substr(0, ConsoleWidth)
-					<< setfill(' ')
-					<< setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
+					<< SetFill(' ')
+					<< SetWidth(ConsoleWidth - DevLogStream.str().size()) << ' ';
 
 				String sub = _info.substr(0, ConsoleWidth);
 
@@ -199,7 +186,7 @@ namespace Dev
 
 				WriteTo_Buffer
 				(
-					linePos - 1,
+					_LinePos - 1,
 					ConslAttribFlags(EConslAttribFlag::Foreground_Red, EConslAttribFlag::Foreground_Green, EConslAttribFlag::Foreground_Blue)
 				);
 
@@ -223,12 +210,12 @@ namespace Dev
 			DevLogStream
 				<< dateSig.str()
 				<< _info
-				<< setfill(' ')
-				<< setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
+				<< SetFill(' ')
+				<< SetWidth(ConsoleWidth - DevLogStream.str().size()) << ' ';
 
 			WriteTo_Buffer
 			(
-				linePos - 1,
+				_LinePos - 1,
 				ConslAttribFlags(EConslAttribFlag::Foreground_Red, EConslAttribFlag::Foreground_Green, EConslAttribFlag::Foreground_Blue)
 			);
 
@@ -236,17 +223,19 @@ namespace Dev
 		}	
 
 		DevLogStream
-			<< setfill('-')
-			<< setw(ConsoleWidth - DevLogStream.str().size()) << '-';
+			<< SetFill('-')
+			<< SetWidth(ConsoleWidth - DevLogStream.str().size()) << '-';
 
-		WriteTo_Buffer(linePos++, ConslAttribFlags(EConslAttribFlag::Background_Intensity));
+		WriteTo_Buffer(_LinePos++, ConslAttribFlags(EConslAttribFlag::Background_Intensity));
 
-		if (AutoUpdateConsole) Console_UpdateBuffer();
+		if (AutoUpdateConsole) 
+			Console_UpdateBuffer();
 	}
 
 	void CLog_Error(String _info)
 	{
-		if (!Meta::UseDebug()) return;
+		if (! Meta::UseDebug()) 
+			return;
 
 		static u16 linePos = 4;
 
@@ -263,18 +252,12 @@ namespace Dev
 
 		uDM lineLength = dateSig.str().size() + _info.size();
 
-		//DevLogFileOut
-		//	<< dateSig.str()
-		//	<< "\n"
-		//	<< _info
-		//	<< endl;
-
 		if (lineLength > uDM(ConsoleWidth))
 		{
 			DevLogStream
 				<< dateSig.str()
-				<< setfill(' ')
-				<< setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
+				<< SetFill(' ')
+				<< SetWidth(ConsoleWidth - DevLogStream.str().size()) << ' ';
 
 			WriteTo_Buffer
 			(
@@ -297,12 +280,10 @@ namespace Dev
 
 				DevLogStream
 					<< _info.substr(0, ConsoleWidth)
-					<< setfill(' ')
-					<< setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
+					<< SetFill(' ')
+					<< SetWidth(ConsoleWidth - DevLogStream.str().size()) << ' ';
 
 				String sub = _info.substr(0, ConsoleWidth);
-
-		/*		DevLogFileOut << sub << endl;*/
 
 				WriteTo_Buffer
 				(
@@ -321,7 +302,7 @@ namespace Dev
 					_info.erase(0, ConsoleWidth);
 				}
 
-				pos += ConsoleWidth + 1;
+				pos    += ConsoleWidth + 1;
 				endPos += ConsoleWidth;
 			}
 		}
@@ -330,8 +311,8 @@ namespace Dev
 			DevLogStream
 				<< dateSig.str()
 				<< _info
-				<< setfill(' ')
-				<< setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
+				<< SetFill(' ')
+				<< SetWidth(ConsoleWidth - DevLogStream.str().size()) << ' ';
 
 			WriteTo_Buffer
 			(
@@ -343,12 +324,13 @@ namespace Dev
 		}
 
 		DevLogStream
-			<< setfill('-')
-			<< setw(ConsoleWidth - DevLogStream.str().size()) << '-';
+			<< SetFill('-')
+			<< SetWidth(ConsoleWidth - DevLogStream.str().size()) << '-';
 
 		WriteTo_Buffer(linePos++, ConslAttribFlags(EConslAttribFlag::Background_Red, EConslAttribFlag::Background_Intensity));
 
-		if (AutoUpdateConsole) Console_UpdateBuffer();
+		if (AutoUpdateConsole) 
+			Console_UpdateBuffer();
 	}
 
 	void CLog_Status(String _info, int _row, int _col)
@@ -359,8 +341,8 @@ namespace Dev
 
 			StatusStreams[_row][_col]
 				<< _info
-				<< setfill(' ')
-				<< setw(StatusColumnWidth - StatusStreams[_row][_col].str().size()) << ' ';
+				<< SetFill(' ')
+				<< SetWidth(StatusColumnWidth - StatusStreams[_row][_col].str().size()) << ' ';
 		}
 	}
 
@@ -405,11 +387,6 @@ namespace Dev
 		StatusStart   = ConsoleHeight - 5;
 
 		StatusColumnWidth = ConsoleWidth / 4;
-
-		/*SMALL_RECT screen = { 0, 0, 1, 1 };
-		SetConsoleWindowInfo(ConsoleOutput, true, &screen);*/
-
-		//OSAL::Console_SetBufferSize(ConsoleOutput, ConsoleBufferSize);
 
 		OSAL::Console_SetBufferSize(ConsoleOutput, ConsoleBufferSize);
 		OSAL::Console_SetSize      (ConsoleOutput, ConsoleSize      );
@@ -524,15 +501,14 @@ namespace Dev
 					uDM col = index + StatusColumnWidth * x;
 
 					ConsoleCharBuffer[(y + StatusStart + 1) * ConsoleWidth + col].Char.UnicodeChar = str.at(index);
-
 					ConsoleCharBuffer[(y + StatusStart + 1) * ConsoleWidth + col].Attributes =
-						ConslAttribFlags
-						(
+					ConslAttribFlags
+					(
 						EConslAttribFlag::Foreground_Red,
 						EConslAttribFlag::Foreground_Green,
 						EConslAttribFlag::Foreground_Blue,
 						EConslAttribFlag::Foreground_Intensity
-						);
+					);
 				}
 			}
 		}
@@ -551,6 +527,9 @@ namespace Dev
 		OSAL::Console_SetSize      (ConsoleOutput, ConsoleSize      );
 
 		ConsoleCharBuffer.resize(ConsoleHeight * ConsoleWidth);
+
+		// Set the floating-point precision to 10 places.
+		cout.precision(10);
 
 		cout << "Dev: Console buffers loaded" << endl;
 	
@@ -574,13 +553,12 @@ namespace Dev
 	void Unload_DevConsole()
 	{
 		Log("Unloading dev console (there will be no logs after this)");
-
-		//DevLogFileOut.close(); 
-		//DevLogFileIn .close(); 
 	}
 
+#pragma endregion Public
 
-	// Private
+
+#pragma region Private
 
 	void Load_DevLogStream()
 	{
@@ -593,9 +571,9 @@ namespace Dev
 	{
 		for (u16 line = 3; line < DevLogLineEnd; line++)
 		{
-			DevLogStream.str(std::string());
+			DevLogStream.str(String());
 
-			DevLogStream << setw(ConsoleWidth) << setfill(' ') << ' ';
+			DevLogStream << SetWidth(ConsoleWidth) << SetFill(' ') << ' ';
 
 			WriteTo_Buffer
 			(
@@ -612,23 +590,23 @@ namespace Dev
 
 	void Load_DevLogStream_Status()
 	{
-		DevLogStream.str(std::string());
+		DevLogStream.str(String());
 
-		DevLogStream << setfill('=') << setw(ConsoleWidth) << '=';
+		DevLogStream << SetFill('=') << SetWidth(ConsoleWidth) << '=';
 
 		WriteTo_Buffer
 		(
 			StatusStart,
 			ConslAttribFlags
 			(
-			EConslAttribFlag::Foreground_Red,
-			EConslAttribFlag::Foreground_Green,
-			EConslAttribFlag::Foreground_Blue,
-			EConslAttribFlag::Foreground_Intensity
-		)
+				EConslAttribFlag::Foreground_Red,
+				EConslAttribFlag::Foreground_Green,
+				EConslAttribFlag::Foreground_Blue,
+				EConslAttribFlag::Foreground_Intensity
+			)
 		);
 
-		DevLogStream.str(std::string());
+		DevLogStream.str(String());
 
 		DevLogStream << "Status: Not Setup.";
 
@@ -636,19 +614,19 @@ namespace Dev
 
 		for (u16 line = StatusStart + 2; line < ConsoleHeight; line++)
 		{
-			DevLogStream.str(std::string());
+			DevLogStream.str(String());
 
-			DevLogStream << setfill(' ') << setw(ConsoleWidth) << ' ';
+			DevLogStream << SetFill(' ') << SetWidth(ConsoleWidth) << ' ';
 
 			WriteTo_Buffer
 			(
 				line,
 				ConslAttribFlags
 				(
-				EConslAttribFlag::Foreground_Red,
-				EConslAttribFlag::Foreground_Green,
-				EConslAttribFlag::Foreground_Blue
-			)
+					EConslAttribFlag::Foreground_Red,
+					EConslAttribFlag::Foreground_Green,
+					EConslAttribFlag::Foreground_Blue
+				)
 			);
 		}
 	}
@@ -657,11 +635,9 @@ namespace Dev
 	{
 		using namespace Meta;
 
-		DevLogStream.str(std::string());
+		DevLogStream.str(String());
 
-		DevLogStream << setfill('-') << setw(ConsoleWidth) << '-';
-
-		//DevLogFileOut << setfill('-') << setw(ConsoleWidth) << '-' << endl;
+		DevLogStream << SetFill('-') << SetWidth(ConsoleWidth) << '-';
 
 		WriteTo_Buffer
 		(
@@ -675,7 +651,7 @@ namespace Dev
 			)
 		);
 
-		DevLogStream.str(std::string());
+		DevLogStream.str(String());
 
 		DevLogStream 
 			<< "Abstract Realm: MVP Build - "
@@ -686,7 +662,7 @@ namespace Dev
 			<< "Dev Log: "
 			<< PutTime(OSAL::GetExecutionStartDate(), "%F %I:%M:%S %p")
 
-			<< setfill(' ') << setw(ConsoleWidth - DevLogStream.str().size()) << ' ';
+			<< SetFill(' ') << SetWidth(ConsoleWidth - DevLogStream.str().size()) << ' ';
 
 		WriteTo_Buffer
 		(
@@ -702,9 +678,7 @@ namespace Dev
 
 		DevLogStream.str(String());
 
-		DevLogStream << setfill('-') << setw(ConsoleWidth) << '-';
-
-		//DevLogFileOut << setfill('-') << setw(ConsoleWidth) << '-' << endl;
+		DevLogStream << SetFill('-') << SetWidth(ConsoleWidth) << '-';
 
 		WriteTo_Buffer
 		(
@@ -725,11 +699,8 @@ namespace Dev
 
 		for (uDM index = 0; index < str.size(); index++)
 		{
-			/*ConsoleCharBuffer[_line][index].Char.UnicodeChar = str.at(index);
-			ConsoleCharBuffer[_line][index].Attributes       = _flags       ;*/
-
 			ConsoleCharBuffer[_line * u32(ConsoleWidth) + index].Char.UnicodeChar = str.at(index);
-			ConsoleCharBuffer[_line * u32(ConsoleWidth) + index].Attributes       = _flags       ;
+			ConsoleCharBuffer[_line * u32(ConsoleWidth) + index].Attributes       = _flags;
 		}
 	}
 
@@ -743,11 +714,10 @@ namespace Dev
 		{
 			uDM col = index + StatusColumnWidth * _col;
 
-			/*ConsoleCharBuffer[_row][col].Char.UnicodeChar = str.at(index);
-			ConsoleCharBuffer[_row][col].Attributes       = WORD(_flags);*/
-
 			ConsoleCharBuffer[_row * ConsoleWidth + col].Char.UnicodeChar = str.at(index);
-			ConsoleCharBuffer[_row * ConsoleWidth + col].Attributes = WORD(_flags); 
+			ConsoleCharBuffer[_row * ConsoleWidth + col].Attributes       = WORD(_flags); 
 		}
 	}
+
+#pragma endregion Private
 }

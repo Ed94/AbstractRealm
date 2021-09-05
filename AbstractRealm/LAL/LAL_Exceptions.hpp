@@ -3,13 +3,11 @@
 */
 
 
-
 #pragma once
 
 
 #include "Meta/Config/CoreDev_Config.hpp"
 #include "LAL_Cpp_STL.hpp"
-
 
 
 namespace LAL

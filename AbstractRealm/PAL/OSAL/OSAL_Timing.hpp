@@ -21,8 +21,8 @@ namespace OSAL
 		using TimingAPI = TimingAPI_Maker<OSAL::OS>;
 	}
 
-	template<typename Period> using NanoPeriod = std::ratio_multiply<Period, std::giga>;
-	template<typename Period> using MiliPeriod = std::ratio_multiply<Period, std::kilo>;
+	template<typename Period> using NanoPeriod = RatioMultiply<Period, Giga>;
+	template<typename Period> using MiliPeriod = RatioMultiply<Period, Kilo>;
 
 	struct SystemTimeInfo
 	{

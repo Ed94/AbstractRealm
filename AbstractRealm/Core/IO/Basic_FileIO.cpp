@@ -2,7 +2,6 @@
 #include "Basic_FileIO.hpp"
 
 
-
 namespace IO
 {
 	// Public
@@ -37,21 +36,21 @@ namespace IO
 		return bufferToReturn;
 	}
 
-	bool OpenFile(File_OutputStream& _fileStream, OpenFlags _flags, const Path& _file)
+	bool OpenFile(File_OutputStream& _fileStream_in, OpenFlags _flags, const Path& _file)
 	{
-		_fileStream.open(_file, _flags);
+		_fileStream_in.open(_file, _flags);
 
-		if (! _fileStream.is_open()) 
+		if (! _fileStream_in.is_open()) 
 			return false;
 		else
 			return true;
 	}
 
-	bool OpenFile(File_InputStream& _fileStream, OpenFlags _flags, const Path& _file)
+	bool OpenFile(File_InputStream& _fileStream_in, OpenFlags _flags, const Path& _file)
 	{
-		_fileStream.open(_file, _flags);
+		_fileStream_in.open(_file, _flags);
 
-		if (!_fileStream.is_open())
+		if (!_fileStream_in.is_open())
 			return false;
 		else
 			return true;

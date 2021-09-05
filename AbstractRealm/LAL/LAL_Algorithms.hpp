@@ -6,7 +6,8 @@
 
 namespace LAL
 {
-	using STL::find;	
-
+	using STL::clamp;
 	using STL::copy;
+	using STL::find;	
+	using STL::max;
 }

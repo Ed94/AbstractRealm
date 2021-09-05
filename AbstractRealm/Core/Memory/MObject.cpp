@@ -2,7 +2,6 @@
 #include "MObject.hpp"
 
 
-
 namespace Memory
 {
 

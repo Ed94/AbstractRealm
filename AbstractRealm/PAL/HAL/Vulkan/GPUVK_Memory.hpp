@@ -1,10 +1,6 @@
 #pragma once
 
-
-
 #include "GPUVK_Comms.hpp"
-
-
 
 
 namespace HAL::GPU::Vulkan
@@ -28,7 +24,7 @@ namespace HAL::GPU::Vulkan
 
 	protected:
 
-		// KeyValue Pair<void*, DeviceSize> size.
+		// KeyValue Pair< ptr<void>, DeviceSize> size.
 
 		AllocateInfo info;
 	};

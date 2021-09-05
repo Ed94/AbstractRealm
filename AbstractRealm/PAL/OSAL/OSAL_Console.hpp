@@ -72,17 +72,17 @@ namespace OSAL
 
 			static bool SetBufferSize(OS_Handle _handle, Extent _extent);
 
-			static bool SetSize(OS_Handle _handle, Rect& _rect);
+			static bool SetSize(OS_Handle _handle, const Rect& _rect);
 
 			static bool SetTitle(OS_RoCStr _title);
 
 			static bool WriteToConsole
 			(
-				OS_Handle _handle     ,
-				Char*    _buffer     ,
-				Extent    _bufferSize ,
-				Extent    _bufferCoord,
-				Rect&     _readRegion
+				OS_Handle _handle       ,
+				ptr<Char> _buffer_in    ,
+				Extent    _bufferSize   ,
+				Extent    _bufferCoord  , 
+				Rect&     _readRegion_in
 			);
 		};
 
@@ -105,7 +105,7 @@ namespace OSAL
 
 	using ConslAttribFlags = ConsoleAPI::AttributeFlags;
 	using EConslAttribFlag = ConsoleAPI::EAttributeFlag;
-	using ConsoleChar      = ConsoleAPI::Char         ;
+	using ConsoleChar      = ConsoleAPI::Char          ;
 	using ConsoleExtent    = ConsoleAPI::Extent        ;
 	using ConsoleRect      = ConsoleAPI::Rect          ;
 	using EConsoleHandle   = ConsoleAPI::EHandle       ;

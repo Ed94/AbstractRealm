@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "OSAL_Platform.hpp"
 
 
@@ -219,7 +218,7 @@ namespace OSAL
 				Error               = -1
 			};
 
-			static EIPPresToNetworkCode IPV4AddressToNetwork(RoCStr _presentation, IPV4_TRAddress& _ipv6Address_Out);
+			static EIPPresToNetworkCode IPV4AddressToNetwork   (RoCStr _presentation, IPV4_TRAddress& _ipv6Address_Out);
 			static EIPPresToNetworkCode IPPresentationToNetwork(RoCStr _presentation, IPV6_TRAddress& _ipv6Address_Out);
 
 			enum class ENamespace : ui32
@@ -254,10 +253,10 @@ namespace OSAL
 				ptr<AddressInfo>   Next           = nullptr;
 			};
 
-			static EAddressInfoCode GetAddressInfo     (RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info);
-			static EAddressInfoCode GetAddressInfoAsync(RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info);
+			static EAddressInfoCode GetAddressInfo     (RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info_out);
+			static EAddressInfoCode GetAddressInfoAsync(RoCStr _nodeName, RoCStr _serviceName, const AddressInfo& _hints, AddressInfo& _info_out);
 
-			static void FreeAddressInfo(ptr<AddressInfo> _addressInfo);
+			static void FreeAddressInfo(ptr<AddressInfo> _addressInfo_in);
 		};
 
 		using NetworkingAPI = NetworkingAPI_Maker<OSAL::OS>;
@@ -354,8 +353,8 @@ namespace OSAL
 		return 0;
 	}
 
-	constexpr EIPPresToNetworkCode(*IPV4AddressToNetwork)(RoCStr, IPV4_TRAddress&) = NetworkingAPI::IPV4AddressToNetwork;
-	constexpr EIPPresToNetworkCode(*IPPresentationToNetwork)(RoCStr, IPV6_TRAddress&) = NetworkingAPI::IPPresentationToNetwork;
+	constexpr fnPtr<EIPPresToNetworkCode, RoCStr, IPV4_TRAddress&> IPV4AddressToNetwork    = NetworkingAPI::IPV4AddressToNetwork;
+	constexpr fnPtr<EIPPresToNetworkCode, RoCStr, IPV6_TRAddress&> IPPresentationToNetwork = NetworkingAPI::IPPresentationToNetwork;
 
 	constexpr auto GetAddressInfo  = NetworkingAPI::GetAddressInfo;
 	constexpr auto FreeAddressInfo = NetworkingAPI::FreeAddressInfo;

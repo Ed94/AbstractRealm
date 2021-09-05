@@ -5,7 +5,6 @@ Contains type definitions for commonly used raw character types (such as raw cha
 */
 
 
-
 #pragma once
 
 

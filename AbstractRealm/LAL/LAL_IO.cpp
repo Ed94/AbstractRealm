@@ -2,7 +2,6 @@
 #include "LAL_IO.hpp"
 
 
-
 namespace LAL
 {
 	bool CheckPathExists(const Path& _path)

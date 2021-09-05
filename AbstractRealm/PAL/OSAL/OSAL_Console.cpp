@@ -6,7 +6,6 @@
 #include "OSAL_Backend.hpp"
 
 
-
 namespace OSAL
 {
 	namespace PlatformBackend
@@ -17,16 +16,16 @@ namespace OSAL
 		{				 
 			bool result = false;
 
-			FILE* dummyFile = nullptr;
+			ptr<FILE> dummyFile = nullptr;
 
-			freopen_s(&dummyFile, "CONIN$" , "r", stdin );
-			freopen_s(&dummyFile, "CONOUT$", "w", stdout);
-			freopen_s(&dummyFile, "CONOUT$", "w", stderr);
+			freopen_s(getPtr(dummyFile), "CONIN$" , "r", stdin );
+			freopen_s(getPtr(dummyFile), "CONOUT$", "w", stdout);
+			freopen_s(getPtr(dummyFile), "CONOUT$", "w", stderr);
 
 			// Redirect STDIN if the console has an input handle
 			if (GetStdHandle(STD_INPUT_HANDLE) != INVALID_HANDLE_VALUE)
 			{
-				if (freopen_s(&dummyFile, "CONIN$", "r", stdin) != 0)
+				if (freopen_s(getPtr(dummyFile), "CONIN$", "r", stdin) != 0)
 				{
 					result = false;
 				}
@@ -39,7 +38,7 @@ namespace OSAL
 			// Redirect STDOUT if the console has an output handle
 			if (GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
 			{
-				if (freopen_s(&dummyFile, "CONOUT$", "w", stdout) != 0)
+				if (freopen_s(getPtr(dummyFile), "CONOUT$", "w", stdout) != 0)
 				{
 					result = false;
 				}
@@ -52,7 +51,7 @@ namespace OSAL
 			// Redirect STDERR if the console has an error handle
 			if (GetStdHandle(STD_ERROR_HANDLE) != INVALID_HANDLE_VALUE)
 			{
-				if (freopen_s(&dummyFile, "CONOUT$", "w", stderr) != 0)
+				if (freopen_s(getPtr(dummyFile), "CONOUT$", "w", stderr) != 0)
 				{
 					result = false;
 				}
@@ -63,15 +62,15 @@ namespace OSAL
 			}
 			
 			// Make C++ standard streams point to console as well.
-			std::ios::sync_with_stdio(true);
+			SyncWith_STDIO(true);
 
 			// Clear the error state for each of the C++ standard streams.
-			std::wcout.clear();
+			std::cerr .clear();
+			std::cin  .clear();
 			std::cout .clear();
 			std::wcerr.clear();
-			std::cerr .clear();
 			std::wcin .clear();
-			std::cin  .clear();
+			std::wcout.clear();
 
 			return true;
 		}
@@ -80,12 +79,12 @@ namespace OSAL
 		{
 			bool result = true;
 
-			FILE* dummyFile;
+			ptr<FILE> dummyFile = nullptr;
 
 			// Just to be safe, redirect standard IO to NUL before releasing.
 
 			// Redirect STDIN to NUL
-			if (freopen_s(&dummyFile, "NUL:", "r", stdin) != 0)
+			if (freopen_s(getPtr(dummyFile), "NUL:", "r", stdin) != 0)
 			{
 				result = false;
 			}
@@ -95,7 +94,7 @@ namespace OSAL
 			}
 
 			// Redirect STDOUT to NUL
-			if (freopen_s(&dummyFile, "NUL:", "w", stdout) != 0)
+			if (freopen_s(getPtr(dummyFile), "NUL:", "w", stdout) != 0)
 			{
 				result = false;
 			}
@@ -105,7 +104,7 @@ namespace OSAL
 			}
 
 			// Redirect STDERR to NUL
-			if (freopen_s(&dummyFile, "NUL:", "w", stderr) != 0)
+			if (freopen_s(getPtr(dummyFile), "NUL:", "w", stderr) != 0)
 			{
 				result = false;
 			}
@@ -124,19 +123,20 @@ namespace OSAL
 
 		bool ConsoleAPI_Win::Create()
 		{
-			static bool created = false;
+			static bool _Created = false;
 
-			if (!created)
+			if (!_Created)
 			{
-				created = AllocConsole();
+				_Created = AllocConsole();
 
 				//auto handle = GetStdHandle(EHandle::Output);
 
-				created = Bind_IOBuffersTo_OSIO();
+				_Created = Bind_IOBuffersTo_OSIO();
 
-				if (created) cout << "Console created" << endl;
+				if (_Created) 
+					cout << "Console created" << endl;
 
-				return created;
+				return _Created;
 			}
 			else
 			{
@@ -148,12 +148,14 @@ namespace OSAL
 		{
 			bool result = Unbind_IOBuffersTo_OSIO();
 
-			if (!result) return result;
+			if (!result) 
+				return result;
 
 			// Detach from console
 			result = FreeConsole();
 
-			if (result) Log("Console destroyed");
+			if (result) 
+				Log("Console destroyed");
 
 			return result;
 		}
@@ -168,9 +170,9 @@ namespace OSAL
 			return SetConsoleScreenBufferSize(_handle, _extent);
 		}
 
-		bool ConsoleAPI_Win::SetSize(OS_Handle _handle, Rect& _rect)
+		bool ConsoleAPI_Win::SetSize(OS_Handle _handle, const Rect& _rect)
 		{
-			return SetConsoleWindowInfo(_handle, TRUE, &_rect);
+			return SetConsoleWindowInfo(_handle, TRUE, getPtr(_rect));
 		}
 
 		bool ConsoleAPI_Win::SetTitle(OS_RoCStr _title)
@@ -180,18 +182,19 @@ namespace OSAL
 
 		bool ConsoleAPI_Win::WriteToConsole
 		(
-			OS_Handle _handle     ,
-			Char*     _buffer     ,
-			Extent    _bufferSize ,
-			Extent    _bufferCoord,
-			Rect&     _readRegion
+			OS_Handle _handle       ,
+			ptr<Char> _buffer_in    ,
+			Extent    _bufferSize   ,
+			Extent    _bufferCoord  ,
+			Rect&     _readRegion_in
 		)
 		{
 			auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
-			if (handle == INVALID_HANDLE_VALUE) return false;
+			if (handle == INVALID_HANDLE_VALUE) 
+				return false;
 
-			return WriteConsoleOutput(_handle, _buffer, _bufferSize, _bufferCoord, &_readRegion);
+			return WriteConsoleOutput(_handle, _buffer_in, _bufferSize, _bufferCoord, getPtr(_readRegion_in));
 		}
 	}
 }

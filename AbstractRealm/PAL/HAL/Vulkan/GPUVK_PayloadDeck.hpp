@@ -1,9 +1,7 @@
 #pragma once
 
 
-
 #include "GPUVK_Comms.hpp"
-
 
 
 namespace HAL::GPU::Vulkan
@@ -15,17 +13,22 @@ namespace HAL::GPU::Vulkan
 
 		CommandBuffer() : Parent::CommandBuffer() {};
 
-		CommandBuffer(const LogicalDevice& _device, Handle& _handle) : Parent::CommandBuffer(_device, _handle) {}
+		CommandBuffer(const LogicalDevice& _device, Handle& _handle_in) : Parent::CommandBuffer(_device, _handle_in) {}
 
-		void Assign(const LogicalDevice& _device, AllocateInfo& _info, Handle& _handle);
+		void Assign(const LogicalDevice& _device, AllocateInfo& _info_in, Handle& _handle_in);
 		 
 		void Clear();
 
-		const AllocateInfo& GetAllocateInfo() const { return info; }
+		ForceInline
+		const AllocateInfo& GetAllocateInfo() const 
+		{
+			return info; 
+		}
 
 		using Parent::BindVertexBuffers;
 
 	protected:
+
 		AllocateInfo info;
 	};
 
@@ -42,6 +45,7 @@ namespace HAL::GPU::Vulkan
 
 
 	protected:
+
 		DynamicArray<CommandBuffer> commandBuffers;
 	};
 

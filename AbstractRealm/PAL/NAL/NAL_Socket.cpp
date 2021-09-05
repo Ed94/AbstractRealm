@@ -6,6 +6,7 @@ namespace NAL
 {
 	using OSAL::EAddressInfoCode;
 
+
 #pragma region SocketAddress
 	SocketAddress::SocketAddress(IPV4_TRAddress _address, u16 _port)
 	{
@@ -84,34 +85,5 @@ namespace NAL
 #pragma endregion SocketAddress
 
 #pragma region Socket
-	void Socket::Create(EAddressFamily _family, ESocketType _type, EProtocol _protocol)
-	{
-		handle = OSAL::CreateSocket(_family, _type, _protocol);
-	}
-
-	void Socket::CreateUDP(EAddressFamily _family, EProtocol _protocol)
-	{
-		handle = OSAL::CreateSocket(_family, ESocketType::DGram, _protocol);
-	}
-
-	void Socket::CreateTCP(EAddressFamily _family, EProtocol _protocol)
-	{
-		handle = OSAL::CreateSocket(_family, ESocketType::Stream, _protocol);
-	}
-
-	void Socket::Bind(const SocketAddress& _address)
-	{
-		OSAL::BindSocket(dref(this), _address, _address.GetSize());
-	}
-
-	ESocketOpResult Socket::Shutdown(ESocketChannel _what)
-	{
-		return OSAL::ShutdownSocket(handle, _what);
-	}
-
-	ESocketOpResult Socket::Close()
-	{
-		return OSAL::CloseSocket(handle);
-	}
 #pragma endregion Socket
 }

@@ -18,16 +18,13 @@ namespace HAL::GPU::Vulkan
 	using namespace VV::Corridors;
 	using namespace VV::V3;
 
-	using namespace LAL;
-
 	using LAL::DynamicArray;
 	using LAL::Deque;
 
 	using LayerandExtensionsList = DynamicArray<LayerAndExtensionProperties>;
-
 	
 
-	// Classes
+#pragma region Classes
 
 	class PhysicalDevice : public V3::PhysicalDevice
 	{
@@ -41,9 +38,8 @@ namespace HAL::GPU::Vulkan
 
 		const LayerandExtensionsList& GetLayersAndExtensions() const;
 
-		operator Parent&();
-
-		operator const Parent& () const;
+		//operator Parent&();
+		//operator const Parent&() const;
 
 	protected:
 
@@ -101,11 +97,11 @@ namespace HAL::GPU::Vulkan
 
 		using Parent = V3::LogicalDevice;
 
-		void AssignPhysicalDevice(PhysicalDevice& _physicalDevice);
+		void AssignPhysicalDevice(PhysicalDevice& _physicalDevice_in);
 
 		EResult Create();
 
-		bool ExtensionsEnabled(DynamicArray<RoCStr> _extensions);
+		bool ExtensionsEnabled(DynamicArray<RoCStr> _extensions_in);
 		
 		const PhysicalDevice& GetPhysicalDevice() const;
 
@@ -119,8 +115,8 @@ namespace HAL::GPU::Vulkan
 
 		operator       Handle ();
 		operator const Handle&() const;
-		operator       Parent&();
-		operator const Parent&() const;
+		//operator       Parent&();
+		//operator const Parent&() const;
 
 	protected:
 
@@ -133,7 +129,7 @@ namespace HAL::GPU::Vulkan
 		{
 			//DynamicArray<Queue> queues;   // Not used at this level for now.
 
-			Queue::CreateInfo* Info = nullptr;   // Stores a reference from the queue info container.
+			ptr<Queue::CreateInfo> Info = nullptr;   // Stores a reference from the queue info container.
 
 			f32 Priority = 1.0F;   // Later on will need to be a dynamic array of each queue's priority.
 
@@ -159,17 +155,17 @@ namespace HAL::GPU::Vulkan
 	};
 
 
-
 	using PhysicalDeviceList = DynamicArray<PhysicalDevice>;
 	using LogicalDeviceList  = DynamicArray<LogicalDevice>;
 
+#pragma endregion Classes
 
 
 	template<Meta::EGPU_Engage>
-	class GPU_Comms_Maker;
+	class Comms_Maker;
 
 	template<>
-	class GPU_Comms_Maker<Meta::EGPU_Engage::Single>
+	class Comms_Maker<Meta::EGPU_Engage::Single>
 	{
 	public:
 
@@ -199,12 +195,12 @@ namespace HAL::GPU::Vulkan
 
 		static void AquireSupportedValidationLayers();
 
-		static bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified);
+		static bool CheckLayerSupport(DynamicArray<RoCStr> _layersSpecified_in);
 
 		static void DetermineRequiredExtensions();
 
 		static void SetupDebugMessenger();
 	};
 
-	using GPU_Comms = GPU_Comms_Maker<Meta::GPU_Engagement>;
+	using Comms = Comms_Maker<Meta::GPU_Engagement>;
 }

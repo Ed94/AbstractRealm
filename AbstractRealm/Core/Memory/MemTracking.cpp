@@ -6,8 +6,6 @@
 #include "Core/Dev/Console.hpp"
 #include "Meta/Config/CoreDev_Config.hpp"
 
-// Magic Enum
-
 
 namespace Memory
 {
@@ -24,7 +22,7 @@ namespace Memory
 
 	void Heap::ReportAllocation(String _identifier, EModule _module)
 	{
-		if (Meta::Enable_HeapTracking)
+		if (Meta::Enable_HeapTracking())
 		{
 			Allocation newAllocation(_identifier, _module);
 
@@ -34,7 +32,7 @@ namespace Memory
 
 	void Heap::ReportAllocation(ptr<void> _address, String _identifier, EModule _module)
 	{
-		if (Meta::Enable_HeapTracking)
+		if (Meta::Enable_HeapTracking())
 		{
 			Allocation newAllocation(_identifier, _module);
 
@@ -44,7 +42,7 @@ namespace Memory
 
 	void Heap::ReportDeallocation(String _identifier)
 	{
-		if (Meta::Enable_HeapTracking)
+		if (Meta::Enable_HeapTracking())
 		{
 			AllocationsReported_NoAddress.erase(_identifier);
 		}
@@ -52,7 +50,7 @@ namespace Memory
 
 	void Heap::ReportDeallocation(ptr<void> _address)
 	{
-		if (Meta::Enable_HeapTracking)
+		if (Meta::Enable_HeapTracking())
 		{
 			AllocationsReported.erase(_address);
 		}
@@ -60,7 +58,7 @@ namespace Memory
 
 	void Heap::PrintAllocations()
 	{
-		if (Meta::Enable_HeapTracking)
+		if (Meta::Enable_HeapTracking())
 		{
 			if (!AllocationsReported.empty())
 			{

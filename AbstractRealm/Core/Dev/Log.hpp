@@ -30,10 +30,6 @@ namespace Dev
 		 Logger(String _name);
 		~Logger();
 
-		void Init();
-
-		void Record(ESeverity _severity, String _message);
-
 		static void GlobalInit();
 
 		static void Queue_DebugUI();
@@ -42,11 +38,15 @@ namespace Dev
 
 		static void Record_EditorDevDebugUI();
 
+		void Init();
+
+		void Record(ESeverity _severity, String _message);
+
 	protected:
 
-		File_OutputStream FileOut;
-
 		using SubRecords = DynamicArray< ptr<RecordEntry>>;
+
+		File_OutputStream fileOut;
 
 		String name;
 

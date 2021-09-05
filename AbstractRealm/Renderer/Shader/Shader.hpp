@@ -1,27 +1,15 @@
 #pragma once
 
-
-
-
-#include "LAL.hpp"
-
-
-
+#include "Renderer_Backend.hpp"
 
 
 namespace Renderer::Shader
 {
-	using namespace LAL;
-
-
-
 	enum class ELanguage
 	{
 		GLSL,
 		HLSL
 	};
-
-
 
 	class Shader
 	{

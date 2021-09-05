@@ -5,14 +5,11 @@ Last Modified: 5/18/2020
 */
 
 
-
 #pragma once
-
 
 
 #include "LAL_Cpp_STL.hpp"
 #include "LAL_Reflection.hpp"
-
 
 
 namespace LAL
@@ -49,10 +46,11 @@ namespace LAL
 
 	// Functions
 
-	using std::signbit;
+	using STL::signbit;
 
 	template<typename Type>
-	constexpr bool IsInt()
+	constexpr 
+	bool IsInt()
 	{
 		return IsSameType<Type, s8 >() || 
 			   IsSameType<Type, s16>() || 
@@ -65,7 +63,8 @@ namespace LAL
 	}
 
 	template<typename Type>
-	constexpr bool IsFloat()
+	constexpr 
+	bool IsFloat()
 	{
 		return IsSameType<Type, f32>() || IsSameType<Type, f64>();
 	}

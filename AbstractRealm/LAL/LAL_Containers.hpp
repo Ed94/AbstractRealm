@@ -4,14 +4,11 @@
 */
 
 
-
 #pragma once
-
 
 
 #include "LAL_Cpp_STL.hpp"
 #include "LAL_Types.hpp"
-
 
 
 namespace LAL
