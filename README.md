@@ -7,11 +7,7 @@ A Real-Time Engine
 
 Vulkan. (Use the VULKAN_PATH env variable). You will also need the debug libs https://files.lunarg.com/.
 
-Plan to eventually use Methane as well.
-
 ## So whats the point of this engine?
-
-So far I'm treating this engine design like a learning tool so its going to pretty much be the breadboard of game engines; where you can poke and see everything during runtime (with some caveats ofc, if you poke too much the performance will be impacted)
 
 This is a portfolio piece I want to make. This is not intended to be a full-fledged engine. More so a showcase of what I know in c++
 
@@ -29,8 +25,8 @@ This book:
 
 Documentation for various APIs.
 
-A bunch of Youtube... (I'll note what I used in the wiki)
+A bunch of Youtube...
 
-And more likely more cause this isn't the smallest engine at the same time...
+Various other books and sites.
 
 ## C++17 Used with MSVC and Clang-CL. 
