@@ -376,3 +376,4 @@ AbstractRealm/AbstractRealm.srctrldb
 AbstractRealm/GPU_Vulkan.cpp.PVS-Studio.cfg
 .idea
 AbstractRealm/.vscode
+Engine/Build/Windows
