@@ -76,3 +76,6 @@
 [submodule "EASTL"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/EASTL
 	url = https://github.com/electronicarts/EASTL
+[submodule "Engine/PAL"]
+	path = Engine/PAL
+	url = https://github.com/Ed94/PAL_CPP
