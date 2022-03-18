@@ -19,10 +19,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Entrypoint.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.cpp" />
+    <ClCompile Include="ThirdParty\API\API.Windows.Backend.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.Platform.cpp" />
     <ClCompile Include="PAL\PAL.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Build\Build.Windows.bat" />
+    <ClInclude Include="PAL\LAL\LAL.Casting.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.C_STL.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Declarations.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Memory.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Types.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Windows.Backend.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Windows.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL.EntryPoint.hpp.ixx" />
+    <ClInclude Include="PAL\OSAL\OSAL.Platform.hpp" />
+    <ClInclude Include="PAL\PAL.Backend.h" />
+    <ClInclude Include="PAL\PAL.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Infoware.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -84,9 +101,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)Build;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\API;$(IncludePath)</IncludePath>
+    <PublicModuleDirectories>$(ProjectDir)Build;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\API;$(IncludePath)</PublicModuleDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)Build;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\API;$(IncludePath)</IncludePath>
+    <PublicModuleDirectories>$(ProjectDir)Build;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\API;$(IncludePath)</PublicModuleDirectories>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -118,10 +139,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)ThirdParty\infoware\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <TranslateIncludes>false</TranslateIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,12 +155,15 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <TranslateIncludes>false</TranslateIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

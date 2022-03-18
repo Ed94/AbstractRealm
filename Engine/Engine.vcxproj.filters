@@ -2,8 +2,25 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="PAL\PAL.cpp" />
+    <ClCompile Include="ThirdParty\API\API.Windows.Backend.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.Platform.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.cpp" />
+    <ClCompile Include="Core\Entrypoint.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Build\Build.Windows.bat" />
+    <ClInclude Include="ThirdParty\API\API.Windows.Backend.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL.EntryPoint.hpp.ixx" />
+    <ClInclude Include="PAL\OSAL\OSAL.Platform.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Declarations.hpp" />
+    <ClInclude Include="PAL\PAL.Backend.h" />
+    <ClInclude Include="PAL\PAL.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Windows.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Types.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Casting.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Infoware.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.C_STL.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Memory.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.hpp" />
   </ItemGroup>
 </Project>
