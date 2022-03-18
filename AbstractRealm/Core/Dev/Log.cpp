@@ -114,7 +114,7 @@ namespace Dev
 
 	void Logger::GlobalRecord(ESeverity _severity, String _message)
 	{
-		records.push_back(MakeUnique<RecordEntry>(_severity, "Global", _message));
+		records.push_back(Make_UPtr<RecordEntry>(_severity, "Global", _message));
 
 		if (globalFileOut.is_open())
 		{
@@ -288,7 +288,7 @@ namespace Dev
 
 	void Logger::Record(ESeverity _severity, String _message)
 	{
-		records.push_back(MakeUnique<RecordEntry>(_severity, name, _message));
+		records.push_back(Make_UPtr<RecordEntry>(_severity, name, _message));
 
 		subRecordsRef->push_back(records.back().get());
 

@@ -439,7 +439,7 @@ namespace HAL::GPU::Vulkan
 
 		IndexBuffer indexBuffer;
 
-		DynamicArray<Byte> uniformData;
+		DynamicArray<byte> uniformData;
 
 		DynamicArray<UniformBuffer> uniformBuffers;
 
@@ -469,7 +469,7 @@ namespace HAL::GPU::Vulkan
 		static Where< VulkanVertex<VertexType>(), ptr<ARenderable> >
 		Request_Renderable(const DynamicArray<VertexType>& _verticies, ptr<const AShader> _shader)
 		{
-			SPtr< TPrimitiveRenderable<VertexType>> newRenderable = MakeShared< TPrimitiveRenderable<VertexType>>();
+			SPtr< TPrimitiveRenderable<VertexType>> newRenderable = Make_SPtr< TPrimitiveRenderable<VertexType>>();
 
 			newRenderable->Create(_verticies, _shader);
 
@@ -490,7 +490,7 @@ namespace HAL::GPU::Vulkan
 			      ptr<const AShader>        _shader
 		)
 		{
-			SPtr< TModelRenderable<VertexType>> newRenderable = MakeShared< TModelRenderable<VertexType>>();
+			SPtr< TModelRenderable<VertexType>> newRenderable = Make_SPtr< TModelRenderable<VertexType>>();
 
 			newRenderable->Create(_verticies, _indicies, _textureData, _width, _height, _shader);
 

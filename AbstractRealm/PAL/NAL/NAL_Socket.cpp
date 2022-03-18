@@ -29,7 +29,7 @@ namespace NAL
 
 	SocketAddress::SocketAddress(const OSAL::SocketAddress& _info)
 	{
-		FormatWithData<OSAL::SocketAddress>(getPtr(address), getPtr(_info), 1);
+		Format_WithData<OSAL::SocketAddress>(getPtr(address), getPtr(_info), 1);
 	}
 
 	SPtr<SocketAddress> SocketAddress::CreateIPV4(const String& _hostAndPort)
@@ -76,7 +76,7 @@ namespace NAL
 			return nullptr;
 		}
 
-		SPtr<SocketAddress> socketAddress = MakeShared<SocketAddress>(dref(result->Address));
+		SPtr<SocketAddress> socketAddress = Make_SPtr<SocketAddress>(dref(result->Address));
 
 		OSAL::FreeAddressInfo(result);
 

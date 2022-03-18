@@ -280,8 +280,8 @@ namespace HAL::GPU::Vulkan
 
 			EStage stage = GetStageType(_type);
 
-			UPtr<LinkerUnit> linker = MakeUnique<LinkerUnit>();
-			UPtr<ShaderUnit> shader = MakeUnique<ShaderUnit>( EShLanguage(stage));
+			UPtr<LinkerUnit> linker = Make_UPtr<LinkerUnit>();
+			UPtr<ShaderUnit> shader = Make_UPtr<ShaderUnit>( EShLanguage(stage));
 
 			RoCStr strings[NumShaders];
 			

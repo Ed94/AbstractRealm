@@ -9,8 +9,8 @@ Meta_SetupEngineModule(Memory);
 
 namespace Memory
 {
-	using LAL::FormatByFill;
-	using LAL::FormatWithData;
+	using LAL::Format_ByFill;
+	using LAL::Format_WithData;
 
 	void LoadBackend();
 }

@@ -18,7 +18,7 @@ Explicit Specifiers
 static
 
 // Creates a static duration variable accessible to any file or linkage. (Global/File scope Only)
-#define ExportLink \
+#define ExtLink \
 extern
 
 //// Creates a static duration stack variable.

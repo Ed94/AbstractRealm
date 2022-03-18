@@ -23,7 +23,7 @@
     <ProjectGuid>{ED3769FF-5743-440A-A97B-282D9F019C8A}</ProjectGuid>
     <RootNamespace>AbstractRealm</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
-    <ProjectName>AbstractRealm_A1</ProjectName>
+    <ProjectName>AbstractRealm</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -74,7 +74,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execptions;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Objects;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)LAL\;$(ProjectDir)LAL\Types;$(ProjectDir)LAL\Utilities;$(ProjectDir)PAL\;$(ProjectDir)PAL\TPAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Renderer;$(ProjectDir)Resource;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Assets\;$(ProjectDir)Assets\Animation;$(ProjectDir)Core\;$(ProjectDir)Core\Cycler;$(ProjectDir)Core\Dev;$(ProjectDir)Core\Execptions;$(ProjectDir)Core\Execution;$(ProjectDir)Core\Memory;$(ProjectDir)Core\Objects;$(ProjectDir)Meta\;$(ProjectDir)Meta\Config\;$(ProjectDir)Core\Debug\;$(ProjectDir)PAL\;$(ProjectDir)PAL\LAL\;$(ProjectDir)PAL\LAL\Types;$(ProjectDir)PAL\LAL\Utilities;$(ProjectDir)PAL\TPAL\;$(ProjectDir)PAL\HAL\;$(ProjectDir)PAL\OSAL\;$(ProjectDir)Renderer;$(ProjectDir)Resource;$(ProjectDir)Simulation;$(ProjectDir)Simulation\Math;$(ProjectDir)Simulation\Navigation;$(IncludePath)</IncludePath>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -115,6 +115,7 @@
       <DisableSpecificWarnings>5105</DisableSpecificWarnings>
       <AdditionalOptions>/showFilenames  </AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -268,6 +269,33 @@
     <ClInclude Include="Manifest\Enities\EMS.hpp" />
     <ClInclude Include="PAL\HAL\HAL_GPU_Resource.hpp" />
     <ClInclude Include="PAL\HAL\Methane\Methane_API.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Algorithms.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Ambiguous.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Bits.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_CallEnforcer.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Casting.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_CharacterTypeOps.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_CharacterTypes.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Chrono.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Containers.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Cpp_STL.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_C_STL.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Declarations.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Enum.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Exceptions.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Functions.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_FundamentalLimits.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_FundamentalTypes.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_IO.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Iterator.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Math.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Memory.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Reflection.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_SmartPtrs.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_String.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Thread.hpp" />
+    <ClInclude Include="PAL\LAL\LAL_Types.hpp" />
     <ClInclude Include="Renderer\Renderer_Backend.hpp" />
     <ClInclude Include="Resource\Assets\Asset.hpp">
       <SubType>
@@ -287,28 +315,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\LAL_C_STL.hpp" />
-    <ClInclude Include="LAL\LAL_Algorithms.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Bitfield.hpp" />
-    <ClInclude Include="LAL\LAL_Chrono.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Enum.hpp" />
-    <ClInclude Include="LAL\LAL_Iterator.hpp" />
-    <ClInclude Include="LAL\LAL_Math.hpp" />
-    <ClInclude Include="LAL\LAL_Thread.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Functions.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_CharacterTypeOps.hpp" />
     <ClInclude Include="Manifest\Cosmos.hpp">
       <SubType>
       </SubType>
@@ -377,35 +383,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\LAL_CallEnforcer.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Containers.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Exceptions.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_IO.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_String.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="LAL\LAL_Bitmask.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_CharacterTypes.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Ambiguous.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -416,43 +394,6 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PAL\HAL\HAL_Audio.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Cpp_STL.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Memory.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Types.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_FundamentalLimits.hpp" />
-    <ClInclude Include="LAL\LAL_FundamentalTypes.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Reflection.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_SmartPtrs.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Casting.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LAL\LAL_Declarations.hpp">
       <SubType>
       </SubType>
     </ClInclude>
@@ -835,10 +776,6 @@
     <ClCompile Include="Core\Reflection\SubtypeOf.cpp" />
     <ClCompile Include="Core\Reflection\Type.cpp" />
     <ClCompile Include="Editor\Editor.cpp" />
-    <ClCompile Include="LAL\LAL_Algorithms.cpp" />
-    <ClCompile Include="LAL\LAL_C_STL.cpp" />
-    <ClCompile Include="LAL\LAL_IO.cpp" />
-    <ClCompile Include="LAL\LAL_Memory.cpp" />
     <ClCompile Include="Manifest\Enities\Component.cpp" />
     <ClCompile Include="Manifest\Enities\EMS.cpp" />
     <ClCompile Include="Manifest\Enities\Phenomena\Animal.cpp" />
@@ -867,6 +804,10 @@
     <ClCompile Include="PAL\HAL\Vulkan\GPU_Vulkan.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\Vulkan_API.cpp" />
     <ClCompile Include="PAL\HAL\Vulkan\_TutorialRelated.cpp" />
+    <ClCompile Include="PAL\LAL\LAL_Algorithms.cpp" />
+    <ClCompile Include="PAL\LAL\LAL_C_STL.cpp" />
+    <ClCompile Include="PAL\LAL\LAL_IO.cpp" />
+    <ClCompile Include="PAL\LAL\LAL_Memory.cpp" />
     <ClCompile Include="PAL\NAL\NAL.cpp" />
     <ClCompile Include="PAL\NAL\NAL_Backend.cpp" />
     <ClCompile Include="PAL\NAL\NAL_Socket.cpp" />

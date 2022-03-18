@@ -191,8 +191,8 @@ namespace HAL::GPU::Vulkan
 			4, 5, 6, 6, 7, 4
 		};
 
-		eGlobal DynamicArray<Vertex_WTexture> ModelVerticies;
-		eGlobal DynamicArray<u32  > ModelIndicies;
+		ExtLink DynamicArray<Vertex_WTexture> ModelVerticies;
+		ExtLink DynamicArray<u32  > ModelIndicies;
 
 		multiDefs const String VikingRoom_ModelPath   = "Engine/Data/Models/VikingRoom/viking_room.obj";
 		multiDefs const String VikingRoom_TexturePath = "Engine/Data/Models/VikingRoom/viking_room.png";
@@ -202,19 +202,19 @@ namespace HAL::GPU::Vulkan
 
 		// TODO: Make the GPU hal agnostic to this.
 
-		eGlobal Buffer VertexBuffer_Old;
-		eGlobal Memory VertexBufferMemory;
+		ExtLink Buffer VertexBuffer_Old;
+		ExtLink Memory VertexBufferMemory;
 
-		eGlobal Buffer IndexBuffer_Old;
-		eGlobal Memory IndexBufferMemory;
+		ExtLink Buffer IndexBuffer_Old;
+		ExtLink Memory IndexBufferMemory;
 
-		eGlobal DynamicArray<Buffer> UniformBuffers      ;
-		eGlobal DynamicArray<Memory> UniformBuffersMemory;
+		ExtLink DynamicArray<Buffer> UniformBuffers      ;
+		ExtLink DynamicArray<Memory> UniformBuffersMemory;
 
-		eGlobal Image     TextureImage_Old  ;
-		eGlobal Memory    TextureImageMemory;
-		eGlobal ImageView TextureImageView  ;
-		eGlobal Sampler   TextureSampler    ;
+		ExtLink Image     TextureImage_Old  ;
+		ExtLink Memory    TextureImageMemory;
+		ExtLink ImageView TextureImageView  ;
+		ExtLink Sampler   TextureSampler    ;
 #pragma endregion StaticData
 
 		void LoadModel(String _modelPath);
