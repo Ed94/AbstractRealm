@@ -20,6 +20,7 @@ function Gen-ArgStr($Arguments)
 
 # Setup the compiler
 cmd.exe /c "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+# cmd.exe /c "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"
 
 # Setup build output path.
 if (-not (Test-Path "Windows"))
@@ -45,6 +46,11 @@ $Path_ThirdParty	= $Path_Engine 		+ "ThirdParty\"
 $Path_API			= $Path_ThirdParty	+ "API\"
 
 $Includes = $(
+	"/I", "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.31.31103\include",
+	"/I", "C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared",
+	"/I", "C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt",
+	"/I", "C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um",
+
 	"/I", $Path_API,
 	"/I", $Path_Core,
 	"/I", $PATH_PAL,
@@ -56,14 +62,15 @@ $Includes = $(
 
 $ModuleSearchDirs = $(
 	"/ifcSearchDir", $Path_API,
-	"/ifcSearchDir", $Path_Core,c
+	"/ifcSearchDir", $Path_Core,
 	"/ifcSearchDir", $PATH_PAL,
 	"/ifcSearchDir", $Path_PAL_LAL,
 	"/ifcSearchDir", $Path_PAL_OSAL
 )
 
 $Modules = @(
-	$Path_PAL_OSAL + "OSAL.Entrypoint.ixx"
+	($Path_PAL_OSAL + "OSAL.Entrypoint.ixx"),
+	($Path_PAL_OSAL + "OSAL.Platform.ixx")
 )
 
 $TranslationUnits = @( 
@@ -75,19 +82,10 @@ $TranslationUnits = @(
 	$Path_Core	+ "Entrypoint.cpp"
 )
 
-# Write-Output "Include Paths:"
-# foreach($Path in $Includes)
-# {
-# 	if ($Path -ne "/I")
-# 	{
-# 		Write-Output $Path
-# 	}
-# }
-
 $CompilerFlags = @(
 	"/nologo",						#	
 	"/EHa",							#
-	"/Fe: AbstractRealm.exe",		# Exectuable Name
+	"/Fe:AbstractRealm.exe",		# Exectuable Name
 	# "/GR",						# Deprecated
 	"/GS-",							#
 	"/Gs9999999",					#
@@ -106,21 +104,36 @@ $LinkerFlags = @(
 	"/stack:0x100000,0x100000"
 )
 
+# $LibraryIncludes = @(
+# 	# "/LIBPATH",  "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64"
+# )
+
+$Path_WinKit_um64 = "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\"
+$Path_WinKit_ucrt = "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\ucrt\x64\"
+$Path_MSVC_Lib64 = "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.31.31103\lib\x64\"
+
 $Libraries_ThirdParty = @(
-	"kernel32.lib",
-	"user32.lib",
-	"gdi32.lib",
-	"winspool.lib",
-	"comdlg32.lib",
-	"advapi32.lib",
-	"shell32.lib",
-	"ole32.lib",
-	"oleaut32.lib",
-	"uuid.lib",
-	"odbc32.lib",
-	"odbccp32.lib",
-	"Wbemuuid.lib",
-	"version.lib",
+	($Path_WinKit_um64 + "kernel32.Lib"),
+	($Path_WinKit_um64 + "user32.Lib"),
+	($Path_WinKit_um64 + "gdi32.Lib"),
+	($Path_WinKit_um64 + "winspool.lib"),
+	($Path_WinKit_um64 + "comdlg32.lib"),
+	($Path_WinKit_um64 + "advapi32.lib"),
+	($Path_WinKit_um64 + "shell32.lib"),
+	($Path_WinKit_um64 + "ole32.lib"),
+	($Path_WinKit_um64 + "oleaut32.lib"),
+	($Path_WinKit_um64 + "uuid.lib"),
+	($Path_WinKit_um64 + "odbc32.lib"),
+	($Path_WinKit_um64 + "odbccp32.lib"),
+	($Path_WinKit_um64 + "Wbemuuid.lib"),
+	($Path_WinKit_um64 + "version.lib"),
+
+	($Path_MSVC_Lib64 + "msvcrtd.lib"),
+	($Path_MSVC_Lib64 + "oldnames.lib"),
+	($Path_MSVC_Lib64 + "msvcprtd.lib"),
+	($Path_MSVC_Lib64 + "vcruntimed.lib"),
+
+	($Path_WinKit_ucrt + "ucrtd.lib"),
 
 	($Path_ThirdParty + "infoware\out\build\x64-debug\lib\infowared.lib")
 )
@@ -134,3 +147,5 @@ cmd.exe /c cl $CompilerFlags $Includes $Modules $ModuleSearchDirs $TranslationUn
 #endregion Compiler
 
 Pop-Location
+
+#Read-Host -Prompt "Press Enter to exit"

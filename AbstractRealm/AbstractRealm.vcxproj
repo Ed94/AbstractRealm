@@ -384,10 +384,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="LAL\LAL_Bitmask.hpp">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="Meta\Meta.hpp" />
     <ClInclude Include="Meta\Meta_Backend.hpp" />
     <ClInclude Include="Networking\Networking.hpp">

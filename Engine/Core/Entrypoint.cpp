@@ -1,5 +1,4 @@
-//#include "OSAL.Entrypoint.hpp"
-import OSAL.EntryPoint;
+#include "OSAL.Entrypoint.hpp"
 
 
 OSAL::EExitVal 
@@ -7,3 +6,4 @@ OSAL::EntryPoint()
 {
 	return EExitVal::Success;
 }
+

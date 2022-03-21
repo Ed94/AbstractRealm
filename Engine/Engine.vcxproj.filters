@@ -1,26 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="Core\Entrypoint.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.EntryPoint.hpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.Platform.cpp" />
     <ClCompile Include="PAL\PAL.cpp" />
     <ClCompile Include="ThirdParty\API\API.Windows.Backend.cpp" />
-    <ClCompile Include="PAL\OSAL\OSAL.Platform.cpp" />
-    <ClCompile Include="PAL\OSAL\OSAL.cpp" />
-    <ClCompile Include="Core\Entrypoint.cpp" />
+    <ClCompile Include="PAL\LAL\LAL.Memory.cpp" />
+    <ClCompile Include="PAL\LAL\LAL.Memory.Allocators.cpp" />
+    <ClCompile Include="PAL\LAL\LAL.Math.hpp" />
+    <ClCompile Include="Build\PrecompiledIntermediate.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ThirdParty\API\API.Windows.Backend.hpp" />
-    <ClInclude Include="PAL\OSAL\OSAL.EntryPoint.ixx" />
-    <ClInclude Include="PAL\OSAL\OSAL.Platform.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.Declarations.hpp" />
-    <ClInclude Include="PAL\PAL.Backend.h" />
-    <ClInclude Include="PAL\PAL.hpp" />
-    <ClInclude Include="ThirdParty\API\API.Windows.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.Types.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.Casting.hpp" />
-    <ClInclude Include="ThirdParty\API\API.Infoware.hpp" />
-    <ClInclude Include="PAL\OSAL\OSAL.ixx" />
+    <ClInclude Include="PAL\LAL\LAL.Asserts.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Bit.hpp" />
     <ClInclude Include="PAL\LAL\LAL.C_STL.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.Memory.ixx" />
+    <ClInclude Include="PAL\LAL\LAL.Casting.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.DArray.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Declarations.hpp" />
     <ClInclude Include="PAL\LAL\LAL.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.NumericLimits.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Numerics.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Types.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL.Platform.hpp" />
+    <ClInclude Include="PAL\PAL.Backend.hpp" />
+    <ClInclude Include="PAL\PAL.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Infoware.hpp" />
+    <ClInclude Include="ThirdParty\API\API.SDL.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Windows.Backend.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Windows.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Platform.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Memory.Allocators.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Reflection.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Memory.hpp" />
+    <ClInclude Include="Build\PrecompiledIntermediate.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.BString.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.TChar.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Config.hpp" />
+    <ClInclude Include="PAL\LAL\Options\LAL.undef.Casting.hpp" />
   </ItemGroup>
 </Project>

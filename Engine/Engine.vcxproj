@@ -18,33 +18,10 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Core\Entrypoint.cpp" />
-    <ClCompile Include="PAL\OSAL\OSAL.cpp" />
-    <ClCompile Include="ThirdParty\API\API.Windows.Backend.cpp" />
-    <ClCompile Include="PAL\OSAL\OSAL.Platform.cpp" />
-    <ClCompile Include="PAL\PAL.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="PAL\LAL\LAL.Casting.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.C_STL.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.Declarations.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.Memory.ixx" />
-    <ClInclude Include="PAL\LAL\LAL.Types.hpp" />
-    <ClInclude Include="PAL\OSAL\OSAL.ixx" />
-    <ClInclude Include="ThirdParty\API\API.Windows.Backend.hpp" />
-    <ClInclude Include="ThirdParty\API\API.Windows.hpp" />
-    <ClInclude Include="PAL\OSAL\OSAL.EntryPoint.ixx" />
-    <ClInclude Include="PAL\OSAL\OSAL.Platform.hpp" />
-    <ClInclude Include="PAL\PAL.Backend.h" />
-    <ClInclude Include="PAL\PAL.hpp" />
-    <ClInclude Include="ThirdParty\API\API.Infoware.hpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2ab8134e-860f-4a57-9463-03b71fd3c472}</ProjectGuid>
+    <ProjectGuid>{7b582157-5d8b-4206-92c4-cc309b4dff41}</ProjectGuid>
     <RootNamespace>Engine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -67,6 +44,8 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <EnableUnitySupport>false</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -74,6 +53,8 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <EnableUnitySupport>false</EnableUnitySupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -101,13 +82,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)Build;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\API;$(IncludePath)</IncludePath>
-    <PublicModuleDirectories>$(ProjectDir)Build;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\API;$(IncludePath)</PublicModuleDirectories>
+    <IncludePath>$(ProjectDir)Build;$(ProjectDir)Core;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\;$(ProjectDir)ThirdParty\API;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)Build;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\API;$(IncludePath)</IncludePath>
-    <PublicModuleDirectories>$(ProjectDir)Build;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\API;$(IncludePath)</PublicModuleDirectories>
+    <IncludePath>$(ProjectDir)Build;$(ProjectDir)Core;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\;$(ProjectDir)ThirdParty\API;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -143,14 +122,18 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)ThirdParty\infoware\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <TranslateIncludes>false</TranslateIncludes>
+      <AdditionalIncludeDirectories>$(ProjectDir)ThirdParty\infoware\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>PrecompiledIntermediate.hpp</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>PrecompiledIntermediate.hpp</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>infowared.lib;version.lib;wbemuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)ThirdParty\infoware\out\build\x64-Debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,7 +146,10 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <TranslateIncludes>false</TranslateIncludes>
+      <AdditionalIncludeDirectories>$(ProjectDir)ThirdParty\infoware\out\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>PrecompiledIntermediate.hpp</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>PrecompiledIntermediate.hpp</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,6 +158,50 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Build\PrecompiledIntermediate.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Core\Entrypoint.cpp" />
+    <ClCompile Include="PAL\LAL\LAL.Memory.Allocators.cpp" />
+    <ClCompile Include="PAL\LAL\LAL.Math.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.BString.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Config.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Memory.Allocators.hpp" />
+    <ClCompile Include="PAL\LAL\LAL.Memory.cpp" />
+    <ClInclude Include="PAL\LAL\LAL.Memory.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Reflection.hpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.cpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.EntryPoint.hpp" />
+    <ClCompile Include="PAL\OSAL\OSAL.Platform.cpp" />
+    <ClCompile Include="PAL\PAL.cpp" />
+    <ClCompile Include="ThirdParty\API\API.Windows.Backend.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PAL\LAL\LAL.Asserts.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Bit.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Casting.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.C_STL.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.DArray.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Declarations.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.NumericLimits.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Numerics.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Platform.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Types.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.TChar.hpp" />
+    <ClInclude Include="PAL\LAL\Options\LAL.undef.Casting.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL.hpp" />
+    <ClInclude Include="PAL\OSAL\OSAL.Platform.hpp" />
+    <ClInclude Include="PAL\PAL.Backend.hpp" />
+    <ClInclude Include="PAL\PAL.hpp" />
+    <ClInclude Include="Build\PrecompiledIntermediate.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Infoware.hpp" />
+    <ClInclude Include="ThirdParty\API\API.SDL.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Windows.Backend.hpp" />
+    <ClInclude Include="ThirdParty\API\API.Windows.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
