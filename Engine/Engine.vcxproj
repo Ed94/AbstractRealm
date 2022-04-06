@@ -82,11 +82,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)Build;$(ProjectDir)Core;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\;$(ProjectDir)ThirdParty\API;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Build;$(ProjectDir)Core;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\LAL\String;$(ProjectDir)PAL\OSAL;$(ProjectDir)PAL\ThirdParty\;$(ProjectDir)ThirdParty\;$(ProjectDir)ThirdParty\API;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)Build;$(ProjectDir)Core;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\OSAL;$(ProjectDir)ThirdParty\;$(ProjectDir)ThirdParty\API;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Build;$(ProjectDir)Core;$(ProjectDir)PAL;$(ProjectDir)PAL\LAL;$(ProjectDir)PAL\LAL\String;$(ProjectDir)PAL\OSAL;$(ProjectDir)PAL\ThirdParty\;$(ProjectDir)ThirdParty\;$(ProjectDir)ThirdParty\API;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -164,23 +164,26 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Core\Entrypoint.cpp" />
+    <ClCompile Include="PAL\LAL\String\LAL.CString.cpp" />
     <ClCompile Include="PAL\LAL\LAL.Memory.Allocators.cpp" />
     <ClCompile Include="PAL\LAL\LAL.Math.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.BString.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Limits.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.BString.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Config.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.CString.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Memory.Allocators.hpp" />
     <ClCompile Include="PAL\LAL\LAL.Memory.cpp" />
     <ClInclude Include="PAL\LAL\LAL.Memory.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.Reflection.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Metaprogramming.hpp" />
     <ClCompile Include="PAL\OSAL\OSAL.cpp" />
     <ClCompile Include="PAL\OSAL\OSAL.EntryPoint.hpp" />
     <ClCompile Include="PAL\OSAL\OSAL.Platform.cpp" />
     <ClCompile Include="PAL\PAL.cpp" />
-    <ClCompile Include="ThirdParty\API\API.Windows.Backend.cpp" />
+    <ClCompile Include="PAL\ThirdParty\API.Windows.Backend.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PAL\LAL\LAL.Asserts.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.Bit.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Bits.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Casting.hpp" />
     <ClInclude Include="PAL\LAL\LAL.C_STL.hpp" />
     <ClInclude Include="PAL\LAL\LAL.DArray.hpp" />
@@ -190,17 +193,21 @@
     <ClInclude Include="PAL\LAL\LAL.Numerics.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Platform.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Types.hpp" />
-    <ClInclude Include="PAL\LAL\LAL.TChar.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.TChar.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.UTF8.hpp" />
     <ClInclude Include="PAL\LAL\Options\LAL.undef.Casting.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.Platform.hpp" />
     <ClInclude Include="PAL\PAL.Backend.hpp" />
     <ClInclude Include="PAL\PAL.hpp" />
     <ClInclude Include="Build\PrecompiledIntermediate.hpp" />
-    <ClInclude Include="ThirdParty\API\API.Infoware.hpp" />
-    <ClInclude Include="ThirdParty\API\API.SDL.hpp" />
-    <ClInclude Include="ThirdParty\API\API.Windows.Backend.hpp" />
-    <ClInclude Include="ThirdParty\API\API.Windows.hpp" />
+    <ClInclude Include="PAL\ThirdParty\API.Infoware.hpp" />
+    <ClInclude Include="PAL\ThirdParty\API.SDL.hpp" />
+    <ClInclude Include="PAL\ThirdParty\API.Windows.Backend.hpp" />
+    <ClInclude Include="PAL\ThirdParty\API.Windows.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PAL\Readme.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
