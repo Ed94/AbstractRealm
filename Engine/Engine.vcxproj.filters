@@ -37,13 +37,18 @@
     <ClInclude Include="PAL\LAL\LAL.Metaprogramming.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Memory.hpp" />
     <ClInclude Include="Build\PrecompiledIntermediate.hpp" />
-    <ClInclude Include="PAL\LAL\String\LAL.BString.hpp" />
-    <ClInclude Include="PAL\LAL\String\LAL.TChar.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.String.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.Char.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Config.hpp" />
     <ClInclude Include="PAL\LAL\Options\LAL.undef.Casting.hpp" />
     <ClInclude Include="PAL\LAL\String\LAL.CString.hpp" />
-    <ClInclude Include="PAL\LAL\String\LAL.UTF8.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.UTF.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Limits.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.ASCII.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.RefWrap.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Data.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Tuple.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Utility.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PAL\Readme.md" />

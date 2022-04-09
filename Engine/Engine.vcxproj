@@ -128,6 +128,10 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PrecompiledIntermediate.hpp</PrecompiledHeaderFile>
       <ForcedIncludeFiles>PrecompiledIntermediate.hpp</ForcedIncludeFiles>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,6 +154,10 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PrecompiledIntermediate.hpp</PrecompiledHeaderFile>
       <ForcedIncludeFiles>PrecompiledIntermediate.hpp</ForcedIncludeFiles>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -167,8 +175,12 @@
     <ClCompile Include="PAL\LAL\String\LAL.CString.cpp" />
     <ClCompile Include="PAL\LAL\LAL.Memory.Allocators.cpp" />
     <ClCompile Include="PAL\LAL\LAL.Math.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Data.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Limits.hpp" />
-    <ClInclude Include="PAL\LAL\String\LAL.BString.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.RefWrap.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Utility.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.ASCII.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.String.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Config.hpp" />
     <ClInclude Include="PAL\LAL\String\LAL.CString.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Memory.Allocators.hpp" />
@@ -193,9 +205,10 @@
     <ClInclude Include="PAL\LAL\LAL.Numerics.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Platform.hpp" />
     <ClInclude Include="PAL\LAL\LAL.Types.hpp" />
-    <ClInclude Include="PAL\LAL\String\LAL.TChar.hpp" />
-    <ClInclude Include="PAL\LAL\String\LAL.UTF8.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.Char.hpp" />
+    <ClInclude Include="PAL\LAL\String\LAL.UTF.hpp" />
     <ClInclude Include="PAL\LAL\Options\LAL.undef.Casting.hpp" />
+    <ClInclude Include="PAL\LAL\LAL.Tuple.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.hpp" />
     <ClInclude Include="PAL\OSAL\OSAL.Platform.hpp" />
     <ClInclude Include="PAL\PAL.Backend.hpp" />

@@ -79,3 +79,6 @@
 [submodule "Engine/PAL"]
 	path = Engine/PAL
 	url = https://github.com/Ed94/PAL_CPP
+[submodule "EABase"]
+	path = AbstractRealm/PAL/ThirdParty/Libraries/EABase
+	url = https://github.com/electronicarts/EABase
