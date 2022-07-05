@@ -70,6 +70,7 @@
 [submodule "cereal"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/cereal
 	url = https://github.com/marcizhu/Cereal
+	branch = master
 [submodule "nameof"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/nameof
 	url = https://github.com/Neargye/nameof
