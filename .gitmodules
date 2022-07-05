@@ -7,36 +7,15 @@
 [submodule "imgui"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/imgui
 	url = https://github.com/ocornut/imgui.git
-[submodule "SDL-mirror"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/SDL-mirror
-	url = https://github.com/spurious/SDL-mirror.git
-[submodule "gainput"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/gainput
-	url = https://github.com/jkuhlmann/gainput.git
-[submodule "openal-soft"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/openal-soft
-	url = https://github.com/kcat/openal-soft.git
-[submodule "MemoryAllocator.KanameShiki"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/MemoryAllocator.KanameShiki
-	url = https://github.com/EmuraDaisuke/MemoryAllocator.KanameShiki.git
-[submodule "basis_universal"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/basis_universal
-	url = https://github.com/BinomialLLC/basis_universal.git
 [submodule "magic_enum"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/magic_enum
 	url = https://github.com/Neargye/magic_enum.git
 [submodule "rbase"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/rbase
 	url = https://github.com/milostosic/rbase.git
-[submodule "rpclib"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/rpclib
-	url = https://github.com/rpclib/rpclib.git
 [submodule "vivid"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/vivid
 	url = https://github.com/gurki/vivid.git
-[submodule "assimp"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/assimp
-	url = https://github.com/assimp/assimp.git
 [submodule "VulkanMemoryAllocator"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/VulkanMemoryAllocator
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
@@ -46,31 +25,15 @@
 [submodule "tinyobjloader"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/tinyobjloader
 	url = https://github.com/tinyobjloader/tinyobjloader.git
-[submodule "enkiTS"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/enkiTS
-	url = https://github.com/dougbinks/enkiTS.git
 [submodule "vld"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/vld
 	url = https://github.com/razor950/vld.git
 [submodule "infoware"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/infoware
 	url = https://github.com/ThePhD/infoware.git
-[submodule "rttr"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/rttr
-	url = https://github.com/rttrorg/rttr.git
-[submodule "ctti"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/ctti
-	url = https://github.com/Manu343726/ctti.git
-[submodule "ggpo"]
-	path = AbstractRealm/PAL/ThirdParty/SDKs/ggpo
-	url = https://github.com/pond3r/ggpo.git
 [submodule "VaultedVulkan"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/VaultedVulkan
 	url = https://github.com/Ed94/VaultedVulkan.git
-[submodule "cereal"]
-	path = AbstractRealm/PAL/ThirdParty/Libraries/cereal
-	url = https://github.com/marcizhu/Cereal
-	branch = master
 [submodule "nameof"]
 	path = AbstractRealm/PAL/ThirdParty/Libraries/nameof
 	url = https://github.com/Neargye/nameof
